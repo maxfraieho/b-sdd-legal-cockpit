@@ -1,0 +1,14 @@
+[Unit]
+Description=B-SDD Legal Universal MCP Gateway (Port 8766)
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/home/vokov/projects/b-sdd-legal
+ExecStart=/usr/bin/python3 /home/vokov/projects/b-sdd-legal/daemon/legal_mcp_gateway.py
+Restart=always
+RestartSec=5
+Environment=LEGAL_MCP_PORT=8766
+
+[Install]
+WantedBy=default.target

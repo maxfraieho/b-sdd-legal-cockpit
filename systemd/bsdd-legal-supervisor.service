@@ -1,0 +1,15 @@
+[Unit]
+Description=B-SDD Legal Autonomous Supervisor Daemon (Port 8162)
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/home/vokov/projects/b-sdd-legal
+ExecStart=/usr/bin/python3 /home/vokov/projects/b-sdd-legal/daemon/legal_supervisor.py
+Restart=always
+RestartSec=5
+Environment=LEGAL_SUPERVISOR_PORT=8162
+Environment=TELEGRAM_BOT_TOKEN=8942331406:AAHZ-MhlOfO3vWWiR3y9sQrSUQbP7U-ar28
+
+[Install]
+WantedBy=default.target
