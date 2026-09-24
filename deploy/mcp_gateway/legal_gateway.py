@@ -27,6 +27,7 @@ if str(ROOT_DIR) not in sys.path:
 # Toolkits
 from deploy.mcp_gateway import (
     toolkit_legal,
+    toolkit_docs,
     toolkit_utopia,
     toolkit_gitnexus,
     toolkit_drakon,
@@ -97,15 +98,17 @@ def get_all_tool_specs() -> List[Dict[str, Any]]:
     tools = []
     # 1. Legal tools (Primary)
     tools.extend(toolkit_legal.get_tools_spec())
-    # 2. Utopia DB tools
+    # 2. Documentation & Architecture Planning tools (Spark Architect)
+    tools.extend(toolkit_docs.get_tools_spec())
+    # 3. Utopia DB tools
     tools.extend(toolkit_utopia.get_tools_spec())
-    # 3. GitNexus AST tools
+    # 4. GitNexus AST tools
     tools.extend(toolkit_gitnexus.get_tools_spec())
-    # 4. DRAKON tools
+    # 5. DRAKON tools
     tools.extend(toolkit_drakon.get_tools_spec())
-    # 5. Astryx tools
+    # 6. Astryx tools
     tools.extend(toolkit_astryx.get_tools_spec())
-    # 6. System Skills
+    # 7. System Skills
     tools.extend(toolkit_skills.get_tools_spec())
     return tools
 
@@ -129,6 +132,35 @@ def dispatch_tool_call(name: str, args: Dict[str, Any]) -> Any:
         return toolkit_legal.legal_epub_rebuild()
     elif name == "utopia_db_query":
         return toolkit_legal.utopia_db_query(sql_query=args.get("sql_query", ""))
+
+    # 2. Documentation & Planning Tools (Spark Architect)
+    elif name == "legal_docs_list":
+        return toolkit_docs.docs_list(category=args.get("category", "all"))
+    elif name == "legal_docs_read":
+        return toolkit_docs.docs_read(doc_path=args.get("doc_path", ""), max_chars=args.get("max_chars"))
+    elif name == "legal_docs_write":
+        return toolkit_docs.docs_write(
+            doc_path=args.get("doc_path", ""),
+            content=args.get("content", ""),
+            mode=args.get("mode", "overwrite"),
+            author=args.get("author", "Gemini Spark Architect"),
+            comment=args.get("comment")
+        )
+    elif name == "legal_plan_save":
+        return toolkit_docs.plan_save(
+            plan_id=args.get("plan_id", ""),
+            title=args.get("title", ""),
+            objective=args.get("objective", ""),
+            content=args.get("content", ""),
+            steps=args.get("steps"),
+            status=args.get("status", "DRAFT"),
+            tags=args.get("tags"),
+            author=args.get("author", "Gemini Spark Architect")
+        )
+    elif name == "legal_plans_list":
+        return toolkit_docs.plans_list(status=args.get("status"), tag=args.get("tag"))
+    elif name == "legal_plan_get":
+        return toolkit_docs.plan_get(plan_id=args.get("plan_id", ""))
 
     # 2. Utopia Tools
     elif name == "utopia_bitemporal_query":

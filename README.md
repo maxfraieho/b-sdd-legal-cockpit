@@ -65,9 +65,10 @@ Built upon the principles of **B-SDD (Bitemporal Spec-Driven Development)**, the
 
 ## Key Features
 
-### 1. 24 Sovereign MCP Tools
-The gateway provides full coverage across legal analysis, evidence verification, and bitemporal data retrieval:
+### 1. 30 Sovereign MCP Tools
+The gateway provides full coverage across legal analysis, architecture documentation, planning, and bitemporal data retrieval:
 - **Legal Practice (8 tools):** `legal_dossier_search`, `legal_transcripts_query`, `legal_actor_matrix_get`, `legal_evidence_get`, `legal_sprint_dispatch`, `legal_supervisor_status`, `legal_epub_rebuild`, `utopia_db_query`.
+- **Documentation & Plan Management (6 tools):** `legal_docs_list`, `legal_docs_read`, `legal_docs_write`, `legal_plan_save`, `legal_plans_list`, `legal_plan_get`. Enables Gemini Spark & AI architects to read, update, and manage specs and implementation plans.
 - **Utopia DB & WORM (3 tools):** `utopia_bitemporal_query`, `utopia_record_worm_ledger`, `utopia_check_invariants`.
 - **GitNexus Code Intelligence (3 tools):** `gitnexus_ast_query`, `gitnexus_blast_radius`, `gitnexus_symbol_search`.
 - **DRAKON Visual Algorithms (4 tools):** `drakon_planar_validate`, `drakon_svg_export`, `drakon_code_compile`, `drakon_macro_flow_synthesis`.
