@@ -78,6 +78,8 @@ export default function App() {
     }
   };
 
+  const [mobileTab, setMobileTab] = useState<"workspace" | "inspector">("workspace");
+
   const handleLockSession = () => {
     showToast(
       "Session Avocat Verrouillée",
@@ -87,7 +89,7 @@ export default function App() {
   };
 
   return (
-    <div className="h-screen w-screen overflow-hidden flex flex-col bg-[#080C14] text-slate-100 font-sans select-none">
+    <div className="h-[100dvh] w-screen overflow-hidden flex flex-col bg-[#080C14] text-slate-100 font-sans">
       {/* ZONE A: OMNI-HEADER (40px) */}
       <Topbar
         currentTab={currentTab}
@@ -97,12 +99,16 @@ export default function App() {
         onRecompileEpub={handleRecompileAndSendKindle}
         onLockSession={handleLockSession}
         isRecompiling={isRecompiling}
+        mobileTab={mobileTab}
+        onMobileTabChange={setMobileTab}
       />
 
-      {/* MIDDLE BODY: ZONE B (68%) & ZONE C (32%) */}
-      <main className="h-[calc(100vh-80px)] w-full flex overflow-hidden">
-        {/* ZONE B: PRIMARY LEGAL WORKSPACE (68%) */}
-        <section className="w-[68%] h-full flex flex-col overflow-hidden">
+      {/* MIDDLE BODY: ZONE B (68% desktop) & ZONE C (32% desktop) */}
+      <main className="flex-1 w-full flex overflow-hidden min-h-0">
+        {/* ZONE B: PRIMARY LEGAL WORKSPACE */}
+        <section className={`h-full flex-col overflow-hidden w-full lg:w-[68%] ${
+          mobileTab === "workspace" ? "flex" : "hidden lg:flex"
+        }`}>
           {currentTab === "kindle_review" && (
             <KindleVoiceReview
               currentLang={currentLang}
@@ -123,8 +129,10 @@ export default function App() {
           )}
         </section>
 
-        {/* ZONE C: CONTEXTUAL LEGAL INSPECTOR (32%) */}
-        <section className="w-[32%] h-full border-l border-slate-800/80 bg-[#0B1120] overflow-hidden">
+        {/* ZONE C: CONTEXTUAL LEGAL INSPECTOR */}
+        <section className={`h-full border-l border-slate-800/80 bg-[#0B1120] overflow-hidden w-full lg:w-[32%] ${
+          mobileTab === "inspector" ? "flex flex-col" : "hidden lg:flex lg:flex-col"
+        }`}>
           <LegalInspector currentLang={currentLang} />
         </section>
       </main>

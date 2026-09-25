@@ -217,23 +217,25 @@ export const KindleVoiceReview: React.FC<KindleVoiceReviewProps> = ({
     setEditorText(resolveLocalized(selectedChapter.lawyer_draft, currentLang));
   };
 
+  const [mobileDiffView, setMobileDiffView] = useState<"both" | "outdated" | "current">("current");
+
   const wordCount = editorText.trim() ? editorText.trim().split(/\s+/).length : 0;
   const charCount = editorText.length;
 
   return (
     <div className="h-full w-full flex flex-col bg-[#080C14] text-slate-100 overflow-hidden">
       {/* 1. FREE INPUT & AUDIO DICTATION HEADER */}
-      <div className="bg-[#0D1424] border-b border-slate-800/80 p-3 shrink-0">
-        <div className="flex items-center justify-between mb-2">
-          <div className="flex items-center space-x-2">
-            <div className="p-1.5 bg-blue-600/20 text-blue-400 border border-blue-500/30 rounded">
+      <div className="bg-[#0D1424] border-b border-slate-800/80 p-2 sm:p-3 shrink-0">
+        <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
+          <div className="flex items-center space-x-2 min-w-0">
+            <div className="p-1.5 bg-blue-600/20 text-blue-400 border border-blue-500/30 rounded shrink-0">
               <Mic className="w-4 h-4" />
             </div>
-            <div>
-              <h2 className="text-xs font-semibold text-slate-200 uppercase tracking-wider font-mono">
+            <div className="min-w-0">
+              <h2 className="text-xs font-semibold text-slate-200 uppercase tracking-wider font-mono truncate">
                 {currentLang === 'uk' ? 'Надиктовка адвоката & Вільні примітки' : 'Dictée de l\'avocat & Notes brutes'}
               </h2>
-              <p className="text-[11px] text-slate-400">
+              <p className="text-[10px] sm:text-[11px] text-slate-400 truncate">
                 {currentLang === 'uk'
                   ? 'Голосове введення Web Speech API або введення тексту для парсингу через KùzuDB'
                   : 'Saisie vocale continue Web Speech API ou prise de note pour analyse KùzuDB'}
@@ -241,7 +243,7 @@ export const KindleVoiceReview: React.FC<KindleVoiceReviewProps> = ({
             </div>
           </div>
 
-          <div className="flex items-center space-x-2">
+          <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 shrink-0">
             {/* Dictation Language Selector */}
             <select
               value={recordingLang}
@@ -332,40 +334,76 @@ export const KindleVoiceReview: React.FC<KindleVoiceReviewProps> = ({
       </div>
 
       {/* 2. CHAPTER SELECTOR BAR & EVERLAW-STYLE DRAWER TRIGGER */}
-      <div className="bg-[#0B1120] border-b border-slate-800/80 px-3 py-1.5 flex items-center justify-between text-xs shrink-0">
-        <div className="flex items-center space-x-2">
+      <div className="bg-[#0B1120] border-b border-slate-800/80 px-2 sm:px-3 py-1.5 flex flex-wrap items-center justify-between gap-1.5 text-xs shrink-0">
+        <div className="flex items-center space-x-1.5 sm:space-x-2 min-w-0">
           <button
             onClick={() => setDrawerOpen(!drawerOpen)}
-            className="flex items-center space-x-1.5 px-2 py-1 bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-800 rounded font-mono text-xs transition-colors"
+            className="flex items-center space-x-1 sm:space-x-1.5 px-2 py-1 bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-800 rounded font-mono text-xs transition-colors shrink-0"
           >
             <BookOpen className="w-3.5 h-3.5 text-blue-400" />
-            <span>18 Chapitres ED10</span>
+            <span className="hidden sm:inline">18 Chapitres ED10</span>
+            <span className="sm:hidden">ED10</span>
             <ChevronRight className={`w-3.5 h-3.5 transition-transform ${drawerOpen ? "rotate-90" : ""}`} />
           </button>
 
           <span className="text-slate-600">|</span>
 
-          <span className="font-mono text-amber-400 font-bold">
+          <span className="font-mono text-amber-400 font-bold shrink-0">
             CH-{selectedChapter.number}:
           </span>
-          <span className="text-slate-200 font-medium truncate max-w-[340px]">
+          <span className="text-slate-200 font-medium truncate max-w-[140px] sm:max-w-[260px] md:max-w-[340px]">
             {resolveLocalized(selectedChapter.title, currentLang)}
           </span>
         </div>
 
-        <div className="flex items-center space-x-2">
-          {selectedChapter.impacted_articles.map((art) => (
-            <span
-              key={art}
-              className="bg-slate-900 border border-slate-800 text-slate-300 px-1.5 py-0.5 rounded text-[10px] font-mono"
+        <div className="flex items-center space-x-1.5 sm:space-x-2 shrink-0">
+          {/* Mobile Diff View Switcher (Visible on < md) */}
+          <div className="flex md:hidden items-center bg-[#070B12] p-0.5 rounded border border-slate-800 text-[10px] font-mono">
+            <button
+              onClick={() => setMobileDiffView("outdated")}
+              className={`px-1.5 py-0.5 rounded transition-all ${
+                mobileDiffView === "outdated"
+                  ? "bg-rose-950 text-rose-300 font-bold border border-rose-800"
+                  : "text-slate-400"
+              }`}
             >
-              {art}
-            </span>
-          ))}
-          <span className="text-slate-600">·</span>
+              Réfuté
+            </button>
+            <button
+              onClick={() => setMobileDiffView("current")}
+              className={`px-1.5 py-0.5 rounded transition-all ${
+                mobileDiffView === "current"
+                  ? "bg-emerald-950 text-emerald-300 font-bold border border-emerald-800"
+                  : "text-slate-400"
+              }`}
+            >
+              Corrigé
+            </button>
+            <button
+              onClick={() => setMobileDiffView("both")}
+              className={`px-1.5 py-0.5 rounded transition-all ${
+                mobileDiffView === "both"
+                  ? "bg-blue-900/60 text-blue-200 font-bold border border-blue-700"
+                  : "text-slate-400"
+              }`}
+            >
+              Split
+            </button>
+          </div>
+
+          <div className="hidden sm:flex items-center space-x-1.5">
+            {selectedChapter.impacted_articles.slice(0, 2).map((art) => (
+              <span
+                key={art}
+                className="bg-slate-900 border border-slate-800 text-slate-300 px-1.5 py-0.5 rounded text-[10px] font-mono"
+              >
+                {art}
+              </span>
+            ))}
+          </div>
           <span className="text-emerald-400 text-[10px] font-mono flex items-center gap-1">
             <CheckCircle2 className="w-3 h-3 text-emerald-400" />
-            Vérifié WORM
+            <span className="hidden sm:inline">Vérifié WORM</span>
           </span>
         </div>
       </div>
@@ -418,7 +456,9 @@ export const KindleVoiceReview: React.FC<KindleVoiceReviewProps> = ({
         )}
 
         {/* LEFT COLUMN: OUTDATED DOSSIER CLAIMS (Crimson soft strikethrough styling) */}
-        <section className="w-1/2 border-r border-slate-800/80 bg-[#0A0E18] flex flex-col overflow-hidden">
+        <section className={`border-r border-slate-800/80 bg-[#0A0E18] flex-col overflow-hidden md:flex md:w-1/2 ${
+          mobileDiffView === "outdated" ? "w-full flex" : mobileDiffView === "both" ? "w-1/2 flex" : "hidden md:flex"
+        }`}>
           <div className="h-8 bg-[#070B12] border-b border-slate-800/80 px-3 flex items-center justify-between text-xs text-rose-300 font-mono">
             <span className="flex items-center gap-1.5">
               <AlertCircle className="w-3.5 h-3.5 text-rose-400" />
@@ -467,7 +507,9 @@ export const KindleVoiceReview: React.FC<KindleVoiceReviewProps> = ({
         </section>
 
         {/* RIGHT COLUMN: HIGH-CONTRAST EDITABLE LIVE ADVOCATE CANVAS */}
-        <section className="w-1/2 bg-[#080C14] flex flex-col overflow-hidden">
+        <section className={`bg-[#080C14] flex-col overflow-hidden md:flex md:w-1/2 ${
+          mobileDiffView === "current" ? "w-full flex" : mobileDiffView === "both" ? "w-1/2 flex" : "hidden md:flex"
+        }`}>
           <div className="h-8 bg-[#0D1424] border-b border-slate-800/80 px-3 flex items-center justify-between text-xs text-emerald-300 font-mono">
             <span className="flex items-center gap-1.5">
               <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
