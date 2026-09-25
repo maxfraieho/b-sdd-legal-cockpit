@@ -6,18 +6,20 @@ import { PleadingsView } from "./components/PleadingsView";
 import { WormLedgerView } from "./components/WormLedgerView";
 import { LegalInspector } from "./components/LegalInspector";
 import { ActionDock } from "./components/ActionDock";
+import { GlossaryModal } from "./components/GlossaryModal";
 import { SupportedLanguage } from "./types/i18n";
 import { commitAtomicSupersession } from "./lib/wormLedger";
 import { CheckCircle2, BookOpen, Send, X, ShieldCheck } from "lucide-react";
 
 export default function App() {
   const [currentTab, setCurrentTab] = useState<WorkspaceTab>("kindle_review");
-  const [currentLang, setCurrentLang] = useState<SupportedLanguage>("fr");
+  const [currentLang, setCurrentLang] = useState<SupportedLanguage>("uk");
 
   // Loading & toast states
   const [isRecompiling, setIsRecompiling] = useState(false);
   const [isSealing, setIsSealing] = useState(false);
   const [isSendingKindle, setIsSendingKindle] = useState(false);
+  const [glossaryModalOpen, setGlossaryModalOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState<{
     title: string;
     description: string;
@@ -99,6 +101,7 @@ export default function App() {
         onRecompileEpub={handleRecompileAndSendKindle}
         onLockSession={handleLockSession}
         isRecompiling={isRecompiling}
+        onOpenGlossary={() => setGlossaryModalOpen(true)}
         mobileTab={mobileTab}
         onMobileTabChange={setMobileTab}
       />
@@ -235,6 +238,12 @@ export default function App() {
           </button>
         </div>
       )}
+      {/* GLOSSARY & ACRONYMS DECODER MODAL */}
+      <GlossaryModal
+        isOpen={glossaryModalOpen}
+        onClose={() => setGlossaryModalOpen(false)}
+        currentLang={currentLang}
+      />
     </div>
   );
 }

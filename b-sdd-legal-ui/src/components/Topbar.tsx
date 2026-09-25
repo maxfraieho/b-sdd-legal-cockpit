@@ -8,6 +8,7 @@ import {
   BookOpen,
   Activity,
   Layers,
+  HelpCircle,
 } from "lucide-react";
 import { SupportedLanguage } from "../types/i18n";
 
@@ -20,6 +21,7 @@ interface TopbarProps {
   onLangChange: (lang: SupportedLanguage) => void;
   onRecompileEpub: () => void;
   onLockSession: () => void;
+  onOpenGlossary?: () => void;
   isRecompiling?: boolean;
   mobileTab?: "workspace" | "inspector";
   onMobileTabChange?: (tab: "workspace" | "inspector") => void;
@@ -32,6 +34,7 @@ export const Topbar: React.FC<TopbarProps> = ({
   onLangChange,
   onRecompileEpub,
   onLockSession,
+  onOpenGlossary,
   isRecompiling = false,
   mobileTab = "workspace",
   onMobileTabChange,
@@ -169,15 +172,28 @@ export const Topbar: React.FC<TopbarProps> = ({
           <span className="text-slate-300 hidden lg:inline">MemPalace :8766</span>
         </div>
 
+        {/* Glossary & Legal Acronyms Decoder */}
+        <button
+          onClick={onOpenGlossary}
+          className="flex items-center space-x-1 px-1.5 sm:px-2 py-0.5 bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 text-amber-300 rounded text-[10px] sm:text-[11px] font-medium transition-colors shrink-0 shadow-[0_0_8px_rgba(245,158,11,0.12)]"
+          title="Словник юридичних термінів & Абревіатур (КПК, КК, CC 933, CO 49, ATF 146 IV 9, WORM, SPOP)"
+        >
+          <HelpCircle className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+          <span className="hidden sm:inline font-mono">
+            {currentLang === "uk" ? "? Абревіатури" : currentLang === "fr" ? "? Glossaire" : "? Glossary"}
+          </span>
+          <span className="sm:hidden font-mono font-bold">?</span>
+        </button>
+
         {/* Trilingual Language Selector */}
         <div className="flex items-center bg-[#070B12] p-0.5 rounded border border-slate-800/80 text-[10px] sm:text-[11px] font-mono shrink-0">
-          {(['fr', 'uk', 'en'] as SupportedLanguage[]).map((lang) => (
+          {(['uk', 'fr', 'en'] as SupportedLanguage[]).map((lang) => (
             <button
               key={lang}
               onClick={() => onLangChange(lang)}
               className={`px-1 sm:px-1.5 py-0.5 rounded uppercase font-semibold transition-all ${
                 currentLang === lang
-                  ? "bg-blue-600 text-white"
+                  ? "bg-blue-600 text-white shadow-sm"
                   : "text-slate-400 hover:text-slate-200"
               }`}
             >
