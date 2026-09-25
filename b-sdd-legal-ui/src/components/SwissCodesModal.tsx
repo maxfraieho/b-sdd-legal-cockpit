@@ -80,16 +80,26 @@ export const SwissCodesModal: React.FC<SwissCodesModalProps> = ({
                     ? "База кодексів Швейцарії & Законодавство кантону Во (MemPalace)"
                     : currentLang === "fr"
                     ? "Corpus Juridique Suisse & Droit Vaudois (MemPalace KùzuDB)"
+                    : currentLang === "de"
+                    ? "Schweizerisches Gesetzeskorpus & Waadtländer Recht (MemPalace)"
+                    : currentLang === "it"
+                    ? "Corpus Giuridico Svizzero & Diritto Vodese (MemPalace)"
                     : "Swiss Legal Codes & Vaud Cantonal Corpus (MemPalace)"}
                 </span>
                 <span className="text-[10px] font-mono bg-emerald-950/80 text-emerald-300 border border-emerald-800/60 px-2 py-0.5 rounded-full">
-                  KùzuDB 8'746 зв'язків
+                  KùzuDB 8'746 {currentLang === "uk" ? "зв'язків" : currentLang === "fr" ? "relations" : currentLang === "de" ? "Verknüpfungen" : currentLang === "it" ? "relazioni" : "relations"}
                 </span>
               </h2>
               <p className="text-[11px] text-slate-400">
                 {currentLang === "uk"
                   ? "Офіційні норми CP, CPP, CC, CO, кантональне право Во (LOJV, TDIP) та прецеденти ATF"
-                  : "Normes pénales, procédure vaudoise et jurisprudence fédérale de référence"}
+                  : currentLang === "fr"
+                  ? "Normes pénales, procédure vaudoise et jurisprudence fédérale de référence"
+                  : currentLang === "de"
+                  ? "Strafnormen, Waadtländer Verfahrensrecht und bundesgerichtliche Leitentscheide"
+                  : currentLang === "it"
+                  ? "Norme penali, procedura vodese e giurisprudenza federale di riferimento"
+                  : "Penal norms, Vaud procedure, and leading federal Supreme Court case law"}
               </p>
             </div>
           </div>
@@ -112,7 +122,13 @@ export const SwissCodesModal: React.FC<SwissCodesModalProps> = ({
               placeholder={
                 currentLang === "uk"
                   ? "Пошук статті (напр. Art. 146, 180, 263, ATF 146 IV 9, кантон Во...)"
-                  : "Rechercher un article (ex. Art. 146, 180, 263, ATF 146 IV 9...)"
+                  : currentLang === "fr"
+                  ? "Rechercher un article (ex. Art. 146, 180, 263, ATF 146 IV 9...)"
+                  : currentLang === "de"
+                  ? "Artikel suchen (z.B. Art. 146, 180, 263, BGE 146 IV 9...)"
+                  : currentLang === "it"
+                  ? "Cerca un articolo (es. Art. 146, 180, 263, DTF 146 IV 9...)"
+                  : "Search article (e.g. Art. 146, 180, 263, ATF 146 IV 9...)"
               }
               className="w-full pl-8 pr-3 py-1.5 bg-[#0D1527] border border-slate-700/80 rounded-lg text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-blue-500"
             />
@@ -128,7 +144,7 @@ export const SwissCodesModal: React.FC<SwissCodesModalProps> = ({
                   : "bg-slate-900 text-slate-400 hover:text-slate-200"
               }`}
             >
-              {currentLang === "uk" ? "Всі юрисдикції" : "Toutes"}
+              {currentLang === "uk" ? "Всі юрисдикції" : currentLang === "fr" ? "Toutes" : currentLang === "de" ? "Alle" : currentLang === "it" ? "Tutte" : "All"}
             </button>
             <button
               onClick={() => setSelectedJurisdiction("federal")}
@@ -138,7 +154,7 @@ export const SwissCodesModal: React.FC<SwissCodesModalProps> = ({
                   : "bg-slate-900 text-slate-400 hover:text-slate-200"
               }`}
             >
-              🇨🇭 {currentLang === "uk" ? "Федеральне (CH)" : "Fédéral"}
+              🇨🇭 {currentLang === "uk" ? "Федеральне (CH)" : currentLang === "fr" ? "Fédéral (CH)" : currentLang === "de" ? "Bund (CH)" : currentLang === "it" ? "Federale (CH)" : "Federal (CH)"}
             </button>
             <button
               onClick={() => setSelectedJurisdiction("canton_vaud")}
@@ -148,7 +164,7 @@ export const SwissCodesModal: React.FC<SwissCodesModalProps> = ({
                   : "bg-slate-900 text-slate-400 hover:text-slate-200"
               }`}
             >
-              🏛️ {currentLang === "uk" ? "Кантон Во (VD)" : "Canton Vaud"}
+              🏛️ {currentLang === "uk" ? "Кантон Во (VD)" : currentLang === "fr" ? "Canton Vaud (VD)" : currentLang === "de" ? "Kanton Waadt (VD)" : currentLang === "it" ? "Canton Vaud (VD)" : "Canton Vaud (VD)"}
             </button>
           </div>
         </div>
@@ -200,7 +216,9 @@ export const SwissCodesModal: React.FC<SwissCodesModalProps> = ({
 
                   <div className="flex items-center justify-between text-[10px] pt-1.5 border-t border-slate-800/80">
                     <div className="flex items-center space-x-1">
-                      <span className="text-slate-500 font-mono">Докази:</span>
+                      <span className="text-slate-500 font-mono">
+                        {currentLang === "uk" ? "Докази:" : currentLang === "fr" ? "Pièces :" : currentLang === "de" ? "Beweise:" : currentLang === "it" ? "Reperti:" : "Exhibits:"}
+                      </span>
                       {art.corroborating_cotes.slice(0, 3).map((cote) => (
                         <span
                           key={cote}
@@ -221,7 +239,13 @@ export const SwissCodesModal: React.FC<SwissCodesModalProps> = ({
               <div className="text-center py-12 text-slate-500 font-mono text-xs">
                 {currentLang === "uk"
                   ? "Статей за цим запитом не знайдено."
-                  : "Aucun article trouvé."}
+                  : currentLang === "fr"
+                  ? "Aucun article trouvé."
+                  : currentLang === "de"
+                  ? "Keine Artikel gefunden."
+                  : currentLang === "it"
+                  ? "Nessun articolo trovato."
+                  : "No articles found."}
               </div>
             )}
           </div>
@@ -236,12 +260,28 @@ export const SwissCodesModal: React.FC<SwissCodesModalProps> = ({
                   </span>
                   <span className="text-xs font-mono text-slate-300 bg-slate-800 px-2 py-0.5 rounded border border-slate-700">
                     {activeArticle.jurisdiction === "canton_vaud"
-                      ? "Кантональне право Во (BLV)"
-                      : "Федеральне право Швейцарії (RS)"}
+                      ? currentLang === "uk"
+                        ? "Кантональне право Во (BLV)"
+                        : currentLang === "fr"
+                        ? "Droit cantonal vaudois (BLV)"
+                        : currentLang === "de"
+                        ? "Waadtländisches Recht (BLV)"
+                        : currentLang === "it"
+                        ? "Diritto cantonale vodese (BLV)"
+                        : "Vaud Cantonal Law (BLV)"
+                      : currentLang === "uk"
+                      ? "Федеральне право Швейцарії (RS)"
+                      : currentLang === "fr"
+                      ? "Droit fédéral suisse (RS)"
+                      : currentLang === "de"
+                      ? "Schweizerisches Bundesrecht (SR)"
+                      : currentLang === "it"
+                      ? "Diritto federale svizzero (RS)"
+                      : "Swiss Federal Law (SR)"}
                   </span>
                 </div>
                 <h3 className="text-base font-bold text-slate-100">
-                  {activeArticle.title[currentLang]}
+                  {activeArticle.title[currentLang] || activeArticle.title['fr'] || activeArticle.title['uk']}
                 </h3>
               </div>
 
@@ -249,14 +289,44 @@ export const SwissCodesModal: React.FC<SwissCodesModalProps> = ({
                 <button
                   onClick={() => handleCopyCitation(activeArticle)}
                   className="flex items-center space-x-1.5 px-3 py-1.5 bg-blue-600 hover:bg-blue-500 text-white rounded text-xs font-medium transition-colors shadow-sm"
-                  title="Скопіювати статтю для позову чи клопотання"
+                  title={
+                    currentLang === "uk"
+                      ? "Скопіювати статтю для позову чи клопотання"
+                      : currentLang === "fr"
+                      ? "Copier l'article pour le mémoire"
+                      : currentLang === "de"
+                      ? "Artikel für Rechtsschrift kopieren"
+                      : currentLang === "it"
+                      ? "Copia l'articolo per l'atto giudiziario"
+                      : "Copy article citation for brief"
+                  }
                 >
                   {copiedId === activeArticle.id ? (
                     <Check className="w-3.5 h-3.5" />
                   ) : (
                     <Copy className="w-3.5 h-3.5" />
                   )}
-                  <span>{copiedId === activeArticle.id ? "Скопійовано!" : "Копіювати цитату"}</span>
+                  <span>
+                    {copiedId === activeArticle.id
+                      ? currentLang === "uk"
+                        ? "Скопійовано!"
+                        : currentLang === "fr"
+                        ? "Copié !"
+                        : currentLang === "de"
+                        ? "Kopiert!"
+                        : currentLang === "it"
+                        ? "Copiato!"
+                        : "Copied!"
+                      : currentLang === "uk"
+                      ? "Копіювати цитату"
+                      : currentLang === "fr"
+                      ? "Copier l'extrait"
+                      : currentLang === "de"
+                      ? "Zitat kopieren"
+                      : currentLang === "it"
+                      ? "Copia citazione"
+                      : "Copy citation"}
+                  </span>
                 </button>
 
                 {onSelectArticle && (
@@ -267,7 +337,15 @@ export const SwissCodesModal: React.FC<SwissCodesModalProps> = ({
                     }}
                     className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded text-xs font-medium transition-colors"
                   >
-                    Вставити в аналіз
+                    {currentLang === "uk"
+                      ? "Вставити в аналіз"
+                      : currentLang === "fr"
+                      ? "Insérer dans l'analyse"
+                      : currentLang === "de"
+                      ? "In Analyse einfügen"
+                      : currentLang === "it"
+                      ? "Inserisci nell'analisi"
+                      : "Insert into analysis"}
                   </button>
                 )}
               </div>
@@ -276,7 +354,17 @@ export const SwissCodesModal: React.FC<SwissCodesModalProps> = ({
             {/* Sanction Pill if penal */}
             {activeArticle.sanction && (
               <div className="p-2.5 bg-rose-950/30 border border-rose-800/50 rounded-lg text-xs font-mono text-rose-300 flex items-center justify-between">
-                <span>Санкція за правопорушення :</span>
+                <span>
+                  {currentLang === "uk"
+                    ? "Санкція за правопорушення :"
+                    : currentLang === "fr"
+                    ? "Sanction pénale encourue :"
+                    : currentLang === "de"
+                    ? "Strafandrohung :"
+                    : currentLang === "it"
+                    ? "Sanzione penale prevista :"
+                    : "Statutory Sanction :"}
+                </span>
                 <strong className="text-white">{activeArticle.sanction}</strong>
               </div>
             )}
@@ -284,20 +372,36 @@ export const SwissCodesModal: React.FC<SwissCodesModalProps> = ({
             {/* Official French Legal Text */}
             <div className="bg-[#050810] border border-slate-800 rounded-lg p-3">
               <span className="text-[10px] font-mono uppercase text-blue-400 font-bold block mb-1">
-                Офіційний автентичний текст французькою мовою (Droit officiel CH) :
+                {currentLang === "uk"
+                  ? "Офіційний автентичний текст французькою мовою (Droit officiel CH) :"
+                  : currentLang === "fr"
+                  ? "Texte authentique officiel en français (Droit officiel CH) :"
+                  : currentLang === "de"
+                  ? "Offizieller authentischer Text auf Französisch (Amtliches Recht CH) :"
+                  : currentLang === "it"
+                  ? "Testo ufficiale autentico in francese (Diritto ufficiale CH) :"
+                  : "Official Authentic French Legal Text (Swiss Federal Law) :"}
               </span>
               <p className="text-xs text-slate-200 font-serif leading-relaxed italic">
                 « {activeArticle.content_fr} »
               </p>
             </div>
 
-            {/* Ukrainian Translation */}
+            {/* Translated Legal Text */}
             <div className="bg-[#050810] border border-slate-800 rounded-lg p-3">
               <span className="text-[10px] font-mono uppercase text-emerald-400 font-bold block mb-1">
-                Точний український юридичний переклад :
+                {currentLang === "uk"
+                  ? "Точний український юридичний переклад :"
+                  : currentLang === "fr"
+                  ? "Traduction juridique certifiée :"
+                  : currentLang === "de"
+                  ? "Beglaubigte juristische Übersetzung :"
+                  : currentLang === "it"
+                  ? "Traduzione giuridica certificata :"
+                  : "Certified Legal Translation :"}
               </span>
               <p className="text-xs text-emerald-100 font-sans leading-relaxed">
-                {activeArticle.content_uk}
+                {currentLang === "fr" ? activeArticle.content_fr : activeArticle.content_uk}
               </p>
             </div>
 
@@ -305,10 +409,20 @@ export const SwissCodesModal: React.FC<SwissCodesModalProps> = ({
             <div className="bg-amber-950/20 border border-amber-500/30 rounded-lg p-3">
               <div className="flex items-center space-x-1.5 mb-1 text-amber-400 text-xs font-bold font-mono">
                 <ShieldCheck className="w-4 h-4 text-amber-400" />
-                <span>Застосування у справі Арсена Коваленка :</span>
+                <span>
+                  {currentLang === "uk"
+                    ? "Застосування у справі Арсена Коваленка :"
+                    : currentLang === "fr"
+                    ? "Application au cas d'Arsen Kovalenko :"
+                    : currentLang === "de"
+                    ? "Anwendung im Fall Arsen Kovalenko :"
+                    : currentLang === "it"
+                    ? "Applicazione al caso di Arsen Kovalenko :"
+                    : "Application to Arsen Kovalenko Case :"}
+                </span>
               </div>
               <p className="text-xs text-slate-200 leading-relaxed">
-                {activeArticle.relevance_case[currentLang]}
+                {activeArticle.relevance_case[currentLang] || activeArticle.relevance_case['fr'] || activeArticle.relevance_case['uk']}
               </p>
             </div>
 
@@ -317,7 +431,17 @@ export const SwissCodesModal: React.FC<SwissCodesModalProps> = ({
               <div className="flex items-center justify-between mb-2">
                 <span className="text-xs font-mono text-slate-400 flex items-center space-x-1">
                   <Layers className="w-3.5 h-3.5 text-blue-400" />
-                  <span>Пов'язані речові докази у справі (MemPalace Graph) :</span>
+                  <span>
+                    {currentLang === "uk"
+                      ? "Пов'язані речові докази у справі (MemPalace Graph) :"
+                      : currentLang === "fr"
+                      ? "Pièces justificatives liées (Graphe MemPalace) :"
+                      : currentLang === "de"
+                      ? "Zugehörige Beweismittel im Dossier (MemPalace Graph) :"
+                      : currentLang === "it"
+                      ? "Reperti probatori collegati (Grafo MemPalace) :"
+                      : "Associated Case Exhibits (MemPalace Graph) :"}
+                  </span>
                 </span>
                 <span className="text-[10px] font-mono text-emerald-400">
                   {activeArticle.mempalace_node_id}
@@ -349,7 +473,7 @@ export const SwissCodesModal: React.FC<SwissCodesModalProps> = ({
             onClick={onClose}
             className="px-3 py-1 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded transition-colors"
           >
-            {currentLang === "uk" ? "Закрити" : "Fermer"}
+            {currentLang === "uk" ? "Закрити" : currentLang === "fr" ? "Fermer" : currentLang === "de" ? "Schliessen" : currentLang === "it" ? "Chiudi" : "Close"}
           </button>
         </div>
       </div>

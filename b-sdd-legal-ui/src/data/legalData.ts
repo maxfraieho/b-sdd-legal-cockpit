@@ -8,8 +8,9 @@ import { SupportedLanguage } from '../types/i18n';
 
 export type LocalizedString = { [K in SupportedLanguage]?: string } & { uk?: string; fr?: string; en?: string };
 
-export function resolveLocalized(val: LocalizedString | undefined, lang: SupportedLanguage): string {
+export function resolveLocalized(val: LocalizedString | string | undefined, lang: SupportedLanguage): string {
   if (!val) return '';
+  if (typeof val === 'string') return val;
   return val[lang] || val['fr'] || val['uk'] || val['en'] || val['de'] || val['it'] || '';
 }
 
@@ -78,7 +79,7 @@ export interface BordereauPiece {
     gps: string;
     iso: number;
     aperture: string;
-    alibi_verification: string;
+    alibi_verification: LocalizedString | string;
   };
   audio_transcript?: Array<{ start: number; end: number; speaker: string; text: string }>;
 }
@@ -560,6 +561,8 @@ export const BORDEREAU_PIECES: BordereauPiece[] = [
     titre: {
       uk: "Аудіозапис 32 · Прямі погрози розправою та насильством",
       fr: "Enregistrement Audio 32 · Menaces explicites de mort et sévices",
+      de: "Tonaufnahme 32 · Ausdrückliche Todes- und Gewaltdrohungen",
+      it: "Registrazione Audio 32 · Minacce esplicite di morte e violenze",
       en: "Audio Recording 32 · Explicit Death and Violence Threats",
     },
     categorie: "Audio",
@@ -568,16 +571,22 @@ export const BORDEREAU_PIECES: BordereauPiece[] = [
     admissibilite: {
       uk: "Повністю допустимий за практикою ATF 146 IV 9",
       fr: "Exploitable selon ATF 146 IV 9 (Intérêt prépondérant à la manifestation de la vérité)",
+      de: "Zulässig gemäss BGE 146 IV 9 (Überwiegendes Wahrheitsfindungsinteresse)",
+      it: "Ammissibile secondo DTF 146 IV 9 (Interesse preponderante all'accertamento della verità)",
       en: "Admissible under ATF 146 IV 9 precedent",
     },
     portee_probatoire: {
       uk: "Доводить тяжкі погрози розправою (ст. 180 ч. 1 КК)",
       fr: "Prouve les menaces de mort caractérisées (Art. 180 al. 1 CP)",
+      de: "Beweist schwere Drohungen und Todesdrohungen (Art. 180 Abs. 1 StGB)",
+      it: "Dimostra minacce gravi di morte (Art. 180 cpv. 1 CP)",
       en: "Proves explicit death threats (Art. 180 para 1 CP)",
     },
     citation_cle: {
       uk: "« ...Я тобі влаштую розправу, ніхто тобі тут не допоможе, швейцарська поліція нічого не зробить... »",
       fr: "« ...Je vais t'abattre, personne ne t'aidera ici, la police suisse ne fera rien... »",
+      de: "« ...Ich mache dich fertig, niemand wird dir hier helfen, die Schweizer Polizei wird nichts tun... »",
+      it: "« ...Ti distruggo, nessuno ti aiuterà qui, la polizia svizzera non farà nulla... »",
       en: "« ...I will destroy you, nobody will help you here, the Swiss police will do nothing... »",
     },
     fichier_local: "/evidence/audio/P-01_audio32_menace_mort.mp3",
@@ -595,6 +604,8 @@ export const BORDEREAU_PIECES: BordereauPiece[] = [
     titre: {
       uk: "Аудіозапис 38 · Повторні погрози розправою та шантаж",
       fr: "Enregistrement Audio 38 · Réitération des menaces et chantage psychologique",
+      de: "Tonaufnahme 38 · Wiederholte Drohungen und Nötigung",
+      it: "Registrazione Audio 38 · Reiterazione delle minacce e ricatto psicologico",
       en: "Audio Recording 38 · Reiterated Threats & Psychological Coercion",
     },
     categorie: "Audio",
@@ -603,16 +614,22 @@ export const BORDEREAU_PIECES: BordereauPiece[] = [
     admissibilite: {
       uk: "Допустимо за ATF 146 IV 9",
       fr: "Exploitable selon ATF 146 IV 9",
+      de: "Zulässig gemäss BGE 146 IV 9",
+      it: "Ammissibile secondo DTF 146 IV 9",
       en: "Admissible under ATF 146 IV 9",
     },
     portee_probatoire: {
       uk: "Встановлює тривалу повторюваність наміру залякування (ст. 180, 181 КК)",
       fr: "Établit la réitération de l'intention délictuelle et la contrainte (Art. 180, 181 CP)",
+      de: "Begründet den wiederholten Nötigungsvorsatz (Art. 180, 181 StGB)",
+      it: "Accerta la reiterazione dell'intento delittuoso e della coazione (Art. 180, 181 CP)",
       en: "Establishes reiterated criminal intent and coercion (Art. 180, 181 CP)",
     },
     citation_cle: {
       uk: "« ...Якщо підеш до прокуратури, тебе викинуть на вулицю без копійки... »",
       fr: "« ...Si tu oses contacter le procureur, tu te retrouveras à la rue sans un sou... »",
+      de: "« ...Wenn du zur Staatsanwaltschaft gehst, landest du ohne einen Rappen auf der Strasse... »",
+      it: "« ...Se vai dal procuratore, ti ritroverai per strada senza un centesimo... »",
       en: "« ...If you dare contact the prosecutor, you will be thrown onto the street penniless... »",
     },
     fichier_local: "/evidence/audio/P-02_audio38_coercion_reiterated.mp3",
@@ -629,6 +646,8 @@ export const BORDEREAU_PIECES: BordereauPiece[] = [
     titre: {
       uk: "Офіційний судово-медичний сертифікат Unisanté (Лозанна) · Відсутність ушкоджень",
       fr: "Certificat médico-légal officiel Unisanté (Lausanne) · Absence totale de lésions",
+      de: "Offizielles rechtsmedizinisches Zeugnis Unisanté (Lausanne) · Keine Verletzungen",
+      it: "Certificato medico-legale ufficiale Unisanté (Losanna) · Assenza totale di lesioni",
       en: "Official Forensic Medical Certificate Unisanté (Lausanne) · Absence of Lesions",
     },
     categorie: "Médical",
@@ -636,16 +655,22 @@ export const BORDEREAU_PIECES: BordereauPiece[] = [
     admissibilite: {
       uk: "Офіційний медичний висновок лікаря-криміналіста Unisanté (ст. 139, 182 КПК)",
       fr: "Constat médical officiel d'expert Unisanté (Art. 139, 182 CPP)",
+      de: "Offizielles rechtsmedizinisches Gutachten Unisanté (Art. 139, 182 StPO)",
+      it: "Referto medico-legale ufficiale esperto Unisanté (Art. 139, 182 CPP)",
       en: "Official Unisanté forensic physician certificate (Art. 139, 182 CPC)",
     },
     portee_probatoire: {
       uk: "Офіційно засвідчує повну відсутність тілесних ушкоджень та слідів боротьби у потерпілого, повністю спростовуючи наклепницькі заяви обвинуваченої (ст. 303 КК).",
       fr: "Atteste formellement l'absence intégrale de lésions corporelles ou de traces de lutte, infirmant définitivement les allégations de la prévenue (Art. 303 CP).",
+      de: "Bestätigt formell das vollständige Fehlen von Körperverletzungen oder Kampfspuren und widerlegt die falschen Behauptungen der Beschuldigten (Art. 303 StGB).",
+      it: "Attesta formalmente la totale assenza di lesioni corporee o tracce di colluttazione, smentendo definitivamente le calunnie dell'imputata (Art. 303 CP).",
       en: "Formally attests total absence of bodily injuries or signs of struggle, conclusively disproving false deposition (Art. 303 CP).",
     },
     citation_cle: {
       uk: "« Examen clinique médico-légal : absence totale d'ecchymoses, d'éraflures ou de signes de traumatisme récent. Intégrité physique préservée. »",
       fr: "« Examen clinique médico-légal : absence totale d'ecchymoses, d'éraflures ou de signes de traumatisme récent. Intégrité physique préservée. »",
+      de: "« Klinisch-forensische Untersuchung: vollständiges Fehlen von Hämatomen, Schürfungen oder Traumazeichen. Körperliche Unversehrtheit gewahrt. »",
+      it: "« Esame clinico medico-legale: totale assenza di ecchimosi, graffi o traumi recenti. Integrità fisica preservata. »",
       en: "« Clinical forensic examination: complete absence of bruises, scratches, or signs of recent trauma. Physical integrity preserved. »",
     },
     fichier_local: "/evidence/photos/P-03_unisante_certificat.jpg",
@@ -653,6 +678,8 @@ export const BORDEREAU_PIECES: BordereauPiece[] = [
     adr_title: {
       uk: "Судово-медичний сертифікат Unisanté Лозанна",
       fr: "Certificat médico-légal Unisanté",
+      de: "Rechtsmedizinisches Zeugnis Unisanté",
+      it: "Certificato medico-legale Unisanté",
       en: "Unisanté Forensic Certificate",
     },
     adr_sync: true,
@@ -663,7 +690,13 @@ export const BORDEREAU_PIECES: BordereauPiece[] = [
       gps: "46.5244° N, 6.6433° E (Unisanté Lausanne, Rue du Bugnon 44)",
       iso: 100,
       aperture: "Calibré ISO/IEC 27037",
-      alibi_verification: "Сертифікований висновок лікаря клініки Unisanté Лозанна: унеможливлює факт нападу та підтверджує ст. 303 КК (завідомо неправдивий донос).",
+      alibi_verification: {
+        uk: "Сертифікований висновок лікаря клініки Unisanté Лозанна: унеможливлює факт нападу та підтверджує ст. 303 КК (завідомо неправдивий донос).",
+        fr: "Constat officiel d'expert Unisanté Lausanne : rend impossible toute agression alléguée et établit la dénonciation calomnieuse (Art. 303 CP).",
+        de: "Amtliches medizinisches Attest Unisanté Lausanne: schliesst jegliche Aggression aus und beweist falsche Anschuldigung (Art. 303 StGB).",
+        it: "Referto ufficiale peritale Unisanté Losanna: esclude qualsiasi aggressione asserita e dimostra la calunnia (Art. 303 CP).",
+        en: "Official medical certificate Unisanté Lausanne: precludes alleged assault and establishes malicious false accusation (Art. 303 CP).",
+      },
     },
   },
   {
@@ -673,6 +706,8 @@ export const BORDEREAU_PIECES: BordereauPiece[] = [
     titre: {
       uk: "Аудіозапис 35 · Зізнання у привласненні $15'000 USD",
       fr: "Enregistrement Audio 35 · Aveu péremptoire de dissipation des $15'000 USD",
+      de: "Tonaufnahme 35 · Geständnis der Unterschlagung von $15'000 USD",
+      it: "Registrazione Audio 35 · Confessione dell'appropriazione indebita di $15'000 USD",
       en: "Audio Recording 35 · Confession of $15,000 USD Dissipation",
     },
     categorie: "Audio",
@@ -681,16 +716,22 @@ export const BORDEREAU_PIECES: BordereauPiece[] = [
     admissibilite: {
       uk: "Допустимо за ATF 146 IV 9",
       fr: "Exploitable au fond selon ATF 146 IV 9",
+      de: "Materiell zulässig gemäss BGE 146 IV 9",
+      it: "Ammissibile nel merito secondo DTF 146 IV 9",
       en: "Admissible on the merits under ATF 146 IV 9",
     },
     portee_probatoire: {
       uk: "Пряме позасудове визнання неповернення довірених коштів (ст. 138, 146 КК)",
       fr: "Aveu extrajudiciaire de refus de restitution des fonds confiés (Art. 138, 146 CP)",
+      de: "Direktes aussergerichtliches Geständnis der Nichtrückgabe anvertrauter Gelder (Art. 138, 146 StGB)",
+      it: "Confessione stragiudiziale diretta del rifiuto di restituire i fondi affidati (Art. 138, 146 CP)",
       en: "Direct confession of refusal to return entrusted capital (Art. 138, 146 CP)",
     },
     citation_cle: {
       uk: "« ...Гроші вже витрачені, ти їх більше ніколи не побачиш... »",
       fr: "« ...L'argent est déjà dépensé, tu ne le reverras plus jamais... »",
+      de: "« ...Das Geld ist bereits ausgegeben, du wirst es nie wiedersehen... »",
+      it: "« ...Il denaro è già speso, non lo rivedrai mai più... »",
       en: "« ...The money is already spent, you will never see it again... »",
     },
     fichier_local: "/evidence/audio/P-04_audio35_appropriation_aveu.mp3",
@@ -698,6 +739,8 @@ export const BORDEREAU_PIECES: BordereauPiece[] = [
     adr_title: {
       uk: "Аудіо 35 · Визнання привласнення $15k",
       fr: "Audio 35 · Aveu détournement $15k",
+      de: "Audio 35 · Geständnis Veruntreuung $15k",
+      it: "Audio 35 · Confessione appropriazione $15k",
       en: "Audio 35 · Dissipation Confession $15k",
     },
     adr_sync: true,
@@ -709,6 +752,8 @@ export const BORDEREAU_PIECES: BordereauPiece[] = [
     titre: {
       uk: "Офіційна банківська виписка Wise / SWIFT · Цільовий переказ $15'000 USD",
       fr: "Bordereau bancaire certifié Wise / SWIFT · Virement fiduciaire $15'000 USD",
+      de: "Offizieller Wise / SWIFT-Bankauszug · Treuhandüberweisung von $15'000 USD",
+      it: "Estratto bancario ufficiale Wise / SWIFT · Bonifico fiduciario di $15'000 USD",
       en: "Official Wise / SWIFT Bank Statement · Fiduciary Transfer $15,000 USD",
     },
     categorie: "Bancaire",
@@ -716,16 +761,22 @@ export const BORDEREAU_PIECES: BordereauPiece[] = [
     admissibilite: {
       uk: "Прямий документальний доказ (ст. 139 ч. 1 КПК)",
       fr: "Preuve documentaire authentique (Art. 139 al. 1 CPP)",
+      de: "Authentischer Urkundenbeweis (Art. 139 Abs. 1 StPO)",
+      it: "Mezzo di prova documentale autentico (Art. 139 cpv. 1 CPP)",
       en: "Authentic documentary evidence (Art. 139 para 1 CPC)",
     },
     portee_probatoire: {
       uk: "Беззаперечний доказ вибуття цільових коштів $15'000 USD з власності потерпілого Арсена Коваленка та їх передачі на збереження.",
       fr: "Preuve irréfutable du dessaisissement financier de $15'000 USD de la victime Arsen Kovalenko à titre fiduciaire.",
+      de: "Unwiderlegbarer Beweis für die treuhänderische Überweisung von $15'000 USD durch das Opfer Arsen Kovalenko.",
+      it: "Prova inconfutabile del versamento fiduciario di $15'000 USD da parte della vittima Arsen Kovalenko.",
       en: "Irrefutable proof of $15,000 USD fiduciary wire from victim Arsen Kovalenko.",
     },
     citation_cle: {
       uk: "Wise Wire Reference: WSE-94821034-US · Beneficiary: Liubov SUVOROVA · Amount: $15,000.00 USD · Purpose: Fiduciary holding.",
       fr: "Wise Wire Reference: WSE-94821034-US · Bénéficiaire : Liubov SUVOROVA · Montant : $15'000.00 USD · Motif : Dépôt fiduciaire.",
+      de: "Wise Wire Referenz: WSE-94821034-US · Begünstigte: Liubov SUVOROVA · Betrag: $15'000.00 USD · Zweck: Treuhandverwahrung.",
+      it: "Wise Wire Riferimento: WSE-94821034-US · Beneficiaria: Liubov SUVOROVA · Importo: $15'000.00 USD · Causale: Deposito fiduciario.",
       en: "Wise Wire Reference: WSE-94821034-US · Beneficiary: Liubov SUVOROVA · Amount: $15,000.00 USD · Purpose: Fiduciary holding.",
     },
     fichier_local: "/evidence/photos/P-05_bancaire_wise.jpg",
@@ -733,6 +784,8 @@ export const BORDEREAU_PIECES: BordereauPiece[] = [
     adr_title: {
       uk: "Банківський переказ $15k SWIFT/Wise",
       fr: "Virement bancaire $15k SWIFT",
+      de: "Banküberweisung $15k SWIFT/Wise",
+      it: "Bonifico bancario $15k SWIFT/Wise",
       en: "Bank wire $15k SWIFT",
     },
     adr_sync: true,
@@ -743,7 +796,13 @@ export const BORDEREAU_PIECES: BordereauPiece[] = [
       gps: "50.8466° N, 4.3528° E (Wise Europe)",
       iso: 100,
       aperture: "MT103 / ISO 20022",
-      alibi_verification: "Фінансовий слід підтверджує прямий переказ $15'000 USD на збереження та їх неповернення (ст. 138, 146 КК).",
+      alibi_verification: {
+        uk: "Фінансовий слід підтверджує прямий переказ $15'000 USD на збереження та їх неповернення (ст. 138, 146 КК).",
+        fr: "La trace financière certifie le virement fiduciaire de $15'000 USD et leur détournement (Art. 138, 146 CP).",
+        de: "Finanzielle Spur bestätigt Treuhandüberweisung von $15'000 USD und deren Veruntreuung (Art. 138, 146 StGB).",
+        it: "La traccia finanziaria attesta il bonifico fiduciario di $15'000 USD e la mancata restituzione (Art. 138, 146 CP).",
+        en: "Financial trail certifies $15,000 USD fiduciary wire transfer and unlawful dissipation (Art. 138, 146 CP).",
+      },
     },
   },
   {
@@ -753,6 +812,8 @@ export const BORDEREAU_PIECES: BordereauPiece[] = [
     titre: {
       uk: "Фотодоказ EXIF 1481 · Об'єктивне алібі в Лозанні (Place de la Palud)",
       fr: "Photographie EXIF 1481 · Alibi objectif à Lausanne (Place de la Palud)",
+      de: "EXIF-Fotobeweis 1481 · Objektives Alibi in Lausanne (Place de la Palud)",
+      it: "Prova fotografica EXIF 1481 · Alibi oggettivo a Losanna (Place de la Palud)",
       en: "EXIF Photo 1481 · Objective Lausanne Alibi (Place de la Palud)",
     },
     categorie: "Photo EXIF",
@@ -760,16 +821,22 @@ export const BORDEREAU_PIECES: BordereauPiece[] = [
     admissibilite: {
       uk: "Криміналістично сертифікований цифровий доказ за ISO/IEC 27037",
       fr: "Preuve numérique scientifiquement certifiée selon ISO/IEC 27037",
+      de: "Kriminaltechnisch zertifizierter digitaler Beweis nach ISO/IEC 27037",
+      it: "Prova digitale certificata scientificamente secondo ISO/IEC 27037",
       en: "Scientifically certified digital evidence under ISO/IEC 27037",
     },
     portee_probatoire: {
       uk: "Абсолютне спростування вигаданого нападу в Рене: потерпілий перебував у центрі Лозанни за верифікованими GPS-координатами.",
       fr: "Démontre l'alibi objectif irréfutable : présence prouvée à Lausanne (Place de la Palud) contredisant l'agression prétendue à Renens.",
+      de: "Unwiderlegbares objektives Alibi: Nachgewiesene Anwesenheit in Lausanne (Place de la Palud), die den angeblichen Angriff in Renens widerlegt.",
+      it: "Dimostra l'alibi oggettivo inconfutabile: presenza provata a Losanna (Place de la Palud) che smentisce la presunta aggressione a Renens.",
       en: "Absolute proof of objective alibi: geolocated in Lausanne centre, disproving fabricated Renens assault claim.",
     },
     citation_cle: {
       uk: "EXIF: iPhone 14 Pro, f/1.78, 1/120s, ISO 64, GPS: 46.5197° N, 6.6323° E (Place de la Palud, Lausanne). Шкіра рук чиста, без слідів боротьби.",
       fr: "Métadonnées EXIF : iPhone 14 Pro, 24mm f/1.78, ISO 64, GPS : 46.5197° N, 6.6323° E (Lausanne). Avant-bras indemnes de blessure.",
+      de: "EXIF-Metadaten: iPhone 14 Pro, 24mm f/1.78, ISO 64, GPS: 46.5197° N, 6.6323° E (Lausanne). Unterarme unverletzt ohne Kampfspuren.",
+      it: "Metadati EXIF: iPhone 14 Pro, 24mm f/1.78, ISO 64, GPS: 46.5197° N, 6.6323° E (Losanna). Avambracci intatti e indenni da lesioni.",
       en: "EXIF: iPhone 14 Pro, 24mm f/1.78, ISO 64, GPS: 46.5197° N, 6.6323° E (Lausanne). Forearms intact and uninjured.",
     },
     fichier_local: "/evidence/photos/P-06_exif1481_lausanne.jpg",
@@ -777,6 +844,8 @@ export const BORDEREAU_PIECES: BordereauPiece[] = [
     adr_title: {
       uk: "Алібі в Лозанні EXIF 1481",
       fr: "Alibi objectif Lausanne EXIF 1481",
+      de: "Objektives Alibi Lausanne EXIF 1481",
+      it: "Alibi oggettivo Losanna EXIF 1481",
       en: "Lausanne Alibi EXIF 1481",
     },
     adr_sync: true,
@@ -787,7 +856,13 @@ export const BORDEREAU_PIECES: BordereauPiece[] = [
       gps: "46.5197° N, 6.6323° E (Place de la Palud, Lausanne)",
       iso: 64,
       aperture: "f/1.78, 1/120s",
-      alibi_verification: "ВЕРИФІКОВАНИЙ АЛІБІ: Присутність у Лозанні о 13:45:12 повністю спростовує протокол допиту поліції Рене (ст. 303 КК).",
+      alibi_verification: {
+        uk: "ВЕРИФІКОВАНИЙ АЛІБІ: Присутність у Лозанні о 13:45:12 повністю спростовує протокол допиту поліції Рене (ст. 303 КК).",
+        fr: "ALIBI OBJECTIF VÉRIFIÉ : La présence à Lausanne à 13:45:12 contredit péremptoirement le procès-verbal de Renens (Art. 303 CP).",
+        de: "VERIFIZIERTES ALIBI: Die Anwesenheit in Lausanne um 13:45:12 widerlegt das Polizeiprotokoll von Renens vollständig (Art. 303 StGB).",
+        it: "ALIBI VERIFICATO: La presenza a Losanna alle 13:45:12 smentisce totalmente il verbale della polizia di Renens (Art. 303 CP).",
+        en: "VERIFIED ALIBI: Presence in Lausanne at 13:45:12 conclusively refutes Renens police deposition (Art. 303 CP).",
+      },
     },
   },
   {
@@ -797,6 +872,8 @@ export const BORDEREAU_PIECES: BordereauPiece[] = [
     titre: {
       uk: "Макрознімок EXIF 1481 · Неушкоджені передпліччя Арсена Коваленка",
       fr: "Macro EXIF 1481 · Avant-bras sains et indemnes d'Arsen Kovalenko",
+      de: "EXIF 1481 Makroaufnahme · Unversehrte Unterarme von Arsen Kovalenko",
+      it: "Macro EXIF 1481 · Avambracci sani e indenni di Arsen Kovalenko",
       en: "Macro EXIF 1481 · Uninjured Forearms of Arsen Kovalenko",
     },
     categorie: "Photo EXIF",
@@ -804,16 +881,22 @@ export const BORDEREAU_PIECES: BordereauPiece[] = [
     admissibilite: {
       uk: "Криміналістичне макродослідження за стандартом ISO/IEC 27037",
       fr: "Expertise macro-photographique certifiée ISO/IEC 27037",
+      de: "Kriminaltechnisches Makrogutachten nach ISO/IEC 27037",
+      it: "Perizia macro-fotografica certificata ISO/IEC 27037",
       en: "Certified macro-photographic evidence under ISO/IEC 27037",
     },
     portee_probatoire: {
       uk: "Детальний макрознімок передпліч та кистей рук професійного скрипаля: повна відсутність синців, саден чи пошкоджень спростовує заяви про фізичну сутичку.",
       fr: "Macro-analyse des avant-bras et des mains du violoniste : l'intégrité cutanée parfaite exclut toute altercation physique réciproque.",
+      de: "Detaillierte Makroaufnahme der Unterarme und Hände des Geigers: Fehlen von Hämatomen oder Kratzern schliesst jegliche körperliche Auseinandersetzung aus.",
+      it: "Macro-analisi degli avambracci e delle mani del violinista: la perfetta integrità cutanea esclude qualsiasi colluttazione fisica reciproca.",
       en: "Macro analysis of violinist's forearms and hands: perfect dermal integrity conclusively refutes allegations of physical altercation.",
     },
     citation_cle: {
       uk: "Криміналістичне збільшення EXIF 1481: чиста поверхня шкіри передпліч без гематом, подряпин чи слідів боротьби.",
       fr: "Grossissement forensique EXIF 1481 : épiderme intact, aucune griffure, aucune contusion.",
+      de: "Forensische Vergrösserung EXIF 1481: Intakte Hautoberfläche der Unterarme ohne Hämatome, Schürfungen oder Kampfspuren.",
+      it: "Ingrandimento forense EXIF 1481: epidermide intatta, nessun graffio, nessuna ecchimosi o segno di lotta.",
       en: "Forensic magnification EXIF 1481: intact skin, zero scratches, zero bruises.",
     },
     fichier_local: "/evidence/photos/P-06_exif1481_bras_sains.jpg",
@@ -821,6 +904,8 @@ export const BORDEREAU_PIECES: BordereauPiece[] = [
     adr_title: {
       uk: "Макродослідження передпліч EXIF 1481",
       fr: "Macro-expertise avant-bras EXIF 1481",
+      de: "Makrogutachten Unterarme EXIF 1481",
+      it: "Perizia macro avambracci EXIF 1481",
       en: "Forearm Macro Analysis EXIF 1481",
     },
     adr_sync: true,
@@ -831,7 +916,13 @@ export const BORDEREAU_PIECES: BordereauPiece[] = [
       gps: "46.5197° N, 6.6323° E (Place de la Palud, Lausanne)",
       iso: 64,
       aperture: "f/1.78, 1/120s",
-      alibi_verification: "Фізична цілісність передпліч скрипаля верифікована судово-медично клінікою Unisanté.",
+      alibi_verification: {
+        uk: "Фізична цілісність передпліч скрипаля верифікована судово-медично клінікою Unisanté.",
+        fr: "L'intégrité physique des avant-bras du violoniste est attestée médicalement par la clinique Unisanté.",
+        de: "Die körperliche Unversehrtheit der Unterarme des Geigers wird von der Unisanté-Klinik medizinisch bestätigt.",
+        it: "L'integrità fisica degli avambracci del violinista è attestata peritalmente dalla clinica Unisanté.",
+        en: "Violinist forearms physical integrity is medically confirmed by Unisanté clinic.",
+      },
     },
   },
   {
@@ -841,6 +932,8 @@ export const BORDEREAU_PIECES: BordereauPiece[] = [
     titre: {
       uk: "Аудіозапис 12 · Зізнання в умисному самопошкодженні нігтями (Mens Rea)",
       fr: "Enregistrement Audio 12 · Aveu formel d'auto-mutilation et fabrication de preuves",
+      de: "Tonaufnahme 12 · Geständnis der vorsätzlichen Selbstverletzung (Mens Rea)",
+      it: "Registrazione Audio 12 · Confessione di auto-lesionismo intenzionale (Mens Rea)",
       en: "Audio Recording 12 · Confession of Staged Bruises & Self-Harm",
     },
     categorie: "Audio",
@@ -849,16 +942,22 @@ export const BORDEREAU_PIECES: BordereauPiece[] = [
     admissibilite: {
       uk: "Повністю допустимий за ATF 146 IV 9",
       fr: "Exploitable selon ATF 146 IV 9 (Démonstration du mens rea délictuel)",
+      de: "Vollumfänglich zulässig gemäss BGE 146 IV 9",
+      it: "Pienamente ammissibile secondo DTF 146 IV 9",
       en: "Admissible under ATF 146 IV 9",
     },
     portee_probatoire: {
       uk: "Вирішальний доказ прямого умислу неправдивого доносу (ст. 303 КК)",
       fr: "Preuve décisive du dol direct de dénonciation calomnieuse (Art. 303 CP)",
+      de: "Entscheidender Beweis des direkten Vorsatzes der falschen Anschuldigung (Art. 303 StGB)",
+      it: "Prova decisiva del dolo diretto di calunnia (Art. 303 CP)",
       en: "Decisive proof of direct dolus for malicious false deposition (Art. 303 CP)",
     },
     citation_cle: {
       uk: "« ...Я сама собі нігтями роздерла лікті, терла об килим, щоб лікар записав синці проти Арсена... »",
       fr: "« ...Je me suis moi-même écorchée avec mes ongles, j'ai frotté mes coudes contre le tapis pour que le médecin constate des bleus contre Arsen... »",
+      de: "« ...Ich habe mir selbst mit den Fingernägeln die Ellbogen aufgekratzt, um Hämatome gegen Arsen vortäuschen zu können... »",
+      it: "« ...Mi sono graffiata i gomiti da sola con le unghie, ho strofinato sul tappeto perché il medico riscontrasse lividi contro Arsen... »",
       en: "« ...I scratched my own elbows with my nails, rubbed on the carpet so the doctor would log bruises against Arsen... »",
     },
     fichier_local: "/evidence/audio/P-07_audio12_aveu_auto_mutilation.mp3",
@@ -875,6 +974,8 @@ export const BORDEREAU_PIECES: BordereauPiece[] = [
     titre: {
       uk: "Аудіозапис 24 · Шантаж анулюванням дозволу на проживання (Статус S)",
       fr: "Enregistrement Audio 24 · Chantage à l'expulsion et abus de situation de détresse",
+      de: "Tonaufnahme 24 · Erpressung durch Androhung des Widerrufs des Status S",
+      it: "Registrazione Audio 24 · Ricatto con revoca del permesso di soggiorno (Statuto S)",
       en: "Audio Recording 24 · Extortion via S-Status Revocation Threats",
     },
     categorie: "Audio",
@@ -883,16 +984,22 @@ export const BORDEREAU_PIECES: BordereauPiece[] = [
     admissibilite: {
       uk: "Допустимо за ATF 146 IV 9",
       fr: "Exploitable selon ATF 146 IV 9",
+      de: "Zulässig gemäss BGE 146 IV 9",
+      it: "Ammissibile secondo DTF 146 IV 9",
       en: "Admissible under ATF 146 IV 9",
     },
     portee_probatoire: {
       uk: "Доводить протиправний примус (ст. 181 КК) та лихварство/експлуатацію (ст. 157 КК)",
       fr: "Établit la contrainte caractérisée (Art. 181 CP) et l'usure (Art. 157 CP)",
+      de: "Beweist rechtswidrige Nötigung (Art. 181 StGB) und Wucher/Ausbeutung (Art. 157 StGB)",
+      it: "Dimostra la coazione illecita (Art. 181 CP) e l'usura (Art. 157 CP)",
       en: "Establishes criminal coercion (Art. 181 CP) and usury (Art. 157 CP)",
     },
     citation_cle: {
       uk: "« ...Якщо писнеш про гроші, я напишу в SPOP, що ти тут не маєш права жити... »",
       fr: "« ...Si tu parles de l'argent, j'écrirai au SPOP pour faire révoquer ton permis... »",
+      de: "« ...Wenn du ein Wort über das Geld verlierst, schreibe ich dem SPOP, dass du hier kein Aufenthaltsrecht hast... »",
+      it: "« ...Se fiati del denaro, scrivo allo SPOP per farti revocare il permesso... »",
       en: "« ...If you mention the money, I will write to SPOP to revoke your permit... »",
     },
     fichier_local: "/evidence/audio/P-08_audio24_chantage_spop.mp3",
@@ -904,6 +1011,8 @@ export const BORDEREAU_PIECES: BordereauPiece[] = [
     titre: {
       uk: "Аудіозапис 19 & Протокол поліції · Порушення недоторканності житла",
       fr: "Enregistrement Audio 19 & Rapport de police · Violation de domicile",
+      de: "Tonaufnahme 19 & Polizeibericht · Hausfriedensbruch",
+      it: "Registrazione Audio 19 & Rapporto di polizia · Violazione di domicilio",
       en: "Audio Recording 19 & Police Report · Trespassing & Unlawful Entry",
     },
     categorie: "Audio",
@@ -912,16 +1021,22 @@ export const BORDEREAU_PIECES: BordereauPiece[] = [
     admissibilite: {
       uk: "Прямий доказ у справі (ст. 139 КПК)",
       fr: "Pièce formellement recevable au dossier (Art. 139 CPP)",
+      de: "Direktes prozessuales Beweismittel (Art. 139 StPO)",
+      it: "Mezzo di prova procedurale diretto (Art. 139 CPP)",
       en: "Direct procedural exhibit (Art. 139 CPC)",
     },
     portee_probatoire: {
       uk: "Доводить порушення недоторканності житла (ст. 186 КК) та блокування дверей",
       fr: "Prouve la violation de domicile caractérisée (Art. 186 CP)",
+      de: "Beweist qualifizierten Hausfriedensbruch (Art. 186 StGB) und Blockieren der Türen",
+      it: "Dimostra la violazione di domicilio (Art. 186 CP) e il blocco delle porte",
       en: "Proves unlawful trespassing into domestic sphere (Art. 186 CP)",
     },
     citation_cle: {
       uk: "« ...Ти звідси не вийдеш, доки не підпишеш відмову від усіх вимог... »",
       fr: "« ...Tu ne sortiras pas d'ici tant que tu n'auras pas renoncé à tes poursuites... »",
+      de: "« ...Du kommst hier nicht raus, bis du den Verzicht auf alle Ansprüche unterschrieben hast... »",
+      it: "« ...Non uscirai da qui finché non firmi la rinuncia a tutte le tue pretese... »",
       en: "« ...You won't leave here until you sign away all legal claims... »",
     },
     fichier_local: "/evidence/audio/P-09_audio19_violation_domicile.mp3",
@@ -933,6 +1048,8 @@ export const BORDEREAU_PIECES: BordereauPiece[] = [
     titre: {
       uk: "Засвідчений скріншот Telegram · Прямі погрози розправою та шантаж",
       fr: "Capture certifiée Telegram · Menaces directes de mort et chantage",
+      de: "Beglaubigter Telegram-Screenshot · Direkte Todesdrohungen und Erpressung",
+      it: "Screenshot certificato Telegram · Minacce dirette di morte e ricatto",
       en: "Certified Telegram Screenshot · Direct Death Threats & Extortion",
     },
     categorie: "Photo EXIF",
@@ -940,16 +1057,22 @@ export const BORDEREAU_PIECES: BordereauPiece[] = [
     admissibilite: {
       uk: "Електронний цифровий доказ, засвідчений протоколом фіксації (ст. 139 КПК)",
       fr: "Preuve électronique directe certifiée conforme (Art. 139 CPP)",
+      de: "Elektronischer digitaler Beweis, protokollarisch beglaubigt (Art. 139 StPO)",
+      it: "Prova elettronica digitale certificata conforme a verbale (Art. 139 CPP)",
       en: "Direct electronic evidence certified by protocol (Art. 139 CPC)",
     },
     portee_probatoire: {
       uk: "Прямий доказ умисних погроз розправою (ст. 180 КК), протиправного примусу (ст. 181 КК) та шантажу позбавленням статусу S.",
       fr: "Preuve formelle des menaces de mort (Art. 180 CP), de la contrainte (Art. 181 CP) et du chantage au permis S.",
+      de: "Direkter Beweis für vorsätzliche Todesdrohungen (Art. 180 StGB), Nötigung (Art. 181 StGB) und S-Status-Erpressung.",
+      it: "Prova diretta di minacce di morte intenzionali (Art. 180 CP), coazione (Art. 181 CP) e ricatto sul permesso S.",
       en: "Direct proof of intentional death threats (Art. 180 CP), coercion (Art. 181 CP), and S-status blackmail.",
     },
     citation_cle: {
       uk: "« ...я тебе знайду, і тобі, і сину кінець, згноїмо у в'язниці, жодної копійки не отримаєш... »",
       fr: "« ...je vais te retrouver, toi et ton fils c'est fini, on va vous pourrir en prison, tu n'auras pas un centime... »",
+      de: "« ...ich finde dich, für dich und deinen Sohn ist es aus, wir lassen euch im Gefängnis verrotten, du kriegst keinen Rappen... »",
+      it: "« ...ti troverò, per te e tuo figlio è finita, vi faremo marcire in prigione, non avrai un solo centesimo... »",
       en: "« ...I will find you, both you and your son are finished, we will rot you in jail, you will not get a single cent... »",
     },
     fichier_local: "/evidence/photos/P-10_telegram_chat.jpg",
@@ -957,6 +1080,8 @@ export const BORDEREAU_PIECES: BordereauPiece[] = [
     adr_title: {
       uk: "Скріншот погроз у Telegram",
       fr: "Capture certifiée Telegram menaces",
+      de: "Telegram-Drohungen Screenshot",
+      it: "Screenshot minacce Telegram",
       en: "Telegram Certified Threat Screenshot",
     },
     adr_sync: true,
@@ -967,7 +1092,13 @@ export const BORDEREAU_PIECES: BordereauPiece[] = [
       gps: "IP 185.125.190.x / Lausanne Vaud",
       iso: 100,
       aperture: "Capture numérique originale",
-      alibi_verification: "Автентифікований скріншот месенджера Telegram з погрозами життю потерпілих (ст. 180, 181 КК).",
+      alibi_verification: {
+        uk: "Автентифікований скріншот месенджера Telegram з погрозами життю потерпілих (ст. 180, 181 КК).",
+        fr: "Capture certifiée conforme Telegram attestant des menaces de mort et de la contrainte (Art. 180, 181 CP).",
+        de: "Beglaubigter Telegram-Screenshot mit Todesdrohungen gegen die Opfer (Art. 180, 181 StGB).",
+        it: "Screenshot autenticato Telegram attestante minacce di morte contro le vittime (Art. 180, 181 CP).",
+        en: "Authenticated Telegram messenger screenshot proving life threats against victims (Art. 180, 181 CP).",
+      },
     },
   },
   {
@@ -977,6 +1108,8 @@ export const BORDEREAU_PIECES: BordereauPiece[] = [
     titre: {
       uk: "Фотофіксація матеріальної шкоди · Зламаний замок (CHF 850.00)",
       fr: "Constat photographique des dégradations · Serrure fracturée (CHF 850.00)",
+      de: "Fotodokumentation des Sachschadens · Aufgebrochenes Schloss (CHF 850.00)",
+      it: "Rilievo fotografico dei danni materiali · Serratura forzata (CHF 850.00)",
       en: "Photographic Property Damage Audit · Broken Lock (CHF 850.00)",
     },
     categorie: "Photo EXIF",
@@ -984,16 +1117,22 @@ export const BORDEREAU_PIECES: BordereauPiece[] = [
     admissibilite: {
       uk: "Офіційний криміналістичний огляд (ст. 139 КПК)",
       fr: "Constat matériel objectif (Art. 139 CPP)",
+      de: "Objektiver materieller Sachbeweis (Art. 139 StPO)",
+      it: "Constatazione materiale oggettiva (Art. 139 CPP)",
       en: "Objective material exhibit (Art. 139 CPC)",
     },
     portee_probatoire: {
       uk: "Підтверджує майнову шкоду CHF 850.00 для включення до суми арешту",
       fr: "Établit le préjudice matériel de CHF 850.00 inclus dans la saisie conservatoire",
+      de: "Bestätigt den Sachschaden von CHF 850.00 zur Aufnahme in den Beschlagnahmebetrag",
+      it: "Attesta il danno patrimoniale di CHF 850.00 incluso nel sequestro conservativo",
       en: "Establishes property damage of CHF 850.00 included in sequestration",
     },
     citation_cle: {
       uk: "Накладна слюсаря та рахунок-фактура заміни замка на CHF 850.00.",
       fr: "Facture d'intervention d'urgence du serrurier d'un montant de CHF 850.00.",
+      de: "Notfallrechnung des Schlossers über CHF 850.00 für den Austausch des Schlosses.",
+      it: "Fattura d'intervento d'urgenza del fabbro per l'importo di CHF 850.00.",
       en: "Emergency locksmith invoice and replacement receipt for CHF 850.00.",
     },
     fichier_local: "/evidence/photos/P-10_serrure_fracturee_chf850.jpg",
@@ -1001,6 +1140,8 @@ export const BORDEREAU_PIECES: BordereauPiece[] = [
     adr_title: {
       uk: "Зламаний замок CHF 850",
       fr: "Serrure fracturée CHF 850",
+      de: "Beschädigtes Schloss CHF 850",
+      it: "Serratura danneggiata CHF 850",
       en: "Broken Lock Damage CHF 850",
     },
     adr_sync: true,
@@ -1011,7 +1152,13 @@ export const BORDEREAU_PIECES: BordereauPiece[] = [
       gps: "46.5210° N, 6.6340° E (Lausanne)",
       iso: 125,
       aperture: "f/1.78",
-      alibi_verification: "Physical lock cylinder damage verified and billed at CHF 850.00.",
+      alibi_verification: {
+        uk: "Матеріальне пошкодження замка верифіковано та виставлено рахунок на CHF 850.00.",
+        fr: "Dégradation matérielle du cylindre de serrure constatée et facturée à CHF 850.00.",
+        de: "Materieller Schaden am Schliesszylinder bestätigt und mit CHF 850.00 in Rechnung gestellt.",
+        it: "Danneggiamento materiale del cilindro della serratura riscontrato e fatturato per CHF 850.00.",
+        en: "Physical lock cylinder damage verified and billed at CHF 850.00.",
+      },
     },
   },
   {
@@ -1021,6 +1168,8 @@ export const BORDEREAU_PIECES: BordereauPiece[] = [
     titre: {
       uk: "Експорт чату Telegram · Залякування та погрози",
       fr: "Export certifié Telegram · Messages d'intimidation de Liubov Suvorova",
+      de: "Telegram-Chat-Export · Einschüchterung und Drohungen",
+      it: "Esportazione chat Telegram · Messaggi di intimidazione e minacce",
       en: "Certified Telegram Chat Export · Intimidation Messages",
     },
     categorie: "Message",
@@ -1028,16 +1177,22 @@ export const BORDEREAU_PIECES: BordereauPiece[] = [
     admissibilite: {
       uk: "Електронний цифровий доказ (ст. 139 КПК)",
       fr: "Preuve électronique directe (Art. 139 CPP)",
+      de: "Elektronischer digitaler Beweis (Art. 139 StPO)",
+      it: "Mezzo di prova elettronico diretto (Art. 139 CPP)",
       en: "Direct electronic evidence (Art. 139 CPC)",
     },
     portee_probatoire: {
       uk: "Підтверджує тривалий психологічний терор проти Арсена Коваленка",
       fr: "Corrobore le harcèlement continu et la contrainte infligée à Arsen Kovalenko",
+      de: "Bestätigt den fortgesetzten psychologischen Terror gegen Arsen Kovalenko",
+      it: "Attesta la persecuzione continua e la coazione inflitta ad Arsen Kovalenko",
       en: "Corroborates continuous harassment and coercion against Arsen Kovalenko",
     },
     citation_cle: {
       uk: "« ...Ти ще пошкодуєш, що зв'язався з нами. Тобі тут не жити... »",
       fr: "« ...Tu vas regretter de t'être mesuré à nous. Tu n'as aucun avenir ici... »",
+      de: "« ...Du wirst es noch bereuen, dich mit uns angelegt zu haben. Du wirst hier nicht leben... »",
+      it: "« ...Ti pentirai di esserti messo contro di noi. Non hai futuro qui... »",
       en: "« ...You will regret opposing us. You have no future here... »",
     },
     fichier_local: "/evidence/docs/P-11_telegram_export_threats.pdf",
@@ -1049,6 +1204,8 @@ export const BORDEREAU_PIECES: BordereauPiece[] = [
     titre: {
       uk: "Протокол допиту в поліції · Неправдивий донос обвинуваченої (ст. 303 КК)",
       fr: "Procès-verbal de dénonciation pénale calomnieuse de la prévenue (Art. 303 CP)",
+      de: "Polizeieinvernahmeprotokoll · Falsche Anschuldigung der Beschuldigten (Art. 303 StGB)",
+      it: "Verbale di denuncia penale calunniosa dell'imputata (Art. 303 CP)",
       en: "Police Deposition Protocol · Malicious False Accusation (Art. 303 CP)",
     },
     categorie: "Procédure",
@@ -1056,16 +1213,22 @@ export const BORDEREAU_PIECES: BordereauPiece[] = [
     admissibilite: {
       uk: "Офіційний процесуальний документ прокуратури Во (ст. 100 КПК)",
       fr: "Pièce du dossier officiel MP Vaud (Art. 100 CPP)",
+      de: "Offizielle Verfahrensurkunde der Staatsanwaltschaft Waadt (Art. 100 StPO)",
+      it: "Documento ufficiale agli atti del MP Vaud (Art. 100 CPP)",
       en: "Official procedural case record (Art. 100 CPC)",
     },
     portee_probatoire: {
       uk: "Матеріальний склад злочину завідомо неправдивого доносу (ст. 303 КК)",
       fr: "Corpus delicti de l'infraction de dénonciation calomnieuse (Art. 303 CP)",
+      de: "Materieller Straftatbestand der falschen Anschuldigung (Art. 303 StGB)",
+      it: "Corpus delicti del reato di calunnia (Art. 303 CP)",
       en: "Corpus delicti of malicious false report (Art. 303 CP)",
     },
     citation_cle: {
       uk: "Неправдиво стверджує про побиття 20.07 у Рене, що повністю спростовано фото EXIF 1481.",
       fr: "Affirme faussement avoir été agressée le 20.07 à Renens, formellement réfuté par le cliché EXIF 1481.",
+      de: "Behauptet fälschlich einen Angriff am 20.07. in Renens, was durch das Foto EXIF 1481 vollständig widerlegt ist.",
+      it: "Asserisce falsamente di essere stata aggredita il 20.07 a Renens, smentito documentalmente dallo scatto EXIF 1481.",
       en: "Falsely alleges assault on 20.07 in Renens, refuted by Lausanne EXIF 1481 alibi.",
     },
     fichier_local: "/evidence/docs/P-12_pv_denonciation_calomnieuse.pdf",
@@ -1077,6 +1240,8 @@ export const BORDEREAU_PIECES: BordereauPiece[] = [
     titre: {
       uk: "Афідевіт добросовісності Адріано Міллі (Щит інваріанта L-03 / ст. 933 CC)",
       fr: "Attestation formelle de bonne foi d'Adriano Milli (Bouclier L-03 / Art. 933 CC)",
+      de: "Eidesstattliche Erklärung der Gutgläubigkeit von Adriano Milli (Schutzschild L-03 / Art. 933 ZGB)",
+      it: "Dichiarazione formale di buona fede di Adriano Milli (Scudo L-03 / Art. 933 CC)",
       en: "Formal Affidavit of Adriano Milli (L-03 Shield / Art. 933 CC)",
     },
     categorie: "Procédure",
@@ -1084,16 +1249,22 @@ export const BORDEREAU_PIECES: BordereauPiece[] = [
     admissibilite: {
       uk: "Свідчення добросовісної третьої сторони (ст. 162 КПК, ст. 933 ЦК)",
       fr: "Preuve testimoniale certifiée de tiers de bonne foi (Art. 162 CPP, Art. 933 CC)",
+      de: "Zeugenbeweis des gutgläubigen Dritten (Art. 162 StPO, Art. 933 ZGB)",
+      it: "Prova testimoniale certificata di terzo in buona fede (Art. 162 CPP, Art. 933 CC)",
       en: "Certified testimonial evidence of bona fide third party (Art. 162 CPC, Art. 933 CC)",
     },
     portee_probatoire: {
       uk: "Підтверджує виключно гуманітарну допомогу та повний імунітет Адріано Міллі",
       fr: "Confirme l'assistance bénévole désintéressée et l'immunité totale d'Adriano Milli",
+      de: "Bestätigt die rein humanitäre Hilfe und die vollständige Immunität von Adriano Milli",
+      it: "Conferma l'assistenza disinteressata e la totale immunità di Adriano Milli",
       en: "Confirms voluntary humanitarian assistance and complete immunity of Adriano Milli",
     },
     citation_cle: {
       uk: "Діяв виключно з гуманітарних мотивів добросовісності, жодного фінансового інтересу.",
       fr: "A agi à titre purement humanitaire et bienveillant, sans aucun dessein frauduleux.",
+      de: "Handelte ausschliesslich aus humanitären Motiven der Gutgläubigkeit ohne jedes finanzielle Interesse.",
+      it: "Ha agito a titolo puramente umanitario e disinteressato, senza alcun disegno fraudolento.",
       en: "Acted strictly out of benevolence, zero fraudulent or financial interest.",
     },
     fichier_local: "/evidence/docs/P-13_attestation_adriano_milli_l03.pdf",
@@ -1105,6 +1276,8 @@ export const BORDEREAU_PIECES: BordereauPiece[] = [
     titre: {
       uk: "Аудіозапис 28 · Фінансовий тиск та відмова повертати кошти",
       fr: "Enregistrement Audio 28 · Pressions financières et refus réitéré de restitution",
+      de: "Tonaufnahme 28 · Finanzieller Druck und Weigerung zur Rückzahlung",
+      it: "Registrazione Audio 28 · Pressioni finanziarie e rifiuto di restituzione",
       en: "Audio Recording 28 · Financial Pressure & Refusal to Return Funds",
     },
     categorie: "Audio",
@@ -1113,16 +1286,22 @@ export const BORDEREAU_PIECES: BordereauPiece[] = [
     admissibilite: {
       uk: "Допустимо за ATF 146 IV 9",
       fr: "Exploitable selon ATF 146 IV 9",
+      de: "Zulässig gemäss BGE 146 IV 9",
+      it: "Ammissibile secondo DTF 146 IV 9",
       en: "Admissible under ATF 146 IV 9",
     },
     portee_probatoire: {
       uk: "Встановлює умисну відмову повертати активи потерпілого (ст. 138 КК)",
       fr: "Établit le refus conscient et persistant de restituer les fonds confiés (Art. 138 CP)",
+      de: "Beweist die vorsätzliche Weigerung, Vermögenswerte des Opfers herauszugeben (Art. 138 StGB)",
+      it: "Dimostra il rifiuto intenzionale e persistente di restituire gli averi affidati (Art. 138 CP)",
       en: "Establishes deliberate and persistent refusal to return entrusted assets (Art. 138 CP)",
     },
     citation_cle: {
       uk: "« ...Я тобі нічого повертати не збираюся, твої гроші пішли на наші потреби... »",
       fr: "« ...Je n'ai aucune intention de rendre quoi que ce soit, ton argent a servi à nos besoins... »",
+      de: "« ...Ich habe nicht die Absicht, irgendetwas zurückzuzahlen, dein Geld wurde für unsere Bedürfnisse verwendet... »",
+      it: "« ...Non ho alcuna intenzione di restituire nulla, il tuo denaro è servito per le nostre necessità... »",
       en: "« ...I have zero intention of returning anything, your money went into our needs... »",
     },
     fichier_local: "/evidence/audio/P-14_audio28_refus_restitution.mp3",
@@ -1134,6 +1313,8 @@ export const BORDEREAU_PIECES: BordereauPiece[] = [
     titre: {
       uk: "Форензік-експертиза метаданих EXIF знімка 1481 (Спектральний аналіз)",
       fr: "Rapport d'expertise chronologique & métadonnées EXIF 1481 (Forensic certifié)",
+      de: "Forensisches Gutachten zu EXIF 1481-Metadaten (RGB-Spektralanalyse)",
+      it: "Perizia forense sui metadati EXIF 1481 (Analisi spettrale RGB)",
       en: "Forensic Chronological & EXIF 1481 Spectral Audit Report",
     },
     categorie: "Procédure",
@@ -1141,16 +1322,22 @@ export const BORDEREAU_PIECES: BordereauPiece[] = [
     admissibilite: {
       uk: "Висновок технічного спеціаліста (ст. 139 КПК / ATF 141 IV 369)",
       fr: "Rapport d'expertise technique privé (Art. 139 CPP / ATF 141 IV 369)",
+      de: "Privates technisches Sachverständigengutachten (Art. 139 StPO / BGE 141 IV 369)",
+      it: "Rapporto peritale tecnico privato (Art. 139 CPP / DTF 141 IV 369)",
       en: "Forensic expert audit (Art. 139 CPC / ATF 141 IV 369)",
     },
     portee_probatoire: {
       uk: "Доводить абсолютну чистоту передпліч під спектральним аналізом RGB",
       fr: "Démontre l'absence totale de contusion sous analyse spectrale RGB",
+      de: "Beweist die absolute Unversehrtheit der Unterarme unter RGB-Spektralanalyse",
+      it: "Dimostra la totale assenza di ecchimosi sotto analisi spettrale RGB",
       en: "Demonstrates complete absence of bruises under spectral RGB analysis",
     },
     citation_cle: {
       uk: "Повна відсутність гематом чи еритеми під спектральним мікро-аналізом.",
       fr: "Absence totale d'ecchymose sous analyse spectrale RGB haute précision.",
+      de: "Vollständiges Fehlen von Hämatomen oder Rötungen unter hochpräziser RGB-Spektralanalyse.",
+      it: "Totale assenza di ecchimosi o eritemi sotto analisi spettrale RGB ad alta precisione.",
       en: "Total absence of ecchymosis under high-precision RGB spectral analysis.",
     },
     fichier_local: "/evidence/docs/P-15_forensic_exif_report_lausanne.pdf",

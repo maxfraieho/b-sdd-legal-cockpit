@@ -41,6 +41,7 @@ import {
   BordereauPiece,
   resolveLocalized,
 } from "../data/legalData";
+import { UI_TRANSLATIONS } from "../data/translations";
 import { EvidenceIngestionWizard } from "./EvidenceIngestionWizard";
 import { SwissCodesModal } from "./SwissCodesModal";
 
@@ -49,6 +50,12 @@ interface EvidenceFactbookProps {
 }
 
 export const EvidenceFactbook: React.FC<EvidenceFactbookProps> = ({ currentLang }) => {
+  const t = (key: string): string =>
+    UI_TRANSLATIONS[currentLang]?.[key] ||
+    UI_TRANSLATIONS["fr"]?.[key] ||
+    UI_TRANSLATIONS["uk"]?.[key] ||
+    key;
+
   // Modes: "factbook" (standard list + audio player), "gallery" (photo & scan cards), "gdrive" (Google Drive archive & SHA-256 verifier)
   const [activeMode, setActiveMode] = useState<"factbook" | "gallery" | "gdrive">("factbook");
 
@@ -379,20 +386,40 @@ export const EvidenceFactbook: React.FC<EvidenceFactbookProps> = ({ currentLang 
           <button
             onClick={() => setIsWizardOpen(true)}
             className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white shadow-[0_0_12px_rgba(79,70,229,0.35)] shrink-0"
-            title="Майстер додавання та юридичної кваліфікації доказів з Google Docs або файлів"
+            title={
+              currentLang === "uk"
+                ? "Майстер додавання та юридичної кваліфікації доказів з Google Docs або файлів"
+                : currentLang === "fr"
+                ? "Assistant d'ingestion et de qualification juridique des pièces (IA)"
+                : currentLang === "de"
+                ? "Beweisaufnahme- und Qualifikationsassistent (KI)"
+                : currentLang === "it"
+                ? "Procedura guidata di inserimento e qualificazione prove (IA)"
+                : "AI Evidence Ingestion & Qualification Wizard"
+            }
           >
             <Sparkles className="w-3.5 h-3.5 text-amber-300 animate-pulse" />
-            <span>+ Додати доказ (ШІ)</span>
+            <span>{t("factbook_btn_add_ai")}</span>
           </button>
 
           {/* Swiss Codes & Cantonal Law Button */}
           <button
             onClick={() => setIsCodesModalOpen(true)}
             className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/40 text-amber-300 shrink-0"
-            title="База законів, кодексів Швейцарії (CP, CPP, CC, CO) та законодавство кантону Во"
+            title={
+              currentLang === "uk"
+                ? "База законів, кодексів Швейцарії (CP, CPP, CC, CO) та законодавство кантону Во"
+                : currentLang === "fr"
+                ? "Base légale suisse (CP, CPP, CC, CO) et législation du Canton de Vaud"
+                : currentLang === "de"
+                ? "Schweizer Gesetze (StGB, StPO, ZGB, OR) und Recht des Kantons Waadt"
+                : currentLang === "it"
+                ? "Codici svizzeri (CP, CPP, CC, CO) e legislazione del Canton Vaud"
+                : "Swiss Codes (CP, CPP, CC, CO) and Vaud Cantonal Legislation"
+            }
           >
             <Scale className="w-3.5 h-3.5 text-amber-400" />
-            <span>⚖️ Кодекси CH/VD</span>
+            <span>{t("factbook_btn_codes")}</span>
           </button>
 
           <div className="h-4 w-px bg-slate-800 mx-1 shrink-0" />
@@ -406,13 +433,7 @@ export const EvidenceFactbook: React.FC<EvidenceFactbookProps> = ({ currentLang 
             }`}
           >
             <FileText className="w-3.5 h-3.5" />
-            <span>
-              {currentLang === "uk"
-                ? "📋 Офіційний реєстр доказів"
-                : currentLang === "fr"
-                ? "📋 Bordereau des pièces"
-                : "📋 Exhibits Registry"}
-            </span>
+            <span>{t("factbook_tab_bordereau")}</span>
           </button>
 
           <button
@@ -424,13 +445,7 @@ export const EvidenceFactbook: React.FC<EvidenceFactbookProps> = ({ currentLang 
             }`}
           >
             <Camera className="w-3.5 h-3.5 text-amber-400" />
-            <span>
-              {currentLang === "uk"
-                ? "📸 Фотогалерея & Скани"
-                : currentLang === "fr"
-                ? "📸 Galerie Photos & Scans"
-                : "📸 Photo Gallery & Scans"}
-            </span>
+            <span>{t("factbook_tab_gallery")}</span>
             <span className="text-[10px] font-mono bg-blue-950/80 px-1.5 py-0.2 rounded border border-blue-700/60 text-blue-300 ml-1">
               {photoPieces.length}
             </span>
@@ -445,13 +460,7 @@ export const EvidenceFactbook: React.FC<EvidenceFactbookProps> = ({ currentLang 
             }`}
           >
             <Cloud className="w-3.5 h-3.5 text-emerald-400" />
-            <span>
-              {currentLang === "uk"
-                ? "☁️ Архів Google Drive & SHA-256"
-                : currentLang === "fr"
-                ? "☁️ Archive Google Drive & SHA-256"
-                : "☁️ Google Drive Archive & SHA-256"}
-            </span>
+            <span>{t("factbook_tab_gdrive")}</span>
           </button>
         </div>
 
@@ -461,11 +470,22 @@ export const EvidenceFactbook: React.FC<EvidenceFactbookProps> = ({ currentLang 
           target="_blank"
           rel="noopener noreferrer"
           className="flex items-center space-x-1.5 px-2.5 py-1 bg-emerald-950/40 hover:bg-emerald-900/50 border border-emerald-600/50 text-emerald-300 rounded text-xs font-mono transition-colors shrink-0"
-          title="Прямий перехід до спільної папки Google Drive з оригінальними матеріалами"
+          title={
+            currentLang === "uk"
+              ? "Прямий перехід до спільної папки Google Drive з оригінальними матеріалами"
+              : currentLang === "fr"
+              ? "Accès direct au répertoire partagé Google Drive avec les pièces originales"
+              : currentLang === "de"
+              ? "Direkter Link zum freigegebenen Google Drive-Ordner mit Originalbeweisen"
+              : currentLang === "it"
+              ? "Accesso diretto alla cartella Google Drive con le prove originali"
+              : "Direct link to shared Google Drive folder containing primary evidentiary files"
+          }
         >
           <ExternalLink className="w-3 h-3 text-emerald-400" />
-          <span className="hidden sm:inline">Drive Folder</span>
+          <span className="hidden sm:inline">{t("factbook_drive_folder")}</span>
         </a>
+
       </div>
 
       {/* ========================================================================= */}
@@ -729,7 +749,7 @@ export const EvidenceFactbook: React.FC<EvidenceFactbookProps> = ({ currentLang 
                           <div className="flex-1 overflow-hidden">
                             <span className="text-[10px] font-mono text-amber-300 flex items-center space-x-1">
                               <Camera className="w-3 h-3 text-amber-400" />
-                              <span>ISO/IEC 27037 · Натисніть для огляду</span>
+                              <span>ISO/IEC 27037 · {currentLang === 'uk' ? 'Натисніть для огляду' : currentLang === 'fr' ? 'Cliquer pour examiner' : currentLang === 'de' ? 'Klicken zur Ansicht' : currentLang === 'it' ? 'Clicca per esaminare' : 'Click to inspect'}</span>
                             </span>
                             <p className="text-[9px] text-slate-400 truncate">
                               {piece.exif_meta?.camera || "Apple iPhone 14 Pro"}
@@ -761,10 +781,10 @@ export const EvidenceFactbook: React.FC<EvidenceFactbookProps> = ({ currentLang 
                               triggerAttachPhoto(piece.cote);
                             }}
                             className="flex items-center space-x-1 px-1.5 py-0.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded border border-slate-700"
-                            title="Прикріпити нове фото або документ"
+                            title={t("factbook_add_photo")}
                           >
                             <Upload className="w-2.5 h-2.5 text-blue-400" />
-                            <span>{hasPhoto ? "Змінити фото" : "Додати фото"}</span>
+                            <span>{hasPhoto ? t("factbook_change_photo") : t("factbook_add_photo")}</span>
                           </button>
 
                           {hasPhoto && (
@@ -774,7 +794,7 @@ export const EvidenceFactbook: React.FC<EvidenceFactbookProps> = ({ currentLang 
                                 handleRemovePhoto(piece.cote);
                               }}
                               className="p-1 text-slate-400 hover:text-rose-400 rounded"
-                              title="Видалити прикріплене фото"
+                              title={t("factbook_delete_photo")}
                             >
                               <Trash2 className="w-2.5 h-2.5" />
                             </button>
@@ -787,7 +807,7 @@ export const EvidenceFactbook: React.FC<EvidenceFactbookProps> = ({ currentLang 
                             handleCopyHash(piece.sha256);
                           }}
                           className="flex items-center space-x-1 font-mono text-[9px] text-slate-400 hover:text-emerald-400"
-                          title="Скопіювати хеш SHA-256"
+                          title={t("factbook_copy")}
                         >
                           {copiedHash === piece.sha256 ? (
                             <Check className="w-3 h-3 text-emerald-400" />
@@ -813,7 +833,7 @@ export const EvidenceFactbook: React.FC<EvidenceFactbookProps> = ({ currentLang 
                 className="md:hidden flex items-center space-x-1.5 text-xs text-blue-400 hover:text-blue-300 font-mono py-1.5 px-3 rounded-lg bg-slate-900 border border-slate-700 self-start mb-1 shadow-sm"
               >
                 <ChevronLeft className="w-4 h-4" />
-                <span>{currentLang === 'uk' ? '← Повернутися до списку' : '← Retour au bordereau'}</span>
+                <span>{t("factbook_back_to_list")}</span>
               </button>
 
               <div className="border-b border-slate-800 pb-3">
@@ -851,7 +871,7 @@ export const EvidenceFactbook: React.FC<EvidenceFactbookProps> = ({ currentLang 
                         className="px-2.5 py-1 bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 rounded text-xs font-mono flex items-center space-x-1"
                       >
                         <Camera className="w-3 h-3" />
-                        <span>Відкрити Lightbox</span>
+                        <span>{t("factbook_open_lightbox")}</span>
                       </button>
                     </div>
                   </div>
@@ -860,7 +880,7 @@ export const EvidenceFactbook: React.FC<EvidenceFactbookProps> = ({ currentLang 
               {/* Probative Value */}
               <div className="bg-[#090E1A] p-3 rounded-lg border border-slate-800">
                 <span className="text-[10px] uppercase font-bold text-indigo-400 block mb-1">
-                  Доказове значення (Portée Probatoire) :
+                  {t("factbook_probative_value")}
                 </span>
                 <p className="text-xs text-slate-200 leading-relaxed">
                   {resolveLocalized(selectedPiece.portee_probatoire, currentLang)}
@@ -870,7 +890,7 @@ export const EvidenceFactbook: React.FC<EvidenceFactbookProps> = ({ currentLang 
               {/* Verbatim quote */}
               <div className="bg-[#090E1A] p-3 rounded-lg border border-slate-800">
                 <span className="text-[10px] uppercase font-bold text-amber-400 block mb-1">
-                  Засвідчена цитата / Реквізити :
+                  {t("factbook_quote_details")}
                 </span>
                 <p className="text-xs text-amber-100/90 font-serif italic leading-relaxed">
                   {resolveLocalized(selectedPiece.citation_cle, currentLang)}
@@ -880,7 +900,7 @@ export const EvidenceFactbook: React.FC<EvidenceFactbookProps> = ({ currentLang 
               {/* Admissibility Regime */}
               <div className="bg-[#090E1A] p-3 rounded-lg border border-slate-800">
                 <span className="text-[10px] uppercase font-bold text-emerald-400 block mb-1">
-                  Процесуальний режим (КПК Во) :
+                  {t("factbook_admissibility_regime")}
                 </span>
                 <p className="text-xs text-emerald-200 font-mono">
                   {resolveLocalized(selectedPiece.admissibilite, currentLang)}
@@ -901,7 +921,7 @@ export const EvidenceFactbook: React.FC<EvidenceFactbookProps> = ({ currentLang 
               {/* SHA-256 Hash Seal Box */}
               <div className="p-3 bg-[#070B14] rounded-lg border border-slate-800 font-mono text-xs">
                 <div className="flex items-center justify-between mb-1">
-                  <span className="text-[10px] text-slate-400">Хеш SHA-256 :</span>
+                  <span className="text-[10px] text-slate-400">{t("factbook_sha256_hash")}</span>
                   <button
                     onClick={() => handleCopyHash(selectedPiece.sha256)}
                     className="text-blue-400 hover:text-white text-[11px] flex items-center space-x-1"
@@ -911,13 +931,14 @@ export const EvidenceFactbook: React.FC<EvidenceFactbookProps> = ({ currentLang 
                     ) : (
                       <Copy className="w-3 h-3" />
                     )}
-                    <span>{copiedHash === selectedPiece.sha256 ? "Скопійовано" : "Копіювати"}</span>
+                    <span>{copiedHash === selectedPiece.sha256 ? t("factbook_copied") : t("factbook_copy")}</span>
                   </button>
                 </div>
                 <div className="p-2 bg-slate-900 border border-slate-800 rounded break-all text-[10px] text-slate-300">
                   {selectedPiece.sha256}
                 </div>
               </div>
+
             </div>
           </div>
         </div>
@@ -934,24 +955,16 @@ export const EvidenceFactbook: React.FC<EvidenceFactbookProps> = ({ currentLang 
               <div>
                 <h3 className="text-sm sm:text-base font-bold text-slate-100 flex items-center space-x-2">
                   <Camera className="w-4 h-4 text-amber-400" />
-                  <span>
-                    {currentLang === "uk"
-                      ? "Судово-медичний та фотографічний архів речових доказів"
-                      : currentLang === "fr"
-                      ? "Archive Forensique Photographique & Constats Médicaux"
-                      : "Forensic Photographic & Medical Evidence Archive"}
-                  </span>
+                  <span>{t("factbook_gallery_title")}</span>
                 </h3>
                 <p className="text-xs text-slate-400 mt-0.5">
-                  {currentLang === "uk"
-                    ? "Усі цифрові фотографії та скани сертифіковані за стандартом ISO/IEC 27037 з прив'язкою EXIF/GPS та ADR у базі Utopia DB."
-                    : "Toutes les photographies et scans sont certifiés selon la norme ISO/IEC 27037 avec métadonnées EXIF/GPS."}
+                  {t("factbook_gallery_sub")}
                 </p>
               </div>
 
               <div className="flex items-center space-x-2">
                 <span className="text-xs font-mono text-emerald-400 bg-emerald-950/60 px-2.5 py-1 rounded-md border border-emerald-800/60 font-semibold">
-                  {photoPieces.length} Речових доказів
+                  {photoPieces.length} {t("factbook_exhibits_count_label")}
                 </span>
               </div>
             </div>
@@ -995,7 +1008,7 @@ export const EvidenceFactbook: React.FC<EvidenceFactbookProps> = ({ currentLang 
                     <div className="absolute inset-0 bg-black/50 opacity-0 group-hover/img:opacity-100 transition-opacity flex items-center justify-center">
                       <span className="px-3 py-1.5 bg-blue-600/90 text-white rounded-lg text-xs font-mono font-bold flex items-center space-x-1.5 shadow-xl">
                         <Eye className="w-3.5 h-3.5" />
-                        <span>Відкрити Forensic Lightbox</span>
+                        <span>{t("factbook_open_forensic_lightbox")}</span>
                       </span>
                     </div>
                   </div>
@@ -1014,17 +1027,17 @@ export const EvidenceFactbook: React.FC<EvidenceFactbookProps> = ({ currentLang 
                       {piece.exif_meta && (
                         <div className="p-2 bg-[#070B14] rounded-lg border border-slate-800/80 space-y-1 text-[10px] font-mono">
                           <div className="flex items-center justify-between text-slate-400">
-                            <span>Камера / Джерело:</span>
+                            <span>{t("factbook_meta_camera")}</span>
                             <span className="text-slate-200 truncate max-w-[160px]">
                               {piece.exif_meta.camera}
                             </span>
                           </div>
                           <div className="flex items-center justify-between text-slate-400">
-                            <span>Час фіксації:</span>
+                            <span>{t("factbook_meta_time")}</span>
                             <span className="text-slate-200">{piece.exif_meta.timestamp}</span>
                           </div>
                           <div className="flex items-center justify-between text-slate-400">
-                            <span>GPS / Локація:</span>
+                            <span>{t("factbook_meta_gps")}</span>
                             <span className="text-emerald-400 font-bold truncate max-w-[160px]">
                               {piece.exif_meta.gps}
                             </span>
@@ -1047,16 +1060,16 @@ export const EvidenceFactbook: React.FC<EvidenceFactbookProps> = ({ currentLang 
                         <button
                           onClick={() => triggerAttachPhoto(piece.cote)}
                           className="px-2 py-1 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded text-[11px] font-mono flex items-center space-x-1"
-                          title="Замінити або оновити фото доказу"
+                          title={t("factbook_add_photo")}
                         >
                           <Upload className="w-3 h-3 text-blue-400" />
-                          <span>Оновити</span>
+                          <span>{t("factbook_update")}</span>
                         </button>
 
                         <button
                           onClick={() => handleRemovePhoto(piece.cote)}
                           className="p-1 text-slate-400 hover:text-rose-400 rounded"
-                          title="Видалити фото"
+                          title={t("factbook_delete_photo")}
                         >
                           <Trash2 className="w-3 h-3" />
                         </button>
@@ -1065,7 +1078,7 @@ export const EvidenceFactbook: React.FC<EvidenceFactbookProps> = ({ currentLang 
                       <button
                         onClick={() => handleCopyHash(piece.sha256)}
                         className="p-1 text-slate-400 hover:text-emerald-400 font-mono text-[10px] flex items-center space-x-1"
-                        title="Скопіювати SHA-256"
+                        title={t("factbook_copy")}
                       >
                         {copiedHash === piece.sha256 ? (
                           <Check className="w-3 h-3 text-emerald-400" />
@@ -1095,15 +1108,11 @@ export const EvidenceFactbook: React.FC<EvidenceFactbookProps> = ({ currentLang 
                 <div className="flex items-center space-x-2">
                   <Cloud className="w-5 h-5 text-emerald-400" />
                   <h3 className="text-base sm:text-lg font-bold text-slate-100">
-                    {currentLang === "uk"
-                      ? "Офіційне сховище першоджерел доказів у Google Drive"
-                      : "Archive Cloud Officielle des Pièces Originales (Google Drive)"}
+                    {t("factbook_gdrive_title")}
                   </h3>
                 </div>
                 <p className="text-xs sm:text-sm text-slate-300 leading-relaxed max-w-2xl">
-                  {currentLang === "uk"
-                    ? "Усі оригінальні матеріали справи (48MP ProRAW фотографії з незмінними метаданими EXIF, студійні аудіозаписи WAV 48kHz, скани протоколів поліції) зберігаються у захищеній хмарній директорії."
-                    : "Tous les fichiers originaux bruts (photos 48MP ProRAW avec EXIF préservés, enregistrements audio WAV master, scans de police 600 DPI) sont centralisés dans le répertoire partagé."}
+                  {t("factbook_gdrive_sub")}
                 </p>
                 <div className="font-mono text-xs text-emerald-400 break-all pt-1">
                   https://drive.google.com/drive/folders/13OgTZBLm1LoYNtfwHNuWBl7kSD3ZncF1
@@ -1116,7 +1125,7 @@ export const EvidenceFactbook: React.FC<EvidenceFactbookProps> = ({ currentLang 
                 rel="noopener noreferrer"
                 className="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-xs font-mono font-bold flex items-center justify-center space-x-2 shadow-lg transition-transform hover:scale-105 shrink-0"
               >
-                <span>Відкрити Google Drive</span>
+                <span>{t("factbook_open_gdrive_btn")}</span>
                 <ExternalLink className="w-4 h-4" />
               </a>
             </div>
@@ -1126,32 +1135,32 @@ export const EvidenceFactbook: React.FC<EvidenceFactbookProps> = ({ currentLang 
               {[
                 {
                   title: "48MP Apple ProRAW (DNG/JPG)",
-                  desc: "Оригінальні знімки iPhone 14 Pro з чистими метаданими IFD0, координатами GPS та витягом діафрагми.",
+                  desc: currentLang === 'uk' ? "Оригінальні знімки iPhone 14 Pro з чистими метаданими IFD0, координатами GPS та витягом діафрагми." : currentLang === 'fr' ? "Clichés originaux iPhone 14 Pro avec métadonnées brutes IFD0, coordonnées GPS et ouverture." : currentLang === 'de' ? "Originalaufnahmen iPhone 14 Pro mit intakten IFD0-Metadaten, GPS-Koordinaten und Blende." : currentLang === 'it' ? "Scatti originali iPhone 14 Pro con metadati IFD0 intatti, coordinate GPS e apertura." : "Original iPhone 14 Pro raw captures with intact IFD0 metadata, GPS coordinates and aperture.",
                   badge: "P-06, P-06-BIS",
                 },
                 {
-                  title: "Студійний звук WAV (48 kHz / 24-bit)",
-                  desc: "Незжаті фонограми погроз та зізнань для судово-фоноскопічної експертизи за стандартом ATF 146 IV 9.",
+                  title: currentLang === 'uk' ? "Студійний звук WAV (48 kHz / 24-bit)" : currentLang === 'fr' ? "Audio studio WAV (48 kHz / 24-bit)" : currentLang === 'de' ? "Studioton WAV (48 kHz / 24-Bit)" : currentLang === 'it' ? "Audio studio WAV (48 kHz / 24-bit)" : "Studio WAV Audio (48 kHz / 24-bit)",
+                  desc: currentLang === 'uk' ? "Незжаті фонограми погроз та зізнань для судово-фоноскопічної експертизи за стандартом ATF 146 IV 9." : currentLang === 'fr' ? "Phonogrammes non compressés des menaces et aveux pour expertise médico-légale selon ATF 146 IV 9." : currentLang === 'de' ? "Unkomprimierte Tonaufnahmen von Drohungen und Geständnissen für forensische Gutachten gemäss BGE 146 IV 9." : currentLang === 'it' ? "Fonogrammi non compressi di minacce e confessioni per perizia forense ex DTF 146 IV 9." : "Uncompressed audio master files of threats and confessions for forensic phonoscopy under ATF 146 IV 9.",
                   badge: "P-01, P-04, P-07, P-08",
                 },
                 {
-                  title: "Скани протоколів поліції (600 DPI)",
-                  desc: "Офіційні протоколи заяв, допитів та фіксації неправдивого доносу (ст. 303 КК) кантональної поліції Во.",
+                  title: currentLang === 'uk' ? "Скани протоколів поліції (600 DPI)" : currentLang === 'fr' ? "Scans des procès-verbaux de police (600 DPI)" : currentLang === 'de' ? "Scans der Polizeiprotokolle (600 DPI)" : currentLang === 'it' ? "Scansioni verbali di polizia (600 DPI)" : "Police Protocol Scans (600 DPI)",
+                  desc: currentLang === 'uk' ? "Офіційні протоколи заяв, допитів та фіксації неправдивого доносу (ст. 303 КК) кантональної поліції Во." : currentLang === 'fr' ? "Procès-verbaux officiels d'auditions, plaintes et constat de dénonciation calomnieuse (Art. 303 CP) de la police vaudoise." : currentLang === 'de' ? "Offizielle Einvernahmeprotokolle und Feststellung falscher Anschuldigung (Art. 303 StGB) der Kantonspolizei Waadt." : currentLang === 'it' ? "Verbali ufficiali di interrogatorio e accertamento di calunnia (Art. 303 CP) della Polizia cantonale vodese." : "Official deposition records, interrogations, and false report protocols (Art. 303 CP) of Vaud cantonal police.",
                   badge: "P-09, P-12, P-13",
                 },
                 {
-                  title: "Сертифікат Unisanté Лозанна",
-                  desc: "Офіційний медичний висновок експерта про повну відсутність ушкоджень та слідів боротьби у потерпілого.",
+                  title: currentLang === 'uk' ? "Сертифікат Unisanté Лозанна" : currentLang === 'fr' ? "Certificat Unisanté Lausanne" : currentLang === 'de' ? "Zertifikat Unisanté Lausanne" : currentLang === 'it' ? "Certificato Unisanté Losanna" : "Unisanté Lausanne Certificate",
+                  desc: currentLang === 'uk' ? "Офіційний медичний висновок експерта про повну відсутність ушкоджень та слідів боротьби у потерпілого." : currentLang === 'fr' ? "Constat médical officiel d'expert attestant l'absence intégrale de lésions corporelles et de traces de lutte chez la victime." : currentLang === 'de' ? "Offizielles forensisches Arztzeugnis über das vollständige Fehlen von Verletzungen oder Kampfspuren beim Opfer." : currentLang === 'it' ? "Referto medico-legale ufficiale attestante la totale assenza di lesioni fisiche e segni di colluttazione nella vittima." : "Official medical expert opinion certifying total absence of physical trauma or struggle marks on the victim.",
                   badge: "P-03",
                 },
                 {
-                  title: "Банківські виписки Wise / SWIFT",
-                  desc: "Цільовий переказ $15'000 USD із зазначенням трастового збереження коштів для забезпечення арешту.",
+                  title: currentLang === 'uk' ? "Банківські виписки Wise / SWIFT" : currentLang === 'fr' ? "Relevés bancaires Wise / SWIFT" : currentLang === 'de' ? "Bankauszüge Wise / SWIFT" : currentLang === 'it' ? "Estratti conto Wise / SWIFT" : "Wise / SWIFT Bank Statements",
+                  desc: currentLang === 'uk' ? "Цільовий переказ $15'000 USD із зазначенням трастового збереження коштів для забезпечення арешту." : currentLang === 'fr' ? "Virement fiduciaire ciblé de $15'000 USD stipulant le dépôt conservatoire pour fonder le séquestre pénal." : currentLang === 'de' ? "Zweckgebundene Überweisung von $15'000 USD mit Verwahrungsbestimmung zur Begründung der Beschlagnahme." : currentLang === 'it' ? "Bonifico fiduciario mirato di $15'000 USD con causale di custodia a supporto del sequestro conservativo." : "Targeted $15,000 USD wire transfer specifying fiduciary custody as legal basis for asset freezing.",
                   badge: "P-05",
                 },
                 {
-                  title: "Засвідчені скріншоти месенджерів",
-                  desc: "Фіксація прямих погроз розправою, залякування та шантажу позбавленням статусу S у Telegram.",
+                  title: currentLang === 'uk' ? "Засвідчені скріншоти месенджерів" : currentLang === 'fr' ? "Captures certifiées de messagerie" : currentLang === 'de' ? "Beglaubigte Messenger-Screenshots" : currentLang === 'it' ? "Screenshot certificati dei messaggi" : "Certified Messenger Screenshots",
+                  desc: currentLang === 'uk' ? "Фіксація прямих погроз розправою, залякування та шантажу позбавленням статусу S у Telegram." : currentLang === 'fr' ? "Fixation légale des menaces explicites de mort, de l'intimidation et du chantage à la révocation du statut S sur Telegram." : currentLang === 'de' ? "Gerichtliche Dokumentation von Todesdrohungen, Einschüchterung und Erpressung mit Entzug des S-Status auf Telegram." : currentLang === 'it' ? "Documentazione probatoria di minacce di morte, intimidazione e ricatto sulla revoca dello Statuto S su Telegram." : "Certified recording of explicit death threats, intimidation, and S-status revocation extortion on Telegram.",
                   badge: "P-10, P-11",
                 },
               ].map((item, idx) => (
@@ -1175,15 +1184,11 @@ export const EvidenceFactbook: React.FC<EvidenceFactbookProps> = ({ currentLang 
               <div className="flex items-center space-x-2">
                 <FileCheck className="w-5 h-5 text-blue-400" />
                 <h3 className="text-sm sm:text-base font-bold text-slate-100">
-                  {currentLang === "uk"
-                    ? "Локальний криптографічний верифікатор цілісності (Web Crypto SHA-256)"
-                    : "Vérificateur Cryptographique Local SHA-256 (Web Crypto API)"}
+                  {t("factbook_verifier_title")}
                 </h3>
               </div>
               <p className="text-xs text-slate-300 leading-relaxed">
-                {currentLang === "uk"
-                  ? "Перетягніть будь-який файл, завантажений з Google Drive або телефону. Ваш браузер локально обчислить хеш SHA-256 без передачі файлу в інтернет та миттєво звірить його з офіційним реєстром доказів справи."
-                  : "Glissez-déposez un fichier téléchargé de Google Drive. Le navigateur calcule l'empreinte SHA-256 localement et la compare au registre officiel."}
+                {t("factbook_verifier_sub")}
               </p>
 
               {/* Drag & Drop Dropzone */}
@@ -1208,11 +1213,11 @@ export const EvidenceFactbook: React.FC<EvidenceFactbookProps> = ({ currentLang 
                 <Upload className="w-8 h-8 text-blue-400 mb-2 animate-bounce" />
                 <span className="text-xs sm:text-sm font-semibold text-slate-200">
                   {isComputingHash
-                    ? "Обчислення SHA-256 через Web Crypto API..."
-                    : "Перетягніть файл сюди або натисніть для вибору"}
+                    ? t("factbook_verifier_computing")
+                    : t("factbook_verifier_drop_prompt")}
                 </span>
                 <span className="text-[11px] text-slate-400 mt-1">
-                  Підтримуються файли будь-якого розміру (RAW, WAV, PDF, JPG, MP3)
+                  {t("factbook_verifier_formats")}
                 </span>
               </div>
 
@@ -1221,7 +1226,7 @@ export const EvidenceFactbook: React.FC<EvidenceFactbookProps> = ({ currentLang 
                 <div className="bg-[#070B14] border border-slate-800 rounded-xl p-4 space-y-3 font-mono">
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 border-b border-slate-800 pb-2">
                     <span className="text-xs text-slate-400">
-                      Файл: <strong>{verifierFileName}</strong> (
+                      {t("factbook_verifier_file_label")} <strong>{verifierFileName}</strong> (
                       {verifierFileSize ? formatFileSize(verifierFileSize) : ""})
                     </span>
                     <button
@@ -1233,13 +1238,13 @@ export const EvidenceFactbook: React.FC<EvidenceFactbookProps> = ({ currentLang 
                       ) : (
                         <Copy className="w-3.5 h-3.5" />
                       )}
-                      <span>Скопіювати хеш</span>
+                      <span>{t("factbook_verifier_copy_hash")}</span>
                     </button>
                   </div>
 
                   <div>
                     <span className="text-[10px] text-slate-500 block mb-1">
-                      Обчислений хеш SHA-256 :
+                      {t("factbook_verifier_computed_hash")}
                     </span>
                     <div className="p-2 bg-slate-900 border border-slate-800 rounded break-all text-xs text-slate-200">
                       {verifierHash}
@@ -1252,12 +1257,11 @@ export const EvidenceFactbook: React.FC<EvidenceFactbookProps> = ({ currentLang 
                       <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
                       <div>
                         <strong className="block text-xs font-bold text-emerald-300">
-                          ✓ ДОКАЗ ВЕРИФІКОВАНО В ОФІЦІЙНОМУ РЕЄСТРІ СПРАВИ :
+                          {t("factbook_verifier_match_title")}
                         </strong>
                         <p className="text-xs font-sans mt-0.5">
-                          Збіг із доказом <strong>{verifierMatch.cote}</strong> (
-                          {resolveLocalized(verifierMatch.titre, currentLang)}). Дата:{" "}
-                          {verifierMatch.date_faits}. Процесуальний статус:{" "}
+                          {resolveLocalized(verifierMatch.titre, currentLang)} [<strong>{verifierMatch.cote}</strong>]. {currentLang === 'uk' ? 'Дата:' : currentLang === 'fr' ? 'Date :' : currentLang === 'de' ? 'Datum:' : currentLang === 'it' ? 'Data:' : 'Date:'}{" "}
+                          {verifierMatch.date_faits}. {currentLang === 'uk' ? 'Процесуальний статус:' : currentLang === 'fr' ? 'Statut procédural :' : currentLang === 'de' ? 'Verfahrensstatus:' : currentLang === 'it' ? 'Stato procedurale:' : 'Procedural status:'}{" "}
                           {resolveLocalized(verifierMatch.admissibilite, currentLang)}.
                         </p>
                       </div>
@@ -1267,11 +1271,10 @@ export const EvidenceFactbook: React.FC<EvidenceFactbookProps> = ({ currentLang 
                       <AlertCircle className="w-5 h-5 text-blue-400 shrink-0 mt-0.5" />
                       <div>
                         <strong className="block text-xs font-bold text-blue-300">
-                          ℹ Хеш обчислено успішно (новий або допоміжний файл)
+                          {t("factbook_verifier_new_title")}
                         </strong>
                         <p className="text-xs font-sans mt-0.5">
-                          Цього хешу ще немає у попередньо завантаженому реєстрі P-01..P-15. Ви
-                          можете прикріпити його до будь-якої картки через кнопку «Додати фото».
+                          {t("factbook_verifier_new_desc")}
                         </p>
                       </div>
                     </div>
@@ -1281,13 +1284,14 @@ export const EvidenceFactbook: React.FC<EvidenceFactbookProps> = ({ currentLang 
 
               {verifierError && (
                 <div className="p-3 bg-rose-950/60 border border-rose-600/70 rounded-lg text-xs text-rose-300">
-                  Помилка: {verifierError}
+                  {t("factbook_verifier_error")} {verifierError}
                 </div>
               )}
             </div>
           </div>
         </div>
       )}
+
 
       {/* ========================================================================= */}
       {/* FORENSIC LIGHTBOX MODAL WITH ZOOM (50%-300%), ROTATION & PREV/NEXT        */}
@@ -1342,7 +1346,17 @@ export const EvidenceFactbook: React.FC<EvidenceFactbookProps> = ({ currentLang 
                 <button
                   onClick={handlePrevPhoto}
                   className="absolute left-3 top-1/2 -translate-y-1/2 z-10 p-2 bg-black/60 hover:bg-black/90 text-white rounded-full border border-slate-700 transition-transform hover:scale-110 shadow-xl"
-                  title="Попереднє фото (Стрілка вліво)"
+                  title={
+                    currentLang === "uk"
+                      ? "Попереднє фото (Стрілка вліво)"
+                      : currentLang === "fr"
+                      ? "Photo précédente (Flèche gauche)"
+                      : currentLang === "de"
+                      ? "Vorheriges Foto (Pfeiltaste links)"
+                      : currentLang === "it"
+                      ? "Foto precedente (Freccia sinistra)"
+                      : "Previous photo (Left arrow)"
+                  }
                 >
                   <ChevronLeft className="w-5 h-5" />
                 </button>
@@ -1377,7 +1391,17 @@ export const EvidenceFactbook: React.FC<EvidenceFactbookProps> = ({ currentLang 
                 <button
                   onClick={handleNextPhoto}
                   className="absolute right-3 top-1/2 -translate-y-1/2 z-10 p-2 bg-black/60 hover:bg-black/90 text-white rounded-full border border-slate-700 transition-transform hover:scale-110 shadow-xl"
-                  title="Наступне фото (Стрілка вправо)"
+                  title={
+                    currentLang === "uk"
+                      ? "Наступне фото (Стрілка вправо)"
+                      : currentLang === "fr"
+                      ? "Photo suivante (Flèche droite)"
+                      : currentLang === "de"
+                      ? "Nächstes Foto (Pfeiltaste rechts)"
+                      : currentLang === "it"
+                      ? "Foto successiva (Freccia destra)"
+                      : "Next photo (Right arrow)"
+                  }
                 >
                   <ChevronRight className="w-5 h-5" />
                 </button>
@@ -1387,7 +1411,17 @@ export const EvidenceFactbook: React.FC<EvidenceFactbookProps> = ({ currentLang 
                   <button
                     onClick={() => setZoomLevel((z) => Math.max(0.5, z - 0.25))}
                     className="p-1 hover:text-white"
-                    title="Зменшити (-)"
+                    title={
+                      currentLang === "uk"
+                        ? "Зменшити (-)"
+                        : currentLang === "fr"
+                        ? "Zoom arrière (-)"
+                        : currentLang === "de"
+                        ? "Verkleinern (-)"
+                        : currentLang === "it"
+                        ? "Riduci (-)"
+                        : "Zoom out (-)"
+                    }
                   >
                     <ZoomOut className="w-3.5 h-3.5" />
                   </button>
@@ -1397,7 +1431,17 @@ export const EvidenceFactbook: React.FC<EvidenceFactbookProps> = ({ currentLang 
                   <button
                     onClick={() => setZoomLevel((z) => Math.min(3.0, z + 0.25))}
                     className="p-1 hover:text-white"
-                    title="Збільшити (+)"
+                    title={
+                      currentLang === "uk"
+                        ? "Збільшити (+)"
+                        : currentLang === "fr"
+                        ? "Zoom avant (+)"
+                        : currentLang === "de"
+                        ? "Vergrössern (+)"
+                        : currentLang === "it"
+                        ? "Ingrandisci (+)"
+                        : "Zoom in (+)"
+                    }
                   >
                     <ZoomIn className="w-3.5 h-3.5" />
                   </button>
@@ -1405,7 +1449,17 @@ export const EvidenceFactbook: React.FC<EvidenceFactbookProps> = ({ currentLang 
                   <button
                     onClick={() => setRotationDeg((r) => (r + 90) % 360)}
                     className="p-1 hover:text-white flex items-center space-x-1"
-                    title="Повернути на 90°"
+                    title={
+                      currentLang === "uk"
+                        ? "Повернути на 90°"
+                        : currentLang === "fr"
+                        ? "Pivoter de 90°"
+                        : currentLang === "de"
+                        ? "Um 90° drehen"
+                        : currentLang === "it"
+                        ? "Ruota di 90°"
+                        : "Rotate 90°"
+                    }
                   >
                     <RotateCcw className="w-3.5 h-3.5" />
                     <span className="text-[10px]">90°</span>
@@ -1427,46 +1481,46 @@ export const EvidenceFactbook: React.FC<EvidenceFactbookProps> = ({ currentLang 
               <div className="w-full lg:w-84 bg-[#070B12] border border-slate-800 rounded-xl p-3.5 text-xs space-y-3 font-mono shrink-0 select-text">
                 <div className="border-b border-slate-800 pb-2">
                   <span className="text-[10px] text-indigo-400 font-bold uppercase tracking-wider block">
-                    Автентифіковані метадані EXIF
+                    {t("factbook_meta_exif_title")}
                   </span>
                   <span className="text-[11px] text-slate-300">
-                    Стандарт криміналістики ISO/IEC 27037
+                    {t("factbook_meta_iso_standard")}
                   </span>
                 </div>
 
                 <div className="space-y-1.5 text-[11px]">
                   <div>
-                    <span className="text-slate-500">Пристрій / Камера: </span>
+                    <span className="text-slate-500">{t("factbook_meta_camera")} </span>
                     <span className="text-slate-200">
                       {lightboxPiece.exif_meta?.camera || "Apple iPhone 14 Pro"}
                     </span>
                   </div>
                   <div>
-                    <span className="text-slate-500">Оптика / Об'єктив: </span>
+                    <span className="text-slate-500">{t("factbook_meta_lens")} </span>
                     <span className="text-slate-200">
                       {lightboxPiece.exif_meta?.lens || "24mm f/1.78"}
                     </span>
                   </div>
                   <div>
-                    <span className="text-slate-500">Часова мітка: </span>
+                    <span className="text-slate-500">{t("factbook_meta_time")} </span>
                     <span className="text-slate-200">
                       {lightboxPiece.exif_meta?.timestamp || lightboxPiece.date_faits}
                     </span>
                   </div>
                   <div>
-                    <span className="text-slate-500">Координати GPS: </span>
+                    <span className="text-slate-500">{t("factbook_meta_gps")} </span>
                     <span className="text-emerald-400 font-bold">
                       {lightboxPiece.exif_meta?.gps || "46.5197° N, 6.6323° E"}
                     </span>
                   </div>
                   <div>
-                    <span className="text-slate-500">Світлочутливість ISO: </span>
+                    <span className="text-slate-500">{t("factbook_meta_iso")} </span>
                     <span className="text-slate-200">
                       ISO {lightboxPiece.exif_meta?.iso || 64}
                     </span>
                   </div>
                   <div>
-                    <span className="text-slate-500">Діафрагма: </span>
+                    <span className="text-slate-500">{t("factbook_meta_aperture")} </span>
                     <span className="text-slate-200">
                       {lightboxPiece.exif_meta?.aperture || "f/1.78, 1/120s"}
                     </span>
@@ -1476,24 +1530,33 @@ export const EvidenceFactbook: React.FC<EvidenceFactbookProps> = ({ currentLang 
                 {/* Corroboration / Alibi Callout */}
                 <div className="p-2.5 bg-emerald-950/40 border border-emerald-600/50 rounded-lg text-[11px] leading-relaxed">
                   <span className="text-emerald-300 font-bold block mb-1">
-                    ✓ Верифікація об'єктивного алібі :
+                    {t("factbook_alibi_verification_label")}
                   </span>
                   <p className="text-emerald-200/90 font-sans text-[11px]">
-                    {lightboxPiece.exif_meta?.alibi_verification ||
-                      "Присутність, засвідчена метаданими EXIF/GPS, спростовує заяви про напад та доводить склад ст. 303 КК (завідомо неправдивий донос)."}
+                    {resolveLocalized(lightboxPiece.exif_meta?.alibi_verification, currentLang) ||
+                      (currentLang === 'uk'
+                        ? "Присутність, засвідчена метаданими EXIF/GPS, спростовує заяви про напад та доводить склад ст. 303 КК (завідомо неправдивий донос)."
+                        : currentLang === 'fr'
+                        ? "La présence prouvée par les métadonnées EXIF/GPS réfute catégoriquement l'agression prétendue et établit le dol de l'Art. 303 CP (dénonciation calomnieuse)."
+                        : currentLang === 'de'
+                        ? "Die durch EXIF/GPS belegte Anwesenheit widerlegt die angebliche Aggression und erfüllt den Tatbestand von Art. 303 StGB."
+                        : currentLang === 'it'
+                        ? "La presenza attestata dai metadati EXIF/GPS smentisce l'aggressione asserita e dimostra il reato di cui all'Art. 303 CP (calunnia)."
+                        : "Presence certified by EXIF/GPS conclusively disproves assault allegations and establishes Art. 303 CP malicious false report.")}
                   </p>
                 </div>
 
                 {/* Verified SHA-256 Seal */}
                 <div className="pt-2 border-t border-slate-800">
                   <span className="text-[10px] text-slate-500 block mb-0.5">
-                    Криптографічний підпис SHA-256 :
+                    {t("factbook_sha256_hash")}
                   </span>
                   <div className="p-1.5 bg-slate-900 border border-slate-800 rounded break-all text-[9px] text-slate-300 select-all">
                     {lightboxPiece.sha256}
                   </div>
                 </div>
               </div>
+
             </div>
           </div>
         </div>

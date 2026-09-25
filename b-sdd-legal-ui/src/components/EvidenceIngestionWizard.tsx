@@ -900,7 +900,17 @@ export const EvidenceIngestionWizard: React.FC<EvidenceIngestionWizardProps> = (
                   ) : (
                     <>
                       <Sparkles className="w-4 h-4 text-amber-300" />
-                      <span>Запустити ШІ-кваліфікацію доказу</span>
+                      <span>
+                        {currentLang === "uk"
+                          ? "Запустити ШІ-кваліфікацію доказу"
+                          : currentLang === "fr"
+                          ? "Lancer la qualification IA de la pièce"
+                          : currentLang === "de"
+                          ? "KI-Qualifikation des Beweismittels starten"
+                          : currentLang === "it"
+                          ? "Avvia qualificazione IA del reperto"
+                          : "Launch AI Evidence Qualification"}
+                      </span>
                       <ChevronRight className="w-4 h-4" />
                     </>
                   )}
@@ -922,13 +932,33 @@ export const EvidenceIngestionWizard: React.FC<EvidenceIngestionWizardProps> = (
                   </div>
                   <div>
                     <h3 className="text-sm sm:text-base font-bold text-slate-100">
-                      {qualification.titre[currentLang]}
+                      {qualification.titre[currentLang] || qualification.titre['fr'] || qualification.titre['uk']}
                     </h3>
                     <p className="text-xs text-slate-400 font-mono flex items-center space-x-2 mt-0.5">
-                      <span>Категорія: {qualification.categorie}</span>
+                      <span>
+                        {currentLang === "uk"
+                          ? "Категорія: "
+                          : currentLang === "fr"
+                          ? "Catégorie : "
+                          : currentLang === "de"
+                          ? "Kategorie: "
+                          : currentLang === "it"
+                          ? "Categoria: "
+                          : "Category: "}
+                        {qualification.categorie}
+                      </span>
                       <span>·</span>
                       <span className="text-emerald-400">
-                        Точність: {qualification.confidence_score}%
+                        {currentLang === "uk"
+                          ? "Точність: "
+                          : currentLang === "fr"
+                          ? "Indice de confiance : "
+                          : currentLang === "de"
+                          ? "Genauigkeit: "
+                          : currentLang === "it"
+                          ? "Accuratezza: "
+                          : "Confidence: "}
+                        {qualification.confidence_score}%
                       </span>
                     </p>
                   </div>
@@ -940,14 +970,34 @@ export const EvidenceIngestionWizard: React.FC<EvidenceIngestionWizardProps> = (
                     className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-xs font-semibold flex items-center space-x-1.5 shadow-md"
                   >
                     <MessageSquare className="w-3.5 h-3.5" />
-                    <span>Діалог з ШІ-юристом</span>
+                    <span>
+                      {currentLang === "uk"
+                        ? "Діалог з ШІ-юристом"
+                        : currentLang === "fr"
+                        ? "Dialogue avec juriste IA"
+                        : currentLang === "de"
+                        ? "Dialog mit KI-Jurist"
+                        : currentLang === "it"
+                        ? "Dialogo con giurista IA"
+                        : "Chat with Legal AI"}
+                    </span>
                   </button>
                   <button
                     onClick={handleFinalCommit}
                     className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-xs font-semibold flex items-center space-x-1.5 shadow-md"
                   >
                     <ShieldCheck className="w-3.5 h-3.5" />
-                    <span>Затвердити & WORM Seal</span>
+                    <span>
+                      {currentLang === "uk"
+                        ? "Затвердити & WORM Seal"
+                        : currentLang === "fr"
+                        ? "Valider & Sceau WORM"
+                        : currentLang === "de"
+                        ? "Genehmigen & WORM-Siegel"
+                        : currentLang === "it"
+                        ? "Conferma & Sigillo WORM"
+                        : "Approve & WORM Seal"}
+                    </span>
                   </button>
                 </div>
               </div>
@@ -958,7 +1008,15 @@ export const EvidenceIngestionWizard: React.FC<EvidenceIngestionWizardProps> = (
                 <div className="bg-[#070B14] p-4 rounded-xl border border-slate-800 space-y-3">
                   <div>
                     <span className="text-[10px] font-mono uppercase text-amber-400 font-bold block mb-1">
-                      Кваліфіковані норми закону (Швейцарія / Во) :
+                      {currentLang === "uk"
+                        ? "Кваліфіковані норми закону (Швейцарія / Во) :"
+                        : currentLang === "fr"
+                        ? "Normes légales qualifiées (Suisse / Vaud) :"
+                        : currentLang === "de"
+                        ? "Qualifizierte Rechtsnormen (Schweiz / Waadt) :"
+                        : currentLang === "it"
+                        ? "Norme di legge qualificate (Svizzera / Vaud) :"
+                        : "Applicable Legal Rules (CH / Vaud) :"}
                     </span>
                     <div className="flex flex-wrap gap-1.5">
                       {qualification.articles_applicable.map((art) => (
@@ -974,25 +1032,51 @@ export const EvidenceIngestionWizard: React.FC<EvidenceIngestionWizardProps> = (
 
                   <div>
                     <span className="text-[10px] font-mono uppercase text-indigo-400 font-bold block mb-1">
-                      Доказове значення (Portée Probatoire) :
+                      {currentLang === "uk"
+                        ? "Доказове значення (Portée Probatoire) :"
+                        : currentLang === "fr"
+                        ? "Portée probatoire :"
+                        : currentLang === "de"
+                        ? "Beweiskraft (Portée Probatoire) :"
+                        : currentLang === "it"
+                        ? "Portata probatoria :"
+                        : "Probative Value :"}
                     </span>
                     <p className="text-xs text-slate-200 leading-relaxed">
-                      {qualification.portee_probatoire[currentLang]}
+                      {qualification.portee_probatoire[currentLang] || qualification.portee_probatoire['fr'] || qualification.portee_probatoire['uk']}
                     </p>
                   </div>
 
                   <div>
                     <span className="text-[10px] font-mono uppercase text-emerald-400 font-bold block mb-1">
-                      Процесуальна допустимість :
+                      {currentLang === "uk"
+                        ? "Процесуальна допустимість :"
+                        : currentLang === "fr"
+                        ? "Admissibilité procédurale :"
+                        : currentLang === "de"
+                        ? "Zulässigkeitsprüfung :"
+                        : currentLang === "it"
+                        ? "Ammissibilità procedurale :"
+                        : "Procedural Admissibility :"}
                     </span>
                     <p className="text-xs text-emerald-200 font-mono">
-                      {qualification.admissibilite[currentLang]}
+                      {qualification.admissibilite[currentLang] || qualification.admissibilite['fr'] || qualification.admissibilite['uk']}
                     </p>
                   </div>
 
                   {qualification.financial_impact_chf && (
                     <div className="p-2.5 bg-amber-950/30 border border-amber-500/40 rounded-lg text-xs font-mono text-amber-300 flex items-center justify-between">
-                      <span>Вплив на суму арешту (ст. 263 КПК) :</span>
+                      <span>
+                        {currentLang === "uk"
+                          ? "Вплив на суму арешту (ст. 263 КПК) :"
+                          : currentLang === "fr"
+                          ? "Impact sur la saisie (Art. 263 CPP) :"
+                          : currentLang === "de"
+                          ? "Auswirkung auf Beschlagnahme (Art. 263 StPO) :"
+                          : currentLang === "it"
+                          ? "Impatto sul sequestro (Art. 263 CPP) :"
+                          : "Sequestration impact (Art. 263 CPC) :"}
+                      </span>
                       <strong className="text-white">
                         + CHF {qualification.financial_impact_chf.toLocaleString()}.00
                       </strong>
@@ -1005,7 +1089,17 @@ export const EvidenceIngestionWizard: React.FC<EvidenceIngestionWizardProps> = (
                   <div className="flex items-center justify-between border-b border-slate-800 pb-2">
                     <span className="text-xs font-mono text-blue-400 font-bold flex items-center space-x-1.5">
                       <Layers className="w-3.5 h-3.5" />
-                      <span>Зв'язки MemPalace (KùzuDB Graph) :</span>
+                      <span>
+                        {currentLang === "uk"
+                          ? "Зв'язки MemPalace (KùzuDB Graph) :"
+                          : currentLang === "fr"
+                          ? "Connexions MemPalace (Graphe KùzuDB) :"
+                          : currentLang === "de"
+                          ? "MemPalace-Verknüpfungen (KùzuDB Graph) :"
+                          : currentLang === "it"
+                          ? "Connessioni MemPalace (Grafo KùzuDB) :"
+                          : "MemPalace Links (KùzuDB Graph) :"}
+                      </span>
                     </span>
                     <span className="text-[10px] font-mono text-emerald-400">
                       $T_v$: {qualification.valid_time}
@@ -1031,7 +1125,25 @@ export const EvidenceIngestionWizard: React.FC<EvidenceIngestionWizardProps> = (
                                 : "bg-emerald-900 text-emerald-200"
                             }`}
                           >
-                            {m.correlation === "refutes" ? "Спростовує наклеп" : "Підтверджує"}
+                            {m.correlation === "refutes"
+                              ? currentLang === "uk"
+                                ? "Спростовує наклеп"
+                                : currentLang === "fr"
+                                ? "Réfute la calomnie"
+                                : currentLang === "de"
+                                ? "Widerlegt Verleumdung"
+                                : currentLang === "it"
+                                ? "Confuta calunnia"
+                                : "Refutes calumny"
+                              : currentLang === "uk"
+                              ? "Підтверджує"
+                              : currentLang === "fr"
+                              ? "Corrobore"
+                              : currentLang === "de"
+                              ? "Bestätigt"
+                              : currentLang === "it"
+                              ? "Conferma"
+                              : "Corroborates"}
                           </span>
                         </div>
                         <p className="text-[11px] text-slate-300 font-sans leading-relaxed">
@@ -1043,7 +1155,17 @@ export const EvidenceIngestionWizard: React.FC<EvidenceIngestionWizardProps> = (
 
                   {/* Certified SHA-256 Seal Box */}
                   <div className="p-2.5 bg-[#050810] rounded-lg border border-slate-800 font-mono text-[10px]">
-                    <span className="text-slate-400 block mb-0.5">Криптографічний хеш SHA-256 :</span>
+                    <span className="text-slate-400 block mb-0.5">
+                      {currentLang === "uk"
+                        ? "Криптографічний хеш SHA-256 :"
+                        : currentLang === "fr"
+                        ? "Empreinte cryptographique SHA-256 :"
+                        : currentLang === "de"
+                        ? "Kryptografischer SHA-256-Hash :"
+                        : currentLang === "it"
+                        ? "Hash crittografico SHA-256 :"
+                        : "Cryptographic SHA-256 Hash :"}
+                    </span>
                     <span className="text-emerald-400 break-all select-all font-bold">
                       {fileSha256}
                     </span>
@@ -1057,7 +1179,15 @@ export const EvidenceIngestionWizard: React.FC<EvidenceIngestionWizardProps> = (
                   onClick={() => setCurrentStep(1)}
                   className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-xs"
                 >
-                  ← Змінити джерело
+                  {currentLang === "uk"
+                    ? "← Змінити джерело"
+                    : currentLang === "fr"
+                    ? "← Modifier la source"
+                    : currentLang === "de"
+                    ? "← Quelle ändern"
+                    : currentLang === "it"
+                    ? "← Modifica fonte"
+                    : "← Change source"}
                 </button>
 
                 <div className="flex space-x-2">
@@ -1065,7 +1195,17 @@ export const EvidenceIngestionWizard: React.FC<EvidenceIngestionWizardProps> = (
                     onClick={() => setCurrentStep(3)}
                     className="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-bold flex items-center space-x-1.5 shadow-md"
                   >
-                    <span>Перейти до чату з ШІ-юристом</span>
+                    <span>
+                      {currentLang === "uk"
+                        ? "Перейти до чату з ШІ-юристом"
+                        : currentLang === "fr"
+                        ? "Accéder au chat avec le juriste IA"
+                        : currentLang === "de"
+                        ? "Weiter zum Chat mit KI-Jurist"
+                        : currentLang === "it"
+                        ? "Vai alla chat con giurista IA"
+                        : "Proceed to Legal AI Chat"}
+                    </span>
                     <ArrowRight className="w-3.5 h-3.5" />
                   </button>
                 </div>
@@ -1086,13 +1226,21 @@ export const EvidenceIngestionWizard: React.FC<EvidenceIngestionWizardProps> = (
                       {qualification.cote}
                     </span>
                     <h4 className="text-sm font-bold text-slate-100 mt-2">
-                      {qualification.titre[currentLang]}
+                      {qualification.titre[currentLang] || qualification.titre['fr'] || qualification.titre['uk']}
                     </h4>
                   </div>
 
                   <div>
                     <label className="text-[10px] font-mono text-slate-400 block mb-1">
-                      Статті кваліфікації :
+                      {currentLang === "uk"
+                        ? "Статті кваліфікації :"
+                        : currentLang === "fr"
+                        ? "Articles applicables :"
+                        : currentLang === "de"
+                        ? "Anwendbare Gesetzesartikel :"
+                        : currentLang === "it"
+                        ? "Articoli applicabili :"
+                        : "Applicable Articles :"}
                     </label>
                     <div className="flex flex-wrap gap-1">
                       {qualification.articles_applicable.map((art) => (
@@ -1108,7 +1256,15 @@ export const EvidenceIngestionWizard: React.FC<EvidenceIngestionWizardProps> = (
 
                   <div>
                     <label className="text-[10px] font-mono text-slate-400 block mb-1">
-                      Рекомендована дія у процесі :
+                      {currentLang === "uk"
+                        ? "Рекомендована дія у процесі :"
+                        : currentLang === "fr"
+                        ? "Action procédurale recommandée :"
+                        : currentLang === "de"
+                        ? "Empfohlene Verfahrenshandlung :"
+                        : currentLang === "it"
+                        ? "Azione procedurale raccomandata :"
+                        : "Recommended Procedural Action :"}
                     </label>
                     <p className="text-xs text-emerald-300 font-mono bg-emerald-950/30 p-2 rounded border border-emerald-800/40">
                       {qualification.procedural_action}
@@ -1127,7 +1283,17 @@ export const EvidenceIngestionWizard: React.FC<EvidenceIngestionWizardProps> = (
                     className="w-full py-3 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold flex items-center justify-center space-x-2 shadow-lg shadow-emerald-600/30 transition-all"
                   >
                     <ShieldCheck className="w-4 h-4" />
-                    <span>Затвердити та запечатати у WORM</span>
+                    <span>
+                      {currentLang === "uk"
+                        ? "Затвердити та запечатати у WORM"
+                        : currentLang === "fr"
+                        ? "Valider et sceller dans WORM"
+                        : currentLang === "de"
+                        ? "Bestätigen und in WORM versiegeln"
+                        : currentLang === "it"
+                        ? "Conferma e sigilla in WORM"
+                        : "Approve and seal in WORM"}
+                    </span>
                   </button>
                 </div>
               </div>
@@ -1139,7 +1305,15 @@ export const EvidenceIngestionWizard: React.FC<EvidenceIngestionWizardProps> = (
                   <div className="flex items-center space-x-2">
                     <Brain className="w-4 h-4 text-blue-400" />
                     <span className="text-xs font-bold text-slate-200">
-                      Діалог з ШІ-юристом (Human-in-the-Loop)
+                      {currentLang === "uk"
+                        ? "Діалог з ШІ-юристом (Human-in-the-Loop)"
+                        : currentLang === "fr"
+                        ? "Dialogue avec juriste IA (Human-in-the-Loop)"
+                        : currentLang === "de"
+                        ? "Dialog mit KI-Jurist (Human-in-the-Loop)"
+                        : currentLang === "it"
+                        ? "Dialogo con giurista IA (Human-in-the-Loop)"
+                        : "Legal AI Copilot (Human-in-the-Loop)"}
                     </span>
                   </div>
                   <span className="text-[10px] font-mono text-emerald-400">
@@ -1166,7 +1340,26 @@ export const EvidenceIngestionWizard: React.FC<EvidenceIngestionWizardProps> = (
                         <p className="whitespace-pre-line">{m.text}</p>
                       </div>
                       <span className="text-[9px] text-slate-500 font-mono mt-0.5 px-1">
-                        {m.sender === "lawyer" ? "Адвокат" : "ШІ-юрист"} · {m.timestamp}
+                        {m.sender === "lawyer"
+                          ? currentLang === "uk"
+                            ? "Адвокат"
+                            : currentLang === "fr"
+                            ? "Avocat"
+                            : currentLang === "de"
+                            ? "Anwalt"
+                            : currentLang === "it"
+                            ? "Avvocato"
+                            : "Counsel"
+                          : currentLang === "uk"
+                          ? "ШІ-юрист"
+                          : currentLang === "fr"
+                          ? "Juriste IA"
+                          : currentLang === "de"
+                          ? "KI-Jurist"
+                          : currentLang === "it"
+                          ? "Giurista IA"
+                          : "Legal AI"}{" "}
+                        · {m.timestamp}
                       </span>
                     </div>
                   ))}
@@ -1176,22 +1369,22 @@ export const EvidenceIngestionWizard: React.FC<EvidenceIngestionWizardProps> = (
                 {/* Fast Suggestions Prompts */}
                 <div className="px-3 py-1.5 bg-[#050810] border-t border-slate-800/80 flex items-center space-x-1.5 overflow-x-auto text-[10px] font-mono text-slate-300">
                   <button
-                    onClick={() => setChatInput("Чи підпадає діяння під ст. 181 КК (примус)?")}
+                    onClick={() => setChatInput(currentLang === 'fr' ? "L'acte tombe-t-il sous l'Art. 181 CP (contrainte) ?" : "Чи підпадає діяння під ст. 181 КК (примус)?")}
                     className="px-2 py-0.5 bg-slate-800 hover:bg-slate-700 rounded border border-slate-700 shrink-0"
                   >
-                    + Перевірити ст. 181 КК
+                    + {currentLang === 'fr' ? "Art. 181 CP" : currentLang === 'de' ? "Art. 181 StGB" : currentLang === 'it' ? "Art. 181 CP" : "ст. 181 КК"}
                   </button>
                   <button
-                    onClick={() => setChatInput("Які контраргументи може надати захист?")}
+                    onClick={() => setChatInput(currentLang === 'fr' ? "Quels contre-arguments la défense peut-elle soulever ?" : "Які контраргументи може надати захист?")}
                     className="px-2 py-0.5 bg-slate-800 hover:bg-slate-700 rounded border border-slate-700 shrink-0"
                   >
-                    + Заперечення захисту
+                    + {currentLang === 'fr' ? "Objections défense" : currentLang === 'de' ? "Einwände Verteidigung" : currentLang === 'it' ? "Obiezioni difesa" : "Заперечення захисту"}
                   </button>
                   <button
-                    onClick={() => setChatInput("Сформулюй 3 запитання для допиту")}
+                    onClick={() => setChatInput(currentLang === 'fr' ? "Formule 3 questions pour l'audition contradictoire" : "Сформулюй 3 запитання для допиту")}
                     className="px-2 py-0.5 bg-slate-800 hover:bg-slate-700 rounded border border-slate-700 shrink-0"
                   >
-                    + Питання на очну ставку
+                    + {currentLang === 'fr' ? "Questions audition" : currentLang === 'de' ? "Einvernahmefragen" : currentLang === 'it' ? "Domande audizione" : "Питання на очну ставку"}
                   </button>
                 </div>
 
@@ -1202,7 +1395,17 @@ export const EvidenceIngestionWizard: React.FC<EvidenceIngestionWizardProps> = (
                     value={chatInput}
                     onChange={(e) => setChatInput(e.target.value)}
                     onKeyDown={(e) => e.key === "Enter" && handleSendChatMessage()}
-                    placeholder="Напишіть запитання або вказівку ШІ-юристу..."
+                    placeholder={
+                      currentLang === "uk"
+                        ? "Напишіть запитання або вказівку ШІ-юристу..."
+                        : currentLang === "fr"
+                        ? "Posez une question ou donnez une instruction au juriste IA..."
+                        : currentLang === "de"
+                        ? "Stellen Sie eine Frage oder Anweisung an den KI-Juristen..."
+                        : currentLang === "it"
+                        ? "Scrivi una domanda o un'istruzione per il giurista IA..."
+                        : "Ask a question or provide instructions to the Legal AI..."
+                    }
                     className="flex-1 bg-[#0D1526] border border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-blue-500"
                   />
                   <button
