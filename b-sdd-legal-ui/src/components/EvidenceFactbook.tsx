@@ -32,6 +32,8 @@ import {
   FolderArchive,
   Layers,
   Sparkles,
+  Scale,
+  Database,
 } from "lucide-react";
 import { SupportedLanguage } from "../types/i18n";
 import {
@@ -39,6 +41,8 @@ import {
   BordereauPiece,
   resolveLocalized,
 } from "../data/legalData";
+import { EvidenceIngestionWizard } from "./EvidenceIngestionWizard";
+import { SwissCodesModal } from "./SwissCodesModal";
 
 interface EvidenceFactbookProps {
   currentLang: SupportedLanguage;
@@ -50,6 +54,10 @@ export const EvidenceFactbook: React.FC<EvidenceFactbookProps> = ({ currentLang 
 
   // Pieces state (supports adding/removing photos and linking with Utopia DB ADRs)
   const [pieces, setPieces] = useState<BordereauPiece[]>(BORDEREAU_PIECES);
+
+  // Evidence Ingestion Wizard and Swiss Codes Modals
+  const [isWizardOpen, setIsWizardOpen] = useState(false);
+  const [isCodesModalOpen, setIsCodesModalOpen] = useState(false);
 
   // Search and filter state
   const [searchQuery, setSearchQuery] = useState("");
@@ -335,6 +343,12 @@ export const EvidenceFactbook: React.FC<EvidenceFactbookProps> = ({ currentLang 
     return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
   };
 
+  const handleCommitNewEvidence = (newPiece: BordereauPiece) => {
+    setPieces((prev) => [newPiece, ...prev]);
+    setSelectedPiece(newPiece);
+    setActiveMode("factbook");
+  };
+
   return (
     <div className="h-full w-full flex flex-col bg-[#080C14] text-slate-100 overflow-hidden select-text">
       {/* Hidden File Input for Card Attachments */}
@@ -349,6 +363,28 @@ export const EvidenceFactbook: React.FC<EvidenceFactbookProps> = ({ currentLang 
       {/* TOP NAVIGATION / MODE SWITCHER BAR */}
       <div className="bg-[#0B1120] border-b border-slate-800/90 px-3 py-2 flex flex-wrap items-center justify-between gap-2 shrink-0">
         <div className="flex items-center space-x-1.5 overflow-x-auto no-scrollbar">
+          {/* AI Evidence Ingestion Wizard Button */}
+          <button
+            onClick={() => setIsWizardOpen(true)}
+            className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white shadow-[0_0_12px_rgba(79,70,229,0.35)] shrink-0"
+            title="Майстер додавання та юридичної кваліфікації доказів з Google Docs або файлів"
+          >
+            <Sparkles className="w-3.5 h-3.5 text-amber-300 animate-pulse" />
+            <span>+ Додати доказ (ШІ)</span>
+          </button>
+
+          {/* Swiss Codes & Cantonal Law Button */}
+          <button
+            onClick={() => setIsCodesModalOpen(true)}
+            className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/40 text-amber-300 shrink-0"
+            title="База законів, кодексів Швейцарії (CP, CPP, CC, CO) та законодавство кантону Во"
+          >
+            <Scale className="w-3.5 h-3.5 text-amber-400" />
+            <span>⚖️ Кодекси CH/VD</span>
+          </button>
+
+          <div className="h-4 w-px bg-slate-800 mx-1 shrink-0" />
+
           <button
             onClick={() => setActiveMode("factbook")}
             className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all shrink-0 ${
@@ -1410,6 +1446,22 @@ export const EvidenceFactbook: React.FC<EvidenceFactbookProps> = ({ currentLang 
           </div>
         </div>
       )}
+
+      {/* AI EVIDENCE INGESTION & QUALIFICATION WIZARD */}
+      <EvidenceIngestionWizard
+        isOpen={isWizardOpen}
+        onClose={() => setIsWizardOpen(false)}
+        currentLang={currentLang}
+        onCommitEvidence={handleCommitNewEvidence}
+        existingPiecesCount={pieces.length}
+      />
+
+      {/* SWISS LAWS & CANTONAL VAUD CODES MODAL */}
+      <SwissCodesModal
+        isOpen={isCodesModalOpen}
+        onClose={() => setIsCodesModalOpen(false)}
+        currentLang={currentLang}
+      />
     </div>
   );
 };

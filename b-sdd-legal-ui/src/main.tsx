@@ -124,31 +124,61 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
   }
 }
 
+// Global error UI renderer
+function renderFatalError(message: string, stack?: string) {
+  const root = document.getElementById("root") || document.body;
+  root.innerHTML = `
+    <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;background:#070B12;color:#F8FAFC;font-family:system-ui,-apple-system,sans-serif;padding:24px;text-align:center;">
+      <div style="max-width:600px;width:100%;background:#0F172A;border:1px solid #E11D48;border-radius:12px;padding:24px;box-shadow:0 20px 40px rgba(0,0,0,0.8);">
+        <div style="display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:12px;">
+          <span style="font-size:22px;">⚠️</span>
+          <h2 style="color:#F43F5E;font-size:18px;margin:0;font-weight:bold;">Помилка запуску Astryx Legal Cockpit</h2>
+        </div>
+        <p style="color:#94A3B8;font-size:13px;margin:0 0 16px 0;line-height:1.5;">
+          Виникла помилка під час ініціалізації середовища або відтворення інтерфейсу:
+        </p>
+        <div style="background:#05080E;border:1px solid #1E293B;border-radius:6px;padding:12px;font-family:monospace;font-size:12px;color:#FCA5A5;overflow-x:auto;margin-bottom:16px;text-align:left;white-space:pre-wrap;max-height:180px;">
+          ${message}
+          ${stack ? `\n\n${stack}` : ""}
+        </div>
+        <button onclick="try{localStorage.clear();sessionStorage.clear();}catch(e){}location.reload();" style="background:#2563EB;color:#FFF;border:none;padding:10px 20px;border-radius:6px;cursor:pointer;font-size:13px;font-weight:bold;font-family:sans-serif;">
+          Очистити кеш та перезавантажити
+        </button>
+      </div>
+    </div>
+  `;
+}
+
 // Global window error listener for non-React uncaught script errors
 window.addEventListener("error", (event) => {
-  console.error("Global uncaught error:", event.error);
+  console.error("Global uncaught error:", event.error || event.message);
+  // Only render if root has no valid app rendered
   const root = document.getElementById("root");
-  if (root && root.children.length === 0) {
-    root.innerHTML = `
-      <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;background:#070B12;color:#F8FAFC;font-family:sans-serif;padding:24px;text-align:center;">
-        <h2 style="color:#F43F5E;font-size:18px;margin-bottom:8px;">Erreur de chargement du Cockpit Avocat</h2>
-        <p style="color:#94A3B8;font-size:13px;max-width:500px;margin-bottom:16px;">${event.error?.message || "Erreur d'initialisation"}</p>
-        <button onclick="localStorage.clear();location.reload();" style="background:#141E34;color:#F59E0B;border:1px solid rgba(245,158,11,0.5);padding:8px 16px;border-radius:4px;cursor:pointer;font-family:monospace;font-weight:bold;">Réinitialiser et recharger</button>
-      </div>
-    `;
+  if (!root || !root.querySelector("header")) {
+    renderFatalError(event.error?.message || event.message || "Erreur d'initialisation du script", event.error?.stack);
   }
 });
 
-function mountApp() {
-  let rootElement = document.getElementById("root");
-  if (!rootElement) {
-    rootElement = document.createElement("div");
-    rootElement.id = "root";
-    rootElement.className = "h-full w-full";
-    document.body.appendChild(rootElement);
-  }
+window.addEventListener("unhandledrejection", (event) => {
+  console.error("Unhandled Promise Rejection:", event.reason);
+});
 
+function mountApp() {
   try {
+    let rootElement = document.getElementById("root");
+    if (!rootElement) {
+      rootElement = document.createElement("div");
+      rootElement.id = "root";
+      rootElement.className = "h-full w-full";
+      document.body.appendChild(rootElement);
+    }
+
+    // Clean up initial static loader before React creates root
+    const loader = document.getElementById("app-initial-loader");
+    if (loader && loader.parentNode === rootElement) {
+      loader.remove();
+    }
+
     const root = ReactDOM.createRoot(rootElement);
     root.render(
       <ErrorBoundary>
@@ -157,15 +187,7 @@ function mountApp() {
     );
   } catch (err: any) {
     console.error("Fatal mounting error:", err);
-    if (rootElement) {
-      rootElement.innerHTML = `
-        <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;background:#070B12;color:#F8FAFC;font-family:sans-serif;padding:24px;text-align:center;">
-          <h2 style="color:#F43F5E;font-size:18px;margin-bottom:8px;">Помилка монтування інтерфейсу</h2>
-          <p style="color:#94A3B8;font-size:13px;max-width:500px;margin-bottom:16px;">${err?.message || "Fatal error"}</p>
-          <button onclick="localStorage.clear();location.reload();" style="background:#2563EB;color:#FFF;border:none;padding:8px 16px;border-radius:4px;cursor:pointer;font-family:sans-serif;font-weight:bold;">Перезавантажити</button>
-        </div>
-      `;
-    }
+    renderFatalError(err?.message || "Fatal error during ReactDOM mount", err?.stack);
   }
 }
 

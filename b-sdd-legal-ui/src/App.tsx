@@ -7,19 +7,31 @@ import { WormLedgerView } from "./components/WormLedgerView";
 import { LegalInspector } from "./components/LegalInspector";
 import { ActionDock } from "./components/ActionDock";
 import { GlossaryModal } from "./components/GlossaryModal";
-import { SupportedLanguage } from "./types/i18n";
+import { SwissCodesModal } from "./components/SwissCodesModal";
+import { EvidenceIngestionWizard } from "./components/EvidenceIngestionWizard";
+import { SettingsModal } from "./components/SettingsModal";
+import { SupportedLanguage, AppSettings, TranslationOverrides } from "./types/i18n";
+import { loadAppSettings, loadOverrides } from "./lib/translator";
 import { commitAtomicSupersession } from "./lib/wormLedger";
+import { BordereauPiece, BORDEREAU_PIECES, resolveLocalized } from "./data/legalData";
 import { CheckCircle2, BookOpen, Send, X, ShieldCheck } from "lucide-react";
 
 export default function App() {
-  const [currentTab, setCurrentTab] = useState<WorkspaceTab>("kindle_review");
+  const [currentTab, setCurrentTab] = useState<WorkspaceTab>("factbook");
   const [currentLang, setCurrentLang] = useState<SupportedLanguage>("uk");
+
+  // Settings & Overrides
+  const [settings, setSettings] = useState<AppSettings>(() => loadAppSettings());
+  const [overrides, setOverrides] = useState<TranslationOverrides>(() => loadOverrides());
+  const [settingsModalOpen, setSettingsModalOpen] = useState(false);
 
   // Loading & toast states
   const [isRecompiling, setIsRecompiling] = useState(false);
   const [isSealing, setIsSealing] = useState(false);
   const [isSendingKindle, setIsSendingKindle] = useState(false);
   const [glossaryModalOpen, setGlossaryModalOpen] = useState(false);
+  const [swissCodesModalOpen, setSwissCodesModalOpen] = useState(false);
+  const [evidenceWizardOpen, setEvidenceWizardOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState<{
     title: string;
     description: string;
@@ -102,6 +114,9 @@ export default function App() {
         onLockSession={handleLockSession}
         isRecompiling={isRecompiling}
         onOpenGlossary={() => setGlossaryModalOpen(true)}
+        onOpenEvidenceWizard={() => setEvidenceWizardOpen(true)}
+        onOpenSwissCodes={() => setSwissCodesModalOpen(true)}
+        onOpenSettings={() => setSettingsModalOpen(true)}
         mobileTab={mobileTab}
         onMobileTabChange={setMobileTab}
       />
@@ -242,6 +257,48 @@ export default function App() {
       <GlossaryModal
         isOpen={glossaryModalOpen}
         onClose={() => setGlossaryModalOpen(false)}
+        currentLang={currentLang}
+      />
+
+      {/* SWISS LAWS & CANTONAL VAUD CODES MODAL */}
+      <SwissCodesModal
+        isOpen={swissCodesModalOpen}
+        onClose={() => setSwissCodesModalOpen(false)}
+        currentLang={currentLang}
+      />
+
+      {/* AI EVIDENCE INGESTION & QUALIFICATION WIZARD */}
+      <EvidenceIngestionWizard
+        isOpen={evidenceWizardOpen}
+        onClose={() => setEvidenceWizardOpen(false)}
+        currentLang={currentLang}
+        onCommitEvidence={(newPiece) => {
+          setCurrentTab("factbook");
+          showToast(
+            currentLang === "uk" ? "Доказ кваліфіковано & WORM зафіксовано" : "Preuve Qualifiée & Scellée WORM",
+            `${newPiece.cote}: ${resolveLocalized(newPiece.titre, currentLang)}`
+          );
+        }}
+        existingPiecesCount={BORDEREAU_PIECES.length}
+      />
+
+      {/* SETTINGS MODAL */}
+      <SettingsModal
+        isOpen={settingsModalOpen}
+        onClose={() => setSettingsModalOpen(false)}
+        settings={settings}
+        onSaveSettings={(newSettings) => {
+          setSettings(newSettings);
+          setCurrentLang(newSettings.language);
+          showToast(
+            currentLang === "uk" ? "Налаштування збережено" : "Paramètres enregistrés",
+            currentLang === "uk"
+              ? "Конфігурацію ШІ-агента та базу кодексів успішно оновлено"
+              : "Configuration de l'agent IA et corpus légal mis à jour"
+          );
+        }}
+        overrides={overrides}
+        onOverridesChange={setOverrides}
         currentLang={currentLang}
       />
     </div>

@@ -1,9 +1,10 @@
 # B-SDD Legal Advocate Cockpit: Architecture & System Specification
 
-> **Version:** 1.0.0 (Open-Source Architecture Release)  
+> **Version:** 2.5.0 (Sovereign AI & Corpus Management Release)  
 > **Framework:** B-SDD (Bitemporal Spec-Driven Development)  
-> **Protocols:** Model Context Protocol (MCP 2024-11-05 SSE & Streamable HTTP), JSON-RPC 2.0  
-> **User Interface:** Astryx Design System React SPA (Cloudflare Pages)
+> **Protocols:** Model Context Protocol (MCP 2024-11-05 SSE & Streamable HTTP), OpenAI REST Protocol, JSON-RPC 2.0  
+> **User Interface:** Astryx Design System React 19 SPA (Cloudflare Pages / Container Port 3000)  
+> **Documentation:** [User Guide](USER_GUIDE.md) · [Developer Guide](DEVELOPER_GUIDE.md) · [Feedback Loops](FEEDBACK_LOOP_SPEC.md)
 
 ---
 

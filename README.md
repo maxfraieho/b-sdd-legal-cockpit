@@ -2,10 +2,21 @@
 ### Sovereign AI Pair-Programming & Decision Architecture for Legal Practice
 
 [![B-SDD Invariants](https://img.shields.io/badge/B--SDD-Invariants%20Verified-emerald?style=flat-square)](docs/ARCHITECTURE.md)
+[![User Guide](https://img.shields.io/badge/Documentation-User%20Guide-blue?style=flat-square)](docs/USER_GUIDE.md)
+[![Developer Guide](https://img.shields.io/badge/Documentation-Developer%20Guide-purple?style=flat-square)](docs/DEVELOPER_GUIDE.md)
 [![Model Context Protocol](https://img.shields.io/badge/MCP-2024--11--05%20SSE-blue?style=flat-square)](https://modelcontextprotocol.io)
 [![Cloudflare Pages](https://img.shields.io/badge/Cloudflare%20Pages-Live%20Deploy-orange?style=flat-square)](https://pages.cloudflare.com)
 [![License: MIT](https://img.shields.io/badge/License-MIT-purple.svg?style=flat-square)](LICENSE)
 [![Python Stdlib Core](https://img.shields.io/badge/Core-100%25%20Pure%20Python-yellow?style=flat-square)](src/legal/)
+
+---
+
+## Documentation
+
+- 📘 **[Посібник Користувача (User Guide)](docs/USER_GUIDE.md)**: Детальне керівництво для адвокатів, слідчих аналітиків та потерпілих. Охоплює роботу з речовими доказами (аудіо, EXIF фото), Майстер додавання доказів через ШІ, вибір провайдерів (проксі .184 / Gemini), управління базою кодексів та експорт на Kindle.
+- 🛠️ **[Керівництво Розробника (Developer Guide)](docs/DEVELOPER_GUIDE.md)**: Повний технічний опис архітектури B-SDD, стек React 19 + TypeScript + Tailwind 4, 30 інструментів MCP Gateway, конфігурація OpenAI-сумісного проксі та інваріанти L-01..L-05.
+- 📐 **[Архітектурна Специфікація (Architecture Spec)](docs/ARCHITECTURE.md)**: Деталі розподіленої топології вузлів, шлюзів та форматів протоколів.
+- 🔄 **[Специфікація Контурів Зворотного Зв'язку (Feedback Loops)](docs/FEEDBACK_LOOP_SPEC.md)**: 5 безперервних контурів верифікації фактів та супервайзера.
 
 ---
 
@@ -88,6 +99,21 @@ The gateway provides full coverage across legal analysis, architecture documenta
 - **Loop 3 (WORM Ledger):** Immutable audit trail recording every state transition.
 - **Loop 4 (Automated Pre-Flight Gate):** 15 unit tests executed before any deployment.
 - **Loop 5 (Human-in-the-Loop Refinement):** In-cockpit lawyer overrides for translations and notes.
+
+### 4. AI-Powered Legal Evidence Ingestion Wizard
+- **Multi-Source Ingestion**: Load exhibits from Google Docs links, local audio files (MP3/WAV/M4A), EXIF-bearing crime scene photos, or court depositions.
+- **Automated AI Qualification**: Evaluates admissibility under Swiss Federal Supreme Court jurisprudence (ATF 146 IV 9), establishes statutory elements, intent, aggravating factors, and civil sequestration damages (CHF 46'850).
+- **Human-in-the-Loop Refinement**: Advocate reviews, adjusts, and signs evidence into the permanent docket with instant SHA-256 verification.
+
+### 5. Multi-Provider AI Architecture
+- **Free Sovereign AI Proxy**: Connects to on-premise or remote OpenAI-compatible proxies (host `192.168.3.184:18880/v1`) with model slots for Qwen 2.5 72B, LLaMA 3.3 70B Instruct, and Mistral Large.
+- **Google Gemini 3.8 Cloud**: High-speed semantic analysis with `gemini-3.8-flash` and `gemini-3.8-pro` with calibrated legal temperature (0.1–0.2).
+- **100% Offline MemPalace Engine**: Graph traversal over 8'746 semantic nodes in KùzuDB and Utopia DB WORM Ledger without external network requests.
+
+### 6. Swiss Codes & Cantonal Vaud Corpus Manager
+- **Complete Statutory Coverage**: Pre-loaded with Swiss Criminal Code (CP), Criminal Procedure Code (CPP), Civil Code (CC), Code of Obligations (CO), Canton de Vaud laws (LOJV, CDPJ), and ATF rulings.
+- **Active Filter Toggles**: Toggle individual articles active or inactive to customize the AI's evidentiary evaluation criteria.
+- **JSON Import & Export**: One-click JSON backup and import of customized legal corpora.
 
 ---
 

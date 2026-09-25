@@ -82,17 +82,17 @@ export const LegalInspector: React.FC<LegalInspectorProps> = ({
   };
 
   return (
-    <aside className="h-full w-full bg-[#0B1120] flex flex-col overflow-hidden text-slate-100 select-none">
+    <aside className="h-full w-full bg-[#0B1120] flex flex-col overflow-y-auto text-slate-100">
       {/* INSPECTOR TITLE BAR */}
       <div className="h-9 bg-[#070B12] border-b border-slate-800/80 px-3 flex items-center justify-between shrink-0">
         <div className="flex items-center space-x-1.5">
           <Scale className="w-3.5 h-3.5 text-blue-400" />
           <span className="text-xs font-mono font-bold text-slate-200 uppercase tracking-wider">
-            {currentLang === 'uk' ? 'Юридичний інспектор' : 'Inspecteur Juridique (CPP)'}
+            {currentLang === 'uk' ? 'Юридичний інспектор (КПК Во)' : 'Inspecteur Juridique (CPP)'}
           </span>
         </div>
         <span className="text-[10px] font-mono text-emerald-400">
-          ● 8'746 relations
+          ● {currentLang === 'uk' ? "8'746 зв'язків" : "8'746 relations"}
         </span>
       </div>
 
@@ -105,7 +105,7 @@ export const LegalInspector: React.FC<LegalInspectorProps> = ({
           >
             <div className="flex items-center space-x-1.5 text-rose-400">
               <Clock className="w-3.5 h-3.5 animate-pulse" />
-              <span>{currentLang === 'uk' ? 'Строки оскарження (Art. 393 CPP)' : 'Délais de Recours (Art. 393 CPP)'}</span>
+              <span>{currentLang === 'uk' ? 'Строки оскарження (ст. 393 КПК Во)' : 'Délais de Recours (Art. 393 CPP)'}</span>
             </div>
             {openSection.deadlines ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
           </button>
@@ -116,37 +116,45 @@ export const LegalInspector: React.FC<LegalInspectorProps> = ({
               <div className="p-2.5 bg-rose-950/30 border border-rose-600/50 rounded-lg">
                 <div className="flex items-center justify-between mb-1.5">
                   <span className="text-[10px] font-mono font-bold text-rose-400 uppercase tracking-wider">
-                    Délai de recours strict (10 jours) :
+                    {currentLang === 'uk' ? 'Присічний строк оскарження (10 днів) :' : 'Délai de recours strict (10 jours) :'}
                   </span>
                   <span className="text-[10px] font-mono text-rose-300">
-                    Art. 396 al. 1 CPP
+                    {currentLang === 'uk' ? 'ст. 396 ч. 1 КПК' : 'Art. 396 al. 1 CPP'}
                   </span>
                 </div>
 
                 <div className="grid grid-cols-4 gap-1 text-center font-mono">
                   <div className="bg-[#070B12] p-1.5 rounded border border-rose-900/60">
                     <span className="text-base font-bold text-rose-300 tabular-nums">
-                      {appealTimeLeft.days}j
+                      {appealTimeLeft.days}{currentLang === 'uk' ? 'д' : 'j'}
                     </span>
-                    <span className="block text-[8px] text-slate-400 uppercase">Jours</span>
+                    <span className="block text-[8px] text-slate-400 uppercase">
+                      {currentLang === 'uk' ? 'Днів' : 'Jours'}
+                    </span>
                   </div>
                   <div className="bg-[#070B12] p-1.5 rounded border border-rose-900/60">
                     <span className="text-base font-bold text-rose-300 tabular-nums">
-                      {String(appealTimeLeft.hours).padStart(2, '0')}h
+                      {String(appealTimeLeft.hours).padStart(2, '0')}{currentLang === 'uk' ? 'г' : 'h'}
                     </span>
-                    <span className="block text-[8px] text-slate-400 uppercase">Heures</span>
+                    <span className="block text-[8px] text-slate-400 uppercase">
+                      {currentLang === 'uk' ? 'Годин' : 'Heures'}
+                    </span>
                   </div>
                   <div className="bg-[#070B12] p-1.5 rounded border border-rose-900/60">
                     <span className="text-base font-bold text-rose-300 tabular-nums">
-                      {String(appealTimeLeft.minutes).padStart(2, '0')}m
+                      {String(appealTimeLeft.minutes).padStart(2, '0')}{currentLang === 'uk' ? 'хв' : 'm'}
                     </span>
-                    <span className="block text-[8px] text-slate-400 uppercase">Min</span>
+                    <span className="block text-[8px] text-slate-400 uppercase">
+                      {currentLang === 'uk' ? 'Хвилин' : 'Min'}
+                    </span>
                   </div>
                   <div className="bg-[#070B12] p-1.5 rounded border border-rose-900/60">
                     <span className="text-base font-bold text-rose-400 tabular-nums animate-pulse">
-                      {String(appealTimeLeft.seconds).padStart(2, '0')}s
+                      {String(appealTimeLeft.seconds).padStart(2, '0')}{currentLang === 'uk' ? 'с' : 's'}
                     </span>
-                    <span className="block text-[8px] text-slate-400 uppercase">Sec</span>
+                    <span className="block text-[8px] text-slate-400 uppercase">
+                      {currentLang === 'uk' ? 'Секунд' : 'Sec'}
+                    </span>
                   </div>
                 </div>
 
@@ -160,12 +168,20 @@ export const LegalInspector: React.FC<LegalInspectorProps> = ({
               {/* Other statutory limits */}
               <div className="grid grid-cols-2 gap-1.5 text-[10px] font-mono">
                 <div className="p-2 bg-[#070B12] rounded border border-slate-800">
-                  <span className="text-slate-500 block">Art. 97 CP Prescription:</span>
-                  <span className="text-emerald-400 font-bold">15 ans (2039)</span>
+                  <span className="text-slate-500 block">
+                    {currentLang === 'uk' ? 'Строк давності (ст. 97 КК):' : 'Art. 97 CP Prescription:'}
+                  </span>
+                  <span className="text-emerald-400 font-bold">
+                    {currentLang === 'uk' ? '15 років (до 2039)' : '15 ans (2039)'}
+                  </span>
                 </div>
                 <div className="p-2 bg-[#070B12] rounded border border-slate-800">
-                  <span className="text-slate-500 block">Art. 318 CPP Clôture:</span>
-                  <span className="text-amber-400 font-bold">Instruction active</span>
+                  <span className="text-slate-500 block">
+                    {currentLang === 'uk' ? 'Завершення (ст. 318 КПК):' : 'Art. 318 CPP Clôture:'}
+                  </span>
+                  <span className="text-amber-400 font-bold">
+                    {currentLang === 'uk' ? 'Слідство триває' : 'Instruction active'}
+                  </span>
                 </div>
               </div>
             </div>
@@ -178,7 +194,7 @@ export const LegalInspector: React.FC<LegalInspectorProps> = ({
             onClick={() => toggle("actors")}
             className="w-full flex items-center justify-between text-xs font-mono font-bold text-slate-200 mb-2 hover:text-white"
           >
-            <span>{currentLang === 'uk' ? 'Сторони справи (Cast of Characters)' : 'Acteurs & Statuts Procéduraux'}</span>
+            <span>{currentLang === 'uk' ? 'Сторони справи (Учасники провадження)' : 'Acteurs & Statuts Procéduraux'}</span>
             {openSection.actors ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
           </button>
 
@@ -205,7 +221,9 @@ export const LegalInspector: React.FC<LegalInspectorProps> = ({
                           <span>{actor.name}</span>
                           {actor.age && (
                             <span className="text-[10px] font-mono text-emerald-400 font-normal">
-                              ({actor.age} ans, né le {actor.birthdate})
+                              {currentLang === 'uk'
+                                ? `(${actor.age} р., нар. ${actor.birthdate})`
+                                : `(${actor.age} ans, né le ${actor.birthdate})`}
                             </span>
                           )}
                         </h4>
@@ -218,16 +236,16 @@ export const LegalInspector: React.FC<LegalInspectorProps> = ({
                       {actor.protected_bona_fide ? (
                         <div className="px-2 py-0.5 bg-amber-500/10 border border-amber-500/70 text-amber-300 rounded text-[10px] font-mono font-bold flex items-center gap-1 shadow-[0_0_8px_rgba(212,175,55,0.25)] shrink-0">
                           <Award className="w-3 h-3 text-amber-400" />
-                          <span>PROTÉGÉ (Art. 933 CC)</span>
+                          <span>{currentLang === 'uk' ? 'ЗАХИЩЕНИЙ ЩИТОМ (ст. 933 ЦК)' : 'PROTÉGÉ (Art. 933 CC)'}</span>
                         </div>
                       ) : actor.id === "ACT-ARSEN-KOVALENKO" ? (
                         <div className="px-2 py-0.5 bg-emerald-500/10 border border-emerald-500/60 text-emerald-300 rounded text-[10px] font-mono font-bold flex items-center gap-1 shrink-0">
                           <ShieldCheck className="w-3 h-3 text-emerald-400" />
-                          <span>VICTIME ADULTE</span>
+                          <span>{currentLang === 'uk' ? 'ПОВНОЛІТНІЙ ПОТЕРПІЛИЙ' : 'VICTIME ADULTE'}</span>
                         </div>
                       ) : (
                         <div className="px-1.5 py-0.5 bg-rose-500/10 border border-rose-800/60 text-rose-300 rounded text-[10px] font-mono font-bold shrink-0">
-                          PRÉVENUE
+                          {currentLang === 'uk' ? 'ОБВИНУВАЧЕНА' : 'PRÉVENUE'}
                         </div>
                       )}
                     </div>
@@ -239,7 +257,11 @@ export const LegalInspector: React.FC<LegalInspectorProps> = ({
                     {actor.protected_bona_fide && (
                       <div className="mt-1.5 p-1.5 bg-amber-950/30 border border-amber-500/30 rounded text-[10px] font-mono text-amber-300 flex items-center gap-1">
                         <Lock className="w-3 h-3 text-amber-400 shrink-0" />
-                        <span>Toute action accusatoire strictement forclose (L-03)</span>
+                        <span>
+                          {currentLang === 'uk'
+                            ? 'Будь-яке обвинувачення категорично виключене законом (Інваріант L-03)'
+                            : 'Toute action accusatoire strictement forclose (L-03)'}
+                        </span>
                       </div>
                     )}
                   </div>
@@ -255,7 +277,7 @@ export const LegalInspector: React.FC<LegalInspectorProps> = ({
             onClick={() => toggle("lawMatrix")}
             className="w-full flex items-center justify-between text-xs font-mono font-bold text-slate-200 mb-2 hover:text-white"
           >
-            <span>{currentLang === 'uk' ? 'Склади злочинів (CP / CPP Matrix)' : 'Matrice Pénale (CP / CPP)'}</span>
+            <span>{currentLang === 'uk' ? 'Склади кримінальних правопорушень (КК / КПК)' : 'Matrice Pénale (CP / CPP)'}</span>
             {openSection.lawMatrix ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
           </button>
 
@@ -274,7 +296,7 @@ export const LegalInspector: React.FC<LegalInspectorProps> = ({
                       {charge.code}
                     </span>
                     <span className="text-[10px] font-mono text-emerald-400 bg-emerald-950/60 border border-emerald-800/50 px-1 py-0.2 rounded">
-                      Corroboré
+                      {currentLang === 'uk' ? 'Підтверджено доказами' : 'Corroboré'}
                     </span>
                   </div>
 
@@ -283,7 +305,7 @@ export const LegalInspector: React.FC<LegalInspectorProps> = ({
                   </h5>
 
                   <div className="mt-1 flex items-center justify-between text-[10px] font-mono text-slate-400">
-                    <span>Auteur: {charge.accused}</span>
+                    <span>{currentLang === 'uk' ? `Обвинувачена: ${charge.accused}` : `Auteur: ${charge.accused}`}</span>
                     <div className="flex gap-1">
                       {charge.supporting_cotes.map((cote) => (
                         <span key={cote} className="bg-slate-800 text-blue-300 px-1 rounded">
@@ -306,7 +328,7 @@ export const LegalInspector: React.FC<LegalInspectorProps> = ({
           >
             <div className="flex items-center space-x-1.5 text-blue-400">
               <Layers className="w-3.5 h-3.5" />
-              <span>MemPalace Blast Radius Radar</span>
+              <span>{currentLang === 'uk' ? 'Граф причинності MemPalace (KùzuDB)' : 'MemPalace Blast Radius Radar'}</span>
             </div>
             {openSection.radar ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
           </button>
@@ -314,20 +336,34 @@ export const LegalInspector: React.FC<LegalInspectorProps> = ({
           {openSection.radar && (
             <div className="p-2.5 bg-[#070B12] border border-slate-800 rounded space-y-2 text-xs font-mono">
               <div className="flex items-center justify-between">
-                <span className="text-slate-400 text-[11px]">KùzuDB Relations :</span>
-                <strong className="text-emerald-400">8'746 arêtes</strong>
+                <span className="text-slate-400 text-[11px]">
+                  {currentLang === 'uk' ? "Зв'язки KùzuDB :" : "KùzuDB Relations :"}
+                </span>
+                <strong className="text-emerald-400">
+                  {currentLang === 'uk' ? "8'746 ребер" : "8'746 arêtes"}
+                </strong>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-slate-400 text-[11px]">Entités Procédurales :</span>
-                <strong className="text-slate-200">412 nœuds</strong>
+                <span className="text-slate-400 text-[11px]">
+                  {currentLang === 'uk' ? "Процесуальні вузли :" : "Entités Procédurales :"}
+                </span>
+                <strong className="text-slate-200">
+                  {currentLang === 'uk' ? "412 сутностей" : "412 nœuds"}
+                </strong>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-slate-400 text-[11px]">Chapitres ED10 Impactés :</span>
-                <strong className="text-amber-400">18 / 18 synchronisés</strong>
+                <span className="text-slate-400 text-[11px]">
+                  {currentLang === 'uk' ? "Розділи ED10 в синхронізації :" : "Chapitres ED10 Impactés :"}
+                </span>
+                <strong className="text-amber-400">
+                  {currentLang === 'uk' ? "18 / 18 узгоджено" : "18 / 18 synchronisés"}
+                </strong>
               </div>
 
               <div className="pt-2 border-t border-slate-800 text-[10px] text-slate-500 font-sans">
-                Toute modification d'un fait déclenche la réévaluation automatique du graphe de causalité et met à jour les chapitres correspondants dans le WORM Ledger.
+                {currentLang === 'uk'
+                  ? "Будь-яка зміна факту автоматично запускає перерахунок графа причинності та оновлює пов'язані розділи у WORM Ledger."
+                  : "Toute modification d'un fait déclenche la réévaluation automatique du graphe de causalité et met à jour les chapitres correspondants dans le WORM Ledger."}
               </div>
             </div>
           )}

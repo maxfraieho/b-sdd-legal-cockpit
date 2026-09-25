@@ -25,7 +25,7 @@ export const UI_TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> 
 
     // Navigation Tabs
     tab_claim_chart: "Склади злочинів (6)",
-    tab_bordereau: "Реєстр доказів (P-01..P-15)",
+    tab_bordereau: "Реєстр доказів (P-01..P-16)",
     tab_confrontation: "Матриця очних ставок & Допити",
     tab_requisitions: "Процесуальні клопотання ст. 318 КПК",
     tab_drakon_trees: "Дерева рішень DRAKON (3)",
