@@ -91,6 +91,9 @@ export const EvidenceFactbook: React.FC<EvidenceFactbookProps> = ({ currentLang 
   const [isComputingHash, setIsComputingHash] = useState(false);
   const [verifierError, setVerifierError] = useState<string | null>(null);
 
+  // Mobile Sub-Tab between evidence list and detailed inspection panel
+  const [mobileSubTab, setMobileSubTab] = useState<"list" | "details">("list");
+
   // Filtered pieces based on search and category
   const filteredPieces = pieces.filter((p) => {
     const titleStr = resolveLocalized(p.titre, currentLang).toLowerCase();
@@ -567,8 +570,34 @@ export const EvidenceFactbook: React.FC<EvidenceFactbookProps> = ({ currentLang 
 
           {/* Search, Filter & Pieces List */}
           <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
+            {/* Mobile Segmented Switch between List and Inspector */}
+            <div className="flex md:hidden items-center bg-[#070B12] p-1 border-b border-slate-800 text-xs font-mono shrink-0">
+              <button
+                onClick={() => setMobileSubTab("list")}
+                className={`flex-1 py-1.5 rounded transition-all text-center ${
+                  mobileSubTab === "list"
+                    ? "bg-blue-600 text-white font-bold shadow-sm"
+                    : "text-slate-400 hover:text-white"
+                }`}
+              >
+                📋 {currentLang === 'uk' ? 'Реєстр доказів' : 'Bordereau'} ({filteredPieces.length})
+              </button>
+              <button
+                onClick={() => setMobileSubTab("details")}
+                className={`flex-1 py-1.5 rounded transition-all text-center flex items-center justify-center space-x-1 ${
+                  mobileSubTab === "details"
+                    ? "bg-amber-600 text-white font-bold shadow-sm"
+                    : "text-slate-400 hover:text-white"
+                }`}
+              >
+                <span>🔍 {currentLang === 'uk' ? 'Деталі' : 'Détails'} : {selectedPiece.cote}</span>
+              </button>
+            </div>
+
             {/* Left Column: Filterable List of Evidence */}
-            <div className="w-full md:w-1/2 lg:w-3/5 border-r border-slate-800/80 flex flex-col overflow-hidden">
+            <div className={`${
+              mobileSubTab === "details" ? "hidden md:flex" : "flex"
+            } w-full md:w-1/2 lg:w-3/5 border-r border-slate-800/80 flex-col overflow-hidden`}>
               {/* Search & Categories Bar */}
               <div className="p-2.5 bg-[#070B14] border-b border-slate-800 flex flex-col sm:flex-row gap-2 shrink-0">
                 <div className="relative flex-1">
@@ -630,7 +659,10 @@ export const EvidenceFactbook: React.FC<EvidenceFactbookProps> = ({ currentLang 
                   return (
                     <div
                       key={piece.cote}
-                      onClick={() => setSelectedPiece(piece)}
+                      onClick={() => {
+                        setSelectedPiece(piece);
+                        setMobileSubTab("details");
+                      }}
                       className={`p-3 rounded-lg border transition-all cursor-pointer relative ${
                         isSelected
                           ? "bg-[#0D1526] border-blue-500/80 shadow-md"
@@ -763,7 +795,18 @@ export const EvidenceFactbook: React.FC<EvidenceFactbookProps> = ({ currentLang 
             </div>
 
             {/* Right Column: In-depth Exhibit Inspector */}
-            <div className="hidden md:flex w-full md:w-1/2 lg:w-2/5 bg-[#0B1120] flex-col overflow-y-auto p-4 space-y-4">
+            <div className={`${
+              mobileSubTab === "list" ? "hidden md:flex" : "flex"
+            } w-full md:w-1/2 lg:w-2/5 bg-[#0B1120] flex-col overflow-y-auto p-4 space-y-4`}>
+              {/* Mobile Back to List Button */}
+              <button
+                onClick={() => setMobileSubTab("list")}
+                className="md:hidden flex items-center space-x-1.5 text-xs text-blue-400 hover:text-blue-300 font-mono py-1.5 px-3 rounded-lg bg-slate-900 border border-slate-700 self-start mb-1 shadow-sm"
+              >
+                <ChevronLeft className="w-4 h-4" />
+                <span>{currentLang === 'uk' ? '← Повернутися до списку' : '← Retour au bordereau'}</span>
+              </button>
+
               <div className="border-b border-slate-800 pb-3">
                 <div className="flex items-center justify-between mb-1.5">
                   <span className="text-xs font-mono font-bold text-amber-300 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/30">

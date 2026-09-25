@@ -53,3 +53,22 @@ body {
 .mono {
   font-family: var(--font-mono);
 }
+
+/* E-Ink High Contrast & Kindle Paperwhite Mode */
+body.e-ink-mode {
+  filter: grayscale(100%) contrast(135%);
+  background-color: #FFFFFF !important;
+  color: #000000 !important;
+}
+
+body.e-ink-mode * {
+  animation: none !important;
+  transition: none !important;
+  text-shadow: none !important;
+  box-shadow: none !important;
+}
+
+/* Mobile Safe Area Padding */
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom, 8px);
+}

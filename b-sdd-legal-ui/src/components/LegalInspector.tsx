@@ -15,6 +15,7 @@ import {
   Lock,
 } from "lucide-react";
 import { SupportedLanguage } from "../types/i18n";
+import { LegalCase } from "../lib/casesManager";
 import {
   ACTORS,
   CHARGES,
@@ -26,15 +27,21 @@ import {
 
 interface LegalInspectorProps {
   currentLang: SupportedLanguage;
+  actors?: ActorItem[];
+  activeCase?: LegalCase;
   onSelectCharge?: (charge: CriminalCharge) => void;
   onSelectActor?: (actor: ActorItem) => void;
 }
 
 export const LegalInspector: React.FC<LegalInspectorProps> = ({
   currentLang,
+  actors,
+  activeCase,
   onSelectCharge,
   onSelectActor,
 }) => {
+  const caseActors = actors && actors.length > 0 ? actors : ACTORS;
+
   // Collapsible inspector sections
   const [openSection, setOpenSection] = useState<{
     actors: boolean;
@@ -49,7 +56,14 @@ export const LegalInspector: React.FC<LegalInspectorProps> = ({
   });
 
   // Selected actor for details modal/card
-  const [selectedActor, setSelectedActor] = useState<ActorItem>(ACTORS[0]);
+  const [selectedActor, setSelectedActor] = useState<ActorItem>(() => caseActors[0] || ACTORS[0]);
+
+  // Keep selectedActor updated if caseActors change
+  useEffect(() => {
+    if (!caseActors.find((a) => a.id === selectedActor.id) && caseActors[0]) {
+      setSelectedActor(caseActors[0]);
+    }
+  }, [caseActors, selectedActor.id]);
 
   // Live 10-Day Appeal Countdown for Art. 393 CPP
   const [appealTimeLeft, setAppealTimeLeft] = useState<{
@@ -88,11 +102,11 @@ export const LegalInspector: React.FC<LegalInspectorProps> = ({
         <div className="flex items-center space-x-1.5">
           <Scale className="w-3.5 h-3.5 text-blue-400" />
           <span className="text-xs font-mono font-bold text-slate-200 uppercase tracking-wider">
-            {currentLang === 'uk' ? 'Юридичний інспектор (КПК Во)' : 'Inspecteur Juridique (CPP)'}
+            {activeCase ? activeCase.reference : (currentLang === 'uk' ? 'Юридичний інспектор (КПК Во)' : 'Inspecteur Juridique (CPP)')}
           </span>
         </div>
         <span className="text-[10px] font-mono text-emerald-400">
-          ● {currentLang === 'uk' ? "8'746 зв'язків" : "8'746 relations"}
+          ● {activeCase ? `${activeCase.canton} · ${activeCase.type.toUpperCase()}` : (currentLang === 'uk' ? "8'746 зв'язків" : "8'746 relations")}
         </span>
       </div>
 
@@ -200,7 +214,7 @@ export const LegalInspector: React.FC<LegalInspectorProps> = ({
 
           {openSection.actors && (
             <div className="space-y-2">
-              {ACTORS.map((actor) => {
+              {caseActors.map((actor) => {
                 const isSelected = selectedActor.id === actor.id;
                 return (
                   <div

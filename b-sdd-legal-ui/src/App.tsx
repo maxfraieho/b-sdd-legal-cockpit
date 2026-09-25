@@ -4,39 +4,93 @@ import { KindleVoiceReview } from "./components/KindleVoiceReview";
 import { EvidenceFactbook } from "./components/EvidenceFactbook";
 import { PleadingsView } from "./components/PleadingsView";
 import { WormLedgerView } from "./components/WormLedgerView";
+import { ActorsRegistryView } from "./components/ActorsRegistryView";
 import { LegalInspector } from "./components/LegalInspector";
 import { ActionDock } from "./components/ActionDock";
 import { GlossaryModal } from "./components/GlossaryModal";
 import { SwissCodesModal } from "./components/SwissCodesModal";
 import { EvidenceIngestionWizard } from "./components/EvidenceIngestionWizard";
+import { ActorIngestionWizard } from "./components/ActorIngestionWizard";
 import { SettingsModal } from "./components/SettingsModal";
 import { SupportedLanguage, AppSettings, TranslationOverrides } from "./types/i18n";
 import { loadAppSettings, loadOverrides } from "./lib/translator";
 import { commitAtomicSupersession } from "./lib/wormLedger";
-import { BordereauPiece, BORDEREAU_PIECES, resolveLocalized } from "./data/legalData";
+import { BordereauPiece, BORDEREAU_PIECES, ActorItem, resolveLocalized } from "./data/legalData";
+import { loadCaseActors, saveCaseActors } from "./lib/actorsManager";
+import { AiLegalCopilotView } from "./components/AiLegalCopilotView";
+import { CaseManagerModal } from "./components/CaseManagerModal";
+import { DocumentationModal } from "./components/DocumentationModal";
+import { MobileBottomNav } from "./components/MobileBottomNav";
+import { MobileQuickMenuSheet } from "./components/MobileQuickMenuSheet";
+import { JudicialBundleModal } from "./components/JudicialBundleModal";
+import {
+  LegalCase,
+  BENCHMARK_CASES,
+  loadAllCases,
+  loadActiveCaseId,
+  saveActiveCaseId,
+  loadActorsForCase,
+  saveActorsForCase,
+} from "./lib/casesManager";
 import { CheckCircle2, BookOpen, Send, X, ShieldCheck } from "lucide-react";
 
 export default function App() {
   const [currentTab, setCurrentTab] = useState<WorkspaceTab>("factbook");
   const [currentLang, setCurrentLang] = useState<SupportedLanguage>("uk");
 
+  // Multi-Case State (ADR-011)
+  const [cases, setCases] = useState<LegalCase[]>(() => loadAllCases());
+  const [activeCaseId, setActiveCaseId] = useState<string>(() => loadActiveCaseId());
+  const [caseManagerModalOpen, setCaseManagerModalOpen] = useState(false);
+
+  const activeCase = React.useMemo(() => {
+    return cases.find((c) => c.id === activeCaseId) || cases[0] || BENCHMARK_CASES[0];
+  }, [cases, activeCaseId]);
+
   // Settings & Overrides
   const [settings, setSettings] = useState<AppSettings>(() => loadAppSettings());
   const [overrides, setOverrides] = useState<TranslationOverrides>(() => loadOverrides());
   const [settingsModalOpen, setSettingsModalOpen] = useState(false);
 
+  // Dynamic Case Actors state (scoped to active case)
+  const [caseActors, setCaseActors] = useState<ActorItem[]>(() => loadActorsForCase(activeCaseId));
+  const [actorWizardOpen, setActorWizardOpen] = useState(false);
+
   // Loading & toast states
   const [isRecompiling, setIsRecompiling] = useState(false);
   const [isSealing, setIsSealing] = useState(false);
   const [isSendingKindle, setIsSendingKindle] = useState(false);
+  const [docsModalOpen, setDocsModalOpen] = useState(false);
   const [glossaryModalOpen, setGlossaryModalOpen] = useState(false);
   const [swissCodesModalOpen, setSwissCodesModalOpen] = useState(false);
   const [evidenceWizardOpen, setEvidenceWizardOpen] = useState(false);
+  const [quickMenuOpen, setQuickMenuOpen] = useState(false);
+  const [judicialBundleOpen, setJudicialBundleOpen] = useState(false);
+  const [isEInkMode, setIsEInkMode] = useState(false);
+
+  // Apply E-Ink Paperwhite mode to document body
+  React.useEffect(() => {
+    if (typeof document !== "undefined") {
+      document.body.classList.toggle("e-ink-mode", isEInkMode);
+    }
+  }, [isEInkMode]);
   const [toastMessage, setToastMessage] = useState<{
     title: string;
     description: string;
     type: "success" | "info";
   } | null>(null);
+
+  // Handle Case Switching
+  const handleSelectCase = (caseId: string) => {
+    setActiveCaseId(caseId);
+    saveActiveCaseId(caseId);
+    const newActors = loadActorsForCase(caseId);
+    setCaseActors(newActors);
+    showToast(
+      currentLang === "uk" ? "Активне досьє змінено" : "Dossier actif modifié",
+      caseId
+    );
+  };
 
   // Kindle Dispatch Modal
   const [kindleModalOpen, setKindleModalOpen] = useState(false);
@@ -102,6 +156,25 @@ export default function App() {
     );
   };
 
+  const handleCommitActor = (newActor: ActorItem) => {
+    setCaseActors((prev) => {
+      const idx = prev.findIndex((a) => a.id === newActor.id);
+      let updated: ActorItem[];
+      if (idx >= 0) {
+        updated = [...prev];
+        updated[idx] = newActor;
+      } else {
+        updated = [newActor, ...prev];
+      }
+      saveActorsForCase(activeCaseId, updated);
+      return updated;
+    });
+    showToast(
+      currentLang === "uk" ? "Фігуранта внесено до реєстру справи" : "Partie enregistrée au dossier",
+      `${newActor.name} (${newActor.legal_reference})`
+    );
+  };
+
   return (
     <div className="h-[100dvh] w-screen overflow-hidden flex flex-col bg-[#080C14] text-slate-100 font-sans">
       {/* ZONE A: OMNI-HEADER (40px) */}
@@ -113,10 +186,16 @@ export default function App() {
         onRecompileEpub={handleRecompileAndSendKindle}
         onLockSession={handleLockSession}
         isRecompiling={isRecompiling}
+        onOpenDocs={() => setDocsModalOpen(true)}
         onOpenGlossary={() => setGlossaryModalOpen(true)}
         onOpenEvidenceWizard={() => setEvidenceWizardOpen(true)}
+        onOpenActorWizard={() => setActorWizardOpen(true)}
         onOpenSwissCodes={() => setSwissCodesModalOpen(true)}
+        onOpenJudicialBundle={() => setJudicialBundleOpen(true)}
+        onOpenQuickMenu={() => setQuickMenuOpen(true)}
         onOpenSettings={() => setSettingsModalOpen(true)}
+        activeCase={activeCase}
+        onOpenCaseManager={() => setCaseManagerModalOpen(true)}
         mobileTab={mobileTab}
         onMobileTabChange={setMobileTab}
       />
@@ -138,8 +217,30 @@ export default function App() {
             <EvidenceFactbook currentLang={currentLang} />
           )}
 
+          {currentTab === "actors" && (
+            <ActorsRegistryView
+              currentLang={currentLang}
+              actors={caseActors}
+              onActorsChange={(updated) => {
+                setCaseActors(updated);
+                saveActorsForCase(activeCaseId, updated);
+              }}
+              onOpenAiWizard={() => setActorWizardOpen(true)}
+              onShowToast={showToast}
+            />
+          )}
+
           {currentTab === "pleadings" && (
             <PleadingsView currentLang={currentLang} />
+          )}
+
+          {currentTab === "ai_copilot" && (
+            <AiLegalCopilotView
+              currentLang={currentLang}
+              activeCase={activeCase}
+              onNavigateToTab={(tab) => setCurrentTab(tab as any)}
+              onShowToast={showToast}
+            />
           )}
 
           {currentTab === "worm_ledger" && (
@@ -151,7 +252,7 @@ export default function App() {
         <section className={`h-full border-l border-slate-800/80 bg-[#0B1120] overflow-hidden w-full lg:w-[32%] ${
           mobileTab === "inspector" ? "flex flex-col" : "hidden lg:flex lg:flex-col"
         }`}>
-          <LegalInspector currentLang={currentLang} />
+          <LegalInspector currentLang={currentLang} actors={caseActors} activeCase={activeCase} />
         </section>
       </main>
 
@@ -162,7 +263,17 @@ export default function App() {
         onSendToKindle={handleRecompileAndSendKindle}
         isSealing={isSealing}
         isSendingKindle={isSendingKindle}
-        sequestrationAmount="CHF 46'850.00"
+        sequestrationAmount={`CHF ${activeCase.sequestration_target_chf.toLocaleString("fr-CH", { minimumFractionDigits: 2 })}`}
+      />
+
+      {/* MOBILE BOTTOM NAVIGATION BAR (Facebook / Meta Asterisk 54px Bar) */}
+      <MobileBottomNav
+        currentTab={currentTab}
+        onTabChange={setCurrentTab}
+        mobileTab={mobileTab}
+        onMobileTabChange={setMobileTab}
+        currentLang={currentLang}
+        onOpenQuickMenu={() => setQuickMenuOpen(true)}
       />
 
       {/* KINDLE DISPATCH PROGRESS MODAL */}
@@ -282,6 +393,18 @@ export default function App() {
         existingPiecesCount={BORDEREAU_PIECES.length}
       />
 
+      {/* AI ACTOR INGESTION & SWISS CPP QUALIFICATION WIZARD */}
+      <ActorIngestionWizard
+        isOpen={actorWizardOpen}
+        onClose={() => setActorWizardOpen(false)}
+        onCommitActor={(newActor) => {
+          handleCommitActor(newActor);
+          setCurrentTab("actors");
+        }}
+        existingActors={caseActors}
+        currentLang={currentLang}
+      />
+
       {/* SETTINGS MODAL */}
       <SettingsModal
         isOpen={settingsModalOpen}
@@ -300,6 +423,59 @@ export default function App() {
         overrides={overrides}
         onOverridesChange={setOverrides}
         currentLang={currentLang}
+      />
+
+      {/* MULTI-CASE MANAGEMENT MODAL (ADR-011) */}
+      <CaseManagerModal
+        isOpen={caseManagerModalOpen}
+        onClose={() => setCaseManagerModalOpen(false)}
+        cases={cases}
+        activeCaseId={activeCaseId}
+        onSelectCase={handleSelectCase}
+        onCasesUpdated={setCases}
+        currentLang={currentLang}
+        onShowToast={showToast}
+      />
+
+      {/* DOCUMENTATION & USER MANUAL MODAL */}
+      <DocumentationModal
+        isOpen={docsModalOpen}
+        onClose={() => setDocsModalOpen(false)}
+        currentLang={currentLang}
+        kindleEmail={settings.kindleEmail}
+        onShowToast={showToast}
+      />
+
+      {/* MOBILE QUICK ACTION SHEET (Meta / Facebook Asterisk Sheet) */}
+      <MobileQuickMenuSheet
+        isOpen={quickMenuOpen}
+        onClose={() => setQuickMenuOpen(false)}
+        currentTab={currentTab}
+        onTabChange={setCurrentTab}
+        mobileTab={mobileTab}
+        onMobileTabChange={setMobileTab}
+        currentLang={currentLang}
+        onLangChange={setCurrentLang}
+        activeCase={activeCase}
+        onOpenCaseManager={() => setCaseManagerModalOpen(true)}
+        onOpenDocs={() => setDocsModalOpen(true)}
+        onOpenSwissCodes={() => setSwissCodesModalOpen(true)}
+        onOpenEvidenceWizard={() => setEvidenceWizardOpen(true)}
+        onOpenActorWizard={() => setActorWizardOpen(true)}
+        onOpenJudicialBundle={() => setJudicialBundleOpen(true)}
+        onOpenSettings={() => setSettingsModalOpen(true)}
+        onLockSession={handleLockSession}
+        isEInkMode={isEInkMode}
+        onToggleEInkMode={() => setIsEInkMode(!isEInkMode)}
+      />
+
+      {/* JUDICIAL BUNDLE PDF/A MODAL */}
+      <JudicialBundleModal
+        isOpen={judicialBundleOpen}
+        onClose={() => setJudicialBundleOpen(false)}
+        activeCase={activeCase}
+        currentLang={currentLang}
+        onShowToast={showToast}
       />
     </div>
   );

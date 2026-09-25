@@ -569,7 +569,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                           type="text"
                           value={proxyUrl}
                           onChange={(e) => setProxyUrl(e.target.value)}
-                          placeholder="http://192.168.3.184:18880/v1"
+                          placeholder="http://192.168.3.234:8766 або http://192.168.3.184:18880/v1"
                           className="flex-1 px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-white font-mono text-xs focus:ring-1 focus:ring-blue-500"
                         />
                         <button
@@ -580,6 +580,30 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                         >
                           <RefreshCw className={`w-3.5 h-3.5 ${isTesting ? 'animate-spin' : ''}`} />
                           <span>{isTesting ? 'Тест...' : 'Перевірити зв\'язок'}</span>
+                        </button>
+                      </div>
+                      <div className="flex flex-wrap items-center gap-1.5 mt-2">
+                        <span className="text-[10px] font-mono text-slate-400 mr-1">Пресети локальної мережі:</span>
+                        <button
+                          type="button"
+                          onClick={() => setProxyUrl('http://192.168.3.234:8766')}
+                          className="px-2 py-0.5 bg-blue-950/60 hover:bg-blue-900/60 text-blue-300 text-[10px] font-mono rounded border border-blue-800/60 transition-colors"
+                        >
+                          ● Вузол 192.168.3.234:8766 (Локальний хост системи)
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setProxyUrl('http://192.168.3.184:18880/v1')}
+                          className="px-2 py-0.5 bg-slate-800 hover:bg-slate-700 text-slate-300 text-[10px] font-mono rounded border border-slate-700 transition-colors"
+                        >
+                          Вузол 192.168.3.184:18880 (Суверенний LLM)
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setProxyUrl('http://127.0.0.1:8766')}
+                          className="px-2 py-0.5 bg-slate-800 hover:bg-slate-700 text-slate-300 text-[10px] font-mono rounded border border-slate-700 transition-colors"
+                        >
+                          127.0.0.1:8766 (Localhost)
                         </button>
                       </div>
                     </div>

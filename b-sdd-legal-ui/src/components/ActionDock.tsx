@@ -93,7 +93,7 @@ export const ActionDock: React.FC<ActionDockProps> = ({
         <button
           onClick={onWormSeal}
           disabled={isSealing}
-          className={`flex items-center space-x-1 sm:space-x-1.5 px-2 sm:px-3 py-1 rounded text-xs font-medium border transition-all ${
+          className={`flex items-center space-x-1 sm:space-x-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-medium border transition-all min-h-[32px] ${
             isSealing
               ? "bg-emerald-950 border-emerald-700 text-emerald-200 animate-pulse cursor-wait"
               : "bg-slate-900 hover:bg-slate-800 border-slate-700/80 text-emerald-400 hover:text-emerald-300"
@@ -108,7 +108,7 @@ export const ActionDock: React.FC<ActionDockProps> = ({
           <span className="font-mono text-[11px] sm:text-xs">
             {isSealing
               ? (currentLang === 'uk' ? 'Фіксація...' : 'Scellement...')
-              : (currentLang === 'uk' ? '💾 Запечатати WORM' : '💾 WORM Seal')}
+              : (currentLang === 'uk' ? '💾 WORM Seal' : '💾 WORM Seal')}
           </span>
         </button>
 
@@ -116,7 +116,7 @@ export const ActionDock: React.FC<ActionDockProps> = ({
         <button
           onClick={onSendToKindle}
           disabled={isSendingKindle}
-          className={`flex items-center space-x-1 sm:space-x-1.5 px-2 sm:px-3 py-1 rounded text-xs font-medium transition-all shadow-sm ${
+          className={`flex items-center space-x-1 sm:space-x-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-medium transition-all shadow-sm min-h-[32px] ${
             isSendingKindle
               ? "bg-blue-900 text-blue-200 border border-blue-700 animate-pulse cursor-wait"
               : "bg-blue-600 hover:bg-blue-500 text-white border border-blue-400/40"
@@ -130,8 +130,8 @@ export const ActionDock: React.FC<ActionDockProps> = ({
           )}
           <span className="font-mono text-[11px] sm:text-xs">
             {isSendingKindle
-              ? (currentLang === 'uk' ? 'Відправка...' : 'Envoi Kindle...')
-              : (currentLang === 'uk' ? '📖 Надіслати Kindle' : '📖 Send to Kindle')}
+              ? (currentLang === 'uk' ? 'Відправка...' : 'Envoi...')
+              : (currentLang === 'uk' ? '📖 На Kindle' : '📖 Kindle')}
           </span>
         </button>
       </div>

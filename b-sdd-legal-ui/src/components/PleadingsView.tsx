@@ -33,11 +33,18 @@ export const PleadingsView: React.FC<PleadingsViewProps> = ({ currentLang }) => 
   const [selectedReq, setSelectedReq] = useState<LegalRequisition>(LEGAL_REQUISITIONS[0]);
   const [selectedConf, setSelectedConf] = useState<ConfrontationItem>(CONFRONTATIONS[0]);
   const [activeSection, setActiveSection] = useState<"requisitions" | "confrontation">("requisitions");
+  const [requisitionFilter, setRequisitionFilter] = useState<"all" | "penal" | "civil">("all");
   const [copiedReq, setCopiedReq] = useState(false);
   const [copiedConclusions, setCopiedConclusions] = useState(false);
 
   // Mobile list vs detail view state
   const [mobileDetailOpen, setMobileDetailOpen] = useState(false);
+
+  const filteredRequisitions = LEGAL_REQUISITIONS.filter((r) => {
+    if (requisitionFilter === "all") return true;
+    if (requisitionFilter === "civil") return r.category === "civil";
+    return r.category !== "civil";
+  });
 
   const handleCopyReq = () => {
     const conclusions = resolveLocalizedArray(selectedReq.conclusions_formelles, currentLang).join("\n- ");
@@ -107,11 +114,45 @@ export const PleadingsView: React.FC<PleadingsViewProps> = ({ currentLang }) => 
             mobileDetailOpen ? "hidden md:flex" : "flex"
           } w-full md:w-80 lg:w-96 border-r border-slate-800/80 bg-[#0A0F1D] flex-col overflow-y-auto p-2 space-y-1.5 shrink-0`}>
             <div className="px-2 py-1 text-[11px] font-mono text-slate-400 uppercase tracking-wider flex items-center justify-between">
-              <span>{currentLang === 'uk' ? 'Реєстр клопотань потерпілого' : 'Registre des Réquisitions'}</span>
-              <span className="text-slate-500">{LEGAL_REQUISITIONS.length}</span>
+              <span>{currentLang === 'uk' ? 'Реєстр вимог та позовів' : 'Registre des Requêtes'}</span>
+              <span className="text-slate-500 font-bold">{filteredRequisitions.length}</span>
             </div>
 
-            {LEGAL_REQUISITIONS.map((req) => (
+            {/* Penal vs Civil Requisition Filter Segmented Control */}
+            <div className="flex items-center bg-[#070B12] p-0.5 rounded-lg border border-slate-800 text-[10px] font-mono">
+              <button
+                onClick={() => setRequisitionFilter("all")}
+                className={`flex-1 py-1 rounded transition-all ${
+                  requisitionFilter === "all"
+                    ? "bg-blue-600 text-white font-bold"
+                    : "text-slate-400 hover:text-white"
+                }`}
+              >
+                {currentLang === 'uk' ? 'Всі (7)' : 'Toutes (7)'}
+              </button>
+              <button
+                onClick={() => setRequisitionFilter("penal")}
+                className={`flex-1 py-1 rounded transition-all ${
+                  requisitionFilter === "penal"
+                    ? "bg-blue-600 text-white font-bold"
+                    : "text-slate-400 hover:text-white"
+                }`}
+              >
+                {currentLang === 'uk' ? 'Кримінальні (КПК)' : 'Pénal (CPP)'}
+              </button>
+              <button
+                onClick={() => setRequisitionFilter("civil")}
+                className={`flex-1 py-1 rounded transition-all ${
+                  requisitionFilter === "civil"
+                    ? "bg-blue-600 text-white font-bold"
+                    : "text-slate-400 hover:text-white"
+                }`}
+              >
+                {currentLang === 'uk' ? 'Цивільні (ЦПК/CC)' : 'Civil (CPC/CC)'}
+              </button>
+            </div>
+
+            {filteredRequisitions.map((req) => (
               <button
                 key={req.id}
                 onClick={() => {
@@ -125,16 +166,25 @@ export const PleadingsView: React.FC<PleadingsViewProps> = ({ currentLang }) => 
                 }`}
               >
                 <div className="flex items-center justify-between mb-1.5">
-                  <span className={`text-[10px] font-mono px-1.5 py-0.5 rounded font-bold ${
-                    req.urgence === "URGENT"
-                      ? "bg-rose-950 text-rose-300 border border-rose-800/60"
-                      : "bg-slate-800 text-slate-400"
-                  }`}>
-                    {req.urgence === "URGENT"
-                      ? (currentLang === 'uk' ? 'НЕВІДКЛАДНО' : 'URGENT')
-                      : (currentLang === 'uk' ? 'ЗВИЧАЙНО' : 'ORDINAIRE')}
-                  </span>
-                  <span className="text-[10px] font-mono text-amber-400 font-bold">
+                  <div className="flex items-center space-x-1">
+                    <span className={`text-[10px] font-mono px-1.5 py-0.5 rounded font-bold ${
+                      req.urgence === "URGENT"
+                        ? "bg-rose-950 text-rose-300 border border-rose-800/60"
+                        : "bg-slate-800 text-slate-400"
+                    }`}>
+                      {req.urgence === "URGENT"
+                        ? (currentLang === 'uk' ? 'НЕВІДКЛАДНО' : 'URGENT')
+                        : (currentLang === 'uk' ? 'ЗВИЧАЙНО' : 'ORDINAIRE')}
+                    </span>
+                    <span className={`text-[9px] font-mono px-1 py-0.5 rounded ${
+                      req.category === "civil"
+                        ? "bg-indigo-950 text-indigo-300 border border-indigo-800/70"
+                        : "bg-amber-950/60 text-amber-300 border border-amber-800/60"
+                    }`}>
+                      {req.category === "civil" ? "CIVIL" : "PÉNAL"}
+                    </span>
+                  </div>
+                  <span className="text-[10px] font-mono text-amber-400 font-bold truncate max-w-[130px]">
                     {req.norme}
                   </span>
                 </div>

@@ -100,8 +100,26 @@ export interface LegalRequisition {
   norme: string;
   autorite: string;
   urgence: 'URGENT' | 'ORDINAIRE';
+  category?: 'penal' | 'civil';
   conclusions_formelles: Record<SupportedLanguage, string[]>;
   corps_texte: LocalizedString;
+}
+
+export interface ActorDocument {
+  id: string;
+  title: LocalizedString;
+  type: string;
+  sha256: string;
+  date: string;
+  url?: string;
+  verified: boolean;
+}
+
+export interface ActorPhoto {
+  url: string;
+  caption: LocalizedString;
+  timestamp?: string;
+  sha256?: string;
 }
 
 export interface ActorItem {
@@ -117,6 +135,31 @@ export interface ActorItem {
   legal_reference: string;
   droits_proceduraux: Record<SupportedLanguage, string[]>;
   forbidden_actions?: string[];
+  avatarUrl?: string;
+  photos?: ActorPhoto[];
+  documents?: ActorDocument[];
+  nationality?: LocalizedString;
+  domicile?: LocalizedString;
+  discernment_capacity?: boolean;
+  procedural_standing?:
+    | 'victime_plaignante'
+    | 'prevenu_principal'
+    | 'prevenu_complice'
+    | 'tiers_bonne_foi'
+    | 'temoin'
+    | 'personne_renseignement'
+    | 'magistrat'
+    | 'avocat';
+  cpp_article?: string;
+  lawyer?: { name: string; bar: string; address?: string; phone?: string };
+  financial_claim_chf?: number;
+  financial_liability_chf?: number;
+  linked_pieces?: string[];
+  invariants?: string[];
+  risk_level?: 'low' | 'medium' | 'high' | 'critical' | 'immune';
+  bitemporal_valid_from?: string;
+  bitemporal_tx_time?: string;
+  custom_notes?: string;
 }
 
 export interface DossierChapter {
@@ -145,14 +188,101 @@ export const ACTORS: ActorItem[] = [
       fr: "Victime & Partie Plaignante (Majeur, 26 ans)",
       en: "Victim & Civil Plaintiff (Adult, 26 yo)",
     },
-    badgeColor: "bg-emerald-950/80 text-emerald-300 border-emerald-700/60",
+    badgeColor: "bg-emerald-950/80 text-emerald-300 border-emerald-700/60 shadow-[0_0_12px_rgba(16,185,129,0.2)]",
     role: {
       uk: "Повнолітній дієздатний потерпілий (народився 05.11.1999, 26 років). Безпосередня жертва шахрайства на $15'000 USD, тяжких погроз розправою, шантажу та завідомо неправдивого доносу. Сторона цивільного позову (ст. 115, 118, 122 КПК).",
       fr: "Victime majeure et capable de discernement (né le 05.11.1999, 26 ans). Victime directe de l'escroquerie de $15'000 USD, de menaces réitérées et de dénonciation calomnieuse. Demandeur civil constitué (Art. 115, 118, 122 CPP).",
       en: "Adult compos mentis victim (born 05.11.1999, 26 years old). Direct victim of $15,000 USD fraud, aggravated death threats, coercion, and malicious false accusation. Constituted civil plaintiff (Art. 115, 118, 122 CPC).",
     },
     protected_bona_fide: false,
-    legal_reference: "Art. 115, 118, 122 CPP / Art. 41 CO",
+    legal_reference: "Art. 115, 118, 122 CPP / Art. 41 CO / Invariant L-01",
+    procedural_standing: "victime_plaignante",
+    cpp_article: "Art. 115, 118, 122 CPP",
+    discernment_capacity: true,
+    nationality: {
+      uk: "Україна (Тимчасовий захист · Статус S в Швейцарії)",
+      fr: "Ukraine (Protection temporaire · Statut S en Suisse)",
+      en: "Ukraine (Temporary Protection · Status S in Switzerland)",
+    },
+    domicile: {
+      uk: "м. Лозанна, Кантон Во, Швейцарія",
+      fr: "Lausanne, Canton de Vaud, Suisse",
+      en: "Lausanne, Canton of Vaud, Switzerland",
+    },
+    financial_claim_chf: 46850,
+    linked_pieces: ["P-01", "P-03", "P-04", "P-05", "P-06", "P-10"],
+    invariants: ["Invariant L-01 (WORM Bitemporal Calibration)", "Art. 118 CPP Standing"],
+    risk_level: "low",
+    bitemporal_valid_from: "2024-07-23T10:00:00Z",
+    lawyer: {
+      name: "Me B. Kamber",
+      bar: "Ordre des Avocats Vaudois (OAV) · Barreau de Lausanne",
+      address: "Place de la Riponne 3, 1005 Lausanne",
+      phone: "+41 21 312 00 00",
+    },
+    photos: [
+      {
+        url: "/evidence/photos/P-06_exif1481_lausanne.jpg",
+        caption: {
+          uk: "Алібі: Place de la Palud, Лозанна 21.07.2024 13:45",
+          fr: "Constat d'alibi : Place de la Palud, Lausanne 21.07.2024 13:45",
+          en: "Alibi verification: Place de la Palud, Lausanne 21.07.2024 13:45",
+        },
+        timestamp: "2024-07-21T13:45:12Z",
+        sha256: "b4a8e3d0912f8641c48e718293a5028471602938475620193847562019485720",
+      },
+      {
+        url: "/evidence/photos/P-06_exif1481_bras_sains.jpg",
+        caption: {
+          uk: "Судово-медична фіксація: руки без жодних слідів насильства",
+          fr: "Constat médico-légal : avant-bras indemnes de toute lésion",
+          en: "Forensic photo: forearms completely unblemished",
+        },
+        timestamp: "2024-07-21T13:47:00Z",
+        sha256: "c5b9e4f1023a9752d59f829304b6139582713049586731204958673120596831",
+      },
+    ],
+    documents: [
+      {
+        id: "DOC-AK-01",
+        title: {
+          uk: "Офіційний медичний висновок Unisanté (Pièce P-03)",
+          fr: "Constat médico-légal officiel Unisanté (Pièce P-03)",
+          en: "Official Unisanté Forensic Medical Certificate (Exhibit P-03)",
+        },
+        type: "Médical",
+        sha256: "8c94fa10b98144298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7",
+        date: "21.07.2024",
+        url: "/evidence/photos/P-03_unisante_certificat.jpg",
+        verified: true,
+      },
+      {
+        id: "DOC-AK-02",
+        title: {
+          uk: "Банківський платіжний документ Wise $15'000 USD (Pièce P-05)",
+          fr: "Bordereau officiel de virement Wise $15'000 USD (Pièce P-05)",
+          en: "Wise Official Wire Transfer Receipt $15,000 USD (Exhibit P-05)",
+        },
+        type: "Bancaire",
+        sha256: "b10a9f5d14e3b7829a8f276cd891b0c9521364718a24d08197c365287e02b74c",
+        date: "02.04.2024",
+        url: "/evidence/photos/P-05_bancaire_wise.jpg",
+        verified: true,
+      },
+      {
+        id: "DOC-AK-03",
+        title: {
+          uk: "Акт заміни зламаного замка дверей Renens CHF 850 (Pièce P-10)",
+          fr: "Facture serrurier d'urgence Renens CHF 850.00 (Pièce P-10)",
+          en: "Emergency Locksmith Invoice Renens CHF 850.00 (Exhibit P-10)",
+        },
+        type: "Facture",
+        sha256: "3f982bca142e88a0984f18375ba201e7498c36294d1b827364501a2893f18e90",
+        date: "20.07.2024",
+        url: "/evidence/photos/P-10_serrure_fracturee_chf850.jpg",
+        verified: true,
+      },
+    ],
     droits_proceduraux: {
       uk: [
         "Повноправний статус цивільного позивача та сторони звинувачення (ст. 118 КПК)",
@@ -185,7 +315,7 @@ export const ACTORS: ActorItem[] = [
       fr: "Tiers de Bonne Foi · Bouclier Art. 933 CC (L-03)",
       en: "Bona Fide Third Party · Art. 933 CC Shield (L-03)",
     },
-    badgeColor: "bg-amber-950/80 text-amber-300 border-amber-500/70 shadow-[0_0_12px_rgba(212,175,55,0.2)]",
+    badgeColor: "bg-amber-950/80 text-amber-300 border-amber-500/70 shadow-[0_0_12px_rgba(212,175,55,0.25)]",
     role: {
       uk: "Третя сторона добросовісності (Art. 933 CC, Art. 105 al. 2 CPP). Надавав виключно законне гуманітарне сприяння та переклад у повній добросовісності. Абсолютний процесуальний імунітет: будь-які звинувачення заборонені.",
       fr: "Tiers de bonne foi absolu (Art. 933 CC, Art. 105 al. 2 CPP). Assistance bénévole et traduction en toute bonne foi. Immunité procédurale absolue : toute action accusatoire est strictement forclose.",
@@ -193,10 +323,41 @@ export const ACTORS: ActorItem[] = [
     },
     protected_bona_fide: true,
     legal_reference: "Art. 933 CC / Art. 105 al. 2 CPP / Invariant L-03",
+    procedural_standing: "tiers_bonne_foi",
+    cpp_article: "Art. 105 al. 2 CPP / Art. 933 CC",
+    discernment_capacity: true,
+    nationality: {
+      uk: "Швейцарія (м. Лозанна, Кантон Во)",
+      fr: "Suisse (Lausanne, Canton de Vaud)",
+      en: "Switzerland (Lausanne, Canton of Vaud)",
+    },
+    domicile: {
+      uk: "м. Лозанна, Кантон Во, Швейцарія",
+      fr: "Lausanne, Canton de Vaud, Suisse",
+      en: "Lausanne, Canton of Vaud, Switzerland",
+    },
+    linked_pieces: ["P-06"],
+    invariants: ["Invariant L-03 (Bouclier Sanctuarisé Tiers de Bonne Foi)", "Art. 933 CC"],
+    risk_level: "immune",
+    bitemporal_valid_from: "2024-07-23T11:30:00Z",
     forbidden_actions: [
       "Interdiction formelle de poursuite pénale",
       "Interdiction de séquestre sur ses biens personnels",
       "Rejet d'office de toute dénonciation téméraire de la défense",
+    ],
+    documents: [
+      {
+        id: "DOC-AM-01",
+        title: {
+          uk: "Афідевіт добросовісного волонтера та перекладача (Інваріант L-03)",
+          fr: "Déclaration formelle et serment de tiers de bonne foi (Invariant L-03)",
+          en: "Bona fide volunteer and translator affidavit (Invariant L-03)",
+        },
+        type: "Attestation",
+        sha256: "d4af37c5a0591234567890abcdef1234567890abcdef1234567890abcdef1234",
+        date: "23.07.2024",
+        verified: true,
+      },
     ],
     droits_proceduraux: {
       uk: [
@@ -224,7 +385,7 @@ export const ACTORS: ActorItem[] = [
       fr: "Prévenue · Auteur Principal",
       en: "Principal Accused Perpetrator",
     },
-    badgeColor: "bg-rose-950/80 text-rose-300 border-rose-800/60",
+    badgeColor: "bg-rose-950/80 text-rose-300 border-rose-800/60 shadow-[0_0_12px_rgba(244,63,94,0.2)]",
     role: {
       uk: "Організатор та виконавець шахрайства на $15'000 USD (ст. 146 КК), погроз розправою (ст. 180 КК), примусу (ст. 181 КК), порушення недоторканності житла (ст. 186 КК) та завідомо неправдивого доносу (ст. 303 КК).",
       fr: "Auteur principal de l'escroquerie portant sur $15'000 USD (Art. 146 CP), menaces graves (Art. 180 CP), contrainte (Art. 181 CP), violation de domicile (Art. 186 CP) et dénonciation calomnieuse (Art. 303 CP).",
@@ -232,6 +393,50 @@ export const ACTORS: ActorItem[] = [
     },
     protected_bona_fide: false,
     legal_reference: "Art. 111 CPP / Art. 138, 146, 157, 180, 181, 186, 303 CP / Art. 118 LEI",
+    procedural_standing: "prevenu_principal",
+    cpp_article: "Art. 111 CPP",
+    discernment_capacity: true,
+    nationality: {
+      uk: "Україна (Тимчасовий захист · Статус S в Швейцарії)",
+      fr: "Ukraine (Protection temporaire · Statut S en Suisse)",
+      en: "Ukraine (Temporary Protection · Status S in Switzerland)",
+    },
+    domicile: {
+      uk: "м. Рене (Renens), Кантон Во, Швейцарія",
+      fr: "Renens, Canton de Vaud, Suisse",
+      en: "Renens, Canton of Vaud, Switzerland",
+    },
+    financial_liability_chf: 46850,
+    linked_pieces: ["P-01", "P-02", "P-04", "P-05", "P-07", "P-08", "P-09", "P-10", "P-14"],
+    risk_level: "critical",
+    bitemporal_valid_from: "2024-07-19T16:45:00Z",
+    documents: [
+      {
+        id: "DOC-LS-01",
+        title: {
+          uk: "Протокол допиту в поліції (PV audition de police)",
+          fr: "Procès-verbal officiel d'audition de la prévenue par la Police cantonale",
+          en: "Official Police Interrogation Minutes of the Accused",
+        },
+        type: "Procédure",
+        sha256: "7a26f84912e9b038c83a74b12630519364817293b048592018374a91b2c3d4e5",
+        date: "22.07.2024",
+        verified: true,
+      },
+      {
+        id: "DOC-LS-02",
+        title: {
+          uk: "Скріншоти погроз та шантажу в Telegram (Pièce P-10)",
+          fr: "Captures certifiées de messages de menaces Telegram (Pièce P-10)",
+          en: "Certified Telegram Intimidation Messages Screenshots (Exhibit P-10)",
+        },
+        type: "Télécom",
+        sha256: "4c718290ab38571029e8471b0593821746201948572019384756201948572019",
+        date: "20.07.2024",
+        url: "/evidence/photos/P-10_telegram_chat.jpg",
+        verified: true,
+      },
+    ],
     droits_proceduraux: {
       uk: [
         "Право знати суть підозри та висунутих звинувачень (ст. 158 КПК)",
@@ -258,7 +463,7 @@ export const ACTORS: ActorItem[] = [
       fr: "Prévenue · Complice / Co-auteur",
       en: "Accused · Accomplice",
     },
-    badgeColor: "bg-rose-950/80 text-rose-300 border-rose-800/60",
+    badgeColor: "bg-rose-950/80 text-rose-300 border-rose-800/60 shadow-[0_0_12px_rgba(244,63,94,0.15)]",
     role: {
       uk: "Співучасниця психологічного тиску, залякування депортацією, вимагання грошей та незаконного вторгнення до квартири потерпілого (ст. 24, 180, 181, 186 КК).",
       fr: "Complice active des menaces d'expulsion, pressions illicites, chantage et participation à la violation de domicile (Art. 24, 180, 181, 186 CP).",
@@ -266,6 +471,22 @@ export const ACTORS: ActorItem[] = [
     },
     protected_bona_fide: false,
     legal_reference: "Art. 24, 25, 180, 181, 186 CP / Art. 111 CPP",
+    procedural_standing: "prevenu_complice",
+    cpp_article: "Art. 25 CP / Art. 111 CPP",
+    discernment_capacity: true,
+    nationality: {
+      uk: "Україна (Тимчасовий захист · Статус S в Швейцарії)",
+      fr: "Ukraine (Protection temporaire · Statut S en Suisse)",
+      en: "Ukraine (Temporary Protection · Status S in Switzerland)",
+    },
+    domicile: {
+      uk: "м. Рене (Renens), Кантон Во, Швейцарія",
+      fr: "Renens, Canton de Vaud, Suisse",
+      en: "Renens, Canton of Vaud, Switzerland",
+    },
+    linked_pieces: ["P-02", "P-08", "P-09"],
+    risk_level: "high",
+    bitemporal_valid_from: "2024-07-20T11:00:00Z",
     droits_proceduraux: {
       uk: [
         "Звичайний процесуальний режим співучасника (ст. 111 КПК)",
@@ -1562,6 +1783,142 @@ export const LEGAL_REQUISITIONS: LegalRequisition[] = [
       uk: "Згідно зі ст. 396 ч. 1 КПК, скарга подається протягом 10 днів з моменту отримання повідомлення про постанову. Необхідно суворо контролювати зворотний відлік для гарантування прав потерпілого.",
       fr: "Conformément à l'Art. 396 al. 1 CPP, le recours doit être déposé par écrit et motivé dans un délai strict de 10 jours. Le respect de ce délai de rigueur est impératif.",
       en: "Under Art. 396 para 1 CPC, the appeal must be lodged within a strict 10-day deadline. Strict adherence to this time window is of absolute procedural essence.",
+    },
+  },
+  {
+    id: "REQ-CIVIL-REVENDICATION-641",
+    title: {
+      uk: "Цивільний позов про витребування майна / віндикація (ст. 641 ч. 2 CC & ст. 219 ЦПК)",
+      fr: "Action en revendication de propriété mobilière (Art. 641 al. 2 CC & Art. 219 CPC)",
+      en: "Action in Property Restitution & Replevin (Art. 641 para 2 CC & Art. 219 CPC)",
+    },
+    norme: "Art. 641 al. 2 CC cum Art. 219 CPC",
+    autorite: "Tribunal civil d'arrondissement (Lausanne)",
+    urgence: "ORDINAIRE",
+    category: "civil",
+    conclusions_formelles: {
+      uk: [
+        "Зобов'язати відповідачку негайно повернути законному власнику кошти в розмірі $15'000 USD (еквівалент CHF 13'500.00).",
+        "Визнати безпідставним будь-яке утримання коштів та нарахувати 5% річних за ст. 104 CO з дня виникнення прострочення.",
+        "Покласти судові витрати та витрати на правову допомогу на відповідачку.",
+      ],
+      fr: [
+        "Condamner la défenderesse à restituer immédiatement au demandeur la somme de $15'000 USD (contre-valeur CHF 13'500.00) avec intérêts moratoires à 5% l'an dès le 18.06.2024.",
+        "Constater l'absence totale de titre juridique justifiant la rétention des fonds par la défenderesse.",
+        "Mettre les frais judiciaires et une équitable indemnité de dépens à la charge exclusive de la partie défenderesse.",
+      ],
+      en: [
+        "Order defendant to immediately restore the sum of $15,000 USD (CHF 13,500.00) with statutory 5% interest.",
+        "Find absence of lawful title justifying detention of the funds.",
+        "Award procedural costs and legal fees against defendant.",
+      ],
+    },
+    corps_texte: {
+      uk: "За ст. 641 ч. 2 Швейцарського цивільного кодексу (CC), власник речі має право вимагати її повернення від кожного, хто утримує її без законних підстав. Переказ $15'000 USD (доказ P-05) мав суто фідуціарний характер для збереження активів. Відмова повернути гроші є прямим порушенням права власності.",
+      fr: "En vertu de l'Art. 641 al. 2 CC, le propriétaire d'une chose peut la revendiquer contre quiconque la détient sans droit. Le virement bancaire formel de $15'000 USD (pièce P-05) a été confié à titre fiduciaire pour conservation. Le refus de restitution caractérise une dépossession illicite.",
+      en: "Under Art. 641 para 2 CC, the owner of a thing may reclaim it from whoever detains it without legal entitlement. The $15,000 USD wire transfer (exhibit P-05) was a fiduciary holding. Refusal to return violates proprietary title.",
+    },
+  },
+  {
+    id: "REQ-CIVIL-MESURES-261",
+    title: {
+      uk: "Заява про вжиття забезпечувальних заходів у цивільному процесі (ст. 261 ЦПК)",
+      fr: "Requête de mesures provisionnelles et superprovisionnelles (Art. 261 CPC)",
+      en: "Motion for Civil Provisional & Urgent Injunctive Measures (Art. 261 CPC)",
+    },
+    norme: "Art. 261 cum 265 CPC",
+    autorite: "Président du Tribunal civil d'arrondissement (Lausanne)",
+    urgence: "URGENT",
+    category: "civil",
+    conclusions_formelles: {
+      uk: [
+        "Inaudita altera parte (без виклику іншої сторони): накласти попередню заборону на розпорядження рахунками на суму CHF 46'850.00.",
+        "Заборонити відчуження, переказ або зняття коштів до набрання законної сили рішенням по суті позову.",
+        "Встановити відповідачці строк у 10 днів для надання письмових заперечень.",
+      ],
+      fr: [
+        "Ordonner, à titre superprovisionnel et inaudita altera parte, le blocage conservatoire immédiat des comptes de la défenderesse jusqu'à concurrence de CHF 46'850.00.",
+        "Faire interdiction formelle aux tiers détenteurs de se dessaisir des avoirs.",
+        "Fixer à la défenderesse un bref délai pour déposer ses éventuelles déterminations.",
+      ],
+      en: [
+        "Order ex parte (inaudita altera parte) immediate provisional freeze of defendant's accounts up to CHF 46,850.00.",
+        "Prohibit third-party banks from dispersing assets.",
+        "Grant defendant a 10-day window for response.",
+      ],
+    },
+    corps_texte: {
+      uk: "За ст. 261 ЦПК суд постановляє забезпечувальні заходи, якщо заявник доведе наявність реального порушення його прав або загрозу такого порушення, що може спричинити важковиправні збитки. З огляду на погрози розправою та заяви підозрюваної про намір приховати гроші (доказ P-04), ризик втрати активів є невідкладним.",
+      fr: "L'Art. 261 CPC dispose que le juge ordonne les mesures provisionnelles nécessaires lorsque le requérant rend vraisemblable qu'une prétention dont il est titulaire est l'objet d'une atteinte ou menace d'atteinte susceptible de lui causer un préjudice difficilement réparable.",
+      en: "Under Art. 261 CPC, injunctive relief is granted where an applicant credibly demonstrates an infringement or threat thereof that threatens not easily repairable harm.",
+    },
+  },
+  {
+    id: "REQ-CIVIL-DOMMAGES-41",
+    title: {
+      uk: "Позов про стягнення збитків та моральної шкоди за деліктом (ст. 41 & 49 CO)",
+      fr: "Action en dommages-intérêts pour acte illicite et tort moral (Art. 41 & 49 CO)",
+      en: "Tort Action for Damages and Moral Injury (Art. 41 & 49 CO)",
+    },
+    norme: "Art. 41 cum 49 CO",
+    autorite: "Tribunal civil d'arrondissement (Lausanne)",
+    urgence: "ORDINAIRE",
+    category: "civil",
+    conclusions_formelles: {
+      uk: [
+        "Стягнути з відповідачки на користь позивача CHF 850.00 компенсації прямих матеріальних збитків (пошкодження майна P-10).",
+        "Стягнути з відповідачки CHF 32'500.00 компенсації моральної шкоди за ст. 49 CO за психологічний терор та неправдивий донос.",
+        "Нарахувати законні 5% річних з моменту вчинення правопорушення.",
+      ],
+      fr: [
+        "Condamner la défenderesse au paiement de CHF 850.00 à titre de réparation du dommage matériel causé (P-10).",
+        "Condamner la défenderesse au versement de CHF 32'500.00 à titre d'indemnité pour tort moral (Art. 49 CO) en raison du harcèlement et de la dénonciation calomnieuse.",
+        "Mettre les intérêts moratoires à 5% à compter du jour du fait dommageable.",
+      ],
+      en: [
+        "Award plaintiff CHF 850.00 in direct material damages (broken lock P-10).",
+        "Award plaintiff CHF 32,500.00 in moral compensation (Art. 49 CO) for psychological coercion and malicious accusations.",
+        "Award statutory 5% interest from the date of the tortious act.",
+      ],
+    },
+    corps_texte: {
+      uk: "За ст. 41 CO особа, яка протиправно завдає шкоди іншій особі, зобов'язана її відшкодувати. Ст. 49 CO встановлює право на грошове відшкодування моральної шкоди при протиправному посяганні на особистість (погрози вбивством, наклепи перед поліцією, фабрикація доказів).",
+      fr: "Selon l'Art. 41 CO, celui qui cause, d'une manière illicite, un dommage à autrui, est tenu de le réparer. L'Art. 49 CO confère au lésé le droit à une indemnité à titre de réparation morale en cas d'atteinte grave portée à sa personnalité.",
+      en: "Under Art. 41 CO, anyone who unlawfully causes damage to another must repair it. Art. 49 CO provides monetary satisfaction for serious infringement of personality rights.",
+    },
+  },
+  {
+    id: "REQ-CIVIL-PREUVE-158",
+    title: {
+      uk: "Превентивне забезпечення доказів у цивільному процесі (ст. 158 ЦПК)",
+      fr: "Requête en administration de preuves à titre préventif (Art. 158 CPC)",
+      en: "Pre-Trial Evidence Preservation Motion (Art. 158 CPC)",
+    },
+    norme: "Art. 158 CPC",
+    autorite: "Juge de paix / Tribunal civil d'arrondissement (Lausanne)",
+    urgence: "URGENT",
+    category: "civil",
+    conclusions_formelles: {
+      uk: [
+        "Призначити судову експертизу для зняття та збереження цифрових копій серверних логів Telegram та виписок банку.",
+        "Зобов'язати мобільних операторів зберегти дані геолокації та базових станцій за липень 2024 року.",
+        "Встановити результати огляду замка квартири (доказ P-10) судовим приставом (huissier judiciaire).",
+      ],
+      fr: [
+        "Ordonner l'expertise informatique et la conservation judiciaire immédiate des métadonnées numériques et extraits bancaires.",
+        "Faire injonction aux opérateurs de télécommunication de préserver les données de géolocalisation de juillet 2024.",
+        "Diligenter un constat d'huissier judiciaire sur l'état de la serrure fracturée (P-10).",
+      ],
+      en: [
+        "Order forensic IT preservation of digital logs and bank statements.",
+        "Direct telecom providers to retain cell tower localization data from July 2024.",
+        "Commission an official judicial bailiff inspection of the damaged lock (P-10).",
+      ],
+    },
+    corps_texte: {
+      uk: "За ст. 158 ЦПК суд приймає докази в будь-який час, якщо заявник доведе наявність загрози їх втрати або наявність законного інтересу для з'ясування шансів у судовому спорі. Оскільки цифрові дані можуть бути стерті відповідачкою, превентивне забезпечення є необхідним.",
+      fr: "L'Art. 158 al. 1 CPC prévoit que le tribunal administre les preuves en tout temps lorsque la loi en confère le droit ou lorsque le requérant rend vraisemblable que les preuves sont menacées ou qu'il a un intérêt digne de protection.",
+      en: "Art. 158 para 1 CPC authorizes provisional gathering of evidence where evidence is endangered or an applicant demonstrates a protected legal interest.",
     },
   },
 ];
