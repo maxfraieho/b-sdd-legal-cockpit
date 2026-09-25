@@ -10,7 +10,7 @@ export const UI_TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> 
     // Topbar
     app_title: "B-SDD ЮРИДИЧНИЙ КОКПІТ",
     jurisdiction_label: "Прокуратура кантону Во (Швейцарія) :",
-    case_ref: "CASE-SAMPLE-2026-CH",
+    case_ref: "PE24.014624-SBA",
     procedure_type: "Звичайне кримінальне провадження (КПК)",
     plaintiff_role: "Потерпілий та Цивільний позивач",
     utopia_db_label: "Utopia DB :251",
@@ -27,7 +27,7 @@ export const UI_TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> 
     tab_claim_chart: "Склади злочинів (6)",
     tab_bordereau: "Реєстр доказів (P-01..P-16)",
     tab_confrontation: "Матриця очних ставок & Допити",
-    tab_requisitions: "Процесуальні клопотання ст. 318 КПК",
+    tab_requisitions: "Клопотання (ст. 318 КПК)",
     tab_drakon_trees: "Дерева рішень DRAKON (3)",
     tab_bitemporal_timeline: "Хронологія $T_v$ vs $T_t$",
     tab_actor_matrix: "Сторони справи & Щит L-03",
@@ -60,7 +60,7 @@ export const UI_TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> 
     filter_bank: "Банківські",
     filter_message: "Повідомлення",
     filter_procedure: "Процедурні",
-    piece_detail_cote: "Доказ",
+    piece_detail_cote: "Шифр доказу",
     btn_copy_piece_ref: "Скопіювати посилання для позову",
     piece_ref_copied: "Шифр скопійовано!",
     valid_time_label: "Час реальної події ($T_v$) :",
@@ -84,7 +84,7 @@ export const UI_TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> 
     tactical_advice_title: "Тактична порада та відбиття заперечень захисту :",
 
     // Tab 4: Requisitions
-    requisitions_header: "Процесуальні клопотання та акти",
+    requisitions_header: "Процесуальні клопотання та акти (ст. 318 КПК)",
     vaud_standards_badge: "Стандарти кантону Во",
     clerk_note: "Канцелярія прокуратури: Усі процесуальні документи відповідають вимогам ст. 110 КПК Швейцарії.",
     btn_copy_requisition: "Скопіювати повний текст акта",
@@ -122,8 +122,8 @@ export const UI_TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> 
 
     // Auth Gate
     auth_title: "КОНФІДЕНЦІЙНИЙ СУДОВИЙ ДОСТУП",
-    auth_subtitle: "Кримінальне провадження · Прокуратура кантону Во · Справа CASE-SAMPLE-2026-CH",
-    auth_warning: "Матеріали досьє містять таємницю слідства (ст. 73 КПК), докази домашнього насильства та дані неповнолітнього (ст. 122 КПК). Доступ дозволено виключно уповноваженому адвокату та сторонам справи.",
+    auth_subtitle: "Кримінальне провадження · Прокуратура кантону Во · Справа PE24.014624-SBA",
+    auth_warning: "Матеріали досьє містять таємницю слідства (ст. 73 КПК) та захист прав потерпілої сторони (ст. 115, 118, 122 КПК). Доступ дозволено виключно уповноваженому адвокату та сторонам справи.",
     auth_pin_placeholder: "Введіть пароль адвоката (за замовчуванням: 0523)",
     auth_btn_unlock: "Відкрити досьє",
     auth_error: "Невірний пароль доступу. Спробуйте ще раз.",
@@ -149,7 +149,7 @@ export const UI_TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> 
     // Topbar
     app_title: "B-SDD LEGAL COCKPIT",
     jurisdiction_label: "Ministère public du canton de Vaud :",
-    case_ref: "CASE-SAMPLE-2026-CH",
+    case_ref: "PE24.014624-SBA",
     procedure_type: "Procédure Ordinaire CPP",
     plaintiff_role: "Partie Plaignante",
     utopia_db_label: "Utopia DB :251",
@@ -166,7 +166,7 @@ export const UI_TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> 
     tab_claim_chart: "Chefs d'Accusation (6)",
     tab_bordereau: "Bordereau des Pièces (P-01..P-15)",
     tab_confrontation: "Matrice de Confrontation & Auditions",
-    tab_requisitions: "Écritures & Requêtes Art. 318 CPP",
+    tab_requisitions: "Requêtes & Écritures (Art. 318 CPP)",
     tab_drakon_trees: "Arbres DRAKON (3)",
     tab_bitemporal_timeline: "Chronologie $T_v$ vs $T_t$",
     tab_actor_matrix: "Parties & Bouclier L-03",
@@ -199,7 +199,7 @@ export const UI_TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> 
     filter_bank: "Bancaire",
     filter_message: "Message",
     filter_procedure: "Procédure",
-    piece_detail_cote: "Pièce",
+    piece_detail_cote: "Cote",
     btn_copy_piece_ref: "Copier Cote pour Écriture",
     piece_ref_copied: "Cote Copiée !",
     valid_time_label: "Date des faits ($T_v$) :",
@@ -223,7 +223,7 @@ export const UI_TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> 
     tactical_advice_title: "Recommandation Tactique & Réplique aux Exceptions de la Défense :",
 
     // Tab 4: Requisitions
-    requisitions_header: "Requêtes & Actes Judiciaires",
+    requisitions_header: "Requêtes & Écritures judiciaires (Art. 318 CPP)",
     vaud_standards_badge: "Normes Vaud",
     clerk_note: "Greffe du Ministère Public : Tous les actes sont immédiatement exportables au format conforme aux exigences de l'Art. 110 CPP.",
     btn_copy_requisition: "Copier le Mémoire Intégral",
@@ -261,8 +261,8 @@ export const UI_TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> 
 
     // Auth Gate
     auth_title: "ACCÈS JUDICIAIRE CONFIDENTIEL",
-    auth_subtitle: "Procédure Pénale Ordinaire · Ministère Public Vaud · Réf: CASE-SAMPLE-2026-CH",
-    auth_warning: "Le présent dossier est soumis au secret de l'instruction (Art. 73 CPP) et à la protection renforcée des mineurs (Art. 122 CPP). Accès réservé aux conseils constitués.",
+    auth_subtitle: "Procédure Pénale Ordinaire · Ministère Public Vaud · Réf: PE24.014624-SBA",
+    auth_warning: "Le présent dossier est soumis au secret de l'instruction (Art. 73 CPP) et à la protection des droits de la victime (Art. 115, 118, 122 CPP). Accès réservé aux conseils constitués.",
     auth_pin_placeholder: "Mot de passe avocat (défaut : 0523)",
     auth_btn_unlock: "Déverrouiller le Dossier",
     auth_error: "Code d'accès invalide. Veuillez réessayer.",
@@ -288,7 +288,7 @@ export const UI_TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> 
     // Topbar
     app_title: "B-SDD LEGAL COCKPIT",
     jurisdiction_label: "Public Prosecutor's Office of Canton de Vaud :",
-    case_ref: "CASE-SAMPLE-2026-CH",
+    case_ref: "PE24.014624-SBA",
     procedure_type: "Ordinary Criminal Procedure (CPC)",
     plaintiff_role: "Victim & Private Claimant",
     utopia_db_label: "Utopia DB :251",
@@ -362,7 +362,7 @@ export const UI_TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> 
     tactical_advice_title: "Tactical Recommendation & Defense Counter-Trap:",
 
     // Tab 4: Requisitions
-    requisitions_header: "Court Motions & Procedural Briefs",
+    requisitions_header: "Court Motions & Procedural Briefs (Art. 318 CPC)",
     vaud_standards_badge: "Vaud Standards",
     clerk_note: "Prosecutor's Registry: All filings are immediately exportable compliant with Art. 110 Swiss CPC formal requirements.",
     btn_copy_requisition: "Copy Complete Legal Motion",
@@ -400,8 +400,8 @@ export const UI_TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> 
 
     // Auth Gate
     auth_title: "CONFIDENTIAL JUDICIAL ACCESS",
-    auth_subtitle: "Ordinary Criminal Procedure · Ministère Public Vaud · Ref: CASE-SAMPLE-2026-CH",
-    auth_warning: "This case dossier is protected under procedural secrecy (Art. 73 CPC) and minor protection safeguards (Art. 122 CPC). Authorized advocate and party access only.",
+    auth_subtitle: "Ordinary Criminal Procedure · Ministère Public Vaud · Ref: PE24.014624-SBA",
+    auth_warning: "This case dossier is protected under procedural secrecy (Art. 73 CPC) and victim rights protection safeguards (Art. 115, 118, 122 CPC). Authorized advocate and party access only.",
     auth_pin_placeholder: "Enter Advocate Password (default: 0523)",
     auth_btn_unlock: "Unlock Case Dossier",
     auth_error: "Invalid access password. Please try again.",
@@ -427,7 +427,7 @@ export const UI_TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> 
     // Topbar
     app_title: "B-SDD JURISTISCHES COCKPIT",
     jurisdiction_label: "Staatsanwaltschaft des Kantons Waadt (Schweiz) :",
-    case_ref: "CASE-SAMPLE-2026-CH",
+    case_ref: "PE24.014624-SBA",
     procedure_type: "Ordentliches Strafverfahren (StPO)",
     plaintiff_role: "Geschädigte Person & Privatklägerschaft",
     utopia_db_label: "Utopia DB :251",
@@ -444,7 +444,7 @@ export const UI_TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> 
     tab_claim_chart: "Straftatbestände (6)",
     tab_bordereau: "Beweismittelverzeichnis (P-01..P-15)",
     tab_confrontation: "Konfrontationsmatrix & Einvernahmen",
-    tab_requisitions: "Beweisanträge Art. 318 StPO",
+    tab_requisitions: "Beweisanträge (Art. 318 StPO)",
     tab_drakon_trees: "DRAKON-Entscheidungsbäume (3)",
     tab_bitemporal_timeline: "Bitemporale Zeitleiste $T_v$ vs $T_t$",
     tab_actor_matrix: "Verfahrensbeteiligte & Schutz L-03",
@@ -477,7 +477,7 @@ export const UI_TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> 
     filter_bank: "Bankbelege",
     filter_message: "Nachrichten",
     filter_procedure: "Verfahrensakten",
-    piece_detail_cote: "Beweisstück",
+    piece_detail_cote: "Beweisstück (Cote)",
     btn_copy_piece_ref: "Referenz für Klageschrift kopieren",
     piece_ref_copied: "Beweisreferenz kopiert!",
     valid_time_label: "Tatzeitpunkt / Ereignis ($T_v$) :",
@@ -501,7 +501,7 @@ export const UI_TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> 
     tactical_advice_title: "Taktische Empfehlung & Entkräftung von Einwänden :",
 
     // Tab 4: Requisitions
-    requisitions_header: "Prozessuale Anträge & Rechtsschriften",
+    requisitions_header: "Beweisanträge & Rechtsschriften (Art. 318 StPO)",
     vaud_standards_badge: "Waadtländer Standards",
     clerk_note: "Kanzlei der Staatsanwaltschaft: Alle Rechtsschriften entsprechen formell Art. 110 Schweizer StPO.",
     btn_copy_requisition: "Vollständige Rechtsschrift kopieren",
@@ -539,8 +539,8 @@ export const UI_TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> 
 
     // Auth Gate
     auth_title: "VERTRAULICHER GERICHTLICHER ZUGANG",
-    auth_subtitle: "Ordentliches Strafverfahren · Staatsanwaltschaft Kanton Waadt · Dossier CASE-SAMPLE-2026-CH",
-    auth_warning: "Die Akten unterliegen dem Untersuchungsgeheimnis (Art. 73 StPO) und dem Schutz Minderjähriger (Art. 122 StPO). Zugang ausschliesslich für bevollmächtigte Anwälte und Parteien.",
+    auth_subtitle: "Ordentliches Strafverfahren · Staatsanwaltschaft Kanton Waadt · Dossier PE24.014624-SBA",
+    auth_warning: "Die Akten unterliegen dem Untersuchungsgeheimnis (Art. 73 StPO) und dem Schutz der Opferrechte (Art. 115, 118, 122 StPO). Zugang ausschliesslich für bevollmächtigte Anwälte und Parteien.",
     auth_pin_placeholder: "Anwaltspasswort eingeben (Standard: 0523)",
     auth_btn_unlock: "Dossier freischalten",
     auth_error: "Ungültiges Passwort. Bitte erneut versuchen.",
@@ -566,7 +566,7 @@ export const UI_TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> 
     // Topbar
     app_title: "B-SDD COCKPIT GIURIDICO",
     jurisdiction_label: "Ministero pubblico del Canton Vaud (Svizzera) :",
-    case_ref: "CASE-SAMPLE-2026-CH",
+    case_ref: "PE24.014624-SBA",
     procedure_type: "Procedimento penale ordinario (CPP)",
     plaintiff_role: "Danneggiato e Accusatore privato",
     utopia_db_label: "Utopia DB :251",
@@ -583,7 +583,7 @@ export const UI_TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> 
     tab_claim_chart: "Capi d'Accusa (6)",
     tab_bordereau: "Registro Ufficiale Prove (P-01..P-15)",
     tab_confrontation: "Matrice di Confronto & Audizioni",
-    tab_requisitions: "Istanze di prova Art. 318 CPP",
+    tab_requisitions: "Istanze istruttorie (Art. 318 CPP)",
     tab_drakon_trees: "Alberi Decisionali DRAKON (3)",
     tab_bitemporal_timeline: "Cronologia Bitemporale $T_v$ vs $T_t$",
     tab_actor_matrix: "Parti del Procedimento & Scudo L-03",
@@ -616,7 +616,7 @@ export const UI_TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> 
     filter_bank: "Bancario",
     filter_message: "Messaggi",
     filter_procedure: "Procedurale",
-    piece_detail_cote: "Prova",
+    piece_detail_cote: "Reperto (Cote)",
     btn_copy_piece_ref: "Copia riferimento per atto giudiziario",
     piece_ref_copied: "Riferimento copiato!",
     valid_time_label: "Data dell'accadimento reale ($T_v$) :",
@@ -640,7 +640,7 @@ export const UI_TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> 
     tactical_advice_title: "Raccomandazione tattica e replica alle eccezioni della difesa :",
 
     // Tab 4: Requisitions
-    requisitions_header: "Istanze Giudiziarie & Atti di Parte",
+    requisitions_header: "Istanze Giudiziarie & Atti di Parte (Art. 318 CPP)",
     vaud_standards_badge: "Standard Canton Vaud",
     clerk_note: "Cancelleria del Ministero Pubblico: Tutti gli atti sono conformi ai requisiti formali dell'Art. 110 CPP.",
     btn_copy_requisition: "Copia l'atto giudiziario integrale",
@@ -678,8 +678,8 @@ export const UI_TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> 
 
     // Auth Gate
     auth_title: "ACCESSO GIUDIZIARIO RISERVATO",
-    auth_subtitle: "Procedimento Penale Ordinario · Ministero Pubblico Vaud · Rif: CASE-SAMPLE-2026-CH",
-    auth_warning: "Il fascicolo è coperto da segreto istruttorio (Art. 73 CPP) e da tutela rafforzata dei minori (Art. 122 CPP). Accesso consentito esclusivamente ai legali costituiti e alle parti.",
+    auth_subtitle: "Procedimento Penale Ordinario · Ministero Pubblico Vaud · Rif: PE24.014624-SBA",
+    auth_warning: "Il fascicolo è coperto da segreto istruttorio (Art. 73 CPP) e da tutela dei diritti della vittima (Art. 115, 118, 122 CPP). Accesso consentito esclusivamente ai legali costituiti e alle parti.",
     auth_pin_placeholder: "Inserisci password avvocato (predefinita: 0523)",
     auth_btn_unlock: "Sblocca il Fascicolo",
     auth_error: "Password non valida. Riprovare.",

@@ -99,7 +99,13 @@ export const DocumentationModal: React.FC<DocumentationModalProps> = ({
               <p className="text-[11px] text-slate-400">
                 {currentLang === "uk"
                   ? "Суверенна архітектура парного програмування та правового аналізу (Canton de Vaud / Швейцарія)"
-                  : "Architecture souveraine d'analyse judiciaire et pair-programming (Canton de Vaud / Suisse)"}
+                  : currentLang === "fr"
+                  ? "Architecture souveraine d'analyse judiciaire et pair-programming (Canton de Vaud / Suisse)"
+                  : currentLang === "de"
+                  ? "Souveräne Architektur für juristische Analyse und Pair-Programming (Kanton Waadt / Schweiz)"
+                  : currentLang === "it"
+                  ? "Architettura sovrana per l'analisi giudiziaria e pair-programming (Canton Vaud / Svizzera)"
+                  : "Sovereign judicial analysis and pair-programming architecture (Canton de Vaud / Switzerland)"}
               </p>
             </div>
           </div>
@@ -116,7 +122,13 @@ export const DocumentationModal: React.FC<DocumentationModalProps> = ({
                 {isSendingToKindle
                   ? currentLang === "uk"
                     ? "Компіляція EPUB..."
-                    : "Compilation EPUB..."
+                    : currentLang === "fr"
+                    ? "Compilation EPUB..."
+                    : currentLang === "de"
+                    ? "EPUB-Kompilierung..."
+                    : currentLang === "it"
+                    ? "Compilazione EPUB..."
+                    : "Compiling EPUB..."
                   : "Send to Kindle"}
               </span>
             </button>
@@ -146,6 +158,10 @@ export const DocumentationModal: React.FC<DocumentationModalProps> = ({
                   ? "📖 Керівництво Користувача"
                   : currentLang === "fr"
                   ? "📖 Guide Utilisateur"
+                  : currentLang === "de"
+                  ? "📖 Benutzerhandbuch"
+                  : currentLang === "it"
+                  ? "📖 Manuale Utente"
                   : "📖 User Guide"}
               </span>
             </button>
@@ -164,6 +180,10 @@ export const DocumentationModal: React.FC<DocumentationModalProps> = ({
                   ? "🛠️ Архітектура Розробника"
                   : currentLang === "fr"
                   ? "🛠️ Guide Développeur"
+                  : currentLang === "de"
+                  ? "🛠️ Entwicklerhandbuch"
+                  : currentLang === "it"
+                  ? "🛠️ Guida Sviluppatore"
                   : "🛠️ Developer Guide"}
               </span>
             </button>
@@ -180,6 +200,12 @@ export const DocumentationModal: React.FC<DocumentationModalProps> = ({
               <span>
                 {currentLang === "uk"
                   ? "⚖️ Інваріанти L-01..L-05"
+                  : currentLang === "fr"
+                  ? "⚖️ Invariants L-01..L-05"
+                  : currentLang === "de"
+                  ? "⚖️ Invarianten L-01..L-05"
+                  : currentLang === "it"
+                  ? "⚖️ Invarianti L-01..L-05"
                   : "⚖️ Invariants L-01..L-05"}
               </span>
             </button>
@@ -196,6 +222,12 @@ export const DocumentationModal: React.FC<DocumentationModalProps> = ({
               <span>
                 {currentLang === "uk"
                   ? "⚡ Гарячі клавіші"
+                  : currentLang === "fr"
+                  ? "⚡ Raccourcis clavier"
+                  : currentLang === "de"
+                  ? "⚡ Tastenkürzel"
+                  : currentLang === "it"
+                  ? "⚡ Scorciatoie da tastiera"
                   : "⚡ Hotkeys"}
               </span>
             </button>
@@ -210,7 +242,13 @@ export const DocumentationModal: React.FC<DocumentationModalProps> = ({
               placeholder={
                 currentLang === "uk"
                   ? "Пошук по розділах документації..."
-                  : "Rechercher dans la documentation..."
+                  : currentLang === "fr"
+                  ? "Rechercher dans la documentation..."
+                  : currentLang === "de"
+                  ? "In Dokumentation suchen..."
+                  : currentLang === "it"
+                  ? "Cerca nella documentazione..."
+                  : "Search documentation sections..."
               }
               className="w-full pl-8 pr-3 py-1.5 bg-[#060A14] border border-slate-700/80 rounded-lg text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-cyan-500/70"
             />
@@ -372,7 +410,15 @@ export const DocumentationModal: React.FC<DocumentationModalProps> = ({
                   <h4>Bitemporal Immutability</h4>
                 </div>
                 <p className="text-slate-300 text-xs">
-                  Заборона модифікації записів на місці (in-place update). Будь-яке оновлення факту чи статті кодексу здійснюється виключно через атомарну суперсесію зі збереженням історії переходів.
+                  {currentLang === "uk"
+                    ? "Заборона модифікації записів на місці (in-place update). Будь-яке оновлення факту чи статті кодексу здійснюється виключно через атомарну суперсесію зі збереженням історії переходів."
+                    : currentLang === "fr"
+                    ? "Interdiction absolue de modification en place. Toute mise à jour factuelle ou légale s'opère par supersession atomique avec traçabilité intégrale."
+                    : currentLang === "de"
+                    ? "Verbot der In-Place-Modifikation. Jede Aktualisierung erfolgt ausschliesslich über atomare Supersession mit vollständiger Historie."
+                    : currentLang === "it"
+                    ? "Divieto assoluto di modifica sul posto. Ogni aggiornamento opera mediante supersessione atomica con cronistoria delle transizioni."
+                    : "Prohibition of in-place updates. Every factual or statutory change occurs strictly via atomic supersession with full bitemporal audit trail."}
                 </p>
               </div>
 
@@ -382,7 +428,15 @@ export const DocumentationModal: React.FC<DocumentationModalProps> = ({
                   <h4>Zero External Dependencies</h4>
                 </div>
                 <p className="text-slate-300 text-xs">
-                  Критичне юридичне ядро міркувань у <code>src/legal/</code> виконується виключно на стандартній бібліотеці Python (stdlib-only), що унеможливлює збої від оновлень сторонніх пакетів.
+                  {currentLang === "uk"
+                    ? "Критичне юридичне ядро міркувань у src/legal/ виконується виключно на стандартній бібліотеці Python (stdlib-only), що унеможливлює збої від оновлень сторонніх пакетів."
+                    : currentLang === "fr"
+                    ? "Le cœur de raisonnement juridique dans src/legal/ repose exclusivement sur la bibliothèque standard Python (stdlib-only), éliminant toute régression externe."
+                    : currentLang === "de"
+                    ? "Der juristische Kern in src/legal/ läuft ausschliesslich auf der Python-Standardbibliothek (stdlib-only) ohne externe Abhängigkeitsrisiken."
+                    : currentLang === "it"
+                    ? "Il motore di ragionamento giuridico in src/legal/ impiega unicamente la libreria standard di Python (stdlib-only), azzerando rischi di dipendenze esterne."
+                    : "The critical legal inference core in src/legal/ runs strictly on Python stdlib, eliminating any external dependency failure modes."}
                 </p>
               </div>
 
@@ -392,7 +446,15 @@ export const DocumentationModal: React.FC<DocumentationModalProps> = ({
                   <h4>Bona Fide Third-Party Shield</h4>
                 </div>
                 <p className="text-slate-300 text-xs">
-                  Абсолютний правовий щит добросовісної третьої сторони (ст. 933 Цивільного кодексу Швейцарії). Будь-які обвинувальні дії проти волонтера Адріано Міллі суворо заблоковані.
+                  {currentLang === "uk"
+                    ? "Абсолютний правовий щит добросовісної третьої сторони (ст. 933 Цивільного кодексу Швейцарії). Будь-які обвинувальні дії проти волонтера Адріано Міллі суворо заблоковані."
+                    : currentLang === "fr"
+                    ? "Bouclier juridique absolu du tiers de bonne foi (Art. 933 Code Civil suisse). Toute mise en cause du bénévole traducteur Adriano Milli est strictement bloquée."
+                    : currentLang === "de"
+                    ? "Absoluter Schutz des gutgläubigen Dritten (Art. 933 ZGB). Jegliche Beschuldigung gegen den ehrenamtlichen Übersetzer Adriano Milli ist verfahrensmässig blockiert."
+                    : currentLang === "it"
+                    ? "Scudo giuridico assoluto del terzo in buona fede (Art. 933 Codice Civile svizzero). Qualsiasi accusa contro il volontario interprete Adriano Milli è categoricamente bloccata."
+                    : "Absolute statutory shield of bona fide third party (Art. 933 Swiss Civil Code). Any adverse proceeding against volunteer translator Adriano Milli is strictly blocked."}
                 </p>
               </div>
 
@@ -402,7 +464,15 @@ export const DocumentationModal: React.FC<DocumentationModalProps> = ({
                   <h4>Victim Legal Protection</h4>
                 </div>
                 <p className="text-slate-300 text-xs">
-                  Арсен Коваленко (нар. 05.11.1999, повнолітній потерпілий, 26 років). Безпосередня жертва шахрайства на $15'000 USD та тяжких погроз. Жодного помилкового застосування ст. 219 КК.
+                  {currentLang === "uk"
+                    ? "Арсен Коваленко (нар. 05.11.1999, повнолітній потерпілий, 26 років). Безпосередня жертва шахрайства на $15'000 USD та тяжких погроз. Жодного помилкового застосування ст. 219 КК."
+                    : currentLang === "fr"
+                    ? "Arsen Kovalenko (né le 05.11.1999, victime majeure, 26 ans). Victime directe de l'escroquerie de $15'000 USD et de menaces graves. Exclusion absolue de l'Art. 219 CP."
+                    : currentLang === "de"
+                    ? "Arsen Kovalenko (geb. 05.11.1999, volljähriges Opfer, 26 Jahre). Unmittelbares Opfer des Betrugs über $15'000 USD und schwerer Drohungen. Kein Art. 219 StGB."
+                    : currentLang === "it"
+                    ? "Arsen Kovalenko (nato il 05.11.1999, vittima maggiorenne, 26 anni). Vittima diretta della truffa di $15'000 USD e di gravi minacce. Esclusione totale dell'Art. 219 CP."
+                    : "Arsen Kovalenko (born 05.11.1999, adult victim, 26 y.o.). Direct victim of $15,000 USD fraud and aggravated threats. Complete exclusion of Art. 219 CP."}
                 </p>
               </div>
 
@@ -412,7 +482,15 @@ export const DocumentationModal: React.FC<DocumentationModalProps> = ({
                   <h4>Cryptographic WORM Proof</h4>
                 </div>
                 <p className="text-slate-300 text-xs">
-                  Кожен аудіофайл фоноскопічної експертизи, документ та фотознімок EXIF обов'язково містить незмінний хеш SHA-256, верифікований з Utopia DB.
+                  {currentLang === "uk"
+                    ? "Кожен аудіофайл фоноскопічної експертизи, документ та фотознімок EXIF обов'язково містить незмінний хеш SHA-256, верифікований з Utopia DB."
+                    : currentLang === "fr"
+                    ? "Chaque pièce audio, constat d'huissier et cliché EXIF est scellé par une empreinte SHA-256 immuable vérifiée dans Utopia DB."
+                    : currentLang === "de"
+                    ? "Jede Tonaufnahme, jedes Beweisdokument und EXIF-Foto verfügt über einen unveränderlichen SHA-256 Hash, verifiziert in Utopia DB."
+                    : currentLang === "it"
+                    ? "Ogni reperto audio, documento ed estratto EXIF reca un'impronta SHA-256 immutabile verificata con Utopia DB."
+                    : "Every phonoscopic audio file, documentary exhibit, and EXIF photograph is sealed by an immutable SHA-256 hash verified against Utopia DB."}
                 </p>
               </div>
             </div>
@@ -423,23 +501,73 @@ export const DocumentationModal: React.FC<DocumentationModalProps> = ({
             <div className="bg-slate-900/50 border border-slate-800 rounded-xl p-4 sm:p-5">
               <h3 className="text-sm sm:text-base font-bold text-slate-100 mb-3 flex items-center space-x-2">
                 <Laptop className="w-4 h-4 text-cyan-400" />
-                <span>Швидкі клавіші робочого простору</span>
+                <span>
+                  {currentLang === "uk"
+                    ? "Швидкі клавіші робочого простору"
+                    : currentLang === "fr"
+                    ? "Raccourcis clavier du poste de travail"
+                    : currentLang === "de"
+                    ? "Tastaturkürzel des Arbeitsbereichs"
+                    : currentLang === "it"
+                    ? "Scorciatoie da tastiera dell'area di lavoro"
+                    : "Workspace Keyboard Shortcuts"}
+                </span>
               </h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
                 <div className="flex items-center justify-between p-2.5 bg-[#060A14] border border-slate-800 rounded-lg">
-                  <span className="text-slate-300">Блокування робочого простору</span>
+                  <span className="text-slate-300">
+                    {currentLang === "uk"
+                      ? "Блокування робочого простору"
+                      : currentLang === "fr"
+                      ? "Verrouillage du poste"
+                      : currentLang === "de"
+                      ? "Arbeitsbereich sperren"
+                      : currentLang === "it"
+                      ? "Blocco dell'area di lavoro"
+                      : "Lock workspace"}
+                  </span>
                   <kbd className="font-mono bg-slate-800 px-2 py-1 rounded text-cyan-300 text-[11px]">Alt + L</kbd>
                 </div>
                 <div className="flex items-center justify-between p-2.5 bg-[#060A14] border border-slate-800 rounded-lg">
-                  <span className="text-slate-300">Закрити модальне вікно / Lightbox</span>
+                  <span className="text-slate-300">
+                    {currentLang === "uk"
+                      ? "Закрити модальне вікно / Lightbox"
+                      : currentLang === "fr"
+                      ? "Fermer fenêtre / Lightbox"
+                      : currentLang === "de"
+                      ? "Modal / Lightbox schliessen"
+                      : currentLang === "it"
+                      ? "Chiudi modale / Lightbox"
+                      : "Close modal / Lightbox"}
+                  </span>
                   <kbd className="font-mono bg-slate-800 px-2 py-1 rounded text-cyan-300 text-[11px]">Escape</kbd>
                 </div>
                 <div className="flex items-center justify-between p-2.5 bg-[#060A14] border border-slate-800 rounded-lg">
-                  <span className="text-slate-300">Навігація фото у Lightbox</span>
+                  <span className="text-slate-300">
+                    {currentLang === "uk"
+                      ? "Навігація фото у Lightbox"
+                      : currentLang === "fr"
+                      ? "Navigation photos Lightbox"
+                      : currentLang === "de"
+                      ? "Bildnavigation in Lightbox"
+                      : currentLang === "it"
+                      ? "Navigazione immagini Lightbox"
+                      : "Lightbox photo navigation"}
+                  </span>
                   <kbd className="font-mono bg-slate-800 px-2 py-1 rounded text-cyan-300 text-[11px]">← / →</kbd>
                 </div>
                 <div className="flex items-center justify-between p-2.5 bg-[#060A14] border border-slate-800 rounded-lg">
-                  <span className="text-slate-300">Масштабування фото (Zoom)</span>
+                  <span className="text-slate-300">
+                    {currentLang === "uk"
+                      ? "Масштабування фото (Zoom)"
+                      : currentLang === "fr"
+                      ? "Zoom photo"
+                      : currentLang === "de"
+                      ? "Bildzoom"
+                      : currentLang === "it"
+                      ? "Zoom immagine"
+                      : "Photo zoom"}
+                  </span>
                   <kbd className="font-mono bg-slate-800 px-2 py-1 rounded text-cyan-300 text-[11px]">+ / -</kbd>
                 </div>
               </div>
@@ -457,7 +585,15 @@ export const DocumentationModal: React.FC<DocumentationModalProps> = ({
             onClick={onClose}
             className="px-4 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg transition-colors font-medium"
           >
-            {currentLang === "uk" ? "Закрити" : "Fermer"}
+            {currentLang === "uk"
+              ? "Закрити"
+              : currentLang === "fr"
+              ? "Fermer"
+              : currentLang === "de"
+              ? "Schliessen"
+              : currentLang === "it"
+              ? "Chiudi"
+              : "Close"}
           </button>
         </div>
       </div>

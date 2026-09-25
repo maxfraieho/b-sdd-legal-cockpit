@@ -398,10 +398,58 @@ export const ActorIngestionWizard: React.FC<ActorIngestionWizardProps> = ({
           {/* Stepper Progress */}
           <div className="hidden sm:flex items-center space-x-2 text-xs font-mono">
             {[
-              { num: 1, label: currentLang === "uk" ? "Ідентифікація" : "Identité" },
-              { num: 2, label: currentLang === "uk" ? "Кваліфікація КПК" : "Qualification CPP" },
-              { num: 3, label: currentLang === "uk" ? "Очна ставка" : "Confrontation" },
-              { num: 4, label: currentLang === "uk" ? "Внесення & WORM" : "Scellement WORM" },
+              {
+                num: 1,
+                label:
+                  currentLang === "uk"
+                    ? "Ідентифікація"
+                    : currentLang === "fr"
+                    ? "Identité"
+                    : currentLang === "de"
+                    ? "Identität"
+                    : currentLang === "it"
+                    ? "Identità"
+                    : "Identity",
+              },
+              {
+                num: 2,
+                label:
+                  currentLang === "uk"
+                    ? "Кваліфікація КПК"
+                    : currentLang === "fr"
+                    ? "Qualification CPP"
+                    : currentLang === "de"
+                    ? "Qualifikation StPO"
+                    : currentLang === "it"
+                    ? "Qualificazione CPP"
+                    : "CPC Qualification",
+              },
+              {
+                num: 3,
+                label:
+                  currentLang === "uk"
+                    ? "Очна ставка"
+                    : currentLang === "fr"
+                    ? "Confrontation"
+                    : currentLang === "de"
+                    ? "Konfrontation"
+                    : currentLang === "it"
+                    ? "Confronto"
+                    : "Confrontation",
+              },
+              {
+                num: 4,
+                label:
+                  currentLang === "uk"
+                    ? "Внесення & WORM"
+                    : currentLang === "fr"
+                    ? "Scellement WORM"
+                    : currentLang === "de"
+                    ? "WORM-Versiegelung"
+                    : currentLang === "it"
+                    ? "Sigillo WORM"
+                    : "WORM Seal",
+              },
             ].map((st) => (
               <div
                 key={st.num}
@@ -485,7 +533,15 @@ export const ActorIngestionWizard: React.FC<ActorIngestionWizardProps> = ({
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                   <div>
                     <label className="block text-xs font-mono text-slate-300 mb-1">
-                      {currentLang === "uk" ? "Прізвище та Ім'я *" : "Nom et Prénom *"}
+                      {currentLang === "uk"
+                        ? "Прізвище та Ім'я *"
+                        : currentLang === "fr"
+                        ? "Nom et Prénom *"
+                        : currentLang === "de"
+                        ? "Nachname und Vorname *"
+                        : currentLang === "it"
+                        ? "Cognome e Nome *"
+                        : "Full Name *"}
                     </label>
                     <input
                       type="text"
@@ -498,7 +554,15 @@ export const ActorIngestionWizard: React.FC<ActorIngestionWizardProps> = ({
 
                   <div>
                     <label className="block text-xs font-mono text-slate-300 mb-1">
-                      {currentLang === "uk" ? "Дата народження (ДД.ММ.РРРР)" : "Date de naissance"}
+                      {currentLang === "uk"
+                        ? "Дата народження (ДД.ММ.РРРР)"
+                        : currentLang === "fr"
+                        ? "Date de naissance (JJ.MM.AAAA)"
+                        : currentLang === "de"
+                        ? "Geburtsdatum (TT.MM.JJJJ)"
+                        : currentLang === "it"
+                        ? "Data di nascita (GG.MM.AAAA)"
+                        : "Date of Birth (DD.MM.YYYY)"}
                     </label>
                     <input
                       type="text"
@@ -511,7 +575,15 @@ export const ActorIngestionWizard: React.FC<ActorIngestionWizardProps> = ({
 
                   <div>
                     <label className="block text-xs font-mono text-slate-300 mb-1">
-                      {currentLang === "uk" ? "Громадянство / Статус" : "Nationalité / Statut"}
+                      {currentLang === "uk"
+                        ? "Громадянство / Статус"
+                        : currentLang === "fr"
+                        ? "Nationalité / Statut"
+                        : currentLang === "de"
+                        ? "Staatsangehörigkeit / Status"
+                        : currentLang === "it"
+                        ? "Cittadinanza / Stato"
+                        : "Nationality / Status"}
                     </label>
                     <input
                       type="text"
@@ -526,7 +598,15 @@ export const ActorIngestionWizard: React.FC<ActorIngestionWizardProps> = ({
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
                     <label className="block text-xs font-mono text-slate-300 mb-1">
-                      {currentLang === "uk" ? "Адреса проживання / Кантон" : "Domicile / Canton"}
+                      {currentLang === "uk"
+                        ? "Адреса проживання / Кантон"
+                        : currentLang === "fr"
+                        ? "Domicile / Canton"
+                        : currentLang === "de"
+                        ? "Wohnsitz / Kanton"
+                        : currentLang === "it"
+                        ? "Domicilio / Cantone"
+                        : "Residence / Canton"}
                     </label>
                     <input
                       type="text"
@@ -539,7 +619,15 @@ export const ActorIngestionWizard: React.FC<ActorIngestionWizardProps> = ({
 
                   <div>
                     <label className="block text-xs font-mono text-slate-300 mb-1">
-                      {currentLang === "uk" ? "Фінансові вимоги / Відповідальність (CHF)" : "Prétentions / Responsabilité civile (CHF)"}
+                      {currentLang === "uk"
+                        ? "Фінансові вимоги / Відповідальність (CHF)"
+                        : currentLang === "fr"
+                        ? "Prétentions / Responsabilité civile (CHF)"
+                        : currentLang === "de"
+                        ? "Forderungen / Haftung (CHF)"
+                        : currentLang === "it"
+                        ? "Pretese / Responsabilità civile (CHF)"
+                        : "Claims / Civil Liability (CHF)"}
                     </label>
                     <input
                       type="number"
@@ -685,7 +773,15 @@ export const ActorIngestionWizard: React.FC<ActorIngestionWizardProps> = ({
 
                   <div>
                     <label className="block text-xs font-mono text-slate-400 mb-1.5">
-                      {currentLang === "uk" ? "Рівень процесуального ризику :" : "Niveau de risque procédural :"}
+                      {currentLang === "uk"
+                        ? "Рівень процесуального ризику :"
+                        : currentLang === "fr"
+                        ? "Niveau de risque procédural :"
+                        : currentLang === "de"
+                        ? "Prozessuale Risikostufe :"
+                        : currentLang === "it"
+                        ? "Livello di rischio procedurale :"
+                        : "Procedural Risk Level :"}
                     </label>
                     <div className="flex items-center space-x-2">
                       <span
@@ -700,12 +796,44 @@ export const ActorIngestionWizard: React.FC<ActorIngestionWizardProps> = ({
                         }`}
                       >
                         {riskLevel === "immune"
-                          ? "● Імунітет (L-03)"
+                          ? currentLang === "uk"
+                            ? "● Імунітет (L-03)"
+                            : currentLang === "fr"
+                            ? "● Immunité (L-03)"
+                            : currentLang === "de"
+                            ? "● Immunität (L-03)"
+                            : currentLang === "it"
+                            ? "● Immunità (L-03)"
+                            : "● Immunity (L-03)"
                           : riskLevel === "critical"
-                          ? "● Критичний (Обвинувачена)"
+                          ? currentLang === "uk"
+                            ? "● Критичний (Обвинувачена)"
+                            : currentLang === "fr"
+                            ? "● Critique (Prévenue)"
+                            : currentLang === "de"
+                            ? "● Kritisch (Beschuldigte)"
+                            : currentLang === "it"
+                            ? "● Critico (Imputata)"
+                            : "● Critical (Accused)"
                           : riskLevel === "high"
-                          ? "● Високий (Співучасник)"
-                          : "● Звичайний / Низький"}
+                          ? currentLang === "uk"
+                            ? "● Високий (Співучасник)"
+                            : currentLang === "fr"
+                            ? "● Élevé (Complice)"
+                            : currentLang === "de"
+                            ? "● Hoch (Mittäter)"
+                            : currentLang === "it"
+                            ? "● Elevato (Complice)"
+                            : "● High (Accomplice)"
+                          : currentLang === "uk"
+                          ? "● Звичайний / Низький"
+                          : currentLang === "fr"
+                          ? "● Ordinaire / Faible"
+                          : currentLang === "de"
+                          ? "● Normal / Gering"
+                          : currentLang === "it"
+                          ? "● Ordinario / Basso"
+                          : "● Ordinary / Low"}
                       </span>
                       <span className="text-[10px] text-slate-400 font-mono">
                         {PROCEDURAL_ROLES_METADATA[selectedRole].cppArticles}
@@ -932,7 +1060,16 @@ export const ActorIngestionWizard: React.FC<ActorIngestionWizardProps> = ({
                         <span>{candidateActor.name}</span>
                         {candidateActor.age && (
                           <span className="text-xs font-mono text-slate-400 font-normal">
-                            ({candidateActor.age} років, нар. {candidateActor.birthdate})
+                            ({candidateActor.age}{" "}
+                            {currentLang === "uk"
+                              ? `років, нар. ${candidateActor.birthdate}`
+                              : currentLang === "fr"
+                              ? `ans, né le ${candidateActor.birthdate}`
+                              : currentLang === "de"
+                              ? `Jahre, geb. ${candidateActor.birthdate}`
+                              : currentLang === "it"
+                              ? `anni, nato il ${candidateActor.birthdate}`
+                              : `y.o., born ${candidateActor.birthdate}`})
                           </span>
                         )}
                       </h4>
@@ -952,19 +1089,59 @@ export const ActorIngestionWizard: React.FC<ActorIngestionWizardProps> = ({
 
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-2 border-t border-slate-800 text-[11px] font-mono">
                     <div>
-                      <span className="text-slate-500 block">Громадянство:</span>
+                      <span className="text-slate-500 block">
+                        {currentLang === "uk"
+                          ? "Громадянство:"
+                          : currentLang === "fr"
+                          ? "Nationalité :"
+                          : currentLang === "de"
+                          ? "Staatsangehörigkeit:"
+                          : currentLang === "it"
+                          ? "Cittadinanza:"
+                          : "Citizenship:"}
+                      </span>
                       <span className="text-slate-200">{resolveLocalized(candidateActor.nationality, currentLang)}</span>
                     </div>
                     <div>
-                      <span className="text-slate-500 block">Місце проживання:</span>
+                      <span className="text-slate-500 block">
+                        {currentLang === "uk"
+                          ? "Місце проживання:"
+                          : currentLang === "fr"
+                          ? "Domicile :"
+                          : currentLang === "de"
+                          ? "Wohnsitz:"
+                          : currentLang === "it"
+                          ? "Domicilio:"
+                          : "Residence:"}
+                      </span>
                       <span className="text-slate-200">{resolveLocalized(candidateActor.domicile, currentLang)}</span>
                     </div>
                     <div>
-                      <span className="text-slate-500 block">Фінансова сума:</span>
+                      <span className="text-slate-500 block">
+                        {currentLang === "uk"
+                          ? "Фінансова сума:"
+                          : currentLang === "fr"
+                          ? "Montant financier :"
+                          : currentLang === "de"
+                          ? "Streitwert / Betrag:"
+                          : currentLang === "it"
+                          ? "Importo finanziario:"
+                          : "Financial Amount:"}
+                      </span>
                       <span className="text-emerald-400 font-bold">CHF {financialAmount.toLocaleString("fr-CH")}</span>
                     </div>
                     <div>
-                      <span className="text-slate-500 block">Рівень ризику:</span>
+                      <span className="text-slate-500 block">
+                        {currentLang === "uk"
+                          ? "Рівень ризику:"
+                          : currentLang === "fr"
+                          ? "Niveau de risque :"
+                          : currentLang === "de"
+                          ? "Risikostufe:"
+                          : currentLang === "it"
+                          ? "Livello di rischio:"
+                          : "Risk Level:"}
+                      </span>
                       <span className="text-amber-400 font-bold uppercase">{riskLevel}</span>
                     </div>
                   </div>
@@ -972,7 +1149,17 @@ export const ActorIngestionWizard: React.FC<ActorIngestionWizardProps> = ({
                   {/* SHA-256 Seal */}
                   <div className="p-2.5 bg-[#03060C] rounded-lg border border-slate-800 font-mono text-[10px] space-y-1">
                     <div className="flex items-center justify-between text-slate-400">
-                      <span>Незмінний цифровий хеш запису (SHA-256):</span>
+                      <span>
+                        {currentLang === "uk"
+                          ? "Незмінний цифровий хеш запису (SHA-256):"
+                          : currentLang === "fr"
+                          ? "Empreinte numérique immuable (SHA-256) :"
+                          : currentLang === "de"
+                          ? "Unveränderlicher digitaler Hash (SHA-256):"
+                          : currentLang === "it"
+                          ? "Impronta digitale immutabile (SHA-256):"
+                          : "Immutable Digital Hash (SHA-256):"}
+                      </span>
                       <span className="text-emerald-400">ISO/IEC 27037 Conforme</span>
                     </div>
                     <div className="text-emerald-300 break-all select-all font-bold">

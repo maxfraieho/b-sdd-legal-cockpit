@@ -10,7 +10,7 @@ export type LocalizedString = { [K in SupportedLanguage]?: string } & { uk?: str
 
 export function resolveLocalized(val: LocalizedString | undefined, lang: SupportedLanguage): string {
   if (!val) return '';
-  return val[lang] || val['it'] || val['de'] || val['fr'] || val['uk'] || val['en'] || '';
+  return val[lang] || val['fr'] || val['uk'] || val['en'] || val['de'] || val['it'] || '';
 }
 
 export function resolveLocalizedArray(
@@ -20,7 +20,7 @@ export function resolveLocalizedArray(
   if (!val) return [];
   if (Array.isArray(val)) return val;
   const map = val as { [K in SupportedLanguage]?: string[] };
-  return map[lang] || map['it'] || map['de'] || map['fr'] || map['uk'] || map['en'] || [];
+  return map[lang] || map['fr'] || map['uk'] || map['en'] || map['de'] || map['it'] || [];
 }
 
 export interface CitationReference {

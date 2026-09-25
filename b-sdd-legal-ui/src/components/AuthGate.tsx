@@ -1,6 +1,6 @@
 // =========================================================================
 // B-SDD LEGAL COCKPIT · КОНФІДЕНЦІЙНИЙ ШЛЮЗ АВТОРИЗАЦІЇ (AUTH GATE)
-// Захист таємниці слідства (ст. 73 КПК), прав дитини (ст. 122 КПК) та щита L-03
+// Захист таємниці слідства (ст. 73 КПК), прав потерпілої сторони (ст. 115, 118, 122 КПК) та щита L-03
 // =========================================================================
 
 import React, { useState, useEffect } from 'react';
@@ -171,7 +171,7 @@ export const AuthGate: React.FC<AuthGateProps> = ({
             </h1>
             <p className="text-xs text-slate-400 font-mono flex items-center justify-center gap-1.5">
               <Scale className="w-3.5 h-3.5 text-blue-400" />
-              <span>CASE-SAMPLE-2026-CH · Ministère public Vaud</span>
+              <span>PE24.014624-SBA · Ministère public Vaud</span>
             </p>
           </div>
 
@@ -182,6 +182,8 @@ export const AuthGate: React.FC<AuthGateProps> = ({
               <div className="font-semibold text-amber-300 mb-0.5">
                 {currentLang === 'uk' ? 'СУДОВА ТАЄМНИЦЯ (СТ. 73 КПК ШВЕЙЦАРІЇ)' :
                  currentLang === 'fr' ? 'SECRET DE L’INSTRUCTION (ART. 73 CPP)' :
+                 currentLang === 'de' ? 'UNTERSUCHUNGSGEHEIMNIS (ART. 73 STPO)' :
+                 currentLang === 'it' ? 'SEGRETO ISTRUTTORIO (ART. 73 CPP)' :
                  'PROCEDURAL SECRECY (ART. 73 SWISS CPC)'}
               </div>
               {t('auth_warning')}
@@ -263,9 +265,11 @@ export const AuthGate: React.FC<AuthGateProps> = ({
               <span>{t('auth_shield_note')}</span>
             </div>
             <div className="text-slate-500 text-[10px]">
-              {currentLang === 'uk' ? 'Кримінальний кодекс Швейцарії (CP) · КПК (CPP) · Неповнолітній Александр Дюбуа (2012)' :
-               currentLang === 'fr' ? 'Code pénal suisse (CP) · CPP · Protection mineur Alexandre Dubois (2012)' :
-               'Swiss Criminal Code (CP) · Swiss CPC · Minor victim Alexandre Dubois (2012)'}
+              {currentLang === 'uk' ? 'Кримінальний кодекс (CP) · КПК (CPP) · Повнолітній потерпілий Арсен Коваленко (26 років)' :
+               currentLang === 'fr' ? 'Code pénal (CP) · CPP · Protection de la victime majeure Arsen Kovalenko (26 ans)' :
+               currentLang === 'de' ? 'Schweizer StGB · StPO · Schutz des volljährigen Opfers Arsen Kovalenko (26 Jahre)' :
+               currentLang === 'it' ? 'Codice penale (CP) · CPP · Tutela della vittima maggiorenne Arsen Kovalenko (26 anni)' :
+               'Swiss Criminal Code (SCC) · CPC · Protection of adult victim Arsen Kovalenko (26 y.o.)'}
             </div>
           </div>
         </div>
@@ -274,6 +278,8 @@ export const AuthGate: React.FC<AuthGateProps> = ({
         <div className="text-center mt-4 text-[11px] text-slate-500">
           {currentLang === 'uk' ? 'Підказка: Пароль за замовчуванням: ' :
            currentLang === 'fr' ? 'Indication : Mot de passe par défaut : ' :
+           currentLang === 'de' ? 'Hinweis: Standard-Passwort: ' :
+           currentLang === 'it' ? 'Suggerimento: Password predefinita: ' :
            'Hint: Default password: '}
           <code className="text-slate-400 font-mono bg-slate-900 px-1.5 py-0.5 rounded border border-slate-800">0523</code>
         </div>
