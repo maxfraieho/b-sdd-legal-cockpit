@@ -37,11 +37,15 @@ export const BENCHMARK_CASES: LegalCase[] = [
     title: {
       uk: 'Справа Коваленко проти Суворової (Шахрайство, погрози, наклеп)',
       fr: 'Affaire Kovalenko c/ Suvorova (Escroquerie, menaces, dénonciation calomnieuse)',
+      de: 'Rechtssache Kovalenko gegen Suvorova (Betrug, Drohungen, falsche Anschuldigung)',
+      it: 'Causa Kovalenko c/ Suvorova (Truffa, minacce gravi, calunnia/falsa accusa)',
       en: 'Kovalenko v. Suvorova (Fraud, threats, malicious false accusation)',
     },
     court: {
       uk: 'Прокуратура кантону Во · Округ Лозанна',
       fr: 'Ministère public du Canton de Vaud · Arrondissement de Lausanne',
+      de: 'Staatsanwaltschaft des Kantons Waadt · Bezirk Lausanne',
+      it: 'Ministero pubblico del Canton Vaud · Circondario di Losanna',
       en: 'Public Prosecutor of the Canton of Vaud · Lausanne District',
     },
     canton: 'Vaud',
@@ -50,6 +54,8 @@ export const BENCHMARK_CASES: LegalCase[] = [
     client_role: {
       uk: 'Потерпілий & Цивільний позивач (Повнолітній, 26 років)',
       fr: 'Partie plaignante & Demandeur civil (Majeur, 26 ans)',
+      de: 'Geschädigte Person & Privatklägerschaft (Volljährig, 26 Jahre)',
+      it: 'Persona lesa & Accusatore privato (Maggiorenne, 26 anni)',
       en: 'Complainant & Civil Plaintiff (Adult, 26 yo)',
     },
     status: 'active',
@@ -59,6 +65,8 @@ export const BENCHMARK_CASES: LegalCase[] = [
     description: {
       uk: 'Основна еталонна справа щодо привласнення $15 000 USD, тяжких погроз розправою, фальсифікації нападу та клопотання про арешт банківських рахунків на CHF 46 850.00 (ст. 146, 180, 181, 186, 303 CP / ст. 263 CPP).',
       fr: 'Dossier pénal de référence concernant la captation de $15 000 USD, menaces graves de mort, agression fabriquée et séquestre conservatoire de CHF 46 850.00.',
+      de: 'Musterstrafverfahren betreffend Entwendung von $15 000 USD, schwere Todesdrohungen, fabrizierten Angriff und Beschlagnahme von CHF 46 850.00 (Art. 146, 180, 181, 186, 303 StGB / Art. 263 StPO).',
+      it: 'Procedimento penale pilota relativo alla sottrazione di $15 000 USD, minacce gravi di morte, aggressione fabbricata e sequestro conservativo di CHF 46 850.00 (Art. 146, 180, 181, 186, 303 CP / Art. 263 CPP).',
       en: 'Benchmark criminal proceeding concerning $15,000 USD fraud, death threats, fabricated assault, and conservative asset freeze of CHF 46,850.00.',
     },
     sequestration_target_chf: 46850,
@@ -69,11 +77,15 @@ export const BENCHMARK_CASES: LegalCase[] = [
     title: {
       uk: 'Справа Фідуція Лемáн проти Приватного Банку (Комерційний шантаж)',
       fr: 'Fiduciaire Lémanique SA c/ Banque Privée de Genève (Rupture abusive & Chantage)',
+      de: 'Fiduciaire Lémanique SA gegen Privatbank Genf (Vertragsbruch & Erpressung)',
+      it: 'Fiduciaire Lémanique SA c/ Banca Privata di Ginevra (Rottura abusiva & Ricatto)',
       en: 'Fiduciaire Lémanique SA v. Private Bank of Geneva (Commercial Breach & Blackmail)',
     },
     court: {
       uk: 'Цивільний суд Республіки та Кантону Женева',
       fr: 'Tribunal civil de la République et Canton de Genève',
+      de: 'Zivilgericht der Republik und des Kantons Genf',
+      it: 'Tribunale civile della Repubblica e Cantone di Ginevra',
       en: 'Civil Court of the Republic and Canton of Geneva',
     },
     canton: 'Genève',
@@ -82,6 +94,8 @@ export const BENCHMARK_CASES: LegalCase[] = [
     client_role: {
       uk: 'Позивач (Demandeur)',
       fr: 'Demandeur au civil',
+      de: 'Kläger (Zivilkläger)',
+      it: 'Attore civile',
       en: 'Civil Plaintiff',
     },
     status: 'active',
@@ -91,6 +105,8 @@ export const BENCHMARK_CASES: LegalCase[] = [
     description: {
       uk: 'Цивільний позов про відшкодування збитків за порушення банківської таємниці та неправомірне замороження операційного рахунку (ст. 97 CO / ст. 47 LB).',
       fr: 'Action en dommages-intérêts pour rupture intempestive de relations bancaires et blocage illicite de compte.',
+      de: 'Schadenersatzklage wegen ungerechtfertigter Kündigung der Bankbeziehung und unzulässiger Kontosperre (Art. 97 OR).',
+      it: 'Azione risarcitoria per illegittima risoluzione del rapporto bancario e blocco indebito del conto operativo (Art. 97 CO).',
       en: 'Civil damages action for wrongful termination of banking relationship and unlawful account freeze.',
     },
     sequestration_target_chf: 120000,
@@ -101,11 +117,15 @@ export const BENCHMARK_CASES: LegalCase[] = [
     title: {
       uk: 'Спадковий спір Лаво-Орон (Фальсифікація заповіту & Відчуження)',
       fr: 'Succession de V. c/ Tiers acquéreur (Contestation testamentaire & Captation)',
+      de: 'Erbschaftsstreit Lavaux-Oron (Testamentsanfechtung & Erbschleicherei)',
+      it: 'Controversia successoria Lavaux-Oron (Impugnazione testamentaria & Captazione)',
       en: 'Estate of V. v. Third-party buyer (Will forgery & Unlawful appropriation)',
     },
     court: {
       uk: 'Мировий суд округу Лаво-Орон (Canton de Vaud)',
       fr: 'Justice de paix du district de Lavaux-Oron · Cully',
+      de: 'Friedensgericht des Bezirks Lavaux-Oron · Cully',
+      it: 'Giudicatura di pace del distretto di Lavaux-Oron · Cully',
       en: 'Justice of the Peace of Lavaux-Oron District',
     },
     canton: 'Vaud',
@@ -114,6 +134,8 @@ export const BENCHMARK_CASES: LegalCase[] = [
     client_role: {
       uk: 'Спадкоємець за законом (Héritière réservataire)',
       fr: 'Héritière réservataire',
+      de: 'Pflichtteilsgeschützte Erbin',
+      it: 'Erede legittimaria',
       en: 'Forced Heir',
     },
     status: 'active',
@@ -123,6 +145,8 @@ export const BENCHMARK_CASES: LegalCase[] = [
     description: {
       uk: 'Позов про визнання недійсним заповіту та витребування нерухомості з чужого незаконного володіння (ст. 467 ss, 519 CC).',
       fr: 'Action en nullité de testament pour incapacité de discernement et pétition d hérédité (Art. 467 ss CC).',
+      de: 'Klage auf Ungültigerklärung des Testaments wegen Urteilsunfähigkeit und Erbschaftsklage (Art. 467 ff. ZGB).',
+      it: 'Azione di nullità testamentaria per incapacità di discernimento e petizione d eredità (Art. 467 e segg. CC).',
       en: 'Action for annulment of testamentary disposition and inheritance petition.',
     },
     sequestration_target_chf: 350000,

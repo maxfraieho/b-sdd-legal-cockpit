@@ -156,7 +156,16 @@ export const EvidenceFactbook: React.FC<EvidenceFactbookProps> = ({ currentLang 
             window.speechSynthesis.cancel();
             const quote = resolveLocalized(selectedPiece.citation_cle, currentLang);
             const utterance = new SpeechSynthesisUtterance(quote);
-            utterance.lang = currentLang === "fr" ? "fr-CH" : currentLang === "uk" ? "uk-UA" : "en-US";
+            utterance.lang =
+              currentLang === "fr"
+                ? "fr-CH"
+                : currentLang === "de"
+                ? "de-CH"
+                : currentLang === "it"
+                ? "it-CH"
+                : currentLang === "uk"
+                ? "uk-UA"
+                : "en-US";
             utterance.rate = playbackRate;
             utterance.onend = () => setIsPlaying(false);
             window.speechSynthesis.speak(utterance);

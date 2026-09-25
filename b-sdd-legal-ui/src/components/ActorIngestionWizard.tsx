@@ -181,7 +181,13 @@ export const ActorIngestionWizard: React.FC<ActorIngestionWizardProps> = ({
           text:
             currentLang === "uk"
               ? `ШІ-Асистент підготував процесуальний профіль для ${actorName || "нового фігуранта"}. Рекомендовані запитання для допиту/очної ставки (ст. 147 КПК):\n1. Чи підтверджує свідок точний час події?\n2. Які документи чи телефонні контакти можуть підтвердити його свідчення?\n3. Чи має свідок прямий матеріальний чи особистий інтерес у справі?`
-              : `L'assistant IA a modélisé le profil procédural de ${actorName || "l'intervenant"}. Questions recommandées pour l'audition contradictoire (Art. 147 CPP) :\n1. Confirmez-vous l'heure exacte et votre champ de vision lors des faits ?\n2. Disposez-vous d'éléments matériels corroborant votre déposition ?\n3. Avez-vous un lien personnel ou financier avec l'une des parties ?`,
+              : currentLang === "it"
+              ? `L'assistente IA ha modellato il profilo procedurale per ${actorName || "il nuovo soggetto"}. Domande raccomandate per l'audizione di confronto (Art. 147 CPP):\n1. Conferma l'orario esatto e il suo campo visivo al momento dei fatti?\n2. Dispone di elementi materiali o contatti che possano riscontrare la sua deposizione?\n3. Ha un interesse patrimoniale o personale diretto nella presente causa?`
+              : currentLang === "de"
+              ? `Der KI-Assistent hat das Verfahrensprofil für ${actorName || "die neue Person"} erstellt. Empfohlene Fragen für die kontradiktorische Einvernahme (Art. 147 StPO):\n1. Bestätigen Sie den genauen Tatzeitpunkt und Ihre Wahrnehmungen?\n2. Welche Unterlagen oder Kontakte können Ihre Aussage objektiv stützen?\n3. Haben Sie ein direktes Vermögens- oder persönliches Interesse am Verfahren?`
+              : currentLang === "fr"
+              ? `L'assistant IA a modélisé le profil procédural de ${actorName || "l'intervenant"}. Questions recommandées pour l'audition contradictoire (Art. 147 CPP) :\n1. Confirmez-vous l'heure exacte et votre champ de vision lors des faits ?\n2. Disposez-vous d'éléments matériels corroborant votre déposition ?\n3. Avez-vous un lien personnel ou financier avec l'une des parties ?`
+              : `The AI Assistant modeled the procedural profile for ${actorName || "the person of interest"}. Recommended confrontation questions (Art. 147 CPC):\n1. Do you confirm the exact timestamp and direct line of sight?\n2. What tangible records corroborate your statement?\n3. Do you possess any financial or personal stake in this matter?`,
           timestamp: new Date().toLocaleTimeString().slice(0, 5),
         },
       ];
@@ -210,17 +216,35 @@ export const ActorIngestionWizard: React.FC<ActorIngestionWizardProps> = ({
         reply =
           currentLang === "uk"
             ? "Увага: Будь-яке питання до обвинуваченого має враховувати право на мовчання (ст. 158 КПК). Рекомендується пред'явити аудіозапис P-01 та виписку Wise P-05 під час очної ставки для фіксації суперечностей."
-            : "Attention : Rappel préalable de l'Art. 158 CPP impératif. Préconisation tactique : confronter directement aux enregistrements P-01 et à la preuve de virement P-05 pour figer les contradictions.";
+            : currentLang === "it"
+            ? "Attenzione: Richiamo preventivo dell'Art. 158 CPP tassativo (diritto al silenzio). Raccomandazione tattica: contestare direttamente l'audio P-01 e la contabile Wise P-05 durante l'audizione per cristallizzare le contraddizioni."
+            : currentLang === "de"
+            ? "Achtung: Zwingender Hinweis auf Art. 158 StPO (Aussageverweigerung). Taktische Empfehlung: Unmittelbare Vorlage der Tonaufnahme P-01 und des Wise-Belegs P-05 zur Fixierung der Widersprüche."
+            : currentLang === "fr"
+            ? "Attention : Rappel préalable de l'Art. 158 CPP impératif. Préconisation tactique : confronter directement aux enregistrements P-01 et à la preuve de virement P-05 pour figer les contradictions."
+            : "Attention: Prior reminder of Art. 158 CPC mandatory. Tactical recommendation: confront directly with audio P-01 and Wise receipt P-05.";
       } else if (selectedRole === "tiers_bonne_foi") {
         reply =
           currentLang === "uk"
-            ? "Згідно з Інваріантом L-03 та ст. 933 ЦК, добросовісний учасник повністю захищений. Будь-які запитання повинні стосуватися виключно обставин гуманітарної допомоги."
-            : "En vertu de l'Invariant L-03 et de l'Art. 933 CC, le tiers de bonne foi est sanctuarisé. Les questions doivent se limiter aux actes d'assistance neutres.";
+            ? "Згідно з Інваріантом L-03 та ст. 933 ЦК, добросовісний учасник повністю захищений. Будь-які запитання повинні стосуватися виключно обставин гуманітарної допомоги та перекладу."
+            : currentLang === "it"
+            ? "In virtù dell'Invariante L-03 e dell'Art. 933 CC, il terzo di buona fede è inviolabile. Le domande devono limitarsi rigorosamente alle circostanze dell'assistenza umanitaria o della traduzione."
+            : currentLang === "de"
+            ? "Gemäss Invariante L-03 und Art. 933 ZGB ist der gutgläubige Dritte voll geschützt. Alle Fragen müssen sich ausschliesslich auf humanitäre Hilfe oder Dolmetschen beziehen."
+            : currentLang === "fr"
+            ? "En vertu de l'Invariant L-03 et de l'Art. 933 CC, le tiers de bonne foi est sanctuarisé. Les questions doivent se limiter aux actes d'assistance neutres."
+            : "Under Invariant L-03 and Art. 933 CC, the bona fide third party is fully immune. Questions must be strictly confined to neutral assistance.";
       } else {
         reply =
           currentLang === "uk"
             ? "Позицію прийнято. Питання внесено до плану судового засідання та досьє потерпілого."
-            : "Pris en compte. Les éléments sont intégrés au procès-verbal pré-audienciel.";
+            : currentLang === "it"
+            ? "Posizione registrata. Le domande sono inserite nel piano dell'audizione e nel fascicolo dell'accusatore privato."
+            : currentLang === "de"
+            ? "Standpunkt erfasst. Die Fragen wurden in den Einvernahmeplan und das Aktenheft der Privatklägerschaft aufgenommen."
+            : currentLang === "fr"
+            ? "Pris en compte. Les éléments sont intégrés au procès-verbal pré-audienciel."
+            : "Noted. Elements integrated into the hearing plan.";
       }
 
       setChatMessages((prev) => [
@@ -244,12 +268,16 @@ export const ActorIngestionWizard: React.FC<ActorIngestionWizardProps> = ({
     status: {
       uk: PROCEDURAL_ROLES_METADATA[selectedRole].labelUk,
       fr: PROCEDURAL_ROLES_METADATA[selectedRole].labelFr,
+      de: PROCEDURAL_ROLES_METADATA[selectedRole].labelDe,
+      it: PROCEDURAL_ROLES_METADATA[selectedRole].labelIt,
       en: PROCEDURAL_ROLES_METADATA[selectedRole].labelEn,
     },
     badgeColor: PROCEDURAL_ROLES_METADATA[selectedRole].badgeStyle,
     role: {
       uk: aiRationale || `Процесуальний статус ${PROCEDURAL_ROLES_METADATA[selectedRole].labelUk} у кримінальному провадженні PE24.014624-SBA.`,
       fr: aiRationale || `Statut de ${PROCEDURAL_ROLES_METADATA[selectedRole].labelFr} dans le cadre de la procédure PE24.014624-SBA.`,
+      de: aiRationale || `Verfahrensstatus als ${PROCEDURAL_ROLES_METADATA[selectedRole].labelDe} im Verfahren PE24.014624-SBA.`,
+      it: aiRationale || `Status processuale di ${PROCEDURAL_ROLES_METADATA[selectedRole].labelIt} nel procedimento PE24.014624-SBA.`,
       en: aiRationale || `Procedural standing as ${PROCEDURAL_ROLES_METADATA[selectedRole].labelEn} in proceeding PE24.014624-SBA.`,
     },
     protected_bona_fide: selectedRole === "tiers_bonne_foi",
@@ -260,11 +288,15 @@ export const ActorIngestionWizard: React.FC<ActorIngestionWizardProps> = ({
     nationality: {
       uk: actorNationality || "Не вказано",
       fr: actorNationality || "Non spécifié",
+      de: actorNationality || "Nicht angegeben",
+      it: actorNationality || "Non specificato",
       en: actorNationality || "Unspecified",
     },
     domicile: {
       uk: actorDomicile || "Кантон Во, Швейцарія",
       fr: actorDomicile || "Canton de Vaud, Suisse",
+      de: actorDomicile || "Kanton Waadt, Schweiz",
+      it: actorDomicile || "Canton Vaud, Svizzera",
       en: actorDomicile || "Canton of Vaud, Switzerland",
     },
     financial_claim_chf: selectedRole === "victime_plaignante" ? financialAmount : 0,
@@ -274,6 +306,8 @@ export const ActorIngestionWizard: React.FC<ActorIngestionWizardProps> = ({
     droits_proceduraux: {
       uk: PROCEDURAL_ROLES_METADATA[selectedRole].defaultRightsUk,
       fr: PROCEDURAL_ROLES_METADATA[selectedRole].defaultRightsFr,
+      de: PROCEDURAL_ROLES_METADATA[selectedRole].defaultRightsDe,
+      it: PROCEDURAL_ROLES_METADATA[selectedRole].defaultRightsIt,
       en: PROCEDURAL_ROLES_METADATA[selectedRole].defaultRightsEn,
     },
     photos: photoDataUrl

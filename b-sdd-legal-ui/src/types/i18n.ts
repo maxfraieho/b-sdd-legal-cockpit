@@ -3,7 +3,7 @@
 // Supporting Ukrainian (Primary), French (Official Swiss), English
 // =========================================================================
 
-export type SupportedLanguage = 'uk' | 'fr' | 'en';
+export type SupportedLanguage = 'uk' | 'fr' | 'de' | 'it' | 'en';
 
 export interface LanguageInfo {
   code: SupportedLanguage;
@@ -15,6 +15,8 @@ export interface LanguageInfo {
 export const SUPPORTED_LANGUAGES: LanguageInfo[] = [
   { code: 'uk', label: 'Українська', nativeName: 'Українська', flag: '🇺🇦' },
   { code: 'fr', label: 'Français', nativeName: 'Français (CH)', flag: '🇨🇭' },
+  { code: 'de', label: 'Deutsch', nativeName: 'Deutsch (CH)', flag: '🇨🇭' },
+  { code: 'it', label: 'Italiano', nativeName: 'Italiano (CH/IT)', flag: '🇮🇹' },
   { code: 'en', label: 'English', nativeName: 'English (US)', flag: '🇬🇧' },
 ];
 
@@ -28,6 +30,7 @@ export interface AppSettings {
   geminiModel: string;
   geminiApiKey: string;
   geminiTemperature: number;
+  geminiPaidPlanActive: boolean;
   llmProxyUrl: string;
   llmApiKey: string;
   llmModel: string;
@@ -42,6 +45,14 @@ export interface AppSettings {
   authPassword: string;
   autoLockMinutes: number;
   manualEditMode: boolean;
+  // Delivery & Kindle
+  kindleEmail: string;
+  senderEmail: string;
+  autoSendKindleOnWorm: boolean;
+  // Google Account & Docs
+  googleAccountConnected: boolean;
+  googleAccountEmail: string;
+  googleDocsFolderUrl: string;
 }
 
 export const DEFAULT_SETTINGS: AppSettings = {
@@ -51,6 +62,7 @@ export const DEFAULT_SETTINGS: AppSettings = {
   geminiModel: 'gemini-3.8-flash',
   geminiApiKey: '',
   geminiTemperature: 0.2,
+  geminiPaidPlanActive: false,
   llmProxyUrl: 'http://192.168.3.184:18880/v1',
   llmApiKey: '',
   llmModel: 'meta/llama-3.3-70b-instruct',
@@ -71,6 +83,12 @@ export const DEFAULT_SETTINGS: AppSettings = {
   authPassword: '0523',
   autoLockMinutes: 15,
   manualEditMode: false,
+  kindleEmail: 'tukroschu@kindle.com',
+  senderEmail: 'arsen.k111999@gmail.com',
+  autoSendKindleOnWorm: false,
+  googleAccountConnected: true,
+  googleAccountEmail: 'arsen.k111999@gmail.com',
+  googleDocsFolderUrl: 'https://docs.google.com/document/d/1Zt-case-pe24-014624-sba/edit',
 };
 
 export type TranslationOverrides = Record<string, string>;

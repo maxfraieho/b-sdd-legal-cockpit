@@ -288,9 +288,9 @@ export const Topbar: React.FC<TopbarProps> = ({
           </span>
         </button>
 
-        {/* Trilingual Language Selector (Always visible) */}
+        {/* Multilingual Language Selector (Always visible: UA, FR, DE, IT, EN) */}
         <div className="flex items-center bg-[#070B12] p-0.5 rounded border border-slate-800/80 text-[10px] sm:text-[11px] font-mono shrink-0">
-          {(['uk', 'fr', 'en'] as SupportedLanguage[]).map((lang) => (
+          {(['uk', 'fr', 'de', 'it', 'en'] as SupportedLanguage[]).map((lang) => (
             <button
               key={lang}
               onClick={() => onLangChange(lang)}
@@ -299,6 +299,7 @@ export const Topbar: React.FC<TopbarProps> = ({
                   ? "bg-blue-600 text-white shadow-sm"
                   : "text-slate-400 hover:text-slate-200"
               }`}
+              title={lang === 'uk' ? 'Українська' : lang === 'fr' ? 'Français' : lang === 'de' ? 'Deutsch' : lang === 'it' ? 'Italiano' : 'English'}
             >
               {lang === 'uk' ? 'UA' : lang.toUpperCase()}
             </button>
@@ -351,7 +352,17 @@ export const Topbar: React.FC<TopbarProps> = ({
           <button
             onClick={onOpenQuickMenu}
             className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white border border-slate-700/80 transition-colors shrink-0 cursor-pointer min-h-[32px] min-w-[32px] flex items-center justify-center shadow-sm"
-            title={currentLang === "uk" ? "Швидке меню та інструменти (Astryx)" : "Menu rapide & outils"}
+            title={
+              currentLang === "uk"
+                ? "Швидке меню та інструменти (Astryx)"
+                : currentLang === "it"
+                ? "Menu rapido & strumenti (Astryx)"
+                : currentLang === "de"
+                ? "Schnellmenü & Werkzeuge (Astryx)"
+                : currentLang === "fr"
+                ? "Menu rapide & outils"
+                : "Quick menu & tools (Astryx)"
+            }
             aria-label="Open navigation and tools menu"
           >
             <Menu className="w-4 h-4 text-amber-400" />

@@ -38,9 +38,26 @@ export const KindleVoiceReview: React.FC<KindleVoiceReviewProps> = ({
 
   // Free lawyer draft & dictation text
   const [dictationText, setDictationText] = useState("");
+  const [interimText, setInterimText] = useState("");
+  const [speechError, setSpeechError] = useState<string | null>(null);
   const [isRecording, setIsRecording] = useState(false);
-  const [recordingLang, setRecordingLang] = useState<"fr-CH" | "uk-UA">("fr-CH");
+  const [recordingLang, setRecordingLang] = useState<"uk-UA" | "fr-CH" | "de-CH" | "it-CH" | "en-US">(() => {
+    if (currentLang === "uk") return "uk-UA";
+    if (currentLang === "it") return "it-CH";
+    if (currentLang === "de") return "de-CH";
+    if (currentLang === "en") return "en-US";
+    return "fr-CH";
+  });
   const recognitionRef = useRef<any>(null);
+
+  // Sync recordingLang when currentLang changes if user hasn't explicitly overridden
+  useEffect(() => {
+    if (currentLang === "uk") setRecordingLang("uk-UA");
+    else if (currentLang === "it") setRecordingLang("it-CH");
+    else if (currentLang === "de") setRecordingLang("de-CH");
+    else if (currentLang === "en") setRecordingLang("en-US");
+    else setRecordingLang("fr-CH");
+  }, [currentLang]);
 
   // Active editable text for the right column
   const [editorText, setEditorText] = useState(resolveLocalized(selectedChapter.lawyer_draft, currentLang));
@@ -62,7 +79,7 @@ export const KindleVoiceReview: React.FC<KindleVoiceReviewProps> = ({
     setIsSaved(false);
   }, [selectedChapter, currentLang]);
 
-  // Speech Recognition setup (Web Speech API)
+  // Speech Recognition setup (Web Speech API / Meta Astryx Speech Standard)
   useEffect(() => {
     try {
       const SpeechRecognition =
@@ -74,25 +91,61 @@ export const KindleVoiceReview: React.FC<KindleVoiceReviewProps> = ({
         const recognition = new SpeechRecognition();
         recognition.continuous = true;
         recognition.interimResults = true;
+        recognition.maxAlternatives = 1;
         recognition.lang = recordingLang;
 
         recognition.onresult = (event: any) => {
-          let currentTranscript = "";
+          let currentInterim = "";
+          let finalChunk = "";
+
           for (let i = event.resultIndex; i < event.results.length; ++i) {
-            currentTranscript += event.results[i][0].transcript;
+            const item = event.results[i];
+            if (item.isFinal) {
+              finalChunk += item[0].transcript;
+            } else {
+              currentInterim += item[0].transcript;
+            }
           }
-          if (currentTranscript.trim()) {
-            setDictationText((prev) => (prev ? prev + " " + currentTranscript : currentTranscript));
+
+          if (finalChunk.trim()) {
+            setDictationText((prev) => (prev ? prev.trim() + " " + finalChunk.trim() : finalChunk.trim()));
+            setSpeechError(null);
           }
+          setInterimText(currentInterim);
         };
 
         recognition.onerror = (event: any) => {
           console.warn("Speech recognition error:", event.error);
           setIsRecording(false);
+          setInterimText("");
+          if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
+            setSpeechError(
+              currentLang === 'uk'
+                ? "Мікрофон заблоковано в браузері. Дозвольте доступ або введіть текст вручну."
+                : currentLang === 'it'
+                ? "Microfono bloccato nel browser. Autorizzare l'accesso o digitare le note."
+                : currentLang === 'de'
+                ? "Mikrofonzugriff blockiert. Bitte Berechtigung erteilen oder Text tippen."
+                : "Microphone bloqué dans le navigateur. Veuillez autoriser l'accès."
+            );
+          } else if (event.error === 'network') {
+            setSpeechError(
+              currentLang === 'uk'
+                ? "Помилка мережі розпізнавання голосу. Скористайтесь швидкими шаблонами нижче."
+                : currentLang === 'it'
+                ? "Errore di rete del riconoscimento vocale. Usare i modelli rapidi sotto."
+                : currentLang === 'de'
+                ? "Netzwerkfehler der Spracherkennung. Vorlagen unten nutzen."
+                : "Erreur réseau de reconnaissance vocale. Utilisez les modèles ci-dessous."
+            );
+          } else if (event.error !== 'no-speech') {
+            setSpeechError(`Astryx Speech Info: ${event.error}`);
+          }
         };
 
         recognition.onend = () => {
           setIsRecording(false);
+          setInterimText("");
         };
 
         recognitionRef.current = recognition;
@@ -109,21 +162,29 @@ export const KindleVoiceReview: React.FC<KindleVoiceReviewProps> = ({
         } catch {}
       }
     };
-  }, [recordingLang]);
+  }, [recordingLang, currentLang]);
 
   const toggleRecording = () => {
+    setSpeechError(null);
     if (!recognitionRef.current) {
-      alert(
+      setSpeechError(
         currentLang === 'uk'
-          ? "Голосовий ввід не підтримується у цьому браузері або вимкнений. Введіть текст вручну."
-          : "La reconnaissance vocale n'est pas supportée dans ce navigateur. Veuillez saisir le texte manuellement."
+          ? "Голосовий ввід не підтримується цим браузером. Використовуйте кнопки швидких аудіозаписів або клавіатуру."
+          : currentLang === 'it'
+          ? "Riconoscimento vocale non supportato dal browser. Utilizzare i modelli audio rapidi o digitare."
+          : currentLang === 'de'
+          ? "Spracherkennung in diesem Browser nicht unterstützt. Bitte Schnellvorlagen oder Tastatur nutzen."
+          : "La reconnaissance vocale n'est pas supportée dans ce navigateur. Utilisez les modèles ou le clavier."
       );
       return;
     }
 
     if (isRecording) {
-      recognitionRef.current.stop();
+      try {
+        recognitionRef.current.stop();
+      } catch {}
       setIsRecording(false);
+      setInterimText("");
     } else {
       try {
         recognitionRef.current.lang = recordingLang;
@@ -131,6 +192,7 @@ export const KindleVoiceReview: React.FC<KindleVoiceReviewProps> = ({
         setIsRecording(true);
       } catch (err) {
         console.error("Failed to start speech recognition:", err);
+        setSpeechError("Не вдалося запустити розпізнавання: " + String(err));
       }
     }
   };
@@ -250,8 +312,11 @@ export const KindleVoiceReview: React.FC<KindleVoiceReviewProps> = ({
               onChange={(e) => setRecordingLang(e.target.value as any)}
               className="bg-[#070B12] border border-slate-800 text-[11px] text-slate-300 rounded px-2 py-1 font-mono focus:outline-none focus:border-blue-500"
             >
-              <option value="fr-CH">FR (Suisse)</option>
               <option value="uk-UA">UA (Українська)</option>
+              <option value="fr-CH">FR (Français)</option>
+              <option value="de-CH">DE (Deutsch)</option>
+              <option value="it-CH">IT (Italiano)</option>
+              <option value="en-US">EN (English)</option>
             </select>
 
             {/* Mic Toggle Button */}
@@ -264,7 +329,27 @@ export const KindleVoiceReview: React.FC<KindleVoiceReviewProps> = ({
               }`}
             >
               {isRecording ? <MicOff className="w-3.5 h-3.5" /> : <Mic className="w-3.5 h-3.5 text-rose-400" />}
-              <span>{isRecording ? (currentLang === 'uk' ? 'Слухаю...' : 'En écoute...') : (currentLang === 'uk' ? 'Запис' : 'Dicter')}</span>
+              <span>
+                {isRecording
+                  ? currentLang === 'uk'
+                    ? 'Слухаю...'
+                    : currentLang === 'it'
+                    ? 'In ascolto...'
+                    : currentLang === 'de'
+                    ? 'Aufnahme...'
+                    : currentLang === 'fr'
+                    ? 'En écoute...'
+                    : 'Listening...'
+                  : currentLang === 'uk'
+                  ? 'Запис'
+                  : currentLang === 'it'
+                  ? 'Registra'
+                  : currentLang === 'de'
+                  ? 'Diktieren'
+                  : currentLang === 'fr'
+                  ? 'Dicter'
+                  : 'Dictate'}
+              </span>
             </button>
 
             {/* Analyze via MemPalace KùzuDB */}
@@ -277,12 +362,40 @@ export const KindleVoiceReview: React.FC<KindleVoiceReviewProps> = ({
               <Sparkles className={`w-3.5 h-3.5 ${isAnalyzing ? "animate-spin" : ""}`} />
               <span className="font-mono">
                 {isAnalyzing
-                  ? (currentLang === 'uk' ? 'Аналіз графа...' : 'Analyse KùzuDB...')
-                  : (currentLang === 'uk' ? '⚡ Проаналізувати KùzuDB' : '⚡ Analyser via KùzuDB')}
+                  ? currentLang === 'uk'
+                    ? 'Аналіз графа...'
+                    : currentLang === 'it'
+                    ? 'Analisi grafo...'
+                    : currentLang === 'de'
+                    ? 'Graph-Analyse...'
+                    : 'Analyse KùzuDB...'
+                  : currentLang === 'uk'
+                  ? '⚡ Проаналізувати KùzuDB'
+                  : currentLang === 'it'
+                  ? '⚡ Analizza via KùzuDB'
+                  : currentLang === 'de'
+                  ? '⚡ KùzuDB Analyse'
+                  : '⚡ Analyser via KùzuDB'}
               </span>
             </button>
           </div>
         </div>
+
+        {/* Speech Error Banner if any */}
+        {speechError && (
+          <div className="mb-2 p-2 bg-rose-950/50 border border-rose-800/60 rounded flex items-center justify-between text-[11px] text-rose-300">
+            <span className="flex items-center space-x-1.5">
+              <span>⚠️</span>
+              <span>{speechError}</span>
+            </span>
+            <button
+              onClick={() => setSpeechError(null)}
+              className="text-[10px] text-rose-400 hover:text-white font-mono ml-2"
+            >
+              ✕
+            </button>
+          </div>
+        )}
 
         {/* Textarea for Unstructured Notes */}
         <div className="relative">
@@ -292,6 +405,10 @@ export const KindleVoiceReview: React.FC<KindleVoiceReviewProps> = ({
             placeholder={
               currentLang === 'uk'
                 ? "Говоріть у мікрофон або введіть оперативні замітки адвоката (напр. 'Перевірити алібі Арсена в Лозанні проти погроз Любові, звернути увагу на $15'000 USD та ст. 180 КК')..."
+                : currentLang === 'it'
+                ? "Parlate al microfono o inserite note operative legali (es: 'Verificare alibi Arsen a Losanna contro minacce Suvorova, evidenziare $15'000 USD ed Art. 180 CP')..."
+                : currentLang === 'de'
+                ? "Sprechen Sie ins Mikrofon oder tippen Sie Anwaltsnotizen (z.B. 'Alibi von Arsen in Lausanne gegen Drohungen von Suvorova prüfen, 15'000 USD und Art. 180 StGB')..."
                 : "Parlez dans le micro ou saisissez vos notes d'audience (ex: 'Vérifier l'alibi d'Arsen à Lausanne contre les menaces de Suvorova, insister sur les $15'000 USD et l'Art. 180 CP')..."
             }
             rows={2}
@@ -302,9 +419,66 @@ export const KindleVoiceReview: React.FC<KindleVoiceReviewProps> = ({
               onClick={() => setDictationText("")}
               className="absolute right-2 top-2 text-[10px] text-slate-500 hover:text-slate-300 font-mono"
             >
-              Effacer
+              {currentLang === 'uk' ? 'Очистити' : currentLang === 'it' ? 'Cancella' : currentLang === 'de' ? 'Löschen' : 'Effacer'}
             </button>
           )}
+        </div>
+
+        {/* Interim Speech Transcription Live Stream */}
+        {isRecording && interimText && (
+          <div className="mt-1 flex items-center space-x-2 text-[11px] text-amber-300 bg-amber-950/30 border border-amber-800/40 rounded px-2 py-1 font-mono">
+            <span className="w-2 h-2 rounded-full bg-amber-400 animate-ping" />
+            <span className="text-slate-400">
+              {currentLang === 'uk' ? 'Розпізнавання голосу Astryx:' : currentLang === 'it' ? 'Trascrizione Astryx:' : currentLang === 'de' ? 'Spracherkennung:' : 'Astryx Speech:'}
+            </span>
+            <span className="italic">{interimText}</span>
+          </div>
+        )}
+
+        {/* Rapid Astryx Audio Presets (Asterisk recordings & case transcripts) */}
+        <div className="mt-1.5 flex flex-wrap items-center gap-1.5 text-[10px] text-slate-400 font-mono">
+          <span className="text-slate-500">
+            {currentLang === 'uk' ? 'Зразки аудіо (Astryx):' : currentLang === 'it' ? 'Esempi audio (Astryx):' : currentLang === 'de' ? 'Audio-Muster (Astryx):' : 'Exemples audio (Astryx):'}
+          </span>
+          <button
+            type="button"
+            onClick={() => {
+              setDictationText((prev) =>
+                prev
+                  ? prev + " P-01: Погрози вбивством та розправою Любові Суворової ст. 180 КК"
+                  : "Аудіозапис телефонного дзвінка P-01: прямі погрози вбивством та фізичною розправою від Любові Суворової на адресу потерпілого Арсена Коваленка (ст. 180 ч. 1 КК Швейцарії)."
+              );
+            }}
+            className="px-1.5 py-0.5 bg-slate-900 hover:bg-slate-800 border border-slate-700/60 rounded text-slate-300 hover:text-white transition-colors"
+          >
+            🎙️ P-01 Menaces Art. 180 CP
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              setDictationText((prev) =>
+                prev
+                  ? prev + " P-15: Транш $15'000 USD шахрайство ст. 146 КК"
+                  : "Банківська виписка Wise та транш $15'000 USD від потерпілого Арсена Коваленка на рахунок Суворової (P-15), кваліфікований як шахрайство (ст. 146 КК) та арешт ст. 263 КПК."
+              );
+            }}
+            className="px-1.5 py-0.5 bg-slate-900 hover:bg-slate-800 border border-slate-700/60 rounded text-slate-300 hover:text-white transition-colors"
+          >
+            💰 P-15 Escroquerie $15'000
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              setDictationText((prev) =>
+                prev
+                  ? prev + " P-03: Довідка Unisanté та алібі Лозанни"
+                  : "Медична довідка Unisanté P-03 та EXIF фотофіксація: підтвердження присутності Коваленка в Лозанні 24.11.2024, спростування неправдивого доносу Суворової (ст. 303 КК)."
+              );
+            }}
+            className="px-1.5 py-0.5 bg-slate-900 hover:bg-slate-800 border border-slate-700/60 rounded text-slate-300 hover:text-white transition-colors"
+          >
+            📍 P-03 Alibi Lausanne Unisanté
+          </button>
         </div>
 
         {/* KùzuDB Real-Time Analysis Report Pill Strip */}

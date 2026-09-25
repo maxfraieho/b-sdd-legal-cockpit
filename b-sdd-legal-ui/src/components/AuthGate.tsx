@@ -134,17 +134,17 @@ export const AuthGate: React.FC<AuthGateProps> = ({
       {/* Language Switcher in top right */}
       <div className="absolute top-4 right-4 z-20 flex items-center gap-2 bg-slate-900/90 border border-slate-800 rounded-lg p-1.5 shadow-xl backdrop-blur-md">
         <Globe2 className="w-4 h-4 text-slate-400 ml-1" />
-        {(['uk', 'fr', 'en'] as SupportedLanguage[]).map(l => (
+        {(['uk', 'fr', 'de', 'it', 'en'] as SupportedLanguage[]).map(l => (
           <button
             key={l}
             onClick={() => onLanguageChange(l)}
-            className={`px-2.5 py-1 text-xs font-semibold rounded transition-all ${
+            className={`px-2 py-1 text-xs font-semibold rounded transition-all ${
               currentLang === l
                 ? 'bg-blue-600 text-white shadow-sm'
                 : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'
             }`}
           >
-            {l === 'uk' ? '🇺🇦 UA' : l === 'fr' ? '🇨🇭 FR' : '🇬🇧 EN'}
+            {l === 'uk' ? '🇺🇦 UA' : l === 'fr' ? '🇨🇭 FR' : l === 'de' ? '🇨🇭 DE' : l === 'it' ? '🇮🇹 IT' : '🇬🇧 EN'}
           </button>
         ))}
       </div>

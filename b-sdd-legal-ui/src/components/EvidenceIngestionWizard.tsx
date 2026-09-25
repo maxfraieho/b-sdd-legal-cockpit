@@ -220,6 +220,8 @@ export const EvidenceIngestionWizard: React.FC<EvidenceIngestionWizardProps> = (
       let articles: string[] = ["Art. 139 CPP"];
       let titleUk = "Новий процесуальний доказ";
       let titleFr = "Nouvelle pièce de procédure";
+      let titleDe = "Neues verfahrensrechtliches Beweismittel";
+      let titleIt = "Nuovo mezzo di prova procedurale";
       let titleEn = "New procedural exhibit";
       let financialImpact = 0;
       let matchedNodes: AIQualificationResult["mempalace_matches"] = [];
@@ -230,6 +232,8 @@ export const EvidenceIngestionWizard: React.FC<EvidenceIngestionWizardProps> = (
         articles = ["Art. 303 CP", "Art. 139 CPP", "Art. 180 CP", "ATF 141 IV 369"];
         titleUk = "Фотодоказ EXIF & Алібі в Лозанні · Спростування нападу";
         titleFr = "Preuve photographique EXIF & Alibi objectif à Lausanne";
+        titleDe = "EXIF-Fotobeweis & Objektives Alibi in Lausanne · Widerlegung des Angriffs";
+        titleIt = "Prova fotografica EXIF & Alibi oggettivo a Losanna · Confutazione dell'aggressione";
         titleEn = "EXIF Photographic Proof & Objective Lausanne Alibi";
         matchedNodes = [
           {
@@ -248,6 +252,8 @@ export const EvidenceIngestionWizard: React.FC<EvidenceIngestionWizardProps> = (
         articles = ["Art. 146 CP", "Art. 138 CP", "Art. 263 CPP", "Art. 118 CPP"];
         titleUk = "Банківський слід & Переказ $15'000 USD на збереження";
         titleFr = "Traçabilité bancaire & Virement de $15'000 USD";
+        titleDe = "Banküberweisung & Übertrag von $15'000 USD zur Verwahrung";
+        titleIt = "Tracciabilità bancaria & Bonifico di $15'000 USD in custodia fiduciaria";
         titleEn = "Banking Audit Trail & $15,000 USD Wire";
         financialImpact = 13500; // CHF
         matchedNodes = [
@@ -267,6 +273,8 @@ export const EvidenceIngestionWizard: React.FC<EvidenceIngestionWizardProps> = (
         articles = ["Art. 303 CP", "Art. 139 CPP", "Art. 182 CPP"];
         titleUk = "Судово-медичний висновок · Цілісність шкірних покривів";
         titleFr = "Constat médico-légal · Intégrité physique préservée";
+        titleDe = "Gerichtsmedizinisches Gutachten · Körperliche Unversehrtheit";
+        titleIt = "Perizia medico-legale · Integrità fisica preservata";
         titleEn = "Forensic Medical Certificate · Intact Physical Integrity";
         matchedNodes = [
           {
@@ -285,6 +293,8 @@ export const EvidenceIngestionWizard: React.FC<EvidenceIngestionWizardProps> = (
         articles = ["Art. 180 CP", "Art. 181 CP", "ATF 146 IV 9"];
         titleUk = "Фонограма погроз розправою та психологічного тиску";
         titleFr = "Enregistrement sonore des menaces graves et contrainte";
+        titleDe = "Tonaufnahme schwerer Drohungen und Nötigung";
+        titleIt = "Registrazione audio delle minacce gravi e coazione";
         titleEn = "Sound Recording of Grave Threats & Criminal Coercion";
         matchedNodes = [
           {
@@ -302,6 +312,8 @@ export const EvidenceIngestionWizard: React.FC<EvidenceIngestionWizardProps> = (
         articles = ["Art. 139 CPP", "Art. 118 CPP"];
         titleUk = "Письмові свідчення та пояснення до матеріалів справи";
         titleFr = "Déclaration et réquisition versée au dossier";
+        titleDe = "Schriftliche Erklärung und verfahrensrelevante Eingabe";
+        titleIt = "Dichiarazione scritta e istanza probatoria depositata agli atti";
         titleEn = "Written Statement & Evidentiary Requisition";
       }
 
@@ -335,6 +347,8 @@ export const EvidenceIngestionWizard: React.FC<EvidenceIngestionWizardProps> = (
         titre: {
           uk: titleUk,
           fr: titleFr,
+          de: titleDe,
+          it: titleIt,
           en: titleEn,
         },
         categorie: category,
@@ -346,6 +360,12 @@ export const EvidenceIngestionWizard: React.FC<EvidenceIngestionWizardProps> = (
           fr: `Preuve directe pour le Ministère public vaudois : consigne les éléments constitutifs sous les articles ${effectiveArticles.join(
             ", "
           )}, exclut la thèse adverse et satisfait aux exigences de recevabilité de l'ATF 146 IV 9.`,
+          de: `Direktes Beweismittel für die Staatsanwaltschaft Waadt: belegt die Tatbestandsmerkmale der Artikel ${effectiveArticles.join(
+            ", "
+          )}, widerlegt die gegnerische Schutzbehauptung und erfüllt die Kriterien von BGE 146 IV 9.`,
+          it: `Prova diretta per il Ministero Pubblico del Canton Vaud: comprova gli elementi costitutivi di cui agli articoli ${effectiveArticles.join(
+            ", "
+          )}, esclude la versione della difesa e soddisfa i requisiti di ammissibilità ex DTF 146 IV 9.`,
           en: `Direct forensic exhibit establishing essential statutory elements under articles ${effectiveArticles.join(
             ", "
           )} and fulfilling admissibility under ATF 146 IV 9.`,
@@ -353,11 +373,15 @@ export const EvidenceIngestionWizard: React.FC<EvidenceIngestionWizardProps> = (
         citation_cle: {
           uk: `« ${inputText.slice(0, 180)}... »`,
           fr: `« ${inputText.slice(0, 180)}... »`,
+          de: `« ${inputText.slice(0, 180)}... »`,
+          it: `« ${inputText.slice(0, 180)}... »`,
           en: `« ${inputText.slice(0, 180)}... »`,
         },
         admissibilite: {
           uk: "Повністю допустимий доказ (ст. 139 КПК Швейцарії, прецедент ATF 146 IV 9)",
           fr: "Pleinement recevable selon l'Art. 139 CPP et la jurisprudence constante ATF 146 IV 9",
+          de: "Vollumfänglich verwertbares Beweismittel (Art. 139 StPO, Leitentscheid BGE 146 IV 9)",
+          it: "Mezzo di prova pienamente ammissibile (Art. 139 CPP Svizzero, giurisprudenza DTF 146 IV 9)",
           en: "Fully admissible under Art. 139 CPC and leading precedent ATF 146 IV 9",
         },
         valid_time: `${inputDate} ${inputTime}:00`,
@@ -385,9 +409,19 @@ export const EvidenceIngestionWizard: React.FC<EvidenceIngestionWizardProps> = (
               ? `Вітаю, колего. Я проаналізував наданий матеріал через базу кодексів Швейцарії та граф MemPalace KùzuDB. Доказу присвоєно попередній шифр ${result.cote} (${result.categorie}). Кваліфіковано статті: ${result.articles_applicable.join(
                   ", "
                 )}. Виявлено ${result.mempalace_matches.length} прямих зв'язків у часі. Чи бажаєте уточнити правову позицію або додати запитання для прокурора?`
-              : `Bonjour Confrère. J'ai analysé la pièce selon le droit pénal suisse et le graphe MemPalace. Cote provisoire : ${result.cote}. Articles retenus : ${result.articles_applicable.join(
+              : currentLang === "it"
+              ? `Buongiorno Collega. Ho esaminato il documento alla luce del diritto penale svizzero e del grafo MemPalace. Sigla provvisoria della prova: ${result.cote} (${result.categorie}). Articoli applicabili ritenuti: ${result.articles_applicable.join(
                   ", "
-                )}. Souhaitez-vous ajuster la qualification ou formuler des questions d'audition ?`,
+                )}. Individuati ${result.mempalace_matches.length} riscontri temporali diretti. Desidera affinare la qualificazione o predisporre le domande per il Procuratore?`
+              : currentLang === "de"
+              ? `Guten Tag Kollege. Ich habe das Beweismittel nach Schweizer Strafrecht und dem MemPalace-Graphen qualifiziert. Provisorische Kennzeichnung: ${result.cote} (${result.categorie}). Anwendbare Artikel: ${result.articles_applicable.join(
+                  ", "
+                )}. ${result.mempalace_matches.length} zeitliche Bezüge ermittelt. Möchten Sie die Rechtsbegehren verfeinern oder Einvernahmefragen erstellen?`
+              : currentLang === "fr"
+              ? `Bonjour Confrère. J'ai analysé la pièce selon le droit pénal suisse et le graphe MemPalace. Cote provisoire : ${result.cote}. Articles retenus : ${result.articles_applicable.join(
+                  ", "
+                )}. Souhaitez-vous ajuster la qualification ou formuler des questions d'audition ?`
+              : `Hello Colleague. I analyzed the exhibit under Swiss criminal law and the MemPalace graph. Preliminary reference: ${result.cote}. Relevant articles: ${result.articles_applicable.join(", ")}. Would you like to refine the legal positioning?`,
           timestamp: new Date().toLocaleTimeString().slice(0, 5),
         },
       ]);

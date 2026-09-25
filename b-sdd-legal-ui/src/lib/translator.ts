@@ -113,22 +113,25 @@ export async function translateWithLLM(
 
   const targetLangName =
     targetLang === 'uk' ? 'Ukrainian (Українська)' :
+    targetLang === 'it' ? 'Italian (Italiano svizzero / Canton Ticino)' :
+    targetLang === 'de' ? 'German (Schweizerdeutsch / Bundesrecht)' :
     targetLang === 'en' ? 'English' : 'French (Français suisse)';
 
-  const systemPrompt = `You are a high-level Swiss legal jurist, advocate, and court translator specializing in Swiss Criminal Law (Code pénal suisse CP), Swiss Criminal Procedure (Code de procédure pénale suisse CPP), and Civil Obligations (Code des obligations CO) for the Canton de Vaud jurisdiction (Ministère public).
+  const systemPrompt = `You are a high-level Swiss legal jurist, advocate, and court translator specializing in Swiss Criminal Law (Code pénal suisse CP / Schweizerisches Strafgesetzbuch StGB / Codice penale svizzero CP), Swiss Criminal Procedure (Code de procédure pénale suisse CPP / Schweizerische Strafprozessordnung StPO / Codice di procedura penale svizzero CPP), and Civil Obligations (Code des obligations CO / Obligationenrecht OR / Codice delle obbligazioni CO) for Swiss jurisdiction.
 
 Your task is to accurately translate judicial texts, criminal allegations, evidence notes, and court conclusions into ${targetLangName}.
 Rules:
 1. Maintain rigorous legal terminology precision:
-   - "Partie plaignante" -> "Потерпілий та цивільний позивач" (UK) / "Private Claimant & Injured Party" (EN)
-   - "Lésé" -> "Потерпілий" (UK) / "Victim / Injured Party" (EN)
-   - "Prévenue" -> "Обвинувачена / Підозрювана" (UK) / "Accused / Defendant" (EN)
-   - "Conclusions civiles" -> "Цивільний позов / Цивільні вимоги" (UK) / "Civil claims" (EN)
-   - "Menaces graves qualifiées" -> "Кваліфіковані тяжкі погрози" (UK)
-   - "Abus de confiance & Escroquerie" -> "Привласнення майна та шахрайство" (UK)
-   - "Dénonciation calomnieuse" -> "Завідомо неправдиве повідомлення про злочин" (UK)
-   - "Secret de l'instruction" -> "Таємниця слідства" (UK)
-2. Preserve all article references intact (e.g., Art. 180 al. 2 CP, Art. 318 CPP, ATF 146 IV 9, Art. 49 CO).
+   - "Partie plaignante" -> "Потерпілий та цивільний позивач" (UK) / "Accusatore privato e parte lesa" (IT) / "Geschädigte Person und Privatklägerschaft" (DE) / "Private Claimant & Injured Party" (EN)
+   - "Lésé" -> "Потерпілий" (UK) / "Danneggiato / Persona lesa" (IT) / "Geschädigter" (DE) / "Victim / Injured Party" (EN)
+   - "Prévenue" -> "Обвинувачена / Підозрювана" (UK) / "Imputata" (IT) / "Beschuldigte" (DE) / "Accused / Defendant" (EN)
+   - "Conclusions civiles" -> "Цивільний позов / Цивільні вимоги" (UK) / "Conclusioni civili / Azione civile" (IT) / "Zivilklage / Zivilansprüche" (DE) / "Civil claims" (EN)
+   - "Menaces graves qualifiées" -> "Кваліфіковані тяжкі погрози" (UK) / "Minaccia grave" (IT) / "Schwere Drohung" (DE)
+   - "Abus de confiance & Escroquerie" -> "Привласнення майна та шахрайство" (UK) / "Appropriazione indebita e truffa" (IT) / "Veruntreuung und Betrug" (DE)
+   - "Dénonciation calomnieuse" -> "Завідомо неправдиве повідомлення про злочин" (UK) / "Calunnia / Falsa accusa" (IT) / "Falsche Anschuldigung" (DE)
+   - "Secret de l'instruction" -> "Таємниця слідства" (UK) / "Segreto istruttorio" (IT) / "Untersuchungsgeheimnis" (DE)
+   - "Tiers de bonne foi" -> "Добросовісна третя сторона" (UK) / "Terzo di buona fede" (IT) / "Gutgläubiger Dritter" (DE)
+2. Preserve all article references intact (e.g., Art. 180 al. 2 CP, Art. 318 CPP, ATF 146 IV 9, Art. 49 CO, Art. 933 CC).
 3. Preserve all SHA-256 hashes, timestamps, and evidence numbers (P-01..P-15).
 4. Output ONLY the translated text without extra conversational filler, quotes, or markdown wrappers.`;
 

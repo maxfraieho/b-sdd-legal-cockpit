@@ -28,6 +28,8 @@ export interface ProceduralRoleMetadata {
   key: ProceduralRoleKey;
   labelUk: string;
   labelFr: string;
+  labelDe: string;
+  labelIt: string;
   labelEn: string;
   cppArticles: string;
   badgeStyle: string;
@@ -36,7 +38,25 @@ export interface ProceduralRoleMetadata {
   isImmuneOrThirdParty: boolean;
   defaultRightsUk: string[];
   defaultRightsFr: string[];
+  defaultRightsDe: string[];
+  defaultRightsIt: string[];
   defaultRightsEn: string[];
+}
+
+export function getRoleLabel(roleMeta: ProceduralRoleMetadata, lang: SupportedLanguage): string {
+  if (lang === 'uk') return roleMeta.labelUk;
+  if (lang === 'fr') return roleMeta.labelFr;
+  if (lang === 'de') return roleMeta.labelDe;
+  if (lang === 'it') return roleMeta.labelIt;
+  return roleMeta.labelEn;
+}
+
+export function getRoleDefaultRights(roleMeta: ProceduralRoleMetadata, lang: SupportedLanguage): string[] {
+  if (lang === 'uk') return roleMeta.defaultRightsUk;
+  if (lang === 'fr') return roleMeta.defaultRightsFr;
+  if (lang === 'de') return roleMeta.defaultRightsDe;
+  if (lang === 'it') return roleMeta.defaultRightsIt;
+  return roleMeta.defaultRightsEn;
 }
 
 export const PROCEDURAL_ROLES_METADATA: Record<ProceduralRoleKey, ProceduralRoleMetadata> = {
@@ -44,6 +64,8 @@ export const PROCEDURAL_ROLES_METADATA: Record<ProceduralRoleKey, ProceduralRole
     key: 'victime_plaignante',
     labelUk: 'Потерпілий & Цивільний позивач',
     labelFr: 'Victime & Partie Plaignante (Pénal & Civil)',
+    labelDe: 'Geschädigte Person & Privatklägerschaft',
+    labelIt: 'Persona Lesa & Accusatore Privato',
     labelEn: 'Victim & Civil Complainant',
     cppArticles: 'Art. 115, 118, 122 CPP',
     badgeStyle: 'bg-emerald-950/80 text-emerald-300 border-emerald-700/60 shadow-[0_0_12px_rgba(16,185,129,0.2)]',
@@ -64,6 +86,20 @@ export const PROCEDURAL_ROLES_METADATA: Record<ProceduralRoleKey, ProceduralRole
       'Faculté de requérir le séquestre conservatoire (Art. 263 CPP)',
       'Droit de solliciter des mesures d instruction complémentaires (Art. 318 CPP)',
     ],
+    defaultRightsDe: [
+      'Vollwertiger Status als Privatklägerschaft (Art. 118 StPO)',
+      'Recht auf Geltendmachung von Zivilansprüchen (Art. 122 StPO / Art. 41 OR)',
+      'Vollständige Akteneinsicht im Vorverfahren (Art. 101, 107 StPO)',
+      'Recht auf vorsorgliche Beschlagnahme von Vermögenswerten (Art. 263 StPO)',
+      'Recht auf Stellung ergänzender Beweisanträge (Art. 318 StPO)',
+    ],
+    defaultRightsIt: [
+      'Pieno status di parte accusatrice penale (Art. 118 CPP)',
+      'Diritto all azione civile e risarcimento danni (Art. 122 CPP / Art. 41 CO)',
+      'Pieno accesso agli atti istruttori (Art. 101, 107 CPP)',
+      'Facoltà di richiedere il sequestro conservativo (Art. 263 CPP)',
+      'Diritto di presentare istanze probatorie supplementari (Art. 318 CPP)',
+    ],
     defaultRightsEn: [
       'Full standing as private penal complainant (Art. 118 CPC)',
       'Right to civil damages and full restitution (Art. 122 CPC / Art. 41 CO)',
@@ -76,6 +112,8 @@ export const PROCEDURAL_ROLES_METADATA: Record<ProceduralRoleKey, ProceduralRole
     key: 'prevenu_principal',
     labelUk: 'Головний обвинувачений (Auteur principal)',
     labelFr: 'Prévenu · Auteur Principal',
+    labelDe: 'Hauptbeschuldigte Person (Haupttäter)',
+    labelIt: 'Imputato Principale (Autore principale)',
     labelEn: 'Principal Accused',
     cppArticles: 'Art. 111, 158 CPP',
     badgeStyle: 'bg-rose-950/80 text-rose-300 border-rose-800/60 shadow-[0_0_12px_rgba(244,63,94,0.2)]',
@@ -94,6 +132,18 @@ export const PROCEDURAL_ROLES_METADATA: Record<ProceduralRoleKey, ProceduralRole
       'Droit à l assistance d un conseil de la première heure (Art. 158, 159 CPP)',
       'Obligation de comparaître aux auditions contradictoires (Art. 205, 207 CPP)',
     ],
+    defaultRightsDe: [
+      'Recht auf unverzügliche Information über den Tatverdacht (Art. 158 StPO)',
+      'Aussageverweigerungsrecht und Schutz vor Selbstbelastung (Art. 158 StPO)',
+      'Recht auf Beizug einer Verteidigung ab erster Einvernahme (Art. 158, 159 StPO)',
+      'Erscheinungspflicht bei Vorladungen und Konfrontationen (Art. 205, 207 StPO)',
+    ],
+    defaultRightsIt: [
+      'Diritto di essere immediatamente informato dei sospetti (Art. 158 CPP)',
+      'Facoltà di non rispondere e privilegio contro l autoincriminazione (Art. 158 CPP)',
+      'Diritto all assistenza di un difensore sin dal primo interrogatorio (Art. 158, 159 CPP)',
+      'Obbligo di comparire alle citazioni e ai confronti contraddittori (Art. 205, 207 CPP)',
+    ],
     defaultRightsEn: [
       'Right to be informed of suspicions without delay (Art. 158 CPC)',
       'Right to remain silent and privilege against self-incrimination (Art. 158 CPC)',
@@ -105,6 +155,8 @@ export const PROCEDURAL_ROLES_METADATA: Record<ProceduralRoleKey, ProceduralRole
     key: 'prevenu_complice',
     labelUk: 'Обвинувачений · Співучасник (Complice / Co-auteur)',
     labelFr: 'Prévenu · Complice / Co-auteur',
+    labelDe: 'Beschuldigter · Mittäter / Gehilfe',
+    labelIt: 'Imputato · Complice / Co-autore',
     labelEn: 'Accused · Accomplice / Co-perpetrator',
     cppArticles: 'Art. 25 CP / Art. 111 CPP',
     badgeStyle: 'bg-rose-950/80 text-rose-300 border-rose-800/60 shadow-[0_0_12px_rgba(244,63,94,0.15)]',
@@ -121,6 +173,16 @@ export const PROCEDURAL_ROLES_METADATA: Record<ProceduralRoleKey, ProceduralRole
       'Droit de contester la qualification d acte d assistance délibéré',
       'Droit à la défense et présence aux débats contradictoires (Art. 147 CPP)',
     ],
+    defaultRightsDe: [
+      'Verfahrensregime für Mittäter und Gehilfen (Art. 25 StGB, Art. 111 StPO)',
+      'Recht auf Klärung des individuellen Tatbeitrags und Vorsatzes',
+      'Recht auf Verteidigung und Teilnahme an Beweiserhebungen (Art. 147 StPO)',
+    ],
+    defaultRightsIt: [
+      'Regime processuale dei coimputati e complici (Art. 25 CP, Art. 111 CPP)',
+      'Diritto di contestare il grado di partecipazione materiale o morale',
+      'Diritto alla difesa tecnica e presenza agli atti istruttori (Art. 147 CPP)',
+    ],
     defaultRightsEn: [
       'Procedural standing of co-accused accomplice (Art. 25 CP, Art. 111 CPC)',
       'Right to dispute willful assistance qualification',
@@ -131,6 +193,8 @@ export const PROCEDURAL_ROLES_METADATA: Record<ProceduralRoleKey, ProceduralRole
     key: 'tiers_bonne_foi',
     labelUk: 'Добросовісна третя сторона (Щит ст. 933 CC, L-03)',
     labelFr: 'Tiers de Bonne Foi Protégé (Bouclier Art. 933 CC)',
+    labelDe: 'Gutgläubiger Dritter (Schutz Art. 933 ZGB, L-03)',
+    labelIt: 'Terzo in Buona Fede Protetto (Scudo Art. 933 CC, L-03)',
     labelEn: 'Protected Bona Fide Third Party',
     cppArticles: 'Art. 933 CC / Art. 105 al. 2 CPP / Invariant L-03',
     badgeStyle: 'bg-amber-950/80 text-amber-300 border-amber-500/70 shadow-[0_0_12px_rgba(212,175,55,0.25)]',
@@ -149,6 +213,18 @@ export const PROCEDURAL_ROLES_METADATA: Record<ProceduralRoleKey, ProceduralRole
       'Interdiction absolue de saisie ou séquestre conservatoire (Art. 105 al. 2, 263 CPP)',
       'Irrecevabilité d office de toute plainte téméraire de la défense',
     ],
+    defaultRightsDe: [
+      'Absolute zivil- und strafrechtliche Immunität (Invariante L-03)',
+      'Materieller Schutz des gutgläubigen Besitzers/Helfers (Art. 933 ZGB)',
+      'Absolutes Verbot von Beschlagnahme persönlicher Vermögenswerte (Art. 105 Abs. 2, 263 StPO)',
+      'Nichteintreten von Amtes wegen auf mutwillige Eingaben der Verteidigung',
+    ],
+    defaultRightsIt: [
+      'Immunità civile e penale assoluta inviolabile (Invariante L-03)',
+      'Tutela sostanziale del possessore in buona fede (Art. 933 Codice Civile Svizzero)',
+      'Divieto assoluto di sequestro sui beni personali (Art. 105 cpv. 2, 263 CPP)',
+      'Irricevibilità d ufficio di qualsiasi querela temeraria della difesa',
+    ],
     defaultRightsEn: [
       'Absolute sanctuary criminal and civil immunity (Invariant L-03)',
       'Substantive good faith shield under Art. 933 Swiss Civil Code',
@@ -160,6 +236,8 @@ export const PROCEDURAL_ROLES_METADATA: Record<ProceduralRoleKey, ProceduralRole
     key: 'temoin',
     labelUk: 'Свідок (Témoin)',
     labelFr: 'Témoin (Prestation de serment)',
+    labelDe: 'Zeuge (Zeugenpflicht unter Wahrheitspflicht)',
+    labelIt: 'Testimone (Sotto vincolo di giuramento)',
     labelEn: 'Witness (Under oath)',
     cppArticles: 'Art. 162 ss CPP',
     badgeStyle: 'bg-blue-950/80 text-blue-300 border-blue-700/60',
@@ -176,6 +254,16 @@ export const PROCEDURAL_ROLES_METADATA: Record<ProceduralRoleKey, ProceduralRole
       'Droit de refuser de témoigner pour proches parents (Art. 168 CPP)',
       'Droit aux indemnités et mesures de protection des témoins (Art. 149 CPP)',
     ],
+    defaultRightsDe: [
+      'Pflicht zur wahrheitsgemässen Aussage (Art. 163 StPO, Art. 307 StGB)',
+      'Zeugnisverweigerungsrecht für nahe Verwandte (Art. 168 StPO)',
+      'Recht auf Zeugenentschädigung und Zeugenschutzmassnahmen (Art. 149 StPO)',
+    ],
+    defaultRightsIt: [
+      'Obbligo di deporre e dire la verità (Art. 163 CPP, Art. 307 CP)',
+      'Facoltà di astenersi dal testimoniare per i prossimi congiunti (Art. 168 CPP)',
+      'Diritto all indennità e a misure di protezione dei testimoni (Art. 149 CPP)',
+    ],
     defaultRightsEn: [
       'Obligation to testify truthfully under oath (Art. 163 CPC, Art. 307 CP)',
       'Right to refuse testimony for close relatives (Art. 168 CPC)',
@@ -186,6 +274,8 @@ export const PROCEDURAL_ROLES_METADATA: Record<ProceduralRoleKey, ProceduralRole
     key: 'personne_renseignement',
     labelUk: 'Особа, покликана дати відомості',
     labelFr: 'Personne appelée à donner des renseignements',
+    labelDe: 'Auskunftsperson (Art. 178 StPO)',
+    labelIt: 'Persona informata sui fatti (Art. 178 CPP)',
     labelEn: 'Person Called to Give Information',
     cppArticles: 'Art. 178 ss CPP',
     badgeStyle: 'bg-cyan-950/80 text-cyan-300 border-cyan-700/60',
@@ -200,6 +290,14 @@ export const PROCEDURAL_ROLES_METADATA: Record<ProceduralRoleKey, ProceduralRole
       'Audition sans prestation de serment formel (Art. 178, 180 CPP)',
       'Droit de refuser de déposer si cela expose à des poursuites (Art. 180 CPP)',
     ],
+    defaultRightsDe: [
+      'Einvernahme ohne Zeugeneid (Art. 178, 180 StPO)',
+      'Aussageverweigerungsrecht bei Gefahr der Selbstbelastung (Art. 180 StPO)',
+    ],
+    defaultRightsIt: [
+      'Audizione senza formale vincolo di giuramento testimoniale (Art. 178, 180 CPP)',
+      'Facoltà di non deporre in caso di rischio di autoincriminazione (Art. 180 CPP)',
+    ],
     defaultRightsEn: [
       'Interrogation without formal witness oath (Art. 178, 180 CPC)',
       'Right to refuse deposition if exposing to liability (Art. 180 CPC)',
@@ -209,6 +307,8 @@ export const PROCEDURAL_ROLES_METADATA: Record<ProceduralRoleKey, ProceduralRole
     key: 'magistrat',
     labelUk: 'Прокурор / Слідчий магістрат',
     labelFr: 'Ministère Public / Magistrat instructeur',
+    labelDe: 'Staatsanwaltschaft / Untersuchungsrichter',
+    labelIt: 'Ministero Pubblico / Magistrato inquirente',
     labelEn: 'Public Prosecutor / Magistrate',
     cppArticles: 'Art. 14, 61 ss CPP',
     badgeStyle: 'bg-purple-950/80 text-purple-300 border-purple-700/60',
@@ -225,6 +325,16 @@ export const PROCEDURAL_ROLES_METADATA: Record<ProceduralRoleKey, ProceduralRole
       'Devoir d instruire à charge et à décharge avec impartialité (Art. 6 CPP)',
       'Compétence d ordonner le séquestre (Art. 263 CPP) et dresser l acte d accusation (Art. 324 CPP)',
     ],
+    defaultRightsDe: [
+      'Leitung des Vorverfahrens (Art. 61 StPO)',
+      'Pflicht zu unparteiischer Ermittlung der be- und entlastenden Umstände (Art. 6 StPO)',
+      'Befugnis zur Anordnung von Beschlagnahmen (Art. 263 StPO) und Anklageerhebung (Art. 324 StPO)',
+    ],
+    defaultRightsIt: [
+      'Direzione dell istruzione preliminare (Art. 61 CPP)',
+      'Dovere di indagare con imparzialità a carico e a discarico (Art. 6 CPP)',
+      'Competenza a disporre il sequestro probatorio o conservativo (Art. 263 CPP) e formulare l atto d accusa (Art. 324 CPP)',
+    ],
     defaultRightsEn: [
       'Direction of preliminary criminal investigation (Art. 61 CPC)',
       'Duty to investigate exculpatory and inculpatory facts impartially (Art. 6 CPC)',
@@ -235,6 +345,8 @@ export const PROCEDURAL_ROLES_METADATA: Record<ProceduralRoleKey, ProceduralRole
     key: 'avocat',
     labelUk: 'Адвокат / Юридичний представник',
     labelFr: 'Avocat / Conseil Juridique',
+    labelDe: 'Rechtsanwalt / Rechtsbeistand',
+    labelIt: 'Avvocato / Difensore di fiducia',
     labelEn: 'Counsel / Legal Advocate',
     cppArticles: 'Art. 127 ss CPP / LLCA',
     badgeStyle: 'bg-indigo-950/80 text-indigo-300 border-indigo-700/60',
@@ -250,6 +362,16 @@ export const PROCEDURAL_ROLES_METADATA: Record<ProceduralRoleKey, ProceduralRole
       'Secret professionnel absolu de l avocat (Art. 13 LLCA, Art. 321 CP)',
       'Libre communication avec le mandant sans surveillance (Art. 159 CPP)',
       'Plein droit d assister aux actes d instruction (Art. 147 CPP)',
+    ],
+    defaultRightsDe: [
+      'Absolutes Berufsgeheimnis des Anwalts (Art. 13 BGFA, Art. 321 StGB)',
+      'Freier und unüberwachter Verkehr mit dem Klienten (Art. 159 StPO)',
+      'Volles Teilnahmerecht an allen Beweiserhebungen (Art. 147 StPO)',
+    ],
+    defaultRightsIt: [
+      'Segreto professionale forense assoluto (Art. 13 LLCA, Art. 321 CP)',
+      'Libera e riservata comunicazione con il mandante (Art. 159 CPP)',
+      'Pieno diritto di presenziare agli atti d istruzione (Art. 147 CPP)',
     ],
     defaultRightsEn: [
       'Absolute professional legal privilege (Art. 13 BGFA/LLCA, Art. 321 CP)',

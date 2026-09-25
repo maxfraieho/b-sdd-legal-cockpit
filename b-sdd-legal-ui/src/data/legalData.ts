@@ -6,20 +6,21 @@
 
 import { SupportedLanguage } from '../types/i18n';
 
-export type LocalizedString = Record<SupportedLanguage, string>;
+export type LocalizedString = { [K in SupportedLanguage]?: string } & { uk?: string; fr?: string; en?: string };
 
 export function resolveLocalized(val: LocalizedString | undefined, lang: SupportedLanguage): string {
   if (!val) return '';
-  return val[lang] || val['fr'] || val['uk'] || val['en'] || '';
+  return val[lang] || val['it'] || val['de'] || val['fr'] || val['uk'] || val['en'] || '';
 }
 
 export function resolveLocalizedArray(
-  val: Record<SupportedLanguage, string[]> | string[] | undefined,
+  val: Record<SupportedLanguage, string[]> | { [K in SupportedLanguage]?: string[] } | string[] | undefined,
   lang: SupportedLanguage
 ): string[] {
   if (!val) return [];
   if (Array.isArray(val)) return val;
-  return val[lang] || val['fr'] || val['uk'] || val['en'] || [];
+  const map = val as { [K in SupportedLanguage]?: string[] };
+  return map[lang] || map['it'] || map['de'] || map['fr'] || map['uk'] || map['en'] || [];
 }
 
 export interface CitationReference {
@@ -186,12 +187,16 @@ export const ACTORS: ActorItem[] = [
     status: {
       uk: "Потерпілий & Цивільний позивач (Повнолітній, 26 років)",
       fr: "Victime & Partie Plaignante (Majeur, 26 ans)",
+      de: "Geschädigte Person & Privatklägerschaft (Volljährig, 26 Jahre)",
+      it: "Persona lesa & Accusatore privato (Maggiorenne, 26 anni)",
       en: "Victim & Civil Plaintiff (Adult, 26 yo)",
     },
     badgeColor: "bg-emerald-950/80 text-emerald-300 border-emerald-700/60 shadow-[0_0_12px_rgba(16,185,129,0.2)]",
     role: {
       uk: "Повнолітній дієздатний потерпілий (народився 05.11.1999, 26 років). Безпосередня жертва шахрайства на $15'000 USD, тяжких погроз розправою, шантажу та завідомо неправдивого доносу. Сторона цивільного позову (ст. 115, 118, 122 КПК).",
       fr: "Victime majeure et capable de discernement (né le 05.11.1999, 26 ans). Victime directe de l'escroquerie de $15'000 USD, de menaces réitérées et de dénonciation calomnieuse. Demandeur civil constitué (Art. 115, 118, 122 CPP).",
+      de: "Volljähriger urteilsfähiger Geschädigter (geb. 05.11.1999, 26 Jahre). Direktes Opfer des Betrugs über $15'000 USD, schwerer Drohungen, Nötigung und falscher Anschuldigung. Konstituierte Privatklägerschaft (Art. 115, 118, 122 StPO).",
+      it: "Persona lesa maggiorenne e capace di discernimento (nato il 05.11.1999, 26 anni). Vittima diretta della truffa di $15'000 USD, minacce gravi reiterate, coazione e calunnia. Costituito accusatore privato e attore civile (Art. 115, 118, 122 CPP).",
       en: "Adult compos mentis victim (born 05.11.1999, 26 years old). Direct victim of $15,000 USD fraud, aggravated death threats, coercion, and malicious false accusation. Constituted civil plaintiff (Art. 115, 118, 122 CPC).",
     },
     protected_bona_fide: false,
@@ -202,11 +207,15 @@ export const ACTORS: ActorItem[] = [
     nationality: {
       uk: "Україна (Тимчасовий захист · Статус S в Швейцарії)",
       fr: "Ukraine (Protection temporaire · Statut S en Suisse)",
+      de: "Ukraine (Vorübergehender Schutz · Status S in der Schweiz)",
+      it: "Ucraina (Protezione temporanea · Statuto S in Svizzera)",
       en: "Ukraine (Temporary Protection · Status S in Switzerland)",
     },
     domicile: {
       uk: "м. Лозанна, Кантон Во, Швейцарія",
       fr: "Lausanne, Canton de Vaud, Suisse",
+      de: "Lausanne, Kanton Waadt, Schweiz",
+      it: "Losanna, Canton Vaud, Svizzera",
       en: "Lausanne, Canton of Vaud, Switzerland",
     },
     financial_claim_chf: 46850,
@@ -311,15 +320,19 @@ export const ACTORS: ActorItem[] = [
     id: "ACT-ADRIANO-MILLI",
     name: "Adriano MILLI",
     status: {
-      uk: "Добросовісна третя сторона · Щит ст. 933 CC (L-03)",
-      fr: "Tiers de Bonne Foi · Bouclier Art. 933 CC (L-03)",
-      en: "Bona Fide Third Party · Art. 933 CC Shield (L-03)",
+      uk: "Добросовісна третя сторона · Щит ст. 933 CC (L-03) · Італієць за походженням",
+      fr: "Tiers de Bonne Foi · Bouclier Art. 933 CC (L-03) · D'origine italienne",
+      de: "Gutgläubiger Dritter · Art. 933 ZGB Schutz (L-03) · Italienischer Herkunft",
+      it: "Terzo di Buona Fede · Scudo Art. 933 CC (L-03) · Di origine italiana (attuale convivente)",
+      en: "Bona Fide Third Party · Art. 933 CC Shield (L-03) · Of Italian descent (current partner)",
     },
     badgeColor: "bg-amber-950/80 text-amber-300 border-amber-500/70 shadow-[0_0_12px_rgba(212,175,55,0.25)]",
     role: {
-      uk: "Третя сторона добросовісності (Art. 933 CC, Art. 105 al. 2 CPP). Надавав виключно законне гуманітарне сприяння та переклад у повній добросовісності. Абсолютний процесуальний імунітет: будь-які звинувачення заборонені.",
-      fr: "Tiers de bonne foi absolu (Art. 933 CC, Art. 105 al. 2 CPP). Assistance bénévole et traduction en toute bonne foi. Immunité procédurale absolue : toute action accusatoire est strictement forclose.",
-      en: "Protected bona fide third party (Art. 933 CC, Art. 105 al. 2 CPC). Rendered purely legitimate humanitarian assistance and translation in good faith. Absolute procedural immunity: all accusatory actions disabled.",
+      uk: "Третя сторона добросовісності (Art. 933 CC, Art. 105 al. 2 CPP). Фігурант справи є італійцем за походженням, теперішній чоловік, з яким проживає колишня дружина. Надавав виключно законне гуманітарне сприяння та переклад у повній добросовісності. Абсолютний процесуальний імунітет: будь-які звинувачення заборонені.",
+      fr: "Tiers de bonne foi absolu (Art. 933 CC, Art. 105 al. 2 CPP). Ressortissant d'origine italienne, actuel conjoint avec lequel vit l'ex-épouse. Assistance bénévole et traduction en toute bonne foi. Immunité procédurale absolue : toute action accusatoire est strictement forclose.",
+      de: "Absolut gutgläubiger Dritter (Art. 933 ZGB, Art. 105 Abs. 2 StPO). Person italienischer Herkunft, derzeitiger Ehemann/Lebenspartner, mit dem die Ex-Frau zusammenlebt. Reine gutgläubige humanitäre Hilfe und Übersetzung. Absolute Verfahrensimmunität: jede Anklagehandlung ist ausgeschlossen.",
+      it: "Terzo in buona fede assoluto (Art. 933 CC svizzero, Art. 105 cpv. 2 CPP). Persona di origine italiana, attuale marito/convivente con cui vive l'ex moglie. Ha prestato esclusivamente assistenza umanitaria e traduzione in piena buona fede. Immunità processuale assoluta: qualsiasi azione accusatoria è categoricamente preclusa.",
+      en: "Protected bona fide third party (Art. 933 CC, Art. 105 al. 2 CPC). Of Italian descent, current husband with whom the ex-wife lives. Rendered purely legitimate humanitarian assistance and translation in good faith. Absolute procedural immunity: all accusatory actions disabled.",
     },
     protected_bona_fide: true,
     legal_reference: "Art. 933 CC / Art. 105 al. 2 CPP / Invariant L-03",
@@ -327,13 +340,17 @@ export const ACTORS: ActorItem[] = [
     cpp_article: "Art. 105 al. 2 CPP / Art. 933 CC",
     discernment_capacity: true,
     nationality: {
-      uk: "Швейцарія (м. Лозанна, Кантон Во)",
-      fr: "Suisse (Lausanne, Canton de Vaud)",
-      en: "Switzerland (Lausanne, Canton of Vaud)",
+      uk: "Італія / Швейцарія (Італієць за походженням · м. Лозанна, Кантон Во)",
+      fr: "Italie / Suisse (D'origine italienne · Lausanne, Canton de Vaud)",
+      de: "Italien / Schweiz (Italienischer Herkunft · Lausanne, Kanton Waadt)",
+      it: "Italia / Svizzera (Di origine italiana · Domiciliato a Losanna, Canton Vaud)",
+      en: "Italy / Switzerland (Of Italian descent · Lausanne, Canton of Vaud)",
     },
     domicile: {
       uk: "м. Лозанна, Кантон Во, Швейцарія",
       fr: "Lausanne, Canton de Vaud, Suisse",
+      de: "Lausanne, Kanton Waadt, Schweiz",
+      it: "Losanna, Canton Vaud, Svizzera",
       en: "Lausanne, Canton of Vaud, Switzerland",
     },
     linked_pieces: ["P-06"],
@@ -351,6 +368,8 @@ export const ACTORS: ActorItem[] = [
         title: {
           uk: "Афідевіт добросовісного волонтера та перекладача (Інваріант L-03)",
           fr: "Déclaration formelle et serment de tiers de bonne foi (Invariant L-03)",
+          de: "Eidesstattliche Erklärung des gutgläubigen Dolmetschers (Invariante L-03)",
+          it: "Dichiarazione giurata e formale di terzo di buona fede e interprete (Invariante L-03)",
           en: "Bona fide volunteer and translator affidavit (Invariant L-03)",
         },
         type: "Attestation",
@@ -370,6 +389,16 @@ export const ACTORS: ActorItem[] = [
         "Statut strict de tiers participant désintéressé ou témoin (Art. 105 al. 2 CPP)",
         "Protection légale accordée au tiers de bonne foi (Art. 933 Code Civil Suisse)",
       ],
+      de: [
+        "Vollständige Immunität gegen straf- oder zivilrechtliche Ansprüche (Invariante L-03)",
+        "Ausschliesslicher Status als unbeteiligter dritter Verfahrensteilnehmer (Art. 105 Abs. 2 StPO)",
+        "Gesetzlicher Schutz der Gutgläubigkeit (Art. 933 Zivilgesetzbuch ZGB)",
+      ],
+      it: [
+        "Immunità assoluta da qualsiasi pretesa o imputazione penale o civile (Invariante L-03)",
+        "Status esclusivo di terzo partecipante disinteressato o testimone (Art. 105 cpv. 2 CPP)",
+        "Protezione legale accordata al terzo in buona fede (Art. 933 Codice Civile Svizzero)",
+      ],
       en: [
         "Complete immunity from any civil or criminal liability (Architectural Invariant L-03)",
         "Strict disinterested third-party witness standing (Art. 105 para 2 CPC)",
@@ -383,12 +412,16 @@ export const ACTORS: ActorItem[] = [
     status: {
       uk: "Головна обвинувачена (Auteur principal)",
       fr: "Prévenue · Auteur Principal",
+      de: "Hauptbeschuldigte (Haupttäterin)",
+      it: "Imputata Principale (Autrice principale)",
       en: "Principal Accused Perpetrator",
     },
     badgeColor: "bg-rose-950/80 text-rose-300 border-rose-800/60 shadow-[0_0_12px_rgba(244,63,94,0.2)]",
     role: {
       uk: "Організатор та виконавець шахрайства на $15'000 USD (ст. 146 КК), погроз розправою (ст. 180 КК), примусу (ст. 181 КК), порушення недоторканності житла (ст. 186 КК) та завідомо неправдивого доносу (ст. 303 КК).",
       fr: "Auteur principal de l'escroquerie portant sur $15'000 USD (Art. 146 CP), menaces graves (Art. 180 CP), contrainte (Art. 181 CP), violation de domicile (Art. 186 CP) et dénonciation calomnieuse (Art. 303 CP).",
+      de: "Haupttäterin des Betrugs über $15'000 USD (Art. 146 StGB), schwerer Drohungen (Art. 180 StGB), Nötigung (Art. 181 StGB), Hausfriedensbruchs (Art. 186 StGB) und falscher Anschuldigung (Art. 303 StGB).",
+      it: "Autrice principale della truffa per $15'000 USD (Art. 146 CP), minacce gravi (Art. 180 CP), coazione (Art. 181 CP), violazione di domicilio (Art. 186 CP) e calunnia/falsa accusa (Art. 303 CP).",
       en: "Principal perpetrator of $15,000 USD fraud (Art. 146 CP), death threats (Art. 180 CP), coercion (Art. 181 CP), trespassing (Art. 186 CP), and malicious false accusation (Art. 303 CP).",
     },
     protected_bona_fide: false,
@@ -399,11 +432,15 @@ export const ACTORS: ActorItem[] = [
     nationality: {
       uk: "Україна (Тимчасовий захист · Статус S в Швейцарії)",
       fr: "Ukraine (Protection temporaire · Statut S en Suisse)",
+      de: "Ukraine (Vorübergehender Schutz · Status S in der Schweiz)",
+      it: "Ucraina (Protezione temporanea · Statuto S in Svizzera)",
       en: "Ukraine (Temporary Protection · Status S in Switzerland)",
     },
     domicile: {
       uk: "м. Рене (Renens), Кантон Во, Швейцарія",
       fr: "Renens, Canton de Vaud, Suisse",
+      de: "Renens, Kanton Waadt, Schweiz",
+      it: "Renens, Canton Vaud, Svizzera",
       en: "Renens, Canton of Vaud, Switzerland",
     },
     financial_liability_chf: 46850,
@@ -461,12 +498,16 @@ export const ACTORS: ActorItem[] = [
     status: {
       uk: "Обвинувачена · Співучасниця (Complice)",
       fr: "Prévenue · Complice / Co-auteur",
+      de: "Beschuldigte · Mittäterin / Gehilfin",
+      it: "Imputata · Complice / Co-autrice",
       en: "Accused · Accomplice",
     },
     badgeColor: "bg-rose-950/80 text-rose-300 border-rose-800/60 shadow-[0_0_12px_rgba(244,63,94,0.15)]",
     role: {
       uk: "Співучасниця психологічного тиску, залякування депортацією, вимагання грошей та незаконного вторгнення до квартири потерпілого (ст. 24, 180, 181, 186 КК).",
       fr: "Complice active des menaces d'expulsion, pressions illicites, chantage et participation à la violation de domicile (Art. 24, 180, 181, 186 CP).",
+      de: "Mittäterin bei psychischem Druck, Drohung mit Ausweisung, unrechtmässigen Forderungen und Hausfriedensbruch (Art. 24, 180, 181, 186 StGB).",
+      it: "Complice attiva nelle minacce di espulsione, pressioni illecite, ricatto e partecipazione alla violazione di domicilio (Art. 24, 180, 181, 186 CP).",
       en: "Accomplice in psychological intimidation, extortion, deportation threats, and unlawful domestic trespassing (Art. 24, 180, 181, 186 CP).",
     },
     protected_bona_fide: false,
@@ -477,11 +518,15 @@ export const ACTORS: ActorItem[] = [
     nationality: {
       uk: "Україна (Тимчасовий захист · Статус S в Швейцарії)",
       fr: "Ukraine (Protection temporaire · Statut S en Suisse)",
+      de: "Ukraine (Vorübergehender Schutz · Status S in der Schweiz)",
+      it: "Ucraina (Protezione temporanea · Statuto S in Svizzera)",
       en: "Ukraine (Temporary Protection · Status S in Switzerland)",
     },
     domicile: {
       uk: "м. Рене (Renens), Кантон Во, Швейцарія",
       fr: "Renens, Canton de Vaud, Suisse",
+      de: "Renens, Kanton Waadt, Schweiz",
+      it: "Renens, Canton Vaud, Svizzera",
       en: "Renens, Canton of Vaud, Switzerland",
     },
     linked_pieces: ["P-02", "P-08", "P-09"],
