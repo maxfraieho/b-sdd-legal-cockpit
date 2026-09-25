@@ -1,0 +1,14 @@
+{
+  "name": "b-sdd-legal-cockpit",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "workspaces": [
+    "b-sdd-legal-ui"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspace=b-sdd-legal-ui",
+    "build": "npm run build --workspace=b-sdd-legal-ui",
+    "lint": "npm run build --workspace=b-sdd-legal-ui"
+  }
+}

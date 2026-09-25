@@ -1,0 +1,8 @@
+{
+  "name": "B-SDD Legal Workbench · Canton de Vaud",
+  "description": "B-SDD Legal Advocate Cockpit: Bitemporal legal workbench and decision-support cockpit for criminal procedure, evidence correlation, and statutory analysis.",
+  "permissions": [],
+  "capabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
