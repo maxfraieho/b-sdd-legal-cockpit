@@ -45,6 +45,7 @@ export const EvidenceFactbook: React.FC<EvidenceFactbookProps> = ({ currentLang 
   const [selectedPiece, setSelectedPiece] = useState<BordereauPiece>(BORDEREAU_PIECES[0]);
 
   // Audio player state (Opus 2 standard)
+  const audioRef = useRef<HTMLAudioElement | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [playbackTime, setPlaybackTime] = useState(0);
   const [playbackRate, setPlaybackRate] = useState<number>(1.0);
@@ -58,7 +59,6 @@ export const EvidenceFactbook: React.FC<EvidenceFactbookProps> = ({ currentLang 
 
   // Canvas waveform ref
   const waveformCanvasRef = useRef<HTMLCanvasElement | null>(null);
-  const audioIntervalRef = useRef<any>(null);
 
   // Filtered pieces
   const filteredPieces = BORDEREAU_PIECES.filter((p) => {
@@ -78,30 +78,55 @@ export const EvidenceFactbook: React.FC<EvidenceFactbookProps> = ({ currentLang 
     return matchesSearch && matchesCategory;
   });
 
-  // Audio playback simulation & canvas waveform render
+  // Handle piece selection changes: stop audio, reset time
   useEffect(() => {
-    if (isPlaying) {
-      audioIntervalRef.current = setInterval(() => {
-        setPlaybackTime((prev) => {
-          const maxDur = selectedPiece.duration_sec || 120;
-          if (prev >= maxDur) {
-            setIsPlaying(false);
-            return 0;
-          }
-          return prev + 0.5 * playbackRate;
-        });
-      }, 500);
-    } else {
-      if (audioIntervalRef.current) {
-        clearInterval(audioIntervalRef.current);
-      }
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
     }
-    return () => {
-      if (audioIntervalRef.current) {
-        clearInterval(audioIntervalRef.current);
-      }
-    };
-  }, [isPlaying, playbackRate, selectedPiece]);
+    setIsPlaying(false);
+    setPlaybackTime(0);
+  }, [selectedPiece.cote]);
+
+  // Sync playbackRate and isMuted to audio element
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.playbackRate = playbackRate;
+      audioRef.current.muted = isMuted;
+    }
+  }, [playbackRate, isMuted]);
+
+  const togglePlayAudio = () => {
+    if (!audioRef.current) return;
+    if (isPlaying) {
+      audioRef.current.pause();
+      setIsPlaying(false);
+    } else {
+      audioRef.current
+        .play()
+        .then(() => setIsPlaying(true))
+        .catch((err) => {
+          console.warn("Audio playback fallback engaged:", err);
+          if ("speechSynthesis" in window) {
+            window.speechSynthesis.cancel();
+            const quote = resolveLocalized(selectedPiece.citation_cle, currentLang);
+            const utterance = new SpeechSynthesisUtterance(quote);
+            utterance.lang = currentLang === "fr" ? "fr-CH" : currentLang === "uk" ? "uk-UA" : "en-US";
+            utterance.rate = playbackRate;
+            utterance.onend = () => setIsPlaying(false);
+            window.speechSynthesis.speak(utterance);
+            setIsPlaying(true);
+          }
+        });
+    }
+  };
+
+  const handleSeek = (newTime: number) => {
+    setPlaybackTime(newTime);
+    if (audioRef.current) {
+      audioRef.current.currentTime = newTime;
+    }
+  };
 
   // Draw audio waveform animation on canvas
   useEffect(() => {
@@ -183,9 +208,25 @@ export const EvidenceFactbook: React.FC<EvidenceFactbookProps> = ({ currentLang 
 
           {/* Interactive Player Controls */}
           <div className="flex items-center space-x-3 bg-[#070B12] p-1.5 rounded border border-slate-800/80 shrink-0">
+            {/* Real HTML5 Audio Element */}
+            <audio
+              ref={audioRef}
+              src={selectedPiece.fichier_local}
+              onTimeUpdate={() => {
+                if (audioRef.current) {
+                  setPlaybackTime(audioRef.current.currentTime);
+                }
+              }}
+              onEnded={() => {
+                setIsPlaying(false);
+                setPlaybackTime(0);
+              }}
+              preload="metadata"
+            />
+
             {/* Play/Pause */}
             <button
-              onClick={() => setIsPlaying(!isPlaying)}
+              onClick={togglePlayAudio}
               className="p-1.5 bg-blue-600 hover:bg-blue-500 text-white rounded-full transition-colors shadow-sm"
               title={isPlaying ? "Pause" : "Lecture audio criminalistique"}
             >
@@ -245,7 +286,7 @@ export const EvidenceFactbook: React.FC<EvidenceFactbookProps> = ({ currentLang 
               const rect = e.currentTarget.getBoundingClientRect();
               const clickX = e.clientX - rect.left;
               const ratio = Math.max(0, Math.min(1, clickX / rect.width));
-              setPlaybackTime(ratio * (selectedPiece.duration_sec || 120));
+              handleSeek(ratio * (selectedPiece.duration_sec || 120));
             }}
           />
         </div>
@@ -463,30 +504,18 @@ export const EvidenceFactbook: React.FC<EvidenceFactbookProps> = ({ currentLang 
                     transform: `scale(${zoomLevel}) rotate(${rotationDeg}deg)`,
                     transition: "transform 0.15s ease-out",
                   }}
-                  className="flex flex-col items-center justify-center text-center p-4 max-w-full max-h-full select-none"
+                  className="flex flex-col items-center justify-center text-center p-2 max-w-full max-h-full select-none"
                 >
-                  {/* High fidelity forensic representation */}
-                  <div className="w-64 h-64 sm:w-80 sm:h-80 bg-slate-900 border border-slate-700 rounded-lg flex flex-col items-center justify-center p-4 relative shadow-inner">
-                    <MapPin className="w-12 h-12 text-blue-500 mb-2 animate-bounce" />
-                    <span className="text-xs font-mono text-emerald-300 font-bold">
-                      OBJECTIF LAUSANNE (ALIBI CERTIFIÉ)
-                    </span>
-                    <span className="text-[11px] font-mono text-slate-400 mt-1">
-                      GPS: 46.5197° N, 6.6323° E
-                    </span>
-                    <span className="text-[10px] text-slate-500 font-mono mt-0.5">
-                      21.07.2024 13:45:12 CEST
-                    </span>
-
-                    <div className="mt-4 p-2 bg-emerald-950/60 border border-emerald-600/50 rounded text-center">
-                      <span className="text-[10px] font-mono text-emerald-200">
-                        ANALYSE SPECTRAL RGB : Bras intacts (Aucune trace de coups)
-                      </span>
-                    </div>
-
-                    <div className="absolute bottom-2 right-2 text-[9px] font-mono text-slate-500">
-                      ISO/IEC 27037 Certified
-                    </div>
+                  <img
+                    src={lightboxPiece.fichier_local || "/evidence/photos/P-06_exif1481_lausanne.jpg"}
+                    alt={lightboxPiece.cote}
+                    className="max-w-full max-h-[380px] object-contain rounded-lg border border-slate-700 shadow-2xl"
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).src = "/evidence/photos/P-06_exif1481_lausanne.jpg";
+                    }}
+                  />
+                  <div className="mt-2 text-[10px] font-mono text-emerald-400 bg-black/60 px-2 py-0.5 rounded border border-emerald-900/50">
+                    ISO/IEC 27037 Certified · {lightboxPiece.cote} · SHA-256: {lightboxPiece.sha256.slice(0, 16)}...
                   </div>
                 </div>
 

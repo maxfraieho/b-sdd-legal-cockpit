@@ -35,8 +35,8 @@ ssh -o StrictHostKeyChecking=no "${REMOTE_HOST}" "
     echo '❌ Error: CLOUDFLARE_API_TOKEN not found'
     exit 1
   fi
-  CLOUDFLARE_ACCOUNT_ID='${CF_ACCOUNT_ID}' CLOUDFLARE_API_TOKEN=\"\${TOKEN}\" npx wrangler pages project create '${PROJECT_NAME}' --production-branch=main 2>/dev/null || true
-  CLOUDFLARE_ACCOUNT_ID='${CF_ACCOUNT_ID}' CLOUDFLARE_API_TOKEN=\"\${TOKEN}\" npx wrangler pages deploy /tmp/b-sdd-legal-ui-dist --project-name='${PROJECT_NAME}' --branch=main
+  CLOUDFLARE_ACCOUNT_ID='${CF_ACCOUNT_ID}' CLOUDFLARE_API_TOKEN=\"\${TOKEN}\" npx wrangler pages project create '${PROJECT_NAME}' --production-branch=production 2>/dev/null || true
+  CLOUDFLARE_ACCOUNT_ID='${CF_ACCOUNT_ID}' CLOUDFLARE_API_TOKEN=\"\${TOKEN}\" npx wrangler pages deploy /tmp/b-sdd-legal-ui-dist --project-name='${PROJECT_NAME}' --branch=production
 "
 
 echo ""
