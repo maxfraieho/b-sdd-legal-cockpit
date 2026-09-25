@@ -130,44 +130,52 @@ export const EvidenceFactbook: React.FC<EvidenceFactbookProps> = ({ currentLang 
 
   // Draw audio waveform animation on canvas
   useEffect(() => {
-    const canvas = waveformCanvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
+    try {
+      const canvas = waveformCanvasRef.current;
+      if (!canvas) return;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) return;
 
-    const width = canvas.width;
-    const height = canvas.height;
-    ctx.clearRect(0, 0, width, height);
+      const width = canvas.width;
+      const height = canvas.height;
+      ctx.clearRect(0, 0, width, height);
 
-    const maxDuration = selectedPiece.duration_sec || 120;
-    const progress = Math.min(1, playbackTime / maxDuration);
-    const barCount = 64;
-    const barWidth = width / barCount - 1.5;
+      const maxDuration = selectedPiece.duration_sec || 120;
+      const progress = Math.min(1, playbackTime / maxDuration);
+      const barCount = 64;
+      const barWidth = width / barCount - 1.5;
 
-    // Pseudorandom static seed based on hash
-    const seed = selectedPiece.sha256.charCodeAt(0) || 42;
+      // Pseudorandom static seed based on hash
+      const seed = selectedPiece.sha256.charCodeAt(0) || 42;
 
-    for (let i = 0; i < barCount; i++) {
-      const barProgress = i / barCount;
-      const isPast = barProgress <= progress;
+      for (let i = 0; i < barCount; i++) {
+        const barProgress = i / barCount;
+        const isPast = barProgress <= progress;
 
-      // Calculate bar height with oscillation if playing
-      const baseHeight = ((Math.sin(i * 0.3 + seed) + 1.2) / 2.4) * (height * 0.75) + 6;
-      const waveOffset = isPlaying ? Math.sin(Date.now() * 0.005 + i * 0.5) * 4 : 0;
-      const barHeight = Math.max(4, Math.min(height - 4, baseHeight + waveOffset));
+        // Calculate bar height with oscillation if playing
+        const baseHeight = ((Math.sin(i * 0.3 + seed) + 1.2) / 2.4) * (height * 0.75) + 6;
+        const waveOffset = isPlaying ? Math.sin(Date.now() * 0.005 + i * 0.5) * 4 : 0;
+        const barHeight = Math.max(4, Math.min(height - 4, baseHeight + waveOffset));
 
-      const x = i * (barWidth + 1.5);
-      const y = (height - barHeight) / 2;
+        const x = i * (barWidth + 1.5);
+        const y = (height - barHeight) / 2;
 
-      ctx.fillStyle = isPast
-        ? "#3B82F6" // Active cobalt
-        : "#1E293B"; // Background slate
-      ctx.fillRect(x, y, barWidth, barHeight);
+        ctx.fillStyle = isPast
+          ? "#3B82F6" // Active cobalt
+          : "#1E293B"; // Background slate
+        ctx.fillRect(x, y, barWidth, barHeight);
+      }
+    } catch (e) {
+      console.warn("Canvas drawing error:", e);
     }
   }, [playbackTime, isPlaying, selectedPiece]);
 
   const handleCopySha256 = (hash: string) => {
-    navigator.clipboard.writeText(hash);
+    try {
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(hash);
+      }
+    } catch {}
     setCopiedHash(hash);
     setTimeout(() => setCopiedHash(null), 2000);
   };

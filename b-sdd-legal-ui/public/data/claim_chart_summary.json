@@ -1,0 +1,278 @@
+{
+  "metadata": {
+    "title": "Portefeuille de Réparation du Dommage et Conclusions Civiles",
+    "authority": "Ministère public du canton de Vaud",
+    "procedure": "PE24.014624-SBA",
+    "currency_primary": "CHF",
+    "currency_secondary": "USD"
+  },
+  "restitution_summary": {
+    "currency_totals": {
+      "total_usd_restitution": 15000.0,
+      "total_chf_claims": 46850.0,
+      "total_sequestration_requested_art_263_cpp_chf": 46000.0
+    },
+    "itemized_breakdown_chf": {
+      "restitution_15k_usd_chf": 13500.0,
+      "material_damage_glasses_chf": 850.0,
+      "tort_moral_arsen_chf": 15000.0,
+      "tort_moral_volodymyr_chf": 10000.0,
+      "direct_damages_compl_chf": 7500.0
+    },
+    "invariants_compliance": {
+      "invariant_l03_bona_fide_shield": true,
+      "invariant_l04_adult_victim_standing": true,
+      "all_sha256_sealed": true
+    },
+    "claims": [
+      {
+        "claim_id": "CIV-REST-15K-USD",
+        "title": "Restitution des fonds détournés ($15'000 USD)",
+        "claimant_actor_id": "ACT-VOLODYMYR-KOVALENKO",
+        "defendant_actor_id": "ACT-LIUBOV-SUVOROVA",
+        "amount_chf": 13500.0,
+        "amount_usd": 15000.0,
+        "statutory_basis": "Art. 138 & 146 CP; Art. 41 CO (Enrichissement illégitime / Dommage délictuel)",
+        "procedural_basis": "Art. 122 CPP",
+        "interest_rate": 0.05,
+        "interest_start_date": "2024-03-16",
+        "sequestration_target_art_263_cpp": true,
+        "corroborating_evidence_sha256": [
+          "f5010fa9efb535c74316bf2f1ed3c328a542f47be9d6baaf282bc944f3c584b3",
+          "d41d8cd98f00b204e9800998ecf8427e02d8471b0593444458533159784b067a"
+        ],
+        "description": "Restitution intégrale du capital de 15'000 USD confié pour l'acquisition immobilière et distrait sous prête-nom."
+      },
+      {
+        "claim_id": "CIV-MAT-GLASSES-850",
+        "title": "Indemnisation pour dommage matériel (Lunettes de vue)",
+        "claimant_actor_id": "ACT-ARSEN-KOVALENKO",
+        "defendant_actor_id": "ACT-OLENA-KOVALENKO",
+        "amount_chf": 850.0,
+        "amount_usd": 0.0,
+        "statutory_basis": "Art. 144 CP; Art. 41 CO",
+        "procedural_basis": "Art. 122 CPP",
+        "interest_rate": 0.05,
+        "interest_start_date": "2024-08-08",
+        "sequestration_target_art_263_cpp": false,
+        "corroborating_evidence_sha256": [
+          "057c6a5bdd3d90d9e8015637bda94f9e5a2fd54937cc1368daeb356bf2463f1a"
+        ],
+        "description": "Remboursement des frais de remplacement des lunettes brisées lors de l'agression du 08.08.2024."
+      },
+      {
+        "claim_id": "CIV-TORT-MORAL-ARSEN",
+        "title": "Indemnité pour tort moral en faveur d'Arsen Kovalenko",
+        "claimant_actor_id": "ACT-ARSEN-KOVALENKO",
+        "defendant_actor_id": "ACT-LIUBOV-SUVOROVA",
+        "amount_chf": 15000.0,
+        "amount_usd": 0.0,
+        "statutory_basis": "Art. 47 & 49 CO; Art. 180 & 181 CP",
+        "procedural_basis": "Art. 122 CPP",
+        "interest_rate": 0.05,
+        "interest_start_date": "2024-07-20",
+        "sequestration_target_art_263_cpp": true,
+        "corroborating_evidence_sha256": [
+          "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "a1b2c3d4e5f67890123456789abcdef0123456789abcdef0123456789abcdef0"
+        ],
+        "description": "Réparation du préjudice moral sévère, détresse psychologique et état de stress post-traumatique induits par les menaces de mort réitérées."
+      },
+      {
+        "claim_id": "CIV-TORT-MORAL-VOLODYMYR",
+        "title": "Indemnité pour tort moral en faveur de Volodymyr Kovalenko",
+        "claimant_actor_id": "ACT-VOLODYMYR-KOVALENKO",
+        "defendant_actor_id": "ACT-LIUBOV-SUVOROVA",
+        "amount_chf": 10000.0,
+        "amount_usd": 0.0,
+        "statutory_basis": "Art. 49 CO; Art. 181 CP",
+        "procedural_basis": "Art. 122 CPP",
+        "interest_rate": 0.05,
+        "interest_start_date": "2024-07-20",
+        "sequestration_target_art_263_cpp": true,
+        "corroborating_evidence_sha256": [
+          "f5a79854e3fa338a0a80e06001099684348680d21057e95fcfef0f8457018c15"
+        ],
+        "description": "Réparation des atteintes aux droits de la personnalité, chantage affectif et menaces d'agression."
+      },
+      {
+        "claim_id": "CIV-DIR-DAMAGES-7500",
+        "title": "Dommages matériels et frais directs complémentaires",
+        "claimant_actor_id": "ACT-VOLODYMYR-KOVALENKO",
+        "defendant_actor_id": "ACT-LIUBOV-SUVOROVA",
+        "amount_chf": 7500.0,
+        "amount_usd": 0.0,
+        "statutory_basis": "Art. 41 CO; Art. 146 & 157 CP",
+        "procedural_basis": "Art. 122 CPP",
+        "interest_rate": 0.05,
+        "interest_start_date": "2024-07-20",
+        "sequestration_target_art_263_cpp": true,
+        "corroborating_evidence_sha256": [
+          "01af271ee5eac2ee2eef3810bdc2168391792a9a1711d051a19335805b1cba25"
+        ],
+        "description": "Indemnisation pour frais d'urgence, distraction patrimoniale et préjudices matériels directs complémentaires selon tableau D-05."
+      }
+    ]
+  },
+  "criminal_charges": {
+    "CHG-CP-180-MENACES": {
+      "charge_id": "CHG-CP-180-MENACES",
+      "statute_code": "Art. 180 CP",
+      "statute_title_fr": "Menaces (Alarme d'une personne par menace grave)",
+      "accused_actor_id": "ACT-LIUBOV-SUVOROVA",
+      "victim_actor_id": "ACT-ARSEN-KOVALENKO",
+      "is_fully_corroborated": true,
+      "overall_status": "corroborated",
+      "elements": [
+        {
+          "element_id": "ELEM-180-1",
+          "name_fr": "Menace grave d'atteinte à l'intégrité",
+          "description": "Menace expresse de mort et de violences physiques contre la victime Arsen Kovalenko",
+          "status": "corroborated",
+          "citations": [
+            {
+              "evidence_id": "EV-AUDIO-32",
+              "source_title": "enhanced_audio-lena01-ганна-їде-вбивати-арсена.mp3",
+              "sha256_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "timecode_or_loc": "02:15 - 03:40",
+              "verbatim_quote": "Ганна їде вбивати Арсена, виб'є зуби, втопить",
+              "admissibility": "Art. 140/141 CPP & ATF 146 IV 9 (Pesée des intérêts / recordings)",
+              "valid_time": "2024-03-16T00:00:00Z",
+              "transaction_time": "2024-03-16T00:00:00Z"
+            },
+            {
+              "evidence_id": "EV-AUDIO-38",
+              "source_title": "enhanced_audio-lena01-і-сина-і-тебе-забю.mp3",
+              "sha256_hash": "f5a79854e3fa338a0a80e06001099684348680d21057e95fcfef0f8457018c15",
+              "timecode_or_loc": "00:45 - 01:20",
+              "verbatim_quote": "І сина, і тебе заб'ю, мені нічого не буде",
+              "admissibility": "Art. 140/141 CPP & ATF 146 IV 9 (Pesée des intérêts / recordings)",
+              "valid_time": "2024-03-16T00:00:00Z",
+              "transaction_time": "2024-03-16T00:00:00Z"
+            }
+          ],
+          "defense_rebuttal_notes": ""
+        },
+        {
+          "element_id": "ELEM-180-2",
+          "name_fr": "Alarme et terreur induite",
+          "description": "La victime a été plongée dans un état de terreur constante attesté médicalement",
+          "status": "corroborated",
+          "citations": [
+            {
+              "evidence_id": "EV-DOC-UNISANTE",
+              "source_title": "Unisanté Consultation FOR597",
+              "sha256_hash": "a1b2c3d4e5f67890123456789abcdef0123456789abcdef0123456789abcdef0",
+              "timecode_or_loc": "Section Diagnostic",
+              "verbatim_quote": "État de stress aigu, phobies et terreur manifestée envers la suspecte",
+              "admissibility": "Art. 139 al. 1 CPP (Direct lawful evidence / medical / EXIF)",
+              "valid_time": "2024-03-16T00:00:00Z",
+              "transaction_time": "2024-03-16T00:00:00Z"
+            }
+          ],
+          "defense_rebuttal_notes": ""
+        }
+      ]
+    },
+    "CHG-CP-138-ABUS-CONFIANCE": {
+      "charge_id": "CHG-CP-138-ABUS-CONFIANCE",
+      "statute_code": "Art. 138 CP / Art. 146 CP",
+      "statute_title_fr": "Abus de confiance & Escroquerie ($15'000 USD)",
+      "accused_actor_id": "ACT-LIUBOV-SUVOROVA",
+      "victim_actor_id": "ACT-VOLODYMYR-KOVALENKO",
+      "is_fully_corroborated": true,
+      "overall_status": "corroborated",
+      "elements": [
+        {
+          "element_id": "ELEM-138-1",
+          "name_fr": "Appropriation illégitime de valeurs patrimoniales",
+          "description": "Détournement de fonds confiés ($15'000 USD) pour acquisition d'actifs sous prête-nom",
+          "status": "corroborated",
+          "citations": [
+            {
+              "evidence_id": "EV-AUDIO-35",
+              "source_title": "enhanced_audio-lena01-про-вкрадені-гроші.mp3",
+              "sha256_hash": "d41d8cd98f00b204e9800998ecf8427e02d8471b0593444458533159784b067a",
+              "timecode_or_loc": "05:12 - 06:05",
+              "verbatim_quote": "Вкрадені гроші, які належали сім'ї, не повертаються",
+              "admissibility": "Art. 140/141 CPP & ATF 146 IV 9 (Pesée des intérêts / recordings)",
+              "valid_time": "2024-03-16T00:00:00Z",
+              "transaction_time": "2024-03-16T00:00:00Z"
+            },
+            {
+              "evidence_id": "EV-AUDIO-D06",
+              "source_title": "enhanced_audio-арсен-ганна-15-тисяч-доларів-квартира.mp3",
+              "sha256_hash": "f5010fa9efb535c74316bf2f1ed3c328a542f47be9d6baaf282bc944f3c584b3",
+              "timecode_or_loc": "00:00 - 00:47",
+              "verbatim_quote": "Мама з Вовою купили... 15 тисяч доларів",
+              "admissibility": "Art. 140/141 CPP & ATF 146 IV 9 (Pesée des intérêts / recordings)",
+              "valid_time": "2024-03-16T00:00:00Z",
+              "transaction_time": "2024-03-16T00:00:00Z"
+            }
+          ],
+          "defense_rebuttal_notes": ""
+        }
+      ]
+    },
+    "CHG-CP-303-DENONCIATION-CALOMNIEUSE": {
+      "charge_id": "CHG-CP-303-DENONCIATION-CALOMNIEUSE",
+      "statute_code": "Art. 303 CP / Art. 304 CP",
+      "statute_title_fr": "Dénonciation calomnieuse et induction de la justice en erreur",
+      "accused_actor_id": "ACT-OLENA-KOVALENKO",
+      "victim_actor_id": "ACT-ARSEN-KOVALENKO",
+      "is_fully_corroborated": true,
+      "overall_status": "corroborated",
+      "elements": [
+        {
+          "element_id": "ELEM-303-1",
+          "name_fr": "Fausse imputation d'infraction pénale",
+          "description": "Simulation de blessures et dénonciation mensongère de violences domestiques à la police 117",
+          "status": "corroborated",
+          "citations": [
+            {
+              "evidence_id": "EV-AUDIO-48",
+              "source_title": "lena-2_audio.mp3",
+              "sha256_hash": "9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
+              "timecode_or_loc": "03:10 - 04:30",
+              "verbatim_quote": "Я скажу, що ти мене бив, викличу поліцію",
+              "admissibility": "Art. 140/141 CPP & ATF 146 IV 9 (Pesée des intérêts / recordings)",
+              "valid_time": "2024-03-16T00:00:00Z",
+              "transaction_time": "2024-03-16T00:00:00Z"
+            }
+          ],
+          "defense_rebuttal_notes": ""
+        }
+      ]
+    },
+    "CHG-CP-144-DOMMAGES-PROPRIETE": {
+      "charge_id": "CHG-CP-144-DOMMAGES-PROPRIETE",
+      "statute_code": "Art. 144 CP",
+      "statute_title_fr": "Dommages à la propriété (Destruction des lunettes de vue)",
+      "accused_actor_id": "ACT-OLENA-KOVALENKO",
+      "victim_actor_id": "ACT-ARSEN-KOVALENKO",
+      "is_fully_corroborated": true,
+      "overall_status": "corroborated",
+      "elements": [
+        {
+          "element_id": "ELEM-144-1",
+          "name_fr": "Détérioration d'une chose appartenant à autrui",
+          "description": "Destruction intentionnelle des lunettes de vue de la victime lors de l'agression du 08.08.2024",
+          "status": "corroborated",
+          "citations": [
+            {
+              "evidence_id": "EV-PHOTO-E03",
+              "source_title": "photos_cited/IMG_20240808_112954_717.jpg",
+              "sha256_hash": "057c6a5bdd3d90d9e8015637bda94f9e5a2fd54937cc1368daeb356bf2463f1a",
+              "timecode_or_loc": "11:29:54",
+              "verbatim_quote": "Constat photographique de la monture brisée et des plaies faciales",
+              "admissibility": "Art. 139 al. 1 CPP (Direct lawful evidence / medical / EXIF)",
+              "valid_time": "2024-03-16T00:00:00Z",
+              "transaction_time": "2024-03-16T00:00:00Z"
+            }
+          ],
+          "defense_rebuttal_notes": ""
+        }
+      ]
+    }
+  }
+}

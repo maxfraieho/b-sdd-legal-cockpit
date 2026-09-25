@@ -1,4 +1,6 @@
+node_modules
 node_modules/
+b-sdd-legal-ui/node_modules
 *.tsbuildinfo
 dist/
 build/
@@ -11,6 +13,7 @@ __pycache__/
 *.epub
 *.pdf
 *.mp3
+!b-sdd-legal-ui/public/evidence/audio/*.mp3
 *.wav
 *.m4a
 *.zip
