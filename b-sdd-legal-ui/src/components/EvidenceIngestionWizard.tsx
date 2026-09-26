@@ -27,11 +27,15 @@ import {
   Database,
   ArrowRight,
   Info,
+  Cloud,
+  Folder,
 } from "lucide-react";
 import { SupportedLanguage } from "../types/i18n";
 import { BordereauPiece, BORDEREAU_PIECES } from "../data/legalData";
 import { SWISS_LAW_ARTICLES, getAllLawArticles, getEnabledLawArticleIds } from "../data/swissLawCodes";
 import { loadAppSettings } from "../lib/translator";
+import { GoogleDriveBrowserModal } from "./GoogleDriveBrowserModal";
+import { GoogleDrivePickedFile, fetchGoogleDriveContent } from "../lib/googleDrivePicker";
 
 interface EvidenceIngestionWizardProps {
   isOpen: boolean;
@@ -92,6 +96,12 @@ export const EvidenceIngestionWizard: React.FC<EvidenceIngestionWizardProps> = (
   const [fileDataUrl, setFileDataUrl] = useState<string>("");
   const [fileSha256, setFileSha256] = useState<string>("");
   const [isHashing, setIsHashing] = useState(false);
+
+  // Google Drive state
+  const [gdriveBrowserOpen, setGdriveBrowserOpen] = useState(false);
+  const [pickedDriveFile, setPickedDriveFile] = useState<GoogleDrivePickedFile | null>(null);
+  const [isFetchingUrl, setIsFetchingUrl] = useState(false);
+  const [fetchUrlError, setFetchUrlError] = useState<string | null>(null);
 
   // AI Backend configuration
   const [selectedSlot, setSelectedSlot] = useState<AISlotType>(() => {
@@ -185,6 +195,39 @@ export const EvidenceIngestionWizard: React.FC<EvidenceIngestionWizardProps> = (
       }
     };
     reader.readAsDataURL(file);
+  };
+
+  // Handle file selection from Google Drive Browser Modal
+  const handleSelectDriveFile = (driveFile: GoogleDrivePickedFile) => {
+    setPickedDriveFile(driveFile);
+    setFileName(driveFile.name);
+    setFileSha256(driveFile.sha256);
+    if (driveFile.dataUrl) setFileDataUrl(driveFile.dataUrl);
+    if (driveFile.textContent) setInputText(driveFile.textContent);
+    
+    // Auto-adjust category
+    if (driveFile.category === "photo") {
+      setSourceType("photo");
+    } else if (driveFile.category === "audio") {
+      setSourceType("audio");
+    } else {
+      setSourceType("file");
+    }
+  };
+
+  // Handle direct fetch from Google Drive / Docs URL
+  const handleFetchDriveUrl = async () => {
+    if (!googleDocsUrl.trim()) return;
+    setIsFetchingUrl(true);
+    setFetchUrlError(null);
+    try {
+      const file = await fetchGoogleDriveContent(googleDocsUrl);
+      handleSelectDriveFile(file);
+    } catch (err: any) {
+      setFetchUrlError(err?.message || "Не вдалося зчитати файл за вказаним посиланням");
+    } finally {
+      setIsFetchingUrl(false);
+    }
   };
 
   // Ping test for Node .184 / Port 18880
@@ -608,9 +651,9 @@ export const EvidenceIngestionWizard: React.FC<EvidenceIngestionWizardProps> = (
                 {[
                   {
                     id: "gdocs",
-                    icon: <FileText className="w-4 h-4 text-blue-400" />,
-                    label: currentLang === "uk" ? "Google Docs" : "Google Docs",
-                    sub: "Посилання або текст",
+                    icon: <Cloud className="w-4 h-4 text-sky-400" />,
+                    label: currentLang === "uk" ? "Google Drive" : "Google Drive",
+                    sub: "Файли, папка, Docs",
                   },
                   {
                     id: "file",
@@ -657,37 +700,125 @@ export const EvidenceIngestionWizard: React.FC<EvidenceIngestionWizardProps> = (
 
               {/* Source-specific Input Controls */}
               {sourceType === "gdocs" && (
-                <div className="bg-[#090E1A] p-4 rounded-xl border border-slate-800 space-y-3">
-                  <div>
+                <div className="bg-[#090E1A] p-4 rounded-xl border border-slate-800 space-y-4">
+                  {/* Google Drive Direct Browser Trigger Button */}
+                  <div className="p-4 bg-gradient-to-r from-sky-950/40 via-blue-950/30 to-slate-900 border border-sky-500/30 rounded-xl flex flex-col sm:flex-row items-center justify-between gap-3 shadow-lg">
+                    <div className="flex items-center space-x-3">
+                      <div className="p-2.5 bg-sky-500/20 text-sky-400 rounded-lg border border-sky-500/30 shrink-0">
+                        <Cloud className="w-6 h-6" />
+                      </div>
+                      <div>
+                        <h4 className="text-xs font-bold text-slate-100 flex items-center space-x-1.5">
+                          <span>{currentLang === "uk" ? "Сховище Google Drive & AI Studio Link" : "Espace Google Drive & AI Studio"}</span>
+                          <span className="px-1.5 py-0.5 bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 rounded text-[9px] font-mono">
+                            OAuth / Direct
+                          </span>
+                        </h4>
+                        <p className="text-[11px] text-slate-400 mt-0.5">
+                          {currentLang === "uk"
+                            ? "Огляд фотографій, аудіозаписів, відео та документів справи з автоматичним розрахунком SHA-256."
+                            : "Parcourez photos, enregistrements audio, vidéos et pièces avec scellement SHA-256 automatique."}
+                        </p>
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setGdriveBrowserOpen(true)}
+                      className="px-4 py-2.5 bg-sky-600 hover:bg-sky-500 text-white rounded-lg text-xs font-mono font-bold flex items-center space-x-2 transition-all shadow-md shadow-sky-600/30 shrink-0 w-full sm:w-auto justify-center"
+                    >
+                      <Folder className="w-4 h-4" />
+                      <span>{currentLang === "uk" ? "📁 Відкрити Google Drive" : "📁 Ouvrir Google Drive"}</span>
+                    </button>
+                  </div>
+
+                  {/* Picked Drive File Card Preview if available */}
+                  {pickedDriveFile && (
+                    <div className="p-3.5 bg-emerald-950/20 border border-emerald-500/40 rounded-xl space-y-2">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-2">
+                          <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                          <span className="text-xs font-bold text-emerald-300 font-mono">
+                            {pickedDriveFile.name}
+                          </span>
+                        </div>
+                        <span className="px-2 py-0.5 bg-emerald-900/60 text-emerald-200 border border-emerald-700/50 rounded text-[10px] font-mono uppercase">
+                          {pickedDriveFile.category}
+                        </span>
+                      </div>
+                      <div className="flex items-center space-x-2 text-[10px] font-mono text-slate-400">
+                        <span>SHA-256:</span>
+                        <code className="text-emerald-400 select-all truncate bg-slate-950 px-1 py-0.5 rounded border border-slate-800">
+                          {pickedDriveFile.sha256}
+                        </code>
+                      </div>
+                      {pickedDriveFile.dataUrl && pickedDriveFile.category === "photo" && (
+                        <div className="mt-2 flex justify-center bg-black/60 p-2 rounded-lg border border-slate-800">
+                          <img
+                            src={pickedDriveFile.dataUrl}
+                            alt="Drive Preview"
+                            className="max-h-40 object-contain rounded"
+                          />
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Secondary: URL input or fetch */}
+                  <div className="pt-2 border-t border-slate-800/80">
                     <label className="block text-xs font-mono text-slate-300 mb-1">
-                      Посилання на Google Docs або Google Drive :
+                      {currentLang === "uk"
+                        ? "Або введіть пряме посилання на Google Docs / Drive / AI Studio Link :"
+                        : "Ou lien direct Google Docs / Google Drive / AI Studio :"}
                     </label>
                     <div className="flex items-center space-x-2">
                       <input
                         type="url"
                         value={googleDocsUrl}
                         onChange={(e) => setGoogleDocsUrl(e.target.value)}
-                        placeholder="https://docs.google.com/document/d/..."
+                        placeholder="https://docs.google.com/document/d/... або drive.google.com/file/d/..."
                         className="flex-1 bg-[#050810] border border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-blue-500"
                       />
+                      <button
+                        type="button"
+                        onClick={handleFetchDriveUrl}
+                        disabled={!googleDocsUrl.trim() || isFetchingUrl}
+                        className="px-3 py-2 bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white rounded-lg text-xs font-mono flex items-center space-x-1.5 transition-colors shrink-0"
+                      >
+                        {isFetchingUrl ? (
+                          <>
+                            <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                            <span>Зчитування...</span>
+                          </>
+                        ) : (
+                          <>
+                            <Sparkles className="w-3.5 h-3.5" />
+                            <span>Зчитати</span>
+                          </>
+                        )}
+                      </button>
                       <a
                         href="https://drive.google.com/drive/folders/13OgTZBLm1LoYNtfwHNuWBl7kSD3ZncF1"
                         target="_blank"
                         rel="noreferrer"
-                        className="px-3 py-2 bg-emerald-950/60 hover:bg-emerald-900 border border-emerald-700/60 text-emerald-300 rounded-lg text-xs font-mono flex items-center space-x-1"
+                        className="px-3 py-2 bg-emerald-950/60 hover:bg-emerald-900 border border-emerald-700/60 text-emerald-300 rounded-lg text-xs font-mono flex items-center space-x-1 shrink-0"
                       >
                         <ExternalLink className="w-3 h-3" />
                         <span>Папка справи</span>
                       </a>
                     </div>
+                    {fetchUrlError && (
+                      <p className="text-[11px] text-rose-400 mt-1 font-mono">{fetchUrlError}</p>
+                    )}
                   </div>
 
                   <div>
                     <label className="block text-xs font-mono text-slate-300 mb-1">
-                      Зміст або витяг з документу (для криміналістичного аналізу ШІ) :
+                      {currentLang === "uk"
+                        ? "Зміст або витяг з документу (для криміналістичного аналізу ШІ) :"
+                        : "Contenu ou extrait pour l'analyse juridique IA :"}
                     </label>
                     <textarea
-                      rows={6}
+                      rows={5}
                       value={inputText}
                       onChange={(e) => setInputText(e.target.value)}
                       placeholder="Вставте сюди текст документу, протокол або показання свідка..."
@@ -727,6 +858,17 @@ export const EvidenceIngestionWizard: React.FC<EvidenceIngestionWizardProps> = (
                     <span className="text-[10px] text-slate-500 mt-1 block font-mono">
                       Криптографічний хеш SHA-256 обчислюється автоматично
                     </span>
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setGdriveBrowserOpen(true);
+                      }}
+                      className="mt-3 inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-sky-950/70 hover:bg-sky-900 border border-sky-600/50 text-sky-300 text-xs font-mono transition-colors shadow-sm"
+                    >
+                      <Cloud className="w-3.5 h-3.5 text-sky-400" />
+                      <span>{currentLang === "uk" ? "Або вибрати з Google Drive" : "Ou choisir depuis Google Drive"}</span>
+                    </button>
                   </div>
 
                   {fileDataUrl && sourceType === "photo" && (
@@ -1420,6 +1562,23 @@ export const EvidenceIngestionWizard: React.FC<EvidenceIngestionWizardProps> = (
           )}
         </div>
       </div>
+
+      {/* Google Drive / Cloud Browser Modal */}
+      <GoogleDriveBrowserModal
+        isOpen={gdriveBrowserOpen}
+        onClose={() => setGdriveBrowserOpen(false)}
+        onSelectFile={handleSelectDriveFile}
+        currentLang={currentLang}
+        filterType={
+          sourceType === "photo"
+            ? "photo"
+            : sourceType === "audio"
+            ? "audio"
+            : sourceType === "file"
+            ? "document"
+            : "all"
+        }
+      />
     </div>
   );
 };

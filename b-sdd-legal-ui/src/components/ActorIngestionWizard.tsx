@@ -22,6 +22,7 @@ import {
   RefreshCw,
   Hash,
   Award,
+  Cloud,
 } from "lucide-react";
 import { SupportedLanguage } from "../types/i18n";
 import { ActorItem, resolveLocalized } from "../data/legalData";
@@ -32,6 +33,8 @@ import {
   ActorImpactAnalysis,
 } from "../lib/actorsManager";
 import { commitAtomicSupersession } from "../lib/wormLedger";
+import { GoogleDriveBrowserModal } from "./GoogleDriveBrowserModal";
+import { GoogleDrivePickedFile } from "../lib/googleDrivePicker";
 
 interface ActorIngestionWizardProps {
   isOpen: boolean;
@@ -72,11 +75,19 @@ export const ActorIngestionWizard: React.FC<ActorIngestionWizardProps> = ({
   const [photoDataUrl, setPhotoDataUrl] = useState<string>("");
   const [documentTitle, setDocumentTitle] = useState("");
   const [documentType, setDocumentType] = useState("PV d'audition");
+  const [gdriveBrowserOpen, setGdriveBrowserOpen] = useState(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   // Hash & Sealing
   const [inputSha256, setInputSha256] = useState("");
   const [isHashing, setIsHashing] = useState(false);
+
+  // Handle file selection from Google Drive Browser Modal
+  const handleSelectDrivePhoto = (driveFile: GoogleDrivePickedFile) => {
+    setDocumentTitle(driveFile.name);
+    if (driveFile.dataUrl) setPhotoDataUrl(driveFile.dataUrl);
+    if (driveFile.sha256) setInputSha256(driveFile.sha256);
+  };
 
   // AI Qualification result
   const [selectedRole, setSelectedRole] = useState<ProceduralRoleKey>("temoin");
@@ -681,17 +692,41 @@ export const ActorIngestionWizard: React.FC<ActorIngestionWizardProps> = ({
                       <button
                         type="button"
                         onClick={() => fileInputRef.current?.click()}
-                        className="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg text-xs font-mono flex items-center space-x-1.5 border border-slate-700"
+                        className="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg text-xs font-mono flex items-center space-x-1.5 border border-slate-700 transition-colors"
                       >
                         <Upload className="w-3.5 h-3.5 text-blue-400" />
-                        <span>{documentTitle ? "Змінити файл" : "Завантажити скан/фото"}</span>
+                        <span>{documentTitle ? "Змінити файл" : "Завантажити"}</span>
                       </button>
+
+                      <button
+                        type="button"
+                        onClick={() => setGdriveBrowserOpen(true)}
+                        className="px-3 py-2 bg-sky-950/60 hover:bg-sky-900 text-sky-200 rounded-lg text-xs font-mono flex items-center space-x-1.5 border border-sky-700/60 transition-colors"
+                        title="Вибрати фотографію або скан із Google Drive"
+                      >
+                        <Cloud className="w-3.5 h-3.5 text-sky-400" />
+                        <span>Google Drive</span>
+                      </button>
+
                       {documentTitle && (
-                        <span className="text-[11px] text-emerald-400 font-mono truncate max-w-[200px]">
+                        <span className="text-[11px] text-emerald-400 font-mono truncate max-w-[150px]">
                           {documentTitle}
                         </span>
                       )}
                     </div>
+
+                    {photoDataUrl && (
+                      <div className="mt-2 flex items-center space-x-2 p-1.5 bg-black/40 rounded-lg border border-slate-800">
+                        <img
+                          src={photoDataUrl}
+                          alt="Preview"
+                          className="w-10 h-10 object-cover rounded border border-slate-700 shrink-0"
+                        />
+                        <div className="text-[10px] text-slate-400 font-mono truncate">
+                          Фото підтверджено: <span className="text-emerald-400">{documentTitle}</span>
+                        </div>
+                      </div>
+                    )}
                   </div>
 
                   <div>
@@ -1196,6 +1231,15 @@ export const ActorIngestionWizard: React.FC<ActorIngestionWizardProps> = ({
           )}
         </div>
       </div>
+
+      {/* Google Drive Photo Selector Modal */}
+      <GoogleDriveBrowserModal
+        isOpen={gdriveBrowserOpen}
+        onClose={() => setGdriveBrowserOpen(false)}
+        onSelectFile={handleSelectDrivePhoto}
+        currentLang={currentLang}
+        filterType="photo"
+      />
     </div>
   );
 };
