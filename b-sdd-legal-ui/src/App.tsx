@@ -23,6 +23,7 @@ import { DocumentationModal } from "./components/DocumentationModal";
 import { MobileBottomNav } from "./components/MobileBottomNav";
 import { MobileQuickMenuSheet } from "./components/MobileQuickMenuSheet";
 import { JudicialBundleModal } from "./components/JudicialBundleModal";
+import { CaseSyncModal } from "./components/CaseSyncModal";
 import {
   LegalCase,
   BENCHMARK_CASES,
@@ -66,6 +67,7 @@ export default function App() {
   const [evidenceWizardOpen, setEvidenceWizardOpen] = useState(false);
   const [quickMenuOpen, setQuickMenuOpen] = useState(false);
   const [judicialBundleOpen, setJudicialBundleOpen] = useState(false);
+  const [caseSyncModalOpen, setCaseSyncModalOpen] = useState(false);
   const [isEInkMode, setIsEInkMode] = useState(false);
 
   // Apply E-Ink Paperwhite mode to document body
@@ -261,6 +263,7 @@ export default function App() {
         currentLang={currentLang}
         onWormSeal={handleWormSeal}
         onSendToKindle={handleRecompileAndSendKindle}
+        onOpenCaseSync={() => setCaseSyncModalOpen(true)}
         isSealing={isSealing}
         isSendingKindle={isSendingKindle}
         sequestrationAmount={`CHF ${activeCase.sequestration_target_chf.toLocaleString("fr-CH", { minimumFractionDigits: 2 })}`}
@@ -457,6 +460,7 @@ export default function App() {
         currentLang={currentLang}
         onLangChange={setCurrentLang}
         activeCase={activeCase}
+        onOpenCaseSync={() => setCaseSyncModalOpen(true)}
         onOpenCaseManager={() => setCaseManagerModalOpen(true)}
         onOpenDocs={() => setDocsModalOpen(true)}
         onOpenSwissCodes={() => setSwissCodesModalOpen(true)}
@@ -475,6 +479,17 @@ export default function App() {
         onClose={() => setJudicialBundleOpen(false)}
         activeCase={activeCase}
         currentLang={currentLang}
+        onShowToast={showToast}
+      />
+
+      {/* AI CASE SYNC & SEQUENTIAL THINKING MODAL */}
+      <CaseSyncModal
+        isOpen={caseSyncModalOpen}
+        onClose={() => setCaseSyncModalOpen(false)}
+        activeCase={activeCase}
+        actors={caseActors}
+        currentLang={currentLang}
+        onCommitWormSeal={handleWormSeal}
         onShowToast={showToast}
       />
     </div>

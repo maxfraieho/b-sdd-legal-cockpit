@@ -32,6 +32,7 @@ interface MobileQuickMenuSheetProps {
   currentLang: SupportedLanguage;
   onLangChange: (lang: SupportedLanguage) => void;
   activeCase?: LegalCase;
+  onOpenCaseSync?: () => void;
   onOpenCaseManager?: () => void;
   onOpenDocs?: () => void;
   onOpenSwissCodes?: () => void;
@@ -54,6 +55,7 @@ export const MobileQuickMenuSheet: React.FC<MobileQuickMenuSheetProps> = ({
   currentLang,
   onLangChange,
   activeCase,
+  onOpenCaseSync,
   onOpenCaseManager,
   onOpenDocs,
   onOpenSwissCodes,
@@ -267,6 +269,52 @@ export const MobileQuickMenuSheet: React.FC<MobileQuickMenuSheetProps> = ({
                 ? "Outils Juridiques & IA"
                 : "Legal Tools & AI"}
             </span>
+
+            {/* Master Sequential AI Sync Button */}
+            <button
+              onClick={() => {
+                onClose?.();
+                onOpenCaseSync?.();
+              }}
+              className="w-full p-3 bg-gradient-to-r from-purple-950/80 via-blue-950/60 to-purple-950/80 hover:from-purple-900/80 hover:to-blue-900/80 border border-purple-500/50 rounded-xl text-left flex items-center justify-between transition-all shadow-lg shadow-purple-950/40 group"
+            >
+              <div className="flex items-center space-x-3">
+                <div className="p-2 bg-purple-600/30 text-purple-300 rounded-lg group-hover:scale-105 transition-transform">
+                  <Brain className="w-5 h-5 text-purple-300 animate-pulse" />
+                </div>
+                <div>
+                  <div className="flex items-center space-x-1.5">
+                    <strong className="text-white text-xs font-mono font-bold">
+                      {currentLang === "uk"
+                        ? "⚡ ШІ-Синхронізація справи"
+                        : currentLang === "it"
+                        ? "⚡ Sincronizzazione IA Fascicolo"
+                        : currentLang === "de"
+                        ? "⚡ KI-Dossiersynchronisation"
+                        : currentLang === "fr"
+                        ? "⚡ Synchronisation IA Dossier"
+                        : "⚡ AI Dossier Sync"}
+                    </strong>
+                    <span className="text-[9px] bg-purple-500/20 text-purple-300 font-mono px-1 rounded border border-purple-500/40">
+                      Sequential
+                    </span>
+                  </div>
+                  <span className="text-[10px] text-slate-300 block leading-tight mt-0.5">
+                    {currentLang === "uk"
+                      ? "Аналіз нових фактів, статей КПК та Gemini Spark"
+                      : currentLang === "it"
+                      ? "Rivalutazione 35 codici, prove e Gemini Spark"
+                      : currentLang === "de"
+                      ? "Neubewertung 35 Gesetze, Beweise & Spark"
+                      : currentLang === "fr"
+                      ? "Recalcul 35 codes, preuves & Gemini Spark"
+                      : "Re-evaluate 35 statutes, evidence & Spark"}
+                  </span>
+                </div>
+              </div>
+              <Sparkles className="w-4 h-4 text-purple-400 group-hover:rotate-12 transition-transform shrink-0" />
+            </button>
+
             <div className="grid grid-cols-2 gap-2">
               {/* Judicial Bundle Export */}
               <button

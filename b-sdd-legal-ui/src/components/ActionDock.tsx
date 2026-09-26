@@ -8,6 +8,7 @@ import {
   DollarSign,
   Activity,
   Info,
+  Sparkles,
 } from "lucide-react";
 import { SupportedLanguage } from "../types/i18n";
 
@@ -15,6 +16,7 @@ interface ActionDockProps {
   currentLang: SupportedLanguage;
   onWormSeal: () => void;
   onSendToKindle: () => void;
+  onOpenCaseSync?: () => void;
   isSealing?: boolean;
   isSendingKindle?: boolean;
   sequestrationAmount?: string; // Default: "CHF 46'850.00"
@@ -24,6 +26,7 @@ export const ActionDock: React.FC<ActionDockProps> = ({
   currentLang,
   onWormSeal,
   onSendToKindle,
+  onOpenCaseSync,
   isSealing = false,
   isSendingKindle = false,
   sequestrationAmount = "CHF 46'850.00",
@@ -139,6 +142,24 @@ export const ActionDock: React.FC<ActionDockProps> = ({
 
       {/* RIGHT: Instant Action Triggers */}
       <div className="flex items-center space-x-1.5 sm:space-x-2 shrink-0">
+        {/* Sequential AI Case State Synchronization */}
+        {onOpenCaseSync && (
+          <button
+            onClick={onOpenCaseSync}
+            className="flex items-center space-x-1 sm:space-x-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-medium transition-all shadow-sm min-h-[32px] bg-gradient-to-r from-violet-900/90 to-purple-800/90 hover:from-violet-800 hover:to-purple-700 text-purple-200 hover:text-white border border-purple-500/50"
+            title={
+              currentLang === 'uk' ? "ШІ-Синхронізація справи: послідовний аналіз змін та юридичного статусу" :
+              currentLang === 'fr' ? "Synchronisation IA séquentielle : mise à jour du statut juridique" :
+              "Sequential AI Case Sync: update legal standing and facts"
+            }
+          >
+            <Sparkles className="w-3.5 h-3.5 text-purple-300 animate-pulse" />
+            <span className="font-mono text-[11px] sm:text-xs">
+              {currentLang === 'uk' ? '⚡ ШІ-Синхронізація' : currentLang === 'fr' ? '⚡ Sync IA' : '⚡ AI Sync'}
+            </span>
+          </button>
+        )}
+
         {/* WORM Seal & Commit in Utopia DB */}
         <button
           onClick={onWormSeal}
