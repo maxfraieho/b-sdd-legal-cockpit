@@ -301,7 +301,7 @@ export const EvidenceIngestionWizard: React.FC<EvidenceIngestionWizardProps> = (
         financialImpact = 13500; // CHF
         matchedNodes = [
           {
-            node: "SEQUESTRE-CHF-46850",
+            node: "SEQUESTRE-CHF-47700",
             description: "Підтверджує основну суму вимоги арешту за ст. 263 КПК Швейцарії.",
             correlation: "corroborates",
           },

@@ -19,7 +19,7 @@ interface ActionDockProps {
   onOpenCaseSync?: () => void;
   isSealing?: boolean;
   isSendingKindle?: boolean;
-  sequestrationAmount?: string; // Default: "CHF 46'850.00"
+  sequestrationAmount?: string; // Default: "CHF 47'700.00"
 }
 
 export const ActionDock: React.FC<ActionDockProps> = ({
@@ -29,7 +29,7 @@ export const ActionDock: React.FC<ActionDockProps> = ({
   onOpenCaseSync,
   isSealing = false,
   isSendingKindle = false,
-  sequestrationAmount = "CHF 46'850.00",
+  sequestrationAmount = "CHF 47'700.00",
 }) => {
   const [showSequestrationBreakdown, setShowSequestrationBreakdown] = useState(false);
 
@@ -102,11 +102,11 @@ export const ActionDock: React.FC<ActionDockProps> = ({
               <div className="flex justify-between text-slate-300">
                 <span>
                   {
-                    currentLang === 'uk' ? "2. Зламаний замок (доказ P-10 / ст. 144, 186 КК):" :
-                    currentLang === 'fr' ? "2. Serrure fracturée (Cote P-10 / Art. 144, 186 CP) :" :
-                    currentLang === 'de' ? "2. Beschädigtes Schloss (Beweis P-10 / Art. 144, 186 StGB) :" :
-                    currentLang === 'it' ? "2. Serratura forzata (Reperto P-10 / Art. 144, 186 CP) :" :
-                    "2. Damaged lock (Exhibit P-10 / Art. 144, 186 SCC):"
+                    currentLang === 'uk' ? "2. Зламаний замок (P-10 / ст. 144, 186 КК):" :
+                    currentLang === 'fr' ? "2. Serrure fracturée (P-10 / Art. 144, 186 CP) :" :
+                    currentLang === 'de' ? "2. Beschädigtes Schloss (P-10 / Art. 144, 186 StGB) :" :
+                    currentLang === 'it' ? "2. Serratura forzata (P-10 / Art. 144, 186 CP) :" :
+                    "2. Damaged lock (P-10 / Art. 144, 186 SCC):"
                   }
                 </span>
                 <strong className="text-white">CHF 850.00</strong>
@@ -114,11 +114,23 @@ export const ActionDock: React.FC<ActionDockProps> = ({
               <div className="flex justify-between text-slate-300">
                 <span>
                   {
-                    currentLang === 'uk' ? "3. Моральна шкода (ст. 49 CO) & витрати:" :
-                    currentLang === 'fr' ? "3. Tort moral (Art. 49 CO) & dépens :" :
-                    currentLang === 'de' ? "3. Genugtuung (Art. 49 OR) & Kosten :" :
-                    currentLang === 'it' ? "3. Torto morale (Art. 49 CO) & spese :" :
-                    "3. Moral tort (Art. 49 CO) & legal costs:"
+                    currentLang === 'uk' ? "3. Окуляри скрипаля (P-16 / ст. 144 КК):" :
+                    currentLang === 'fr' ? "3. Lunettes médicales (P-16 / Art. 144 CP) :" :
+                    currentLang === 'de' ? "3. Optische Brille (P-16 / Art. 144 StGB) :" :
+                    currentLang === 'it' ? "3. Occhiali del violinista (P-16 / Art. 144 CP) :" :
+                    "3. Violinist spectacles (P-16 / Art. 144 SCC):"
+                  }
+                </span>
+                <strong className="text-white">CHF 850.00</strong>
+              </div>
+              <div className="flex justify-between text-slate-300">
+                <span>
+                  {
+                    currentLang === 'uk' ? "4. Моральна шкода (ст. 49 CO) & витрати:" :
+                    currentLang === 'fr' ? "4. Tort moral (Art. 49 CO) & dépens :" :
+                    currentLang === 'de' ? "4. Genugtuung (Art. 49 OR) & Kosten :" :
+                    currentLang === 'it' ? "4. Torto morale (Art. 49 CO) & spese :" :
+                    "4. Moral tort (Art. 49 CO) & legal costs:"
                   }
                 </span>
                 <strong className="text-white">CHF 32'500.00</strong>
@@ -133,7 +145,7 @@ export const ActionDock: React.FC<ActionDockProps> = ({
                     "Total Sequestration Claim:"
                   }
                 </span>
-                <span>CHF 46'850.00</span>
+                <span>CHF 47'700.00</span>
               </div>
             </div>
           </div>

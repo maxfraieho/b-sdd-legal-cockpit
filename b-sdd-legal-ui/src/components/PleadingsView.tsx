@@ -98,7 +98,7 @@ export const PleadingsView: React.FC<PleadingsViewProps> = ({ currentLang }) => 
 
         <div className="flex items-center space-x-2 text-[11px] font-mono text-slate-400">
           <span className="text-amber-400 font-bold">
-            {currentLang === 'uk' ? 'Арешт: CHF 46\'850.00' : 'Séquestre: CHF 46\'850.00'}
+            {currentLang === 'uk' ? 'Арешт: CHF 47\'700.00' : 'Séquestre: CHF 47\'700.00'}
           </span>
           <span className="hidden sm:inline">·</span>
           <span className="text-emerald-400 hidden sm:inline">
@@ -290,10 +290,10 @@ export const PleadingsView: React.FC<PleadingsViewProps> = ({ currentLang }) => 
                 <div className="p-4 bg-amber-950/20 border border-amber-500/30 rounded-lg">
                   <h4 className="text-xs font-mono font-bold text-amber-300 mb-1">
                     {currentLang === 'uk'
-                      ? 'Деталізація розрахунку суми арешту (CHF 46\'850.00) :'
-                      : 'Détail du Séquestre Conservatoire (CHF 46\'850.00) :'}
+                      ? 'Деталізація розрахунку суми арешту (CHF 47\'700.00) :'
+                      : 'Détail du Séquestre Conservatoire (CHF 47\'700.00) :'}
                   </h4>
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 mt-2 text-xs font-mono">
+                  <div className="grid grid-cols-1 sm:grid-cols-4 gap-2 mt-2 text-xs font-mono">
                     <div className="p-2 bg-slate-900/80 rounded border border-slate-800">
                       <span className="text-slate-400 block text-[10px]">
                         {currentLang === 'uk' ? '1. Повернення коштів :' : 'Restitution capital :'}
@@ -302,13 +302,19 @@ export const PleadingsView: React.FC<PleadingsViewProps> = ({ currentLang }) => 
                     </div>
                     <div className="p-2 bg-slate-900/80 rounded border border-slate-800">
                       <span className="text-slate-400 block text-[10px]">
-                        {currentLang === 'uk' ? '2. Майнові збитки (P-10) :' : 'Dégâts matériels :'}
+                        {currentLang === 'uk' ? '2. Замок (P-10, ст. 144) :' : 'Serrure (P-10, Art. 144) :'}
                       </span>
                       <strong className="text-slate-200">CHF 850.00</strong>
                     </div>
                     <div className="p-2 bg-slate-900/80 rounded border border-slate-800">
                       <span className="text-slate-400 block text-[10px]">
-                        {currentLang === 'uk' ? '3. Моральна шкода (ст. 49 ЗК) :' : 'Tort moral & dépens :'}
+                        {currentLang === 'uk' ? '3. Окуляри (P-16, ст. 144) :' : 'Lunettes (P-16, Art. 144) :'}
+                      </span>
+                      <strong className="text-slate-200">CHF 850.00</strong>
+                    </div>
+                    <div className="p-2 bg-slate-900/80 rounded border border-slate-800">
+                      <span className="text-slate-400 block text-[10px]">
+                        {currentLang === 'uk' ? '4. Моральна шкода (ст. 49 CO) :' : 'Tort moral & dépens :'}
                       </span>
                       <strong className="text-amber-400">CHF 32'500.00</strong>
                     </div>

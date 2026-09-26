@@ -134,7 +134,7 @@ export default function App() {
         entity_id: "DOSSIER-PE24.014624-SBA",
         chapter_id: "CH-18",
         summary: "Scellement bitemporel intégral du dossier PE24.014624-SBA dans Utopia DB (WORM L-01)",
-        content_snapshot: "Validation formelle des 18 chapitres, réquisitions de séquestre CHF 46'850.00 et bouclier Adriano Milli (Art. 933 CC).",
+        content_snapshot: "Validation formelle des 18 chapitres, réquisitions de séquestre CHF 47'700.00 et bouclier Adriano Milli (Art. 933 CC).",
         committer: "Conseil de la victime (Lausanne)",
       });
       setIsSealing(false);

@@ -110,9 +110,9 @@ export const CaseSyncModal: React.FC<CaseSyncModalProps> = ({
       titleUk: "Перерахунок суми арешту (ст. 263 КПК) та цивільний позов (ст. 122 КПК)",
       titleFr: "Recalcul du séquestre (Art. 263 CPP) & conclusions civiles (Art. 122 CPP)",
       descUk:
-        "Загальна гарантована сума: CHF 46'850.00 ($15k USD + tort moral CHF 30'000 + витрати TDIP). Клопотання готові для прокуратури Лозанни.",
+        "Загальна гарантована сума: CHF 47'700.00 ($15k USD + замок CHF 850 + окуляри P-16 CHF 850 + tort moral CHF 32'500). Клопотання готові для прокуратури Лозанни.",
       descFr:
-        "Créance totale garantie : CHF 46'850.00 (15'000 USD + tort moral CHF 30'000 + dépens TDIP). Écritures prêtes pour le MP Vaud.",
+        "Créance totale garantie : CHF 47'700.00 (15'000 USD + serrure CHF 850 + lunettes P-16 CHF 850 + tort moral CHF 32'500). Écritures prêtes pour le MP Vaud.",
       status: currentStep >= 5 ? "done" : currentStep === 4 ? "active" : "pending",
     },
   ];
@@ -133,8 +133,8 @@ export const CaseSyncModal: React.FC<CaseSyncModalProps> = ({
       onShowToast(
         currentLang === "uk" ? "ШІ-Синхронізацію успішно завершено" : "Synchronisation IA réussie",
         currentLang === "uk"
-          ? "Стан доказової бази та юридичної моделі оновлено (CHF 46'850.00 / 35 статей)"
-          : "État probatoire et modèle juridique mis à jour (CHF 46'850.00 / 35 articles)",
+          ? "Стан доказової бази та юридичної моделі оновлено (CHF 47'700.00 / 35 статей)"
+          : "État probatoire et modèle juridique mis à jour (CHF 47'700.00 / 35 articles)",
         "success"
       );
     }, 2400);
@@ -156,7 +156,7 @@ export const CaseSyncModal: React.FC<CaseSyncModalProps> = ({
       actors_count: actors.length,
       statutes_available: totalLawArticles,
       exhibits_registered: 41,
-      sequestration_target_chf: 46850.0,
+      sequestration_target_chf: 47700.0,
       olena_status: "Auteur sous emprise psychologique (Art. 18, 48 CP)",
     },
     instructions:
@@ -237,7 +237,7 @@ export const CaseSyncModal: React.FC<CaseSyncModalProps> = ({
           <div className="flex items-center space-x-2">
             <DollarSign className="w-3.5 h-3.5 text-purple-400" />
             <span className="text-slate-400">Арешт (ст. 263):</span>
-            <strong className="text-purple-300">CHF 46'850</strong>
+            <strong className="text-purple-300">CHF 47'700</strong>
           </div>
         </div>
 
@@ -355,7 +355,7 @@ export const CaseSyncModal: React.FC<CaseSyncModalProps> = ({
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[11px] font-mono text-slate-300 pt-1">
                     <div>
                       • Арешт активів (ст. 263 КПК):{" "}
-                      <strong className="text-white">CHF 46'850.00</strong>
+                      <strong className="text-white">CHF 47'700.00</strong>
                     </div>
                     <div>
                       • Допустимість за ATF 147 IV 9:{" "}

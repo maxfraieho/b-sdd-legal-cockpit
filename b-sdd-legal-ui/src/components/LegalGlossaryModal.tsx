@@ -67,9 +67,9 @@ const GLOSSARY_ENTRIES: GlossaryEntry[] = [
       en: "Governs criminal investigations, victim procedural rights, and asset freezes.",
     },
     details: {
-      uk: "Ключові статті у справі: ст. 115 (Статус потерпілого), ст. 118 (Цивільний позивач), ст. 263 (Арешт активів / Секвестр CHF 46'850), ст. 318 (Завершення попереднього розслідування), ст. 393 (Кримінальна скарга на постанови прокурора), ст. 396 (Присічний строк оскарження 10 днів).",
-      fr: "Articles clés : Art. 115 (Qualité de victime), Art. 118 (Partie plaignante au pénal et civil), Art. 263 (Séquestre conservatoire CHF 46'850), Art. 318 (Clôture d'instruction), Art. 393 (Recours pénal), Art. 396 (Délai de recours strict de 10 jours).",
-      en: "Key articles: Art. 115 (Victim status), Art. 118 (Complainant standing), Art. 263 (Conservatory asset freeze), Art. 318 (Closing of investigation), Art. 393 (Criminal appeal).",
+      uk: "Ключові статті у справі: ст. 115 (Статус потерпілого), ст. 118 (Цивільний позивач), ст. 263 (Арешт активів / Секвестр CHF 47'700), ст. 318 (Завершення попереднього розслідування), ст. 393 (Кримінальна скарга на постанови прокурора), ст. 396 (Присічний строк оскарження 10 днів).",
+      fr: "Articles clés : Art. 115 (Qualité de victime), Art. 118 (Partie plaignante au pénal et civil), Art. 263 (Séquestre conservatoire CHF 47'700), Art. 318 (Clôture d'instruction), Art. 393 (Recours pénal), Art. 396 (Délai de recours strict de 10 jours).",
+      en: "Key articles: Art. 115 (Victim status), Art. 118 (Complainant standing), Art. 263 (Conservatory asset freeze CHF 47'700), Art. 318 (Closing of investigation), Art. 393 (Criminal appeal).",
     },
     legalBasis: "RS 312.0",
     badge: "Procédure Pénale",
@@ -251,7 +251,7 @@ const GLOSSARY_ENTRIES: GlossaryEntry[] = [
       en: "Official structured dossier comprising 18 chapters submitted to the public prosecutor.",
     },
     details: {
-      uk: "Містить 18 розділів: від аналізу сторін та процесуальних строків до розрахунку цивільного позову на CHF 46'850 і вимоги про передачу справи до кримінального суду.",
+      uk: "Містить 18 розділів: від аналізу сторін та процесуальних строків до розрахунку цивільного позову на CHF 47'700 і вимоги про передачу справи до кримінального суду.",
       fr: "Comprend les 18 chapitres vérifiés : analyse des prévenues, réfutation de l'alibi de Renens, quantification du séquestre bancaire et réquisition de renvoi en jugement.",
       en: "Contains 18 verified chapters covering defendant analysis, Renens assault refutation, bank freeze petition, and indictment requests.",
     },

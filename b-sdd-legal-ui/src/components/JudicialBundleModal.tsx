@@ -51,7 +51,7 @@ export const JudicialBundleModal: React.FC<JudicialBundleModalProps> = ({
   const clientName = activeCase ? activeCase.client_name : "Arsen KOVALENKO";
   const targetChf = activeCase
     ? activeCase.sequestration_target_chf.toLocaleString("fr-CH", { minimumFractionDigits: 2 })
-    : "46'850.00";
+    : "47'700.00";
 
   const handlePrint = () => {
     window.print();

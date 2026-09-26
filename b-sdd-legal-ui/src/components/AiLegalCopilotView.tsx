@@ -106,7 +106,7 @@ export const AiLegalCopilotView: React.FC<AiLegalCopilotViewProps> = ({
         { label: "Аналіз допустимості P-01 за ATF 146 IV 9", query: "Проаналізуй допустимість та доказову силу аудіозапису P-01 за прецедентом Федерального суду ATF 146 IV 9 та ст. 139 КПК." },
         { label: "Кваліфікація шахрайства на $15'000 USD", query: "Які обов'язкові ознаки складу шахрайства за ст. 146 КК та як довести підступність (astuce) через банківські документи Wise P-05?" },
         { label: "Перевірка алібі Лозанни (EXIF 1481)", query: "Зістав час знімка EXIF 1481 у Лозанні з часом сфабрикованого нападу в Рене та вкажи на суперечності за ст. 303 КК." },
-        { label: "Обґрунтування арешту рахунків (CHF 46'850)", query: "Склади мотивувальну частину клопотання про арешт рахунків обвинуваченої за ст. 263 КПК на суму CHF 46'850.00." },
+        { label: "Обґрунтування арешту рахунків (CHF 47'700)", query: "Склади мотивувальну частину клопотання про арешт рахунків обвинуваченої за ст. 263 КПК на суму CHF 47'700.00." },
         { label: "Захист добросовісного учасника (ст. 933 CC)", query: "Поясни, чому статус Адріано Міллі як добросовісної третьої особи (ст. 933 ЦК) повністю виключає кримінальну відповідальність." },
       ];
     }
@@ -115,7 +115,7 @@ export const AiLegalCopilotView: React.FC<AiLegalCopilotViewProps> = ({
         { label: "Ammissibilità di P-01 ex DTF 146 IV 9", query: "Valuta l'ammissibilità probatoria della registrazione audio P-01 alla luce della DTF 146 IV 9 e del bilanciamento degli interessi in materia di truffa e minacce." },
         { label: "Qualificazione truffa $15'000 USD (Art. 146 CP)", query: "Quali sono gli elementi costitutivi della truffa ex Art. 146 CP (inganno astuto) comprovati dal bonifico Wise P-05 e confessioni audio P-04?" },
         { label: "Verifica alibi Losanna (EXIF 1481)", query: "Confronta i metadati EXIF 1481 a Losanna con la falsa accusa di percosse a Renens ex Art. 303 CP." },
-        { label: "Sequestro conservativo CHF 46'850.00 (Art. 263 CPP)", query: "Redigi la motivazione dell'istanza di sequestro dei conti bancari ex Art. 263 CPP per CHF 46'850.00." },
+        { label: "Sequestro conservativo CHF 47'700.00 (Art. 263 CPP)", query: "Redigi la motivazione dell'istanza di sequestro dei conti bancari ex Art. 263 CPP per CHF 47'700.00." },
         { label: "Scudo terzo di buona fede Adriano Milli (Art. 933 CC)", query: "Spiega perché lo status di Adriano Milli quale terzo di buona fede di origine italiana esclude radicalmente ogni responsabilità penale o civile." },
       ];
     }
@@ -124,7 +124,7 @@ export const AiLegalCopilotView: React.FC<AiLegalCopilotViewProps> = ({
         { label: "Zulässigkeit von P-01 gemäss BGE 146 IV 9", query: "Analysiere die Verwertbarkeit der Tonaufnahme P-01 nach BGE 146 IV 9 und Art. 139 StPO bei schweren Drohungen." },
         { label: "Qualifikation Betrug über $15'000 USD (Art. 146 StGB)", query: "Welche Tatbestandsmerkmale des Betrugs nach Art. 146 StGB (Arglist) sind durch den Wise-Beleg P-05 erwiesen?" },
         { label: "Überprüfung Alibi Lausanne (EXIF 1481)", query: "Vergleiche die EXIF-Daten 1481 in Lausanne mit der fabrizierten Anzeige in Renens nach Art. 303 StGB." },
-        { label: "Begründung Beschlagnahme CHF 46'850.00 (Art. 263 StPO)", query: "Erstelle den Begründungsteil für den Beschlagnahmeantrag der Bankkonten nach Art. 263 StPO über CHF 46'850.00." },
+        { label: "Begründung Beschlagnahme CHF 47'700.00 (Art. 263 StPO)", query: "Erstelle den Begründungsteil für den Beschlagnahmeantrag der Bankkonten nach Art. 263 StPO über CHF 47'700.00." },
         { label: "Schutz gutgläubiger Dritter Adriano Milli (Art. 933 ZGB)", query: "Erläutere die absolute Immunität von Adriano Milli als gutgläubiger Dritter italienischer Herkunft gemäss Art. 933 ZGB und Invariante L-03." },
       ];
     }
@@ -133,7 +133,7 @@ export const AiLegalCopilotView: React.FC<AiLegalCopilotViewProps> = ({
         { label: "Admissibilité de P-01 sous ATF 146 IV 9", query: "Évalue la recevabilité de l'enregistrement audio P-01 au regard de l'ATF 146 IV 9 et de la pesée des intérêts en matière d'escroquerie et menaces de mort." },
         { label: "Qualification de l'escroquerie $15'000 USD", query: "Détaille les éléments constitutifs de l'Art. 146 CP (tromperie astucieuse) appuyés par le virement Wise P-05 et les aveux audio P-04." },
         { label: "Vérification d'alibi EXIF 1481 (Lausanne)", query: "Confronte les métadonnées géolocalisées EXIF 1481 à Lausanne avec l'allégation calomnieuse de violences à Renens (Art. 303 CP)." },
-        { label: "Séquestre conservatoire de CHF 46'850.00", query: "Rédige les conclusions formelles sous l'Art. 263 CPP pour séquestrer les avoirs bancaires des prévenues à due concurrence de CHF 46'850.00." },
+        { label: "Séquestre conservatoire de CHF 47'700.00", query: "Rédige les conclusions formelles sous l'Art. 263 CPP pour séquestrer les avoirs bancaires des prévenues à due concurrence de CHF 47'700.00." },
         { label: "Bouclier du tiers de bonne foi (Art. 933 CC)", query: "Justifie l'immunité intégrale d'Adriano Milli sous l'Art. 933 CC et l'Art. 105 al. 2 CPP (Invariant L-03)." },
       ];
     }
@@ -141,7 +141,7 @@ export const AiLegalCopilotView: React.FC<AiLegalCopilotViewProps> = ({
       { label: "Admissibility of P-01 under ATF 146 IV 9", query: "Assess admissibility of audio P-01 under Swiss Supreme Court leading precedent ATF 146 IV 9." },
       { label: "Fraud Qualification $15,000 USD (Art. 146 SCC)", query: "Detail the malice and deceit elements of Art. 146 SCC supported by Wise wire P-05." },
       { label: "Lausanne Alibi Verification (EXIF 1481)", query: "Contrast EXIF 1481 timestamps in Lausanne against false allegations in Renens (Art. 303 SCC)." },
-      { label: "Asset Freeze of CHF 46,850.00 (Art. 263 CPC)", query: "Draft motion for conservatory bank freeze of CHF 46,850.00 under Art. 263 CPC." },
+      { label: "Asset Freeze of CHF 47,700.00 (Art. 263 CPC)", query: "Draft motion for conservatory bank freeze of CHF 47,700.00 under Art. 263 CPC." },
       { label: "Bona Fide Third Party Shield (Art. 933 CC)", query: "Explain why Adriano Milli's bona fide status under Art. 933 CC provides absolute procedural immunity." },
     ];
   }, [currentLang]);
@@ -220,15 +220,15 @@ export const AiLegalCopilotView: React.FC<AiLegalCopilotViewProps> = ({
           { title: "Constat Unisanté", ref: "Pièce P-03" },
         ];
         blastRadius = { chaptersCount: 2, chargesAffected: ["CP-303"], risk: "critical" };
-      } else if (lower.includes("séquestre") || lower.includes("sequestro") || lower.includes("beschlagnahme") || lower.includes("263") || lower.includes("арешт") || lower.includes("46'850") || lower.includes("46850")) {
+      } else if (lower.includes("séquestre") || lower.includes("sequestro") || lower.includes("beschlagnahme") || lower.includes("263") || lower.includes("арешт") || lower.includes("47'700") || lower.includes("47700") || lower.includes("46'850") || lower.includes("46850")) {
         if (currentLang === "uk") {
-          responseText = `🏛️ **Розрахунок та обґрунтування арешту активів за ст. 263 КПК (Séquestre conservatoire)**:\n\n- **Привласнені кошти**: $15'000 USD (CHF 13'500.00 за поточним курсом).\n- **Прямі збитки за пошкодження майна**: CHF 850.00 (акт заміни зламаного замка дверей Renens, Pièce P-10).\n- **Моральна шкода та компенсація страждань (Art. 49 CO)**: CHF 32'500.00 (внаслідок тривалого переслідування, погроз розправою та психологічного тиску).\n- **Загальна сума забезпечення позову**: **CHF 46'850.00**.\n\nНакладення арешту на рахунки в банках Wise Europe SA та UBS Switzerland AG є невідкладним заходом для запобігання виведенню активів за кордон.\n\n🌐 **Висновки ШІ-агента всіма мовами (5 мов)**:\n• 🇺🇦 UA: Арешт банківських рахунків на CHF 46'850.00 обґрунтовано за ст. 263 КПК.\n• 🇮🇹 IT: Sequestro conservativo dei conti bancari per CHF 46'850.00 fondato ex Art. 263 CPP.\n• 🇩🇪 DE: Beschlagnahme der Bankkonten über CHF 46'850.00 gestützt auf Art. 263 StPO begründet.\n• 🇫🇷 FR: Séquestre des avoirs bancaires de CHF 46'850.00 justifié sous Art. 263 CPP.\n• 🇬🇧 EN: Bank account freeze of CHF 46,850.00 justified under Art. 263 CPC.`;
+          responseText = `🏛️ **Розрахунок та обґрунтування арешту активів за ст. 263 КПК (Séquestre conservatoire)**:\n\n- **Привласнені кошти**: $15'000 USD (CHF 13'500.00 за курсом).\n- **Прямі збитки за пошкодження майна**: CHF 1'700.00 (акт заміни зламаного замка дверей Renens CHF 850.00, P-10 + розтрощені окуляри скрипаля CHF 850.00, P-16, ст. 144 КК).\n- **Моральна шкода та компенсація страждань (Art. 49 CO)**: CHF 32'500.00 (внаслідок тривалого переслідування, погроз розправою та психологічного тиску).\n- **Загальна сума забезпечення позову**: **CHF 47'700.00**.\n\nНакладення арешту на рахунки в банках Wise Europe SA та UBS Switzerland AG є невідкладним заходом для запобігання виведенню активів за кордон.\n\n🌐 **Висновки ШІ-агента всіма мовами (5 мов)**:\n• 🇺🇦 UA: Арешт банківських рахунків на CHF 47'700.00 обґрунтовано за ст. 263 КПК.\n• 🇮🇹 IT: Sequestro conservativo dei conti bancari per CHF 47'700.00 fondato ex Art. 263 CPP.\n• 🇩🇪 DE: Beschlagnahme der Bankkonten über CHF 47'700.00 gestützt auf Art. 263 StPO begründet.\n• 🇫🇷 FR: Séquestre des avoirs bancaires de CHF 47'700.00 justifié sous Art. 263 CPP.\n• 🇬🇧 EN: Bank account freeze of CHF 47,700.00 justified under Art. 263 CPC.`;
         } else if (currentLang === "it") {
-          responseText = `🏛️ **Conteggio e motivazione del sequestro conservativo ex Art. 263 CPP svizzero**:\n\n- **Capitale dissipato**: $15'000 USD (equivalente a CHF 13'500.00).\n- **Danno materiale diretto**: CHF 850.00 (fattura fabbro d'urgenza serratura forzata, Prova P-10).\n- **Riparazione del torto morale (Art. 49 CO)**: CHF 32'500.00 (menacce di morte continuate, destabilizzazione e calunnia).\n- **Importo totale cautelare richiesto**: **CHF 46'850.00**.\n\nIl blocco immediato dei conti presso Wise Europe SA e UBS Switzerland AG è indispensabile per preservare la futura esecuzione forzata.\n\n🌐 **Conclusioni dell'Agente IA in tutte le lingue (5 lingue)**:\n• 🇮🇹 IT: Sequestro conservativo dei conti bancari per CHF 46'850.00 fondato ex Art. 263 CPP.\n• 🇺🇦 UA: Арешт банківських рахунків на CHF 46'850.00 обґрунтовано за ст. 263 КПК.\n• 🇩🇪 DE: Beschlagnahme der Bankkonten über CHF 46'850.00 gestützt auf Art. 263 StPO begründet.\n• 🇫🇷 FR: Séquestre des avoirs bancaires de CHF 46'850.00 justifié sous Art. 263 CPP.\n• 🇬🇧 EN: Bank account freeze of CHF 46,850.00 justified under Art. 263 CPC.`;
+          responseText = `🏛️ **Conteggio e motivazione del sequestro conservativo ex Art. 263 CPP svizzero**:\n\n- **Capitale dissipato**: $15'000 USD (equivalente a CHF 13'500.00).\n- **Danno materiale diretto**: CHF 1'700.00 (serratura forzata CHF 850.00, Prova P-10 + occhiali distrutti del violinista CHF 850.00, P-16, Art. 144 CP).\n- **Riparazione del torto morale (Art. 49 CO)**: CHF 32'500.00 (minacce di morte continuate, destabilizzazione e calunnia).\n- **Importo totale cautelare richiesto**: **CHF 47'700.00**.\n\nIl blocco immediato dei conti presso Wise Europe SA e UBS Switzerland AG è indispensabile per preservare la futura esecuzione forzata.\n\n🌐 **Conclusioni dell'Agente IA in tutte le lingue (5 lingue)**:\n• 🇮🇹 IT: Sequestro conservativo dei conti bancari per CHF 47'700.00 fondato ex Art. 263 CPP.\n• 🇺🇦 UA: Арешт банківських рахунків на CHF 47'700.00 обґрунтовано за ст. 263 КПК.\n• 🇩🇪 DE: Beschlagnahme der Bankkonten über CHF 47'700.00 gestützt auf Art. 263 StPO begründet.\n• 🇫🇷 FR: Séquestre des avoirs bancaires de CHF 47'700.00 justifié sous Art. 263 CPP.\n• 🇬🇧 EN: Bank account freeze of CHF 47,700.00 justified under Art. 263 CPC.`;
         } else if (currentLang === "de") {
-          responseText = `🏛️ **Berechnung und Begründung der vorsorglichen Beschlagnahme nach Art. 263 StPO**:\n\n- **Veruntreutes Kapital**: $15'000 USD (CHF 13'500.00).\n- **Direkter Sachschaden**: CHF 850.00 (Notfallrechnung Schlüsseldienst Renens, Beweisstück P-10).\n- **Genugtuung für schwere Persönlichkeitsverletzung (Art. 49 OR)**: CHF 32'500.00 (fortgesetzte Todesdrohungen, Nötigung, Verleumdung).\n- **Gesamter Sicherungsbetrag**: **CHF 46'850.00**.\n\nDie sofortige Kontensperre bei Wise Europe SA und UBS Switzerland AG ist zwingend zur Verhinderung von Vermögensverschiebungen ins Ausland.\n\n🌐 **Schlussfolgerungen des KI-Agenten in allen Sprachen (5 Sprachen)**:\n• 🇩🇪 DE: Beschlagnahme der Bankkonten über CHF 46'850.00 gestützt auf Art. 263 StPO begründet.\n• 🇮🇹 IT: Sequestro conservativo dei conti bancari per CHF 46'850.00 fondato ex Art. 263 CPP.\n• 🇺🇦 UA: Арешт банківських рахунків на CHF 46'850.00 обґрунтовано за ст. 263 КПК.\n• 🇫🇷 FR: Séquestre des avoirs bancaires de CHF 46'850.00 justifié sous Art. 263 CPP.\n• 🇬🇧 EN: Bank account freeze of CHF 46,850.00 justified under Art. 263 CPC.`;
+          responseText = `🏛️ **Berechnung und Begründung der vorsorglichen Beschlagnahme nach Art. 263 StPO**:\n\n- **Veruntreutes Kapital**: $15'000 USD (CHF 13'500.00).\n- **Direkter Sachschaden**: CHF 1'700.00 (Schlüsseldienst Renens CHF 850.00, P-10 + zerstörte Geigenbrille CHF 850.00, P-16, Art. 144 StGB).\n- **Genugtuung für schwere Persönlichkeitsverletzung (Art. 49 OR)**: CHF 32'500.00 (fortgesetzte Todesdrohungen, Nötigung, Verleumdung).\n- **Gesamter Sicherungsbetrag**: **CHF 47'700.00**.\n\nDie sofortige Kontensperre bei Wise Europe SA und UBS Switzerland AG ist zwingend zur Verhinderung von Vermögensverschiebungen ins Ausland.\n\n🌐 **Schlussfolgerungen des KI-Agenten in allen Sprachen (5 Sprachen)**:\n• 🇩🇪 DE: Beschlagnahme der Bankkonten über CHF 47'700.00 gestützt auf Art. 263 StPO begründet.\n• 🇮🇹 IT: Sequestro conservativo dei conti bancari per CHF 47'700.00 fondato ex Art. 263 CPP.\n• 🇺🇦 UA: Арешт банківських рахунків на CHF 47'700.00 обґрунтовано за ст. 263 КПК.\n• 🇫🇷 FR: Séquestre des avoirs bancaires de CHF 47'700.00 justifié sous Art. 263 CPP.\n• 🇬🇧 EN: Bank account freeze of CHF 47,700.00 justified under Art. 263 CPC.`;
         } else {
-          responseText = `🏛️ **Conservatory Asset Sequestration Motion under Art. 263 Swiss CPC**:\n\n- **Dissipated Funds**: $15,000 USD (CHF 13,500.00).\n- **Direct Property Damage**: CHF 850.00 (locksmith replacement invoice P-10).\n- **Moral Tort Reparation (Art. 49 CO)**: CHF 32,500.00 (death threats, harassment, false accusation).\n- **Total Conservatory Claim**: **CHF 46,850.00**.\n\n🌐 **AI Agent Multilingual Conclusions (5 languages)**:\n• 🇬🇧 EN: Sequestration of CHF 46,850.00 justified under Art. 263 CPC.\n• 🇮🇹 IT: Sequestro conservativo di CHF 46'850.00 fondato ex Art. 263 CPP.\n• 🇩🇪 DE: Beschlagnahme von CHF 46'850.00 gestützt auf Art. 263 StPO.\n• 🇫🇷 FR: Séquestre conservatoire de CHF 46'850.00 justifié sous Art. 263 CPP.\n• 🇺🇦 UA: Арешт активів на CHF 46'850.00 підтверджено за ст. 263 КПК.`;
+          responseText = `🏛️ **Conservatory Asset Sequestration Motion under Art. 263 Swiss CPC**:\n\n- **Dissipated Funds**: $15,000 USD (CHF 13,500.00).\n- **Direct Property Damage**: CHF 1,700.00 (locksmith replacement invoice P-10 CHF 850.00 + smashed violinist spectacles P-16 CHF 850.00, Art. 144 CP).\n- **Moral Tort Reparation (Art. 49 CO)**: CHF 32,500.00 (death threats, harassment, false accusation).\n- **Total Conservatory Claim**: **CHF 47,700.00**.\n\n🌐 **AI Agent Multilingual Conclusions (5 languages)**:\n• 🇬🇧 EN: Sequestration of CHF 47,700.00 justified under Art. 263 CPC.\n• 🇮🇹 IT: Sequestro conservativo di CHF 47'700.00 fondato ex Art. 263 CPP.\n• 🇩🇪 DE: Beschlagnahme von CHF 47'700.00 gestützt auf Art. 263 StPO.\n• 🇫🇷 FR: Séquestre conservatoire de CHF 47'700.00 justifié sous Art. 263 CPP.\n• 🇺🇦 UA: Арешт активів на CHF 47'700.00 підтверджено за ст. 263 КПК.`;
         }
         citations = [
           { title: "Séquestre conservatoire / Sequestro", ref: "Art. 263 CPP" },
@@ -751,7 +751,7 @@ export const AiLegalCopilotView: React.FC<AiLegalCopilotViewProps> = ({
               <div className="p-3 bg-[#090E1A] rounded-xl border border-slate-800 space-y-1">
                 <span className="text-[10px] font-mono text-slate-400 block">Фінансовий вплив (секвестр) :</span>
                 <span className="text-emerald-400 font-bold font-mono text-sm">
-                  CHF 46'850.00 (Стабільно)
+                  CHF 47'700.00 (Стабільно)
                 </span>
               </div>
             </div>
@@ -785,14 +785,14 @@ export const AiLegalCopilotView: React.FC<AiLegalCopilotViewProps> = ({
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <button
-                onClick={() => handleSendQuery("Склади повне клопотання про арешт банківських рахунків за ст. 263 КПК на суму CHF 46'850.00")}
+                onClick={() => handleSendQuery("Склади повне клопотання про арешт банківських рахунків за ст. 263 КПК на суму CHF 47'700.00")}
                 className="p-4 bg-[#090E1A] hover:bg-slate-900 border border-slate-800 rounded-xl text-left space-y-1 transition-all"
               >
                 <div className="font-bold text-xs text-white font-mono">
                   🏛️ Клопотання про арешт рахунків (ст. 263 КПК)
                 </div>
                 <p className="text-[11px] text-slate-400">
-                  Забезпечення відшкодування $15'000 USD, замка CHF 850.- та моральної шкоди CHF 31'000.-
+                  Забезпечення відшкодування $15'000 USD, замка CHF 850.-, окулярів скрипаля CHF 850.- та моральної шкоди CHF 32'500.-
                 </p>
               </button>
 

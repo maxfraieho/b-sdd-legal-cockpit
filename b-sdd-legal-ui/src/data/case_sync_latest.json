@@ -1,6 +1,6 @@
 {
   "case_id": "PE24.014624-SBA",
-  "synthesized_at": "2026-09-26T18:06:34.667518+00:00",
+  "synthesized_at": "2026-09-26T21:36:14.869588+00:00",
   "is_court_ready": true,
   "sequential_steps": [
     {
@@ -111,8 +111,8 @@
       "step_number": 5,
       "title_uk": "Синтез цивільних позовів та розрахунок арешту (ст. 263 КПК)",
       "title_fr": "Synthèse des conclusions civiles et séquestre conservatoire (Art. 263 CPP)",
-      "total_sequestration_chf": 46850.0,
-      "target_formatted": "CHF 46'850.00",
+      "total_sequestration_chf": 47700.0,
+      "target_formatted": "CHF 47'700.00",
       "claims": [
         {
           "item": "Détournement bancaire direct (Wise / UBS)",
@@ -121,6 +121,11 @@
         },
         {
           "item": "Frais de serrurerie d'urgence et remise en état (Avenue de la Concorde)",
+          "amount_chf": 850.0,
+          "basis": "Art. 144 CP & Art. 41 CO"
+        },
+        {
+          "item": "Destruction des lunettes optiques médicales du violoniste (photo_1448, P-16)",
           "amount_chf": 850.0,
           "basis": "Art. 144 CP & Art. 41 CO"
         },
@@ -140,8 +145,8 @@
         "Blocage préventif des transferts transfrontaliers vers l'Ukraine ou pays tiers.",
         "Constitution de partie plaignante au pénal et au civil (Art. 118 al. 1 et 122 CPP)."
       ],
-      "findings_fr": "Montant total du séquestre réquisitionné : CHF 46,850.00 au titre de la réparation du dommage matériel (Art. 41 CO) et de la réparation morale (Art. 47, 49 CO).",
-      "findings_uk": "Загальна сума клопотання про накладення арешту: CHF 46,850.00 для відшкодування майнової шкоди (ст. 41 ЗК) та моральної компенсації (ст. 47, 49 ЗК)."
+      "findings_fr": "Montant total du séquestre réquisitionné : CHF 47,700.00 au titre de la réparation du dommage matériel (Art. 41 CO) et de la réparation morale (Art. 47, 49 CO).",
+      "findings_uk": "Загальна сума клопотання про накладення арешту: CHF 47,700.00 для відшкодування майнової шкоди (ст. 41 ЗК) та моральної компенсації (ст. 47, 49 ЗК)."
     }
   ],
   "summary_metrics": {
@@ -150,7 +155,7 @@
     "judicial_evidence_items": 41,
     "procedural_rooms": 9,
     "admissible_evidence_percent": 100.0,
-    "total_sequestration_target_chf": 46850.0,
+    "total_sequestration_target_chf": 47700.0,
     "invariants_compliance": {
       "L-01_WORM": true,
       "L-03_Adriano_Milli_Immunity": true,

@@ -1,0 +1,1349 @@
+{
+  "metadata": {
+    "title": "Matrice de Recevabilité Probatoire (ATF 146 IV 9 & ATF 147 IV 9)",
+    "procedure": "PE24.014624-SBA",
+    "canton": "Vaud",
+    "total_items": 61,
+    "admissible_count": 61,
+    "admissibility_rate": 1.0
+  },
+  "drakon_schema": {
+    "title": "Arbre DRAKON de Recevabilité Probatoire (ATF 146 IV 9)",
+    "crossings_count": 0,
+    "invariant_c0_satisfied": true,
+    "skewer_x": 0,
+    "degradation_x": 240,
+    "nodes": [
+      {
+        "id": "node_start",
+        "type": "action",
+        "label": "Start: Analyse de recevabilité",
+        "x": 0,
+        "y": 0
+      },
+      {
+        "id": "node_q_grave",
+        "type": "question",
+        "label": "Infraction grave ? (Art. 146/180/181/157 CP)",
+        "x": 0,
+        "y": 100
+      },
+      {
+        "id": "node_q_subsid",
+        "type": "question",
+        "label": "Subsidiarité établie ? (Détresse prouvée)",
+        "x": 0,
+        "y": 200
+      },
+      {
+        "id": "node_q_pesee",
+        "type": "question",
+        "label": "Pesée des intérêts favorable ? (Vie/Santé/Bien > Intimité)",
+        "x": 0,
+        "y": 300
+      },
+      {
+        "id": "node_admissible",
+        "type": "action",
+        "label": "ADMISSIBLE_ATF_146_IV_9 (Exploitation judiciaire)",
+        "x": 0,
+        "y": 400
+      },
+      {
+        "id": "node_end",
+        "type": "action",
+        "label": "End: Preuve scellée au dossier",
+        "x": 0,
+        "y": 500
+      },
+      {
+        "id": "node_branch_reject",
+        "type": "action",
+        "label": "Art. 179ter CP : Violation sphère privée",
+        "x": 240,
+        "y": 100
+      },
+      {
+        "id": "node_fallback_docs",
+        "type": "action",
+        "label": "INADMISSIBLE_ART_141_CPP : Activation pièces Unisanté & Banques",
+        "x": 240,
+        "y": 400
+      }
+    ],
+    "edges": [
+      {
+        "from": "node_start",
+        "to": "node_q_grave",
+        "branch": "down"
+      },
+      {
+        "from": "node_q_grave",
+        "to": "node_q_subsid",
+        "branch": "yes_x0"
+      },
+      {
+        "from": "node_q_grave",
+        "to": "node_branch_reject",
+        "branch": "no_x240"
+      },
+      {
+        "from": "node_q_subsid",
+        "to": "node_q_pesee",
+        "branch": "yes_x0"
+      },
+      {
+        "from": "node_q_subsid",
+        "to": "node_branch_reject",
+        "branch": "no_x240"
+      },
+      {
+        "from": "node_q_pesee",
+        "to": "node_admissible",
+        "branch": "yes_x0"
+      },
+      {
+        "from": "node_q_pesee",
+        "to": "node_fallback_docs",
+        "branch": "no_x240"
+      },
+      {
+        "from": "node_branch_reject",
+        "to": "node_fallback_docs",
+        "branch": "down_x240"
+      },
+      {
+        "from": "node_admissible",
+        "to": "node_end",
+        "branch": "down_x0"
+      },
+      {
+        "from": "node_fallback_docs",
+        "to": "node_end",
+        "branch": "return_to_skewer"
+      }
+    ]
+  },
+  "records": [
+    {
+      "evidence_id": "DRAWER-TR-01",
+      "filename": "02_1.mp4",
+      "sha256_hash": "484155de648fe5cfd839653a4c97c70a74c088095b2acc1bf489337d61426d95",
+      "status": "ADMISSIBLE_ATF_146_IV_9",
+      "primary_statute": "Art. 180 & 181 CP (Menaces qualifiées & Contrainte)",
+      "pesee": {
+        "infraction_grave": true,
+        "subsidiarite_reconnue": true,
+        "proportionnalite_favorable": true,
+        "balance_score": 1.0,
+        "legal_basis": "ATF 146 IV 9 al. 2; ATF 147 IV 9; Art. 139 al. 1 & 141 al. 2 CPP"
+      },
+      "fallback_documents": [],
+      "verbatim_quote": "**Статус розпізнавання:** Оновлена судово-фонографічна експертиза та вербатим-стенограма (Gemini). Зафіксовано 9 кримінальних маркерів: погроза вбивством («якби я з пушкою була... або він мене забив б",
+      "valid_from": "2024-03-16T00:00:00Z",
+      "valid_to": "9999-12-31T23:59:59Z",
+      "drakon_x": 0,
+      "drakon_step": "CANONICAL_SKEWER_ADMISSIBLE"
+    },
+    {
+      "evidence_id": "DRAWER-TR-02",
+      "filename": "AUDIO2_Avenue du Mont-Blanc 33.m4a",
+      "sha256_hash": "e4fb258c29cd017740fee599f7d7dbc5553282671f144f6c3d13dbb2ba3275cb",
+      "status": "ADMISSIBLE_ATF_146_IV_9",
+      "primary_statute": "ROOM-180-181-CP",
+      "pesee": {
+        "infraction_grave": true,
+        "subsidiarite_reconnue": true,
+        "proportionnalite_favorable": true,
+        "balance_score": 1.0,
+        "legal_basis": "ATF 146 IV 9 al. 2; ATF 147 IV 9; Art. 139 al. 1 & 141 al. 2 CPP"
+      },
+      "fallback_documents": [],
+      "verbatim_quote": "**Джерело фонограми/відеозапису:** `AUDIO2_Avenue du Mont-Blanc 33.m4a`\n\n```text\n[00:00 -> 00:21] Бог бачить, я з ним не буду. Це ржачно просто.\n[00:21 -> 00:26] Шо Вася там?\n[00:51 -> 00:55] Йо? А, В",
+      "valid_from": "2024-03-16T00:00:00Z",
+      "valid_to": "9999-12-31T23:59:59Z",
+      "drakon_x": 0,
+      "drakon_step": "CANONICAL_SKEWER_ADMISSIBLE"
+    },
+    {
+      "evidence_id": "DRAWER-TR-03",
+      "filename": "AUDIO2_URecorder_20240316_135318.m4a",
+      "sha256_hash": "6f405240a17d793de3dfadf71eefe659cf5701fec926d2e8d90de8a57cb91bab",
+      "status": "ADMISSIBLE_ATF_146_IV_9",
+      "primary_statute": "ROOM-180-181-CP",
+      "pesee": {
+        "infraction_grave": true,
+        "subsidiarite_reconnue": true,
+        "proportionnalite_favorable": true,
+        "balance_score": 1.0,
+        "legal_basis": "ATF 146 IV 9 al. 2; ATF 147 IV 9; Art. 139 al. 1 & 141 al. 2 CPP"
+      },
+      "fallback_documents": [],
+      "verbatim_quote": "**Джерело фонограми/відеозапису:** `AUDIO2_URecorder_20240316_135318.m4a`\n\n```text\n[00:00 -> 00:26] Який ж інвалідес, Лена, робив ж на заводі на тому, що і ти. Я не розумію, що це. Як, за що ти мене т",
+      "valid_from": "2024-03-16T00:00:00Z",
+      "valid_to": "9999-12-31T23:59:59Z",
+      "drakon_x": 0,
+      "drakon_step": "CANONICAL_SKEWER_ADMISSIBLE"
+    },
+    {
+      "evidence_id": "DRAWER-TR-04",
+      "filename": "AUDIO2_URecorder_20240316_141322.m4a",
+      "sha256_hash": "e803b0d8cdf8a8e62d4b2565f7312066d4f19da1eb64eacb0db794c77d8ce45a",
+      "status": "ADMISSIBLE_ATF_146_IV_9",
+      "primary_statute": "ROOM-180-181-CP",
+      "pesee": {
+        "infraction_grave": true,
+        "subsidiarite_reconnue": true,
+        "proportionnalite_favorable": true,
+        "balance_score": 1.0,
+        "legal_basis": "ATF 146 IV 9 al. 2; ATF 147 IV 9; Art. 139 al. 1 & 141 al. 2 CPP"
+      },
+      "fallback_documents": [],
+      "verbatim_quote": "**Джерело фонограми/відеозапису:** `AUDIO2_URecorder_20240316_141322.m4a`\n\n```text\n[00:00 -> 00:05] Дякую за переглядом, вона вже краще була, почуваю.\n[00:05 -> 00:10] Похоже на нейротоску.\n[00:10 ->",
+      "valid_from": "2024-03-16T00:00:00Z",
+      "valid_to": "9999-12-31T23:59:59Z",
+      "drakon_x": 0,
+      "drakon_step": "CANONICAL_SKEWER_ADMISSIBLE"
+    },
+    {
+      "evidence_id": "DRAWER-TR-05",
+      "filename": "AUDIO2_URecorder_20240316_143420.m4a",
+      "sha256_hash": "fb4cb6e5d048dc365f6cb4db5d91c26c5151784ffc022036216491021707661a",
+      "status": "ADMISSIBLE_ATF_146_IV_9",
+      "primary_statute": "ROOM-180-181-CP",
+      "pesee": {
+        "infraction_grave": true,
+        "subsidiarite_reconnue": true,
+        "proportionnalite_favorable": true,
+        "balance_score": 1.0,
+        "legal_basis": "ATF 146 IV 9 al. 2; ATF 147 IV 9; Art. 139 al. 1 & 141 al. 2 CPP"
+      },
+      "fallback_documents": [],
+      "verbatim_quote": "**Джерело фонограми/відеозапису:** `AUDIO2_URecorder_20240316_143420.m4a`\n\n```text\n[00:00 -> 00:27] Я дебилом рискану.\n[00:27 -> 00:57] Ну, боже, боже, Лен, серйозно, ну, і, ну, це, в принципі, не об'",
+      "valid_from": "2024-03-16T00:00:00Z",
+      "valid_to": "9999-12-31T23:59:59Z",
+      "drakon_x": 0,
+      "drakon_step": "CANONICAL_SKEWER_ADMISSIBLE"
+    },
+    {
+      "evidence_id": "DRAWER-TR-06",
+      "filename": "AUDIO2_URecorder_20240316_150331.m4a",
+      "sha256_hash": "e3a1f1722f401c8689fe22c78b72ae23570f81edaa8026e0ac0b5e8a9381ae13",
+      "status": "ADMISSIBLE_ATF_146_IV_9",
+      "primary_statute": "ROOM-180-181-CP",
+      "pesee": {
+        "infraction_grave": true,
+        "subsidiarite_reconnue": true,
+        "proportionnalite_favorable": true,
+        "balance_score": 1.0,
+        "legal_basis": "ATF 146 IV 9 al. 2; ATF 147 IV 9; Art. 139 al. 1 & 141 al. 2 CPP"
+      },
+      "fallback_documents": [],
+      "verbatim_quote": "**Джерело фонограми/відеозапису:** `AUDIO2_URecorder_20240316_150331.m4a`\n\n```text\n[00:00 -> 00:15] Забрав ви документи, як папа, хвилин, сказали. Скажу, що не правда.\n[00:15 -> 00:27] Я б без тебе, я",
+      "valid_from": "2024-03-16T00:00:00Z",
+      "valid_to": "9999-12-31T23:59:59Z",
+      "drakon_x": 0,
+      "drakon_step": "CANONICAL_SKEWER_ADMISSIBLE"
+    },
+    {
+      "evidence_id": "DRAWER-TR-07",
+      "filename": "AUDIO2_лена0.mp3",
+      "sha256_hash": "41a8046d994135de6230580a7a2ca6444dc604fc96c2f8e2f922227d88ecb169",
+      "status": "ADMISSIBLE_ATF_146_IV_9",
+      "primary_statute": "ROOM-180-181-CP",
+      "pesee": {
+        "infraction_grave": true,
+        "subsidiarite_reconnue": true,
+        "proportionnalite_favorable": true,
+        "balance_score": 1.0,
+        "legal_basis": "ATF 146 IV 9 al. 2; ATF 147 IV 9; Art. 139 al. 1 & 141 al. 2 CPP"
+      },
+      "fallback_documents": [],
+      "verbatim_quote": "**Джерело фонограми/відеозапису:** `AUDIO2_лена0.mp3`\n\n```text\n[00:00 -> 00:21] Бог бачить, я з ним не буду. Це ржачно просто.\n[00:21 -> 00:26] Що Вася там?\n[00:51 -> 00:54] Йо? А, вася там?\n[00:58 ->",
+      "valid_from": "2024-03-16T00:00:00Z",
+      "valid_to": "9999-12-31T23:59:59Z",
+      "drakon_x": 0,
+      "drakon_step": "CANONICAL_SKEWER_ADMISSIBLE"
+    },
+    {
+      "evidence_id": "DRAWER-TR-08",
+      "filename": "arsen-1.mp3",
+      "sha256_hash": "9cd491986db5a5dc7024119a3479298426c3b4ef7080bf07624732b73d2a2214",
+      "status": "ADMISSIBLE_ATF_146_IV_9",
+      "primary_statute": "ROOM-180-181-CP",
+      "pesee": {
+        "infraction_grave": true,
+        "subsidiarite_reconnue": true,
+        "proportionnalite_favorable": true,
+        "balance_score": 1.0,
+        "legal_basis": "ATF 146 IV 9 al. 2; ATF 147 IV 9; Art. 139 al. 1 & 141 al. 2 CPP"
+      },
+      "fallback_documents": [],
+      "verbatim_quote": "**Джерело фонограми/відеозапису:** `arsen-1.mp3`\n\n```text\n[00:00 -> 00:15] Як це все почалося, ще спочатку скажу. Цей китайець приїхав десь, може, рік тому, він був ще на кухні тоді, мама з одним зуст",
+      "valid_from": "2024-03-16T00:00:00Z",
+      "valid_to": "9999-12-31T23:59:59Z",
+      "drakon_x": 0,
+      "drakon_step": "CANONICAL_SKEWER_ADMISSIBLE"
+    },
+    {
+      "evidence_id": "DRAWER-TR-09",
+      "filename": "audio-lena02-лена-в-морду-арсену.mp3",
+      "sha256_hash": "9127cac2aa34b0b88ea6f25e77c41923e6922cd5f01e82329fc139708714a2e7",
+      "status": "ADMISSIBLE_ATF_146_IV_9",
+      "primary_statute": "Art. 180 & 181 CP (Menaces qualifiées & Contrainte)",
+      "pesee": {
+        "infraction_grave": true,
+        "subsidiarite_reconnue": true,
+        "proportionnalite_favorable": true,
+        "balance_score": 1.0,
+        "legal_basis": "ATF 146 IV 9 al. 2; ATF 147 IV 9; Art. 139 al. 1 & 141 al. 2 CPP"
+      },
+      "fallback_documents": [],
+      "verbatim_quote": "**Джерело фонограми/відеозапису:** `audio-lena02-лена-в-морду-арсену.mp3`\n\n```text\n[00:00 -> 00:07] Ти і куди хочеш. А як мені завалять, то вже другий раз це вже з кулака, мабуть, буде завалювати.\n[00",
+      "valid_from": "2024-03-16T00:00:00Z",
+      "valid_to": "9999-12-31T23:59:59Z",
+      "drakon_x": 0,
+      "drakon_step": "CANONICAL_SKEWER_ADMISSIBLE"
+    },
+    {
+      "evidence_id": "DRAWER-TR-10",
+      "filename": "audio-lena02-таніна-двчинка-протівна.mp3",
+      "sha256_hash": "8ebe209e85a0a06bf92bdfc307361fbf602f4ca6e92be6eb0b99a0bf75958327",
+      "status": "ADMISSIBLE_ATF_146_IV_9",
+      "primary_statute": "ROOM-180-181-CP",
+      "pesee": {
+        "infraction_grave": true,
+        "subsidiarite_reconnue": true,
+        "proportionnalite_favorable": true,
+        "balance_score": 1.0,
+        "legal_basis": "ATF 146 IV 9 al. 2; ATF 147 IV 9; Art. 139 al. 1 & 141 al. 2 CPP"
+      },
+      "fallback_documents": [],
+      "verbatim_quote": "**Джерело фонограми/відеозапису:** `audio-lena02-таніна-двчинка-протівна.mp3`\n\n```text\n[00:00 -> 00:10] Ой, знаєш, дитина притійна настільки мені, воно гамноре, і воно хоче мене вивчати, розумієш?\n[00",
+      "valid_from": "2024-03-16T00:00:00Z",
+      "valid_to": "9999-12-31T23:59:59Z",
+      "drakon_x": 0,
+      "drakon_step": "CANONICAL_SKEWER_ADMISSIBLE"
+    },
+    {
+      "evidence_id": "DRAWER-TR-11",
+      "filename": "audio_arsen_All_falls_apart_3.mp3",
+      "sha256_hash": "2cbddf9c268405ff142cb1cee21c65c6adf622d5e08b720e9439e0969534b896",
+      "status": "ADMISSIBLE_ATF_146_IV_9",
+      "primary_statute": "ROOM-180-181-CP",
+      "pesee": {
+        "infraction_grave": true,
+        "subsidiarite_reconnue": true,
+        "proportionnalite_favorable": true,
+        "balance_score": 1.0,
+        "legal_basis": "ATF 146 IV 9 al. 2; ATF 147 IV 9; Art. 139 al. 1 & 141 al. 2 CPP"
+      },
+      "fallback_documents": [],
+      "verbatim_quote": "**Джерело фонограми/відеозапису:** `audio_arsen_All_falls_apart_3.mp3`\n\n```text\n\n```",
+      "valid_from": "2024-03-16T00:00:00Z",
+      "valid_to": "9999-12-31T23:59:59Z",
+      "drakon_x": 0,
+      "drakon_step": "CANONICAL_SKEWER_ADMISSIBLE"
+    },
+    {
+      "evidence_id": "DRAWER-TR-12",
+      "filename": "audio_arsen_Dragon_is_Harmony.mp3",
+      "sha256_hash": "74f0cfb9b8b6492dab4cd12c32ae35dc9a2cdb30d6c2cf6b575ca4f2b3332c9a",
+      "status": "ADMISSIBLE_ATF_146_IV_9",
+      "primary_statute": "ROOM-180-181-CP",
+      "pesee": {
+        "infraction_grave": true,
+        "subsidiarite_reconnue": true,
+        "proportionnalite_favorable": true,
+        "balance_score": 1.0,
+        "legal_basis": "ATF 146 IV 9 al. 2; ATF 147 IV 9; Art. 139 al. 1 & 141 al. 2 CPP"
+      },
+      "fallback_documents": [],
+      "verbatim_quote": "**Джерело фонограми/відеозапису:** `audio_arsen_Dragon_is_Harmony.mp3`\n\n```text\n[00:01 -> 00:02] Субтитрувальниця Оля Шор\n```",
+      "valid_from": "2024-03-16T00:00:00Z",
+      "valid_to": "9999-12-31T23:59:59Z",
+      "drakon_x": 0,
+      "drakon_step": "CANONICAL_SKEWER_ADMISSIBLE"
+    },
+    {
+      "evidence_id": "DRAWER-TR-13",
+      "filename": "audio_arsen_Ля_мінор.mp3",
+      "sha256_hash": "20d333987027abc468c60e7c01fe2bbf3c600d7e6a4a672aebedf888294fae98",
+      "status": "ADMISSIBLE_ATF_146_IV_9",
+      "primary_statute": "ROOM-180-181-CP",
+      "pesee": {
+        "infraction_grave": true,
+        "subsidiarite_reconnue": true,
+        "proportionnalite_favorable": true,
+        "balance_score": 1.0,
+        "legal_basis": "ATF 146 IV 9 al. 2; ATF 147 IV 9; Art. 139 al. 1 & 141 al. 2 CPP"
+      },
+      "fallback_documents": [],
+      "verbatim_quote": "**Джерело фонограми/відеозапису:** `audio_arsen_Ля_мінор.mp3`\n\n```text\n[00:01 -> 00:02] Дякую.\n```",
+      "valid_from": "2024-03-16T00:00:00Z",
+      "valid_to": "9999-12-31T23:59:59Z",
+      "drakon_x": 0,
+      "drakon_step": "CANONICAL_SKEWER_ADMISSIBLE"
+    },
+    {
+      "evidence_id": "DRAWER-TR-14",
+      "filename": "audio_lena03-це-не-я-моє-таке.mp3",
+      "sha256_hash": "9eeb68cda635bbc991f63db044cac09597e851b74030fa082f134d3415eabe90",
+      "status": "ADMISSIBLE_ATF_146_IV_9",
+      "primary_statute": "ROOM-180-181-CP",
+      "pesee": {
+        "infraction_grave": true,
+        "subsidiarite_reconnue": true,
+        "proportionnalite_favorable": true,
+        "balance_score": 1.0,
+        "legal_basis": "ATF 146 IV 9 al. 2; ATF 147 IV 9; Art. 139 al. 1 & 141 al. 2 CPP"
+      },
+      "fallback_documents": [],
+      "verbatim_quote": "**Джерело фонограми/відеозапису:** `audio_lena03-це-не-я-моє-таке.mp3`\n\n```text\n[00:00 -> 00:15] Я не видавала, я просила голову виключити. Я такий йому, в мене це не я, це моє таке дурне, я йому в гр",
+      "valid_from": "2024-03-16T00:00:00Z",
+      "valid_to": "9999-12-31T23:59:59Z",
+      "drakon_x": 0,
+      "drakon_step": "CANONICAL_SKEWER_ADMISSIBLE"
+    },
+    {
+      "evidence_id": "DRAWER-TR-15",
+      "filename": "az_recorder_20240712_042910_edited.mp4",
+      "sha256_hash": "b33a77d9697dcae10bd574e04191ea5b36f8a665aec3ca00cff7c55664619959",
+      "status": "ADMISSIBLE_ATF_146_IV_9",
+      "primary_statute": "ROOM-180-181-CP",
+      "pesee": {
+        "infraction_grave": true,
+        "subsidiarite_reconnue": true,
+        "proportionnalite_favorable": true,
+        "balance_score": 1.0,
+        "legal_basis": "ATF 146 IV 9 al. 2; ATF 147 IV 9; Art. 139 al. 1 & 141 al. 2 CPP"
+      },
+      "fallback_documents": [],
+      "verbatim_quote": "**Статус розпізнавання:** Оновлена судово-фонографічна експертиза та вербатим-стенограма (Gemini). Зафіксовано 15 кримінальних маркерів: директива Ганни Суворової щодо вилучення платіжної карти Арсена",
+      "valid_from": "2024-03-16T00:00:00Z",
+      "valid_to": "9999-12-31T23:59:59Z",
+      "drakon_x": 0,
+      "drakon_step": "CANONICAL_SKEWER_ADMISSIBLE"
+    },
+    {
+      "evidence_id": "DRAWER-TR-16",
+      "filename": "az_recorder_20240713_232927.mp4",
+      "sha256_hash": "5ad55dfd361c07b552149fd1bceb3fc259bb63ab9a5a580cfa06b89eeab58ea1",
+      "status": "ADMISSIBLE_ATF_146_IV_9",
+      "primary_statute": "ROOM-180-181-CP",
+      "pesee": {
+        "infraction_grave": true,
+        "subsidiarite_reconnue": true,
+        "proportionnalite_favorable": true,
+        "balance_score": 1.0,
+        "legal_basis": "ATF 146 IV 9 al. 2; ATF 147 IV 9; Art. 139 al. 1 & 141 al. 2 CPP"
+      },
+      "fallback_documents": [],
+      "verbatim_quote": "**Статус розпізнавання:** Судово-експертний фонографічний та лінгвістичний аналіз нічного моніторингу AlfredCamera (Gemini). Фіксація фази «задобрювання» та нав'язливого контролю сну сина в циклі дома",
+      "valid_from": "2024-03-16T00:00:00Z",
+      "valid_to": "9999-12-31T23:59:59Z",
+      "drakon_x": 0,
+      "drakon_step": "CANONICAL_SKEWER_ADMISSIBLE"
+    },
+    {
+      "evidence_id": "DRAWER-TR-17",
+      "filename": "az_recorder_20240716_142748.mp4",
+      "sha256_hash": "3acf1cf18e52dfad63081b1f690650a26f3eb68e71f853443599255e92111cd1",
+      "status": "ADMISSIBLE_ATF_146_IV_9",
+      "primary_statute": "ROOM-180-181-CP",
+      "pesee": {
+        "infraction_grave": true,
+        "subsidiarite_reconnue": true,
+        "proportionnalite_favorable": true,
+        "balance_score": 1.0,
+        "legal_basis": "ATF 146 IV 9 al. 2; ATF 147 IV 9; Art. 139 al. 1 & 141 al. 2 CPP"
+      },
+      "fallback_documents": [],
+      "verbatim_quote": "**Статус розпізнавання:** Повний судово-експертний фонографічний та лінгвістичний аналіз у 2 частинах (Gemini). Зафіксовано побиття Арсена («Арсена сьогодні влупила на ті курси»), вербальну агресію, з",
+      "valid_from": "2024-03-16T00:00:00Z",
+      "valid_to": "9999-12-31T23:59:59Z",
+      "drakon_x": 0,
+      "drakon_step": "CANONICAL_SKEWER_ADMISSIBLE"
+    },
+    {
+      "evidence_id": "DRAWER-TR-18",
+      "filename": "az_recorder_20240717_160709.mp4",
+      "sha256_hash": "6eaf53388f0c292eda9b208c5eea8b893f8df7bffd9dffeff167f18ba61b09c5",
+      "status": "ADMISSIBLE_ATF_146_IV_9",
+      "primary_statute": "Art. 123 CP (Lésions corporelles simples)",
+      "pesee": {
+        "infraction_grave": true,
+        "subsidiarite_reconnue": true,
+        "proportionnalite_favorable": true,
+        "balance_score": 1.0,
+        "legal_basis": "ATF 146 IV 9 al. 2; ATF 147 IV 9; Art. 139 al. 1 & 141 al. 2 CPP"
+      },
+      "fallback_documents": [],
+      "verbatim_quote": "**Статус розпізнавання:** Комплексний судово-відеотехнічний, фонографічний та поведінковий аналіз (Gemini, 4 частини). Зафіксовано нотатку «Для психолога» із фактом 10 ударів ножем у матрац поруч з Ар",
+      "valid_from": "2024-03-16T00:00:00Z",
+      "valid_to": "9999-12-31T23:59:59Z",
+      "drakon_x": 0,
+      "drakon_step": "CANONICAL_SKEWER_ADMISSIBLE"
+    },
+    {
+      "evidence_id": "DRAWER-TR-19",
+      "filename": "az_recorder_20240718_143131.mp4",
+      "sha256_hash": "ac963dfe35bebd12a61c84d98f8a071e48755634aaa6dcbf78df8dcf0e99eaad",
+      "status": "ADMISSIBLE_ATF_146_IV_9",
+      "primary_statute": "ROOM-180-181-CP",
+      "pesee": {
+        "infraction_grave": true,
+        "subsidiarite_reconnue": true,
+        "proportionnalite_favorable": true,
+        "balance_score": 1.0,
+        "legal_basis": "ATF 146 IV 9 al. 2; ATF 147 IV 9; Art. 139 al. 1 & 141 al. 2 CPP"
+      },
+      "fallback_documents": [],
+      "verbatim_quote": "**Місце запису:** Житлове приміщення (камера «Планшет», AlfredCamera). - **Олена Коваленко («Олена»)** — мати Арсена; перебуває в кімнаті перед камерою, веде розмову спочатку з Арсеном, потім телефонн",
+      "valid_from": "2024-03-16T00:00:00Z",
+      "valid_to": "9999-12-31T23:59:59Z",
+      "drakon_x": 0,
+      "drakon_step": "CANONICAL_SKEWER_ADMISSIBLE"
+    },
+    {
+      "evidence_id": "DRAWER-TR-20",
+      "filename": "04_az_recorder_20240718_145214_edited.mp4",
+      "sha256_hash": "3cbfea3aaab77a7e50a066aeb46926bc62d59cbae3d0e8613c716fcf307b97fd",
+      "status": "ADMISSIBLE_ATF_146_IV_9",
+      "primary_statute": "ROOM-180-181-CP",
+      "pesee": {
+        "infraction_grave": true,
+        "subsidiarite_reconnue": true,
+        "proportionnalite_favorable": true,
+        "balance_score": 1.0,
+        "legal_basis": "ATF 146 IV 9 al. 2; ATF 147 IV 9; Art. 139 al. 1 & 141 al. 2 CPP"
+      },
+      "fallback_documents": [],
+      "verbatim_quote": "**Статус розпізнавання:** Повне судово-фоноскопічне та лінгвістичне дослідження через Gemini (фонографічна експертиза з оцінкою тону, афекту та кримінальних маркерів). Зафіксовано економічний примус,",
+      "valid_from": "2024-03-16T00:00:00Z",
+      "valid_to": "9999-12-31T23:59:59Z",
+      "drakon_x": 0,
+      "drakon_step": "CANONICAL_SKEWER_ADMISSIBLE"
+    },
+    {
+      "evidence_id": "DRAWER-TR-21",
+      "filename": "05_az_recorder_20240718_202722.mp4",
+      "sha256_hash": "c59a241b4212caed062aca457165991a04da2129284a4d8761c77c3b83e3b8e3",
+      "status": "ADMISSIBLE_ATF_146_IV_9",
+      "primary_statute": "ROOM-180-181-CP",
+      "pesee": {
+        "infraction_grave": true,
+        "subsidiarite_reconnue": true,
+        "proportionnalite_favorable": true,
+        "balance_score": 1.0,
+        "legal_basis": "ATF 146 IV 9 al. 2; ATF 147 IV 9; Art. 139 al. 1 & 141 al. 2 CPP"
+      },
+      "fallback_documents": [],
+      "verbatim_quote": "**Статус розпізнавання:** Повне судово-фоноскопічне дослідження через Gemini з аналізом скринкасту Telegram та AlfredCamera. Зафіксовано визнання наявності прихованих коштів («600 франків і 6 000 – 8",
+      "valid_from": "2024-03-16T00:00:00Z",
+      "valid_to": "9999-12-31T23:59:59Z",
+      "drakon_x": 0,
+      "drakon_step": "CANONICAL_SKEWER_ADMISSIBLE"
+    },
+    {
+      "evidence_id": "DRAWER-TR-22",
+      "filename": "az_recorder_20240718_203731.mp4",
+      "sha256_hash": "85ddb9bb92e05e410ed1408de54906eb3afba29518ffc4f057a2b7a8dc31aeec",
+      "status": "ADMISSIBLE_ATF_146_IV_9",
+      "primary_statute": "ROOM-180-181-CP",
+      "pesee": {
+        "infraction_grave": true,
+        "subsidiarite_reconnue": true,
+        "proportionnalite_favorable": true,
+        "balance_score": 1.0,
+        "legal_basis": "ATF 146 IV 9 al. 2; ATF 147 IV 9; Art. 139 al. 1 & 141 al. 2 CPP"
+      },
+      "fallback_documents": [],
+      "verbatim_quote": "**Статус розпізнавання:** Судово-експертний фонографічний та лінгвістичний аналіз AlfredCamera (Gemini). Фіксація спроби зриву конфіденційного рандеву сина з офіційними органами та нав'язливого контро",
+      "valid_from": "2024-03-16T00:00:00Z",
+      "valid_to": "9999-12-31T23:59:59Z",
+      "drakon_x": 0,
+      "drakon_step": "CANONICAL_SKEWER_ADMISSIBLE"
+    },
+    {
+      "evidence_id": "DRAWER-TR-23",
+      "filename": "az_recorder_20240720_204627.mp4",
+      "sha256_hash": "79874f44d552b73a9031b77d225704366f324d45863e79d540bbe5b998cbc740",
+      "status": "ADMISSIBLE_ATF_146_IV_9",
+      "primary_statute": "ROOM-180-181-CP",
+      "pesee": {
+        "infraction_grave": true,
+        "subsidiarite_reconnue": true,
+        "proportionnalite_favorable": true,
+        "balance_score": 1.0,
+        "legal_basis": "ATF 146 IV 9 al. 2; ATF 147 IV 9; Art. 139 al. 1 & 141 al. 2 CPP"
+      },
+      "fallback_documents": [],
+      "verbatim_quote": "3. **Володимир («Вова» / Батько)** — абонент, який приймає виклик та здійснює фіксацію екрана (вікно *PIP* у правому нижньому кутку). 4. *Третя особа (вхідний виклик):* контакт **«Мама»** (номер `+380",
+      "valid_from": "2024-03-16T00:00:00Z",
+      "valid_to": "9999-12-31T23:59:59Z",
+      "drakon_x": 0,
+      "drakon_step": "CANONICAL_SKEWER_ADMISSIBLE"
+    },
+    {
+      "evidence_id": "DRAWER-TR-24",
+      "filename": "az_recorder_20240720_231430_edited.mp4",
+      "sha256_hash": "39129607b98624f02f7134afdaf059215c3157b83a604b561e9ecdda796ff17e",
+      "status": "ADMISSIBLE_ATF_146_IV_9",
+      "primary_statute": "ROOM-180-181-CP",
+      "pesee": {
+        "infraction_grave": true,
+        "subsidiarite_reconnue": true,
+        "proportionnalite_favorable": true,
+        "balance_score": 1.0,
+        "legal_basis": "ATF 146 IV 9 al. 2; ATF 147 IV 9; Art. 139 al. 1 & 141 al. 2 CPP"
+      },
+      "fallback_documents": [],
+      "verbatim_quote": "3. **Володимир (Батько / «Вова»)** — свідок у режимі реального часу, приймає відеодзвінок та здійснює відеозапис події (вікно *PIP* праворуч знизу). * **[01:36 – 01:43]**: Короткочасний розрив зв'язку",
+      "valid_from": "2024-03-16T00:00:00Z",
+      "valid_to": "9999-12-31T23:59:59Z",
+      "drakon_x": 0,
+      "drakon_step": "CANONICAL_SKEWER_ADMISSIBLE"
+    },
+    {
+      "evidence_id": "DRAWER-TR-25",
+      "filename": "az_recorder_20240721_015709.mp4",
+      "sha256_hash": "570c2f090fef794ca54b3ca0eb43be579e838253a0a5e2bee5ed21a9af93fe5c",
+      "status": "ADMISSIBLE_ATF_146_IV_9",
+      "primary_statute": "Art. 157 CP & Art. 118 LEI (Usure et Fraude aux prestations)",
+      "pesee": {
+        "infraction_grave": true,
+        "subsidiarite_reconnue": true,
+        "proportionnalite_favorable": true,
+        "balance_score": 1.0,
+        "legal_basis": "ATF 146 IV 9 al. 2; ATF 147 IV 9; Art. 139 al. 1 & 141 al. 2 CPP"
+      },
+      "fallback_documents": [],
+      "verbatim_quote": "**Статус розпізнавання:** Судово-експертний фонографічний та лінгвістичний аналіз нічного моніторингу AlfredCamera після побиття (Gemini, 2 частини). Фіксація фази посттравматичного виснаження та раці",
+      "valid_from": "2024-03-16T00:00:00Z",
+      "valid_to": "9999-12-31T23:59:59Z",
+      "drakon_x": 0,
+      "drakon_step": "CANONICAL_SKEWER_ADMISSIBLE"
+    },
+    {
+      "evidence_id": "DRAWER-TR-26",
+      "filename": "enhanced_audio-lena00-заблокувати-вову.mp3",
+      "sha256_hash": "ddfd66a3b4035bdf0a31f7f3d80b73374321952b6056d14a99e63db7fcf41e9a",
+      "status": "ADMISSIBLE_ATF_146_IV_9",
+      "primary_statute": "ROOM-180-181-CP",
+      "pesee": {
+        "infraction_grave": true,
+        "subsidiarite_reconnue": true,
+        "proportionnalite_favorable": true,
+        "balance_score": 1.0,
+        "legal_basis": "ATF 146 IV 9 al. 2; ATF 147 IV 9; Art. 139 al. 1 & 141 al. 2 CPP"
+      },
+      "fallback_documents": [],
+      "verbatim_quote": "**Джерело фонограми/відеозапису:** `enhanced_audio-lena00-заблокувати-вову.mp3`\n\n```text\n[00:00 -> 00:37] Я тобі казала, що я вам дам уклади, я вам дам інтрувацію, ви ж автори, ви ж, як хочете, не жит",
+      "valid_from": "2024-03-16T00:00:00Z",
+      "valid_to": "9999-12-31T23:59:59Z",
+      "drakon_x": 0,
+      "drakon_step": "CANONICAL_SKEWER_ADMISSIBLE"
+    },
+    {
+      "evidence_id": "DRAWER-TR-27",
+      "filename": "enhanced_audio-lena00-люба-хайсобісамзаробить.mp3",
+      "sha256_hash": "9813c3503007379ed480d4f1d86294c634780b0ddcd9aeebdf180a62f2687e82",
+      "status": "ADMISSIBLE_ATF_146_IV_9",
+      "primary_statute": "ROOM-180-181-CP",
+      "pesee": {
+        "infraction_grave": true,
+        "subsidiarite_reconnue": true,
+        "proportionnalite_favorable": true,
+        "balance_score": 1.0,
+        "legal_basis": "ATF 146 IV 9 al. 2; ATF 147 IV 9; Art. 139 al. 1 & 141 al. 2 CPP"
+      },
+      "fallback_documents": [],
+      "verbatim_quote": "**Джерело фонограми/відеозапису:** `enhanced_audio-lena00-люба-хайсобісамзаробить.mp3`\n\n```text\n[00:00 -> 00:11] Нічого не доведеш.\n```",
+      "valid_from": "2024-03-16T00:00:00Z",
+      "valid_to": "9999-12-31T23:59:59Z",
+      "drakon_x": 0,
+      "drakon_step": "CANONICAL_SKEWER_ADMISSIBLE"
+    },
+    {
+      "evidence_id": "DRAWER-TR-28",
+      "filename": "enhanced_audio-lena00-люба-штук-триста-перебрати.mp3",
+      "sha256_hash": "4b9b9e8c20f12ec659de5289e25aa4ca67f04e1af044582d3098576f1f279d33",
+      "status": "ADMISSIBLE_ATF_146_IV_9",
+      "primary_statute": "ROOM-180-181-CP",
+      "pesee": {
+        "infraction_grave": true,
+        "subsidiarite_reconnue": true,
+        "proportionnalite_favorable": true,
+        "balance_score": 1.0,
+        "legal_basis": "ATF 146 IV 9 al. 2; ATF 147 IV 9; Art. 139 al. 1 & 141 al. 2 CPP"
+      },
+      "fallback_documents": [],
+      "verbatim_quote": "**Джерело фонограми/відеозапису:** `enhanced_audio-lena00-люба-штук-триста-перебрати.mp3`\n\n```text\n[00:10 -> 00:18] Та бава, тому не можна тільки, і, навпаки, щодо з Fucking\n```",
+      "valid_from": "2024-03-16T00:00:00Z",
+      "valid_to": "9999-12-31T23:59:59Z",
+      "drakon_x": 0,
+      "drakon_step": "CANONICAL_SKEWER_ADMISSIBLE"
+    },
+    {
+      "evidence_id": "DRAWER-TR-29",
+      "filename": "enhanced_audio-lena01-арсен-егоїст-вова-хоче-гроші.mp3",
+      "sha256_hash": "01d0593465b8d1c6f6544ca9fef21f97647c75aa16ec715fa2a29438ae17a6f4",
+      "status": "ADMISSIBLE_ATF_146_IV_9",
+      "primary_statute": "ROOM-180-181-CP",
+      "pesee": {
+        "infraction_grave": true,
+        "subsidiarite_reconnue": true,
+        "proportionnalite_favorable": true,
+        "balance_score": 1.0,
+        "legal_basis": "ATF 146 IV 9 al. 2; ATF 147 IV 9; Art. 139 al. 1 & 141 al. 2 CPP"
+      },
+      "fallback_documents": [],
+      "verbatim_quote": "**Джерело фонограми/відеозапису:** `enhanced_audio-lena01-арсен-егоїст-вова-хоче-гроші.mp3`\n\n```text\n[00:00 -> 00:14] О, маємо її іншого, тобі піщати.\n```",
+      "valid_from": "2024-03-16T00:00:00Z",
+      "valid_to": "9999-12-31T23:59:59Z",
+      "drakon_x": 0,
+      "drakon_step": "CANONICAL_SKEWER_ADMISSIBLE"
+    },
+    {
+      "evidence_id": "DRAWER-TR-30",
+      "filename": "enhanced_audio-lena01-бклаб-я-мужиком-всі-гроші.mp3",
+      "sha256_hash": "c123f7474129e188b1afae9911b1f34992141df0ffd93cefae7d7c7de9aab782",
+      "status": "ADMISSIBLE_ATF_146_IV_9",
+      "primary_statute": "ROOM-180-181-CP",
+      "pesee": {
+        "infraction_grave": true,
+        "subsidiarite_reconnue": true,
+        "proportionnalite_favorable": true,
+        "balance_score": 1.0,
+        "legal_basis": "ATF 146 IV 9 al. 2; ATF 147 IV 9; Art. 139 al. 1 & 141 al. 2 CPP"
+      },
+      "fallback_documents": [],
+      "verbatim_quote": "**Джерело фонограми/відеозапису:** `enhanced_audio-lena01-бклаб-я-мужиком-всі-гроші.mp3`\n\n```text\n[00:00 -> 00:05] Якби я мужиком була, я б у сім'ї розвинулася б і все.\n```",
+      "valid_from": "2024-03-16T00:00:00Z",
+      "valid_to": "9999-12-31T23:59:59Z",
+      "drakon_x": 0,
+      "drakon_step": "CANONICAL_SKEWER_ADMISSIBLE"
+    },
+    {
+      "evidence_id": "DRAWER-TR-31",
+      "filename": "enhanced_audio-lena01-вова-дурачок2.mp3",
+      "sha256_hash": "b005c1c3c426fbe847fd9f798a8ace8106837019f144bb233f34129136ab1343",
+      "status": "ADMISSIBLE_ATF_146_IV_9",
+      "primary_statute": "ROOM-180-181-CP",
+      "pesee": {
+        "infraction_grave": true,
+        "subsidiarite_reconnue": true,
+        "proportionnalite_favorable": true,
+        "balance_score": 1.0,
+        "legal_basis": "ATF 146 IV 9 al. 2; ATF 147 IV 9; Art. 139 al. 1 & 141 al. 2 CPP"
+      },
+      "fallback_documents": [],
+      "verbatim_quote": "**Джерело фонограми/відеозапису:** `enhanced_audio-lena01-вова-дурачок2.mp3`\n\n```text\n[00:00 -> 00:37] Він розумний? Він не розумний. В нього дві вище освіти, по-моєму. Він все освіта пише. Я ж не йом",
+      "valid_from": "2024-03-16T00:00:00Z",
+      "valid_to": "9999-12-31T23:59:59Z",
+      "drakon_x": 0,
+      "drakon_step": "CANONICAL_SKEWER_ADMISSIBLE"
+    },
+    {
+      "evidence_id": "DRAWER-TR-32",
+      "filename": "enhanced_audio-lena01-ганна-їде- вбивати-арсена.mp3",
+      "sha256_hash": "e061cc90047d8414bc1eb669d898cefd6a5ac1ca569f092efa45754f0e9139b6",
+      "status": "ADMISSIBLE_ATF_146_IV_9",
+      "primary_statute": "ROOM-180-181-CP",
+      "pesee": {
+        "infraction_grave": true,
+        "subsidiarite_reconnue": true,
+        "proportionnalite_favorable": true,
+        "balance_score": 1.0,
+        "legal_basis": "ATF 146 IV 9 al. 2; ATF 147 IV 9; Art. 139 al. 1 & 141 al. 2 CPP"
+      },
+      "fallback_documents": [],
+      "verbatim_quote": "**Джерело фонограми/відеозапису:** `enhanced_audio-lena01-ганна-їде- вбивати-арсена.mp3`\n\n```text\n[00:00 -> 00:20] Найбільше, який ти є, знову вірши, коли я віршую, ти виглядаєш, отіла, коли ти виступ",
+      "valid_from": "2024-03-16T00:00:00Z",
+      "valid_to": "9999-12-31T23:59:59Z",
+      "drakon_x": 0,
+      "drakon_step": "CANONICAL_SKEWER_ADMISSIBLE"
+    },
+    {
+      "evidence_id": "DRAWER-TR-33",
+      "filename": "enhanced_audio-lena01-горбатого-могила-виправить.mp3",
+      "sha256_hash": "1dd37ad0c6c9786ad578b0bca634eb31cf2b439a69446ba455b6a142f47d41cd",
+      "status": "ADMISSIBLE_ATF_146_IV_9",
+      "primary_statute": "ROOM-180-181-CP",
+      "pesee": {
+        "infraction_grave": true,
+        "subsidiarite_reconnue": true,
+        "proportionnalite_favorable": true,
+        "balance_score": 1.0,
+        "legal_basis": "ATF 146 IV 9 al. 2; ATF 147 IV 9; Art. 139 al. 1 & 141 al. 2 CPP"
+      },
+      "fallback_documents": [],
+      "verbatim_quote": "**Джерело фонограми/відеозапису:** `enhanced_audio-lena01-горбатого-могила-виправить.mp3`\n\n```text\n[00:00 -> 00:44] Дякую за перегляд!\n```",
+      "valid_from": "2024-03-16T00:00:00Z",
+      "valid_to": "9999-12-31T23:59:59Z",
+      "drakon_x": 0,
+      "drakon_step": "CANONICAL_SKEWER_ADMISSIBLE"
+    },
+    {
+      "evidence_id": "DRAWER-TR-34",
+      "filename": "enhanced_audio-lena01-лена-з-пушкою.mp3",
+      "sha256_hash": "43c93ee364a8fce583d2a2341ad18108e17a5b2c5b2fce46840deed118fedac3",
+      "status": "ADMISSIBLE_ATF_146_IV_9",
+      "primary_statute": "ROOM-180-181-CP",
+      "pesee": {
+        "infraction_grave": true,
+        "subsidiarite_reconnue": true,
+        "proportionnalite_favorable": true,
+        "balance_score": 1.0,
+        "legal_basis": "ATF 146 IV 9 al. 2; ATF 147 IV 9; Art. 139 al. 1 & 141 al. 2 CPP"
+      },
+      "fallback_documents": [],
+      "verbatim_quote": "**Джерело фонограми/відеозапису:** `enhanced_audio-lena01-лена-з-пушкою.mp3`\n\n```text\n[00:00 -> 00:07] Ти якби з пушкою була, о, там би був, або він би мене забув, або я.\n```",
+      "valid_from": "2024-03-16T00:00:00Z",
+      "valid_to": "9999-12-31T23:59:59Z",
+      "drakon_x": 0,
+      "drakon_step": "CANONICAL_SKEWER_ADMISSIBLE"
+    },
+    {
+      "evidence_id": "DRAWER-TR-35",
+      "filename": "enhanced_audio-lena01-про-вкрадені-гроші.mp3",
+      "sha256_hash": "099d99be932e2a18c58f2497843f4862ee45fb64568203e3091c635fc681efde",
+      "status": "ADMISSIBLE_ATF_146_IV_9",
+      "primary_statute": "Art. 157 CP & Art. 118 LEI (Usure et Fraude aux prestations)",
+      "pesee": {
+        "infraction_grave": true,
+        "subsidiarite_reconnue": true,
+        "proportionnalite_favorable": true,
+        "balance_score": 1.0,
+        "legal_basis": "ATF 146 IV 9 al. 2; ATF 147 IV 9; Art. 139 al. 1 & 141 al. 2 CPP"
+      },
+      "fallback_documents": [],
+      "verbatim_quote": "**Джерело фонограми/відеозапису:** `enhanced_audio-lena01-про-вкрадені-гроші.mp3`\n\n```text\n[00:00 -> 00:18] Чому ти так не ходиш, судді, на департамент, ти нічого не докажеш, статус S, перміс S, яке я",
+      "valid_from": "2024-03-16T00:00:00Z",
+      "valid_to": "9999-12-31T23:59:59Z",
+      "drakon_x": 0,
+      "drakon_step": "CANONICAL_SKEWER_ADMISSIBLE"
+    },
+    {
+      "evidence_id": "DRAWER-TR-36",
+      "filename": "enhanced_audio-lena01-ти-простітутка-телефон-в-носок.mp3",
+      "sha256_hash": "28dd84e0ce4c3574bed6c7f9c7f908e5a45b3780ae625a2cd1ced42055f93ccd",
+      "status": "ADMISSIBLE_ATF_146_IV_9",
+      "primary_statute": "ROOM-180-181-CP",
+      "pesee": {
+        "infraction_grave": true,
+        "subsidiarite_reconnue": true,
+        "proportionnalite_favorable": true,
+        "balance_score": 1.0,
+        "legal_basis": "ATF 146 IV 9 al. 2; ATF 147 IV 9; Art. 139 al. 1 & 141 al. 2 CPP"
+      },
+      "fallback_documents": [],
+      "verbatim_quote": "**Джерело фонограми/відеозапису:** `enhanced_audio-lena01-ти-простітутка-телефон-в-носок.mp3`\n\n```text\n[00:00 -> 00:43] Він, я не знаю, він приїде, мабуть, і я йому чуть-чуть розкажу цю ситуацію.\n```",
+      "valid_from": "2024-03-16T00:00:00Z",
+      "valid_to": "9999-12-31T23:59:59Z",
+      "drakon_x": 0,
+      "drakon_step": "CANONICAL_SKEWER_ADMISSIBLE"
+    },
+    {
+      "evidence_id": "DRAWER-TR-37",
+      "filename": "enhanced_audio-lena01-шо-той-абу-дитина.mp3",
+      "sha256_hash": "661937db97ef41772ef7197b21df91f27395b4c55daf26a9e75af98e2a799351",
+      "status": "ADMISSIBLE_ATF_146_IV_9",
+      "primary_statute": "ROOM-180-181-CP",
+      "pesee": {
+        "infraction_grave": true,
+        "subsidiarite_reconnue": true,
+        "proportionnalite_favorable": true,
+        "balance_score": 1.0,
+        "legal_basis": "ATF 146 IV 9 al. 2; ATF 147 IV 9; Art. 139 al. 1 & 141 al. 2 CPP"
+      },
+      "fallback_documents": [],
+      "verbatim_quote": "**Джерело фонограми/відеозапису:** `enhanced_audio-lena01-шо-той-абу-дитина.mp3`\n\n```text\n[00:00 -> 00:34] На нього написав, Лена, куди ти їздиш, тебе вб'ють, хай вже буде краще тебе, абу, я вже до нь",
+      "valid_from": "2024-03-16T00:00:00Z",
+      "valid_to": "9999-12-31T23:59:59Z",
+      "drakon_x": 0,
+      "drakon_step": "CANONICAL_SKEWER_ADMISSIBLE"
+    },
+    {
+      "evidence_id": "DRAWER-TR-38",
+      "filename": "enhanced_audio-lena01-і-сина-і-тебе-забю.mp3",
+      "sha256_hash": "8c86eeee967031fa60d8aca4c0584b37244d339dd05cb34d177a16f2eeee7445",
+      "status": "ADMISSIBLE_ATF_146_IV_9",
+      "primary_statute": "ROOM-180-181-CP",
+      "pesee": {
+        "infraction_grave": true,
+        "subsidiarite_reconnue": true,
+        "proportionnalite_favorable": true,
+        "balance_score": 1.0,
+        "legal_basis": "ATF 146 IV 9 al. 2; ATF 147 IV 9; Art. 139 al. 1 & 141 al. 2 CPP"
+      },
+      "fallback_documents": [],
+      "verbatim_quote": "**Джерело фонограми/відеозапису:** `enhanced_audio-lena01-і-сина-і-тебе-забю.mp3`\n\n```text\n[00:02 -> 00:13] У мене немає революції, а купатися це по-любому не заставить, тому що зараз літо, звісно, на",
+      "valid_from": "2024-03-16T00:00:00Z",
+      "valid_to": "9999-12-31T23:59:59Z",
+      "drakon_x": 0,
+      "drakon_step": "CANONICAL_SKEWER_ADMISSIBLE"
+    },
+    {
+      "evidence_id": "DRAWER-TR-39",
+      "filename": "enhanced_audio-lena02-ганна-він-ще-приповзе-дотебе.mp3",
+      "sha256_hash": "a39e711052616d73c468c72b71ef78f4fb0fa1811ed635a825144509e5a4e4b3",
+      "status": "ADMISSIBLE_ATF_146_IV_9",
+      "primary_statute": "ROOM-180-181-CP",
+      "pesee": {
+        "infraction_grave": true,
+        "subsidiarite_reconnue": true,
+        "proportionnalite_favorable": true,
+        "balance_score": 1.0,
+        "legal_basis": "ATF 146 IV 9 al. 2; ATF 147 IV 9; Art. 139 al. 1 & 141 al. 2 CPP"
+      },
+      "fallback_documents": [],
+      "verbatim_quote": "**Джерело фонограми/відеозапису:** `enhanced_audio-lena02-ганна-він-ще-приповзе-дотебе.mp3`\n\n```text\n[00:00 -> 00:32] Він не може тільки насрати, оці всі переписки.\n```",
+      "valid_from": "2024-03-16T00:00:00Z",
+      "valid_to": "9999-12-31T23:59:59Z",
+      "drakon_x": 0,
+      "drakon_step": "CANONICAL_SKEWER_ADMISSIBLE"
+    },
+    {
+      "evidence_id": "DRAWER-TR-40",
+      "filename": "enhanced_audio-lena02-ганна-привязав-хрлодільнік.mp3",
+      "sha256_hash": "aaec7b9e8f4d06c084f4e320a698b302a7d9d91369b23742a7061b888747435e",
+      "status": "ADMISSIBLE_ATF_146_IV_9",
+      "primary_statute": "ROOM-180-181-CP",
+      "pesee": {
+        "infraction_grave": true,
+        "subsidiarite_reconnue": true,
+        "proportionnalite_favorable": true,
+        "balance_score": 1.0,
+        "legal_basis": "ATF 146 IV 9 al. 2; ATF 147 IV 9; Art. 139 al. 1 & 141 al. 2 CPP"
+      },
+      "fallback_documents": [],
+      "verbatim_quote": "**Джерело фонограми/відеозапису:** `enhanced_audio-lena02-ганна-привязав-хрлодільнік.mp3`\n\n```text\n[00:00 -> 00:01] П'яте тренун.\n[00:31 -> 00:36] Тут таке, що має істинні дії.\n```",
+      "valid_from": "2024-03-16T00:00:00Z",
+      "valid_to": "9999-12-31T23:59:59Z",
+      "drakon_x": 0,
+      "drakon_step": "CANONICAL_SKEWER_ADMISSIBLE"
+    },
+    {
+      "evidence_id": "DRAWER-TR-41",
+      "filename": "enhanced_audio-lena02-ганна-підти-від-гімна.mp3",
+      "sha256_hash": "2ba8e40221e14a420ed983e2102d2e3c2081a6b850b5ae79d31437fbceffd4b0",
+      "status": "ADMISSIBLE_ATF_146_IV_9",
+      "primary_statute": "ROOM-180-181-CP",
+      "pesee": {
+        "infraction_grave": true,
+        "subsidiarite_reconnue": true,
+        "proportionnalite_favorable": true,
+        "balance_score": 1.0,
+        "legal_basis": "ATF 146 IV 9 al. 2; ATF 147 IV 9; Art. 139 al. 1 & 141 al. 2 CPP"
+      },
+      "fallback_documents": [],
+      "verbatim_quote": "**Джерело фонограми/відеозапису:** `enhanced_audio-lena02-ганна-підти-від-гімна.mp3`\n\n```text\n[00:00 -> 00:08] Віддай відгівно, я тобі говорю, а ти, Люба, він поміняється, він ніколи не поміняється, я",
+      "valid_from": "2024-03-16T00:00:00Z",
+      "valid_to": "9999-12-31T23:59:59Z",
+      "drakon_x": 0,
+      "drakon_step": "CANONICAL_SKEWER_ADMISSIBLE"
+    },
+    {
+      "evidence_id": "DRAWER-TR-42",
+      "filename": "enhanced_gana-1.mp3",
+      "sha256_hash": "93bcd8cbd66d014dd6a16944ad4324975f1722094a28e7140d7c3cf8720cbce9",
+      "status": "ADMISSIBLE_ATF_146_IV_9",
+      "primary_statute": "ROOM-180-181-CP",
+      "pesee": {
+        "infraction_grave": true,
+        "subsidiarite_reconnue": true,
+        "proportionnalite_favorable": true,
+        "balance_score": 1.0,
+        "legal_basis": "ATF 146 IV 9 al. 2; ATF 147 IV 9; Art. 139 al. 1 & 141 al. 2 CPP"
+      },
+      "fallback_documents": [],
+      "verbatim_quote": "**Джерело фонограми/відеозапису:** `enhanced_gana-1.mp3`\n\n```text\n[00:00 -> 00:12] Почалось, скажу, з того, що сім місяців назад побачив смс-ку, в магазині тоді були з мамою, смс-ку, як написав цей ки",
+      "valid_from": "2024-03-16T00:00:00Z",
+      "valid_to": "9999-12-31T23:59:59Z",
+      "drakon_x": 0,
+      "drakon_step": "CANONICAL_SKEWER_ADMISSIBLE"
+    },
+    {
+      "evidence_id": "DRAWER-TR-43",
+      "filename": "gana-1.mp3",
+      "sha256_hash": "624d3b298be266098ce2a4623f032be2b90d984f40a0ed66ea5e205a199dfe06",
+      "status": "ADMISSIBLE_ATF_146_IV_9",
+      "primary_statute": "ROOM-180-181-CP",
+      "pesee": {
+        "infraction_grave": true,
+        "subsidiarite_reconnue": true,
+        "proportionnalite_favorable": true,
+        "balance_score": 1.0,
+        "legal_basis": "ATF 146 IV 9 al. 2; ATF 147 IV 9; Art. 139 al. 1 & 141 al. 2 CPP"
+      },
+      "fallback_documents": [],
+      "verbatim_quote": "**Джерело фонограми/відеозапису:** `gana-1.mp3`\n\n```text\n[00:00 -> 00:12] Почалось, скажу, з того, що сім місяців назад побачив смс-ку, в магазині тоді були з мамою, смс-ку, як написав цей китайець, ч",
+      "valid_from": "2024-03-16T00:00:00Z",
+      "valid_to": "9999-12-31T23:59:59Z",
+      "drakon_x": 0,
+      "drakon_step": "CANONICAL_SKEWER_ADMISSIBLE"
+    },
+    {
+      "evidence_id": "DRAWER-TR-44",
+      "filename": "gana-3.m4a",
+      "sha256_hash": "e8120ab74ea293cb4cfb523f0f2bf984266049e80f7c99f0bcb6d0c5083de3d5",
+      "status": "ADMISSIBLE_ATF_146_IV_9",
+      "primary_statute": "ROOM-180-181-CP",
+      "pesee": {
+        "infraction_grave": true,
+        "subsidiarite_reconnue": true,
+        "proportionnalite_favorable": true,
+        "balance_score": 1.0,
+        "legal_basis": "ATF 146 IV 9 al. 2; ATF 147 IV 9; Art. 139 al. 1 & 141 al. 2 CPP"
+      },
+      "fallback_documents": [],
+      "verbatim_quote": "**Джерело фонограми/відеозапису:** `gana-3.m4a`\n\n```text\n[00:00 -> 00:03] Слухай, на маму ти ніколи не повинен котити бочку.\n[00:03 -> 00:04] Я їй не котив бочку.\n[00:05 -> 00:06] Ти вже ніхто.\n[00:07",
+      "valid_from": "2024-03-16T00:00:00Z",
+      "valid_to": "9999-12-31T23:59:59Z",
+      "drakon_x": 0,
+      "drakon_step": "CANONICAL_SKEWER_ADMISSIBLE"
+    },
+    {
+      "evidence_id": "DRAWER-TR-45",
+      "filename": "gana-4.m4a",
+      "sha256_hash": "656632f9998342d0502cdf239fd5c1c0496139368d7b7d75b25b25d7e3e77209",
+      "status": "ADMISSIBLE_ATF_146_IV_9",
+      "primary_statute": "ROOM-180-181-CP",
+      "pesee": {
+        "infraction_grave": true,
+        "subsidiarite_reconnue": true,
+        "proportionnalite_favorable": true,
+        "balance_score": 1.0,
+        "legal_basis": "ATF 146 IV 9 al. 2; ATF 147 IV 9; Art. 139 al. 1 & 141 al. 2 CPP"
+      },
+      "fallback_documents": [],
+      "verbatim_quote": "**Джерело фонограми/відеозапису:** `gana-4.m4a`\n\n```text\n[00:00 -> 00:05] Кажу одне, що мама має розвестися, тоді вже ходити куди хоче, наліво-направо.\n[00:05 -> 00:09] Вона щось хоче, то і хай робить",
+      "valid_from": "2024-03-16T00:00:00Z",
+      "valid_to": "9999-12-31T23:59:59Z",
+      "drakon_x": 0,
+      "drakon_step": "CANONICAL_SKEWER_ADMISSIBLE"
+    },
+    {
+      "evidence_id": "DRAWER-TR-46",
+      "filename": "gana-5.m4a",
+      "sha256_hash": "f5010fa9efb535c74316bf2f1ed3c328a542f47be9d6baaf282bc944f3c584b3",
+      "status": "ADMISSIBLE_ATF_146_IV_9",
+      "primary_statute": "ROOM-146-CP",
+      "pesee": {
+        "infraction_grave": true,
+        "subsidiarite_reconnue": true,
+        "proportionnalite_favorable": true,
+        "balance_score": 1.0,
+        "legal_basis": "ATF 146 IV 9 al. 2; ATF 147 IV 9; Art. 139 al. 1 & 141 al. 2 CPP"
+      },
+      "fallback_documents": [],
+      "verbatim_quote": "**Джерело фонограми/відеозапису:** `gana-5.m4a`\n\n```text\n[00:00 -> 00:29] Ні, куди? Куди? В Луцьку. Ти не приписаний нічого. Я зніму квартиру і буду жити, де захочу. А, на квартирі? Так. А що, вже на",
+      "valid_from": "2024-03-16T00:00:00Z",
+      "valid_to": "9999-12-31T23:59:59Z",
+      "drakon_x": 0,
+      "drakon_step": "CANONICAL_SKEWER_ADMISSIBLE"
+    },
+    {
+      "evidence_id": "DRAWER-TR-47",
+      "filename": "lena-1.m4a",
+      "sha256_hash": "135ec4e793019e2f2c481168326da7bc94c51e1ce2416eb06a37f7bb9ed5802d",
+      "status": "ADMISSIBLE_ATF_146_IV_9",
+      "primary_statute": "ROOM-180-181-CP",
+      "pesee": {
+        "infraction_grave": true,
+        "subsidiarite_reconnue": true,
+        "proportionnalite_favorable": true,
+        "balance_score": 1.0,
+        "legal_basis": "ATF 146 IV 9 al. 2; ATF 147 IV 9; Art. 139 al. 1 & 141 al. 2 CPP"
+      },
+      "fallback_documents": [],
+      "verbatim_quote": "**Джерело фонограми/відеозапису:** `lena-1.m4a`\n\n```text\n[00:00 -> 00:10] Ганна, це не те, що ти вислала. Це я мамі вислала раніше, ще давно-давно. Мамі все розказую. У мене один другий, другий другий",
+      "valid_from": "2024-03-16T00:00:00Z",
+      "valid_to": "9999-12-31T23:59:59Z",
+      "drakon_x": 0,
+      "drakon_step": "CANONICAL_SKEWER_ADMISSIBLE"
+    },
+    {
+      "evidence_id": "DRAWER-TR-48",
+      "filename": "lena-2_audio.mp3",
+      "sha256_hash": "2e67708d41b8c162b54de9a1b9117cb1faa7e40768ae4c837944034e56aa9382",
+      "status": "ADMISSIBLE_ATF_146_IV_9",
+      "primary_statute": "ROOM-180-181-CP",
+      "pesee": {
+        "infraction_grave": true,
+        "subsidiarite_reconnue": true,
+        "proportionnalite_favorable": true,
+        "balance_score": 1.0,
+        "legal_basis": "ATF 146 IV 9 al. 2; ATF 147 IV 9; Art. 139 al. 1 & 141 al. 2 CPP"
+      },
+      "fallback_documents": [],
+      "verbatim_quote": "**Джерело фонограми/відеозапису:** `lena-2_audio.mp3`\n\n```text\n[00:00 -> 00:10] Стань там, він стоїть, я його сфотографувала, поливаєш, він такий милий такий, він каже, я дуже тебе рівную, я не хочу,",
+      "valid_from": "2024-03-16T00:00:00Z",
+      "valid_to": "9999-12-31T23:59:59Z",
+      "drakon_x": 0,
+      "drakon_step": "CANONICAL_SKEWER_ADMISSIBLE"
+    },
+    {
+      "evidence_id": "DRAWER-TR-49",
+      "filename": "lena-3.m4a",
+      "sha256_hash": "0a637c0ad589d8387a62b3f5a501de65e52d66723fb2a102d4d31535f5389649",
+      "status": "ADMISSIBLE_ATF_146_IV_9",
+      "primary_statute": "ROOM-180-181-CP",
+      "pesee": {
+        "infraction_grave": true,
+        "subsidiarite_reconnue": true,
+        "proportionnalite_favorable": true,
+        "balance_score": 1.0,
+        "legal_basis": "ATF 146 IV 9 al. 2; ATF 147 IV 9; Art. 139 al. 1 & 141 al. 2 CPP"
+      },
+      "fallback_documents": [],
+      "verbatim_quote": "**Джерело фонограми/відеозапису:** `lena-3.m4a`\n\n```text\n[00:00 -> 00:30] Чого в нього виросте?\n[00:30 -> 00:56] Щоб ти була здорова, спокійна, щаслива своїми неграми, ну от, не треба нікому нічого ма",
+      "valid_from": "2024-03-16T00:00:00Z",
+      "valid_to": "9999-12-31T23:59:59Z",
+      "drakon_x": 0,
+      "drakon_step": "CANONICAL_SKEWER_ADMISSIBLE"
+    },
+    {
+      "evidence_id": "DRAWER-TR-50",
+      "filename": "lena-4.m4a",
+      "sha256_hash": "7a2617d1539732708379034651e8f9fb774e62b3994fc7bf4a43cd06d0c830cf",
+      "status": "ADMISSIBLE_ATF_146_IV_9",
+      "primary_statute": "ROOM-180-181-CP",
+      "pesee": {
+        "infraction_grave": true,
+        "subsidiarite_reconnue": true,
+        "proportionnalite_favorable": true,
+        "balance_score": 1.0,
+        "legal_basis": "ATF 146 IV 9 al. 2; ATF 147 IV 9; Art. 139 al. 1 & 141 al. 2 CPP"
+      },
+      "fallback_documents": [],
+      "verbatim_quote": "**Джерело фонограми/відеозапису:** `lena-4.m4a`\n\n```text\n[00:00 -> 00:17] Лена, ти все життя дурила мене, дурила дитину, дурила всіх.\n[00:17 -> 00:20] Все, я їй договорити.\n[00:23 -> 00:24] Він все на",
+      "valid_from": "2024-03-16T00:00:00Z",
+      "valid_to": "9999-12-31T23:59:59Z",
+      "drakon_x": 0,
+      "drakon_step": "CANONICAL_SKEWER_ADMISSIBLE"
+    },
+    {
+      "evidence_id": "DRAWER-TR-51",
+      "filename": "lena-5.m4a",
+      "sha256_hash": "9ad3498833216445c1809a7edcd59abe4194fb808fab08fdd4c1bdc042f0956e",
+      "status": "ADMISSIBLE_ATF_146_IV_9",
+      "primary_statute": "ROOM-180-181-CP",
+      "pesee": {
+        "infraction_grave": true,
+        "subsidiarite_reconnue": true,
+        "proportionnalite_favorable": true,
+        "balance_score": 1.0,
+        "legal_basis": "ATF 146 IV 9 al. 2; ATF 147 IV 9; Art. 139 al. 1 & 141 al. 2 CPP"
+      },
+      "fallback_documents": [],
+      "verbatim_quote": "**Джерело фонограми/відеозапису:** `lena-5.m4a`\n\n```text\n[00:00 -> 00:03] Якби з самого початку бігти до нас в житті, нормально.\n[00:03 -> 00:04] Коли початок почався?\n[00:05 -> 00:06] Ось ти до нашої",
+      "valid_from": "2024-03-16T00:00:00Z",
+      "valid_to": "9999-12-31T23:59:59Z",
+      "drakon_x": 0,
+      "drakon_step": "CANONICAL_SKEWER_ADMISSIBLE"
+    },
+    {
+      "evidence_id": "DRAWER-TR-52",
+      "filename": "luba-groshi.m4a",
+      "sha256_hash": "6eeea685d0475637356cf08f2c89eb68fc0ec30d4a079ca735d458e11242c8db",
+      "status": "ADMISSIBLE_ATF_146_IV_9",
+      "primary_statute": "ROOM-138-CP",
+      "pesee": {
+        "infraction_grave": true,
+        "subsidiarite_reconnue": true,
+        "proportionnalite_favorable": true,
+        "balance_score": 1.0,
+        "legal_basis": "ATF 146 IV 9 al. 2; ATF 147 IV 9; Art. 139 al. 1 & 141 al. 2 CPP"
+      },
+      "fallback_documents": [],
+      "verbatim_quote": "**Джерело фонограми/відеозапису:** `luba-groshi.m4a`\n\n```text\n[00:00 -> 00:15] Моїх батьків ти живеш? Я нормально говорю, тобі інакше не можна. Ну бо ти дурачок. Я білий білет. Дурачок? Дурачок.\n[00:1",
+      "valid_from": "2024-03-16T00:00:00Z",
+      "valid_to": "9999-12-31T23:59:59Z",
+      "drakon_x": 0,
+      "drakon_step": "CANONICAL_SKEWER_ADMISSIBLE"
+    },
+    {
+      "evidence_id": "DRAWER-TR-53",
+      "filename": "luba-mat.m4a",
+      "sha256_hash": "8de89cfd099af9364e4c92248e02d4713955ee92c873ae0e63f345dc2b7196a7",
+      "status": "ADMISSIBLE_ATF_146_IV_9",
+      "primary_statute": "ROOM-180-181-CP",
+      "pesee": {
+        "infraction_grave": true,
+        "subsidiarite_reconnue": true,
+        "proportionnalite_favorable": true,
+        "balance_score": 1.0,
+        "legal_basis": "ATF 146 IV 9 al. 2; ATF 147 IV 9; Art. 139 al. 1 & 141 al. 2 CPP"
+      },
+      "fallback_documents": [],
+      "verbatim_quote": "**Джерело фонограми/відеозапису:** `luba-mat.m4a`\n\n```text\n[00:00 -> 00:01] Норму щасно.\n[00:01 -> 00:03] Що ж я вкрав тобі?\n[00:03 -> 00:04] Ну, мама воробка.\n[00:05 -> 00:06] А мама хто? Чому підтве",
+      "valid_from": "2024-03-16T00:00:00Z",
+      "valid_to": "9999-12-31T23:59:59Z",
+      "drakon_x": 0,
+      "drakon_step": "CANONICAL_SKEWER_ADMISSIBLE"
+    },
+    {
+      "evidence_id": "DRAWER-TR-54",
+      "filename": "luba-ty-durack.m4a",
+      "sha256_hash": "92b3411d171b0c8b1f036727eee246bd6c6c019f4bddd7f4cfb20c886dd35762",
+      "status": "ADMISSIBLE_ATF_146_IV_9",
+      "primary_statute": "ROOM-180-181-CP",
+      "pesee": {
+        "infraction_grave": true,
+        "subsidiarite_reconnue": true,
+        "proportionnalite_favorable": true,
+        "balance_score": 1.0,
+        "legal_basis": "ATF 146 IV 9 al. 2; ATF 147 IV 9; Art. 139 al. 1 & 141 al. 2 CPP"
+      },
+      "fallback_documents": [],
+      "verbatim_quote": "**Джерело фонограми/відеозапису:** `luba-ty-durack.m4a`\n\n```text\n[00:00 -> 00:02] А, то й живи, нормально, може, вже давно знайшов.\n[00:02 -> 00:03] Звісно, так і буде.\n[00:03 -> 00:04] А де тебе відд",
+      "valid_from": "2024-03-16T00:00:00Z",
+      "valid_to": "9999-12-31T23:59:59Z",
+      "drakon_x": 0,
+      "drakon_step": "CANONICAL_SKEWER_ADMISSIBLE"
+    },
+    {
+      "evidence_id": "DRAWER-TR-55",
+      "filename": "luba-vrestoran.m4a",
+      "sha256_hash": "2de71ac0f2fd5fcf5e6fff28e95531861228af8241f4c92d995aeba294e91703",
+      "status": "ADMISSIBLE_ATF_146_IV_9",
+      "primary_statute": "ROOM-180-181-CP",
+      "pesee": {
+        "infraction_grave": true,
+        "subsidiarite_reconnue": true,
+        "proportionnalite_favorable": true,
+        "balance_score": 1.0,
+        "legal_basis": "ATF 146 IV 9 al. 2; ATF 147 IV 9; Art. 139 al. 1 & 141 al. 2 CPP"
+      },
+      "fallback_documents": [],
+      "verbatim_quote": "**Джерело фонограми/відеозапису:** `luba-vrestoran.m4a`\n\n```text\n[00:00 -> 00:03] А мені треба їсти приготувати дитині, я приготувався.\n[00:03 -> 00:05] Ви в ресторан харчуєтеся.\n[00:05 -> 00:06] Гото",
+      "valid_from": "2024-03-16T00:00:00Z",
+      "valid_to": "9999-12-31T23:59:59Z",
+      "drakon_x": 0,
+      "drakon_step": "CANONICAL_SKEWER_ADMISSIBLE"
+    },
+    {
+      "evidence_id": "DRAWER-TR-56",
+      "filename": "luba2019.mp3",
+      "sha256_hash": "d49fa487cc022e420a2cbe5b32966eb419de1dd65d0b5bb773dbe712e7f3054b",
+      "status": "ADMISSIBLE_ATF_146_IV_9",
+      "primary_statute": "ROOM-138-CP",
+      "pesee": {
+        "infraction_grave": true,
+        "subsidiarite_reconnue": true,
+        "proportionnalite_favorable": true,
+        "balance_score": 1.0,
+        "legal_basis": "ATF 146 IV 9 al. 2; ATF 147 IV 9; Art. 139 al. 1 & 141 al. 2 CPP"
+      },
+      "fallback_documents": [],
+      "verbatim_quote": "**Джерело фонограми/відеозапису:** `luba2019.mp3`\n\n```text\n[00:01 -> 00:13] Я вже спробую спробувати.\n[00:13 -> 00:14] Та як мені звати?\n[00:14 -> 00:15] Ну, я не знаю.\n[00:19 -> 00:24] Є, так, поп'єш",
+      "valid_from": "2024-03-16T00:00:00Z",
+      "valid_to": "9999-12-31T23:59:59Z",
+      "drakon_x": 0,
+      "drakon_step": "CANONICAL_SKEWER_ADMISSIBLE"
+    },
+    {
+      "evidence_id": "DRAWER-TR-57",
+      "filename": "nezamujem.m4a",
+      "sha256_hash": "dd48d1a65dcee93eccfd603215ad526459e236f36f6d030320dc2775713d39c2",
+      "status": "ADMISSIBLE_ATF_146_IV_9",
+      "primary_statute": "ROOM-180-181-CP",
+      "pesee": {
+        "infraction_grave": true,
+        "subsidiarite_reconnue": true,
+        "proportionnalite_favorable": true,
+        "balance_score": 1.0,
+        "legal_basis": "ATF 146 IV 9 al. 2; ATF 147 IV 9; Art. 139 al. 1 & 141 al. 2 CPP"
+      },
+      "fallback_documents": [],
+      "verbatim_quote": "**Джерело фонограми/відеозапису:** `nezamujem.m4a`\n\n```text\n[00:00 -> 00:15] Не треба лізти в чужу сім'ю, а куди він заліз, що ти маєш, а хоч ти заліз, не ваше це діло, ти замужем, ти замужем, в тебе",
+      "valid_from": "2024-03-16T00:00:00Z",
+      "valid_to": "9999-12-31T23:59:59Z",
+      "drakon_x": 0,
+      "drakon_step": "CANONICAL_SKEWER_ADMISSIBLE"
+    },
+    {
+      "evidence_id": "DRAWER-TR-58",
+      "filename": "pasajir2.m4a",
+      "sha256_hash": "6d4307791f077358f83b9a367affbb9422e3987bcf181528f603c25b05465ac3",
+      "status": "ADMISSIBLE_ATF_146_IV_9",
+      "primary_statute": "ROOM-180-181-CP",
+      "pesee": {
+        "infraction_grave": true,
+        "subsidiarite_reconnue": true,
+        "proportionnalite_favorable": true,
+        "balance_score": 1.0,
+        "legal_basis": "ATF 146 IV 9 al. 2; ATF 147 IV 9; Art. 139 al. 1 & 141 al. 2 CPP"
+      },
+      "fallback_documents": [],
+      "verbatim_quote": "**Джерело фонограми/відеозапису:** `pasajir2.m4a`\n\n```text\n[00:00 -> 00:24] І мені дуже радісно бачити тебе, зараз доброго приймаю, не бачу, не бачу пасажира, не бачу, пасажир, раз, сьогодні їздила, п",
+      "valid_from": "2024-03-16T00:00:00Z",
+      "valid_to": "9999-12-31T23:59:59Z",
+      "drakon_x": 0,
+      "drakon_step": "CANONICAL_SKEWER_ADMISSIBLE"
+    },
+    {
+      "evidence_id": "DRAWER-TR-59",
+      "filename": "vasya-borg.m4a",
+      "sha256_hash": "57e796cb20e8eafd30d3549a0e43bc6996f8d2dbbc952c129965fb84b600bc34",
+      "status": "ADMISSIBLE_ATF_146_IV_9",
+      "primary_statute": "ROOM-138-CP",
+      "pesee": {
+        "infraction_grave": true,
+        "subsidiarite_reconnue": true,
+        "proportionnalite_favorable": true,
+        "balance_score": 1.0,
+        "legal_basis": "ATF 146 IV 9 al. 2; ATF 147 IV 9; Art. 139 al. 1 & 141 al. 2 CPP"
+      },
+      "fallback_documents": [],
+      "verbatim_quote": "**Джерело фонограми/відеозапису:** `vasya-borg.m4a`\n\n```text\n[00:00 -> 00:10] Пострічка, ну я, буквально, виглядаю з усіх чотирьох, тільки гідь, все, снігівки твари, скандали згодом згодом, чорі.\n[00:",
+      "valid_from": "2024-03-16T00:00:00Z",
+      "valid_to": "9999-12-31T23:59:59Z",
+      "drakon_x": 0,
+      "drakon_step": "CANONICAL_SKEWER_ADMISSIBLE"
+    },
+    {
+      "evidence_id": "DRAWER-TR-60",
+      "filename": "про кондиціонер.mp4",
+      "sha256_hash": "64854bbd3ba6e80f50e054fa67be7193de1f396a5e6e45e0c79ce106e904eaa6",
+      "status": "ADMISSIBLE_ATF_146_IV_9",
+      "primary_statute": "ROOM-180-181-CP",
+      "pesee": {
+        "infraction_grave": true,
+        "subsidiarite_reconnue": true,
+        "proportionnalite_favorable": true,
+        "balance_score": 1.0,
+        "legal_basis": "ATF 146 IV 9 al. 2; ATF 147 IV 9; Art. 139 al. 1 & 141 al. 2 CPP"
+      },
+      "fallback_documents": [],
+      "verbatim_quote": "**Джерело фонограми/відеозапису:** `про кондиціонер.mp4`\n\n```text\n[00:02 -> 00:29] Ні, в мене руки трясуться, я нічого не роблю. Ні, але якщо хтось за мною дивиться.\n[00:32 -> 01:18] Так, а? Я не знаю",
+      "valid_from": "2024-03-16T00:00:00Z",
+      "valid_to": "9999-12-31T23:59:59Z",
+      "drakon_x": 0,
+      "drakon_step": "CANONICAL_SKEWER_ADMISSIBLE"
+    },
+    {
+      "evidence_id": "DRAWER-TR-61",
+      "filename": "стань-там.mp4",
+      "sha256_hash": "a38b3f29e0e9bac16713d25303a4ec50b8c40f00991c27cfc4f69c71a23627aa",
+      "status": "ADMISSIBLE_ATF_146_IV_9",
+      "primary_statute": "ROOM-180-181-CP",
+      "pesee": {
+        "infraction_grave": true,
+        "subsidiarite_reconnue": true,
+        "proportionnalite_favorable": true,
+        "balance_score": 1.0,
+        "legal_basis": "ATF 146 IV 9 al. 2; ATF 147 IV 9; Art. 139 al. 1 & 141 al. 2 CPP"
+      },
+      "fallback_documents": [],
+      "verbatim_quote": "**Джерело фонограми/відеозапису:** `стань-там.mp4`\n\n```text\n[00:09 -> 00:12] Стань так, він стоїть, я його скатарі фірвала.\n[00:12 -> 00:14] Поливається, такі, миви, такі.\n[00:14 -> 00:19] Інка ж, я д",
+      "valid_from": "2024-03-16T00:00:00Z",
+      "valid_to": "9999-12-31T23:59:59Z",
+      "drakon_x": 0,
+      "drakon_step": "CANONICAL_SKEWER_ADMISSIBLE"
+    }
+  ]
+}
