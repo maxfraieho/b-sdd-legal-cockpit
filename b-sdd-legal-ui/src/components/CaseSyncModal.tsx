@@ -24,6 +24,7 @@ import { SupportedLanguage } from "../types/i18n";
 import { ActorItem, resolveLocalized } from "../data/legalData";
 import { LegalCase } from "../lib/casesManager";
 import { getAllLawArticles } from "../data/swissLawCodes";
+import caseSyncLatestData from "../data/case_sync_latest.json";
 
 interface CaseSyncModalProps {
   isOpen: boolean;

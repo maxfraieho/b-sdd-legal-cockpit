@@ -1,0 +1,161 @@
+{
+  "case_id": "PE24.014624-SBA",
+  "synthesized_at": "2026-09-26T18:06:34.667518+00:00",
+  "is_court_ready": true,
+  "sequential_steps": [
+    {
+      "step_number": 1,
+      "title_uk": "Збір та WORM-верифікація первинних фактів",
+      "title_fr": "Ingestion et vérification WORM des faits primaires",
+      "drawers_count": 61,
+      "evidence_count": 41,
+      "l01_worm_valid": true,
+      "l05_seals_valid": true,
+      "invalid_seals": [],
+      "valid": true,
+      "findings_fr": "61 transcriptions audio vérifiées, 41 pièces judiciaires scellées sous SHA-256 (ISO/IEC 27037). Intégrité WORM confirmée.",
+      "findings_uk": "61 аудіотранскрипція та 41 судова деталь перевірені за SHA-256 (ISO/IEC 27037). WORM-інваріанти L-01 та L-05 непорушні."
+    },
+    {
+      "step_number": 2,
+      "title_uk": "Кваліфікація за 35 статтями кодексів Швейцарії та Во",
+      "title_fr": "Qualification sous les 35 articles de lois suisses et vaudoises",
+      "total_statutes": 35,
+      "rooms_count": 9,
+      "mapped_count": 35,
+      "statute_categories": {
+        "Droit pénal matériel (CP)": 14,
+        "Procédure pénale (CPP)": 10,
+        "Droit civil et obligations (CC / CO)": 4,
+        "Droit des étrangers (LEI)": 1,
+        "Droit cantonal vaudois (LOJV, LVCPP, TDIP, LJPA)": 4,
+        "Jurisprudence fédérale de référence (ATF)": 2
+      },
+      "findings_fr": "Couverture exhaustive des infractions CP 180, 181, 138, 146, 157, 144, 186, 303. Cadre procédural CPP 115, 118, 139, 141, 263.",
+      "findings_uk": "Вичерпна кваліфікація кримінальних складів (ст. 180, 181, 138, 146, 157, 144, 186, 303 КК). Процесуальна база (ст. 115, 118, 139, 141, 263 КПК)."
+    },
+    {
+      "step_number": 3,
+      "title_uk": "Оцінка допустимості доказів (ATF 147 IV 9 / Pesée des intérêts)",
+      "title_fr": "Évaluation de la recevabilité probatoire (ATF 147 IV 9 / Pesée des intérêts)",
+      "admissible_ratio": 1.0,
+      "atf_precedent": "ATF 147 IV 9 (confirmant ATF 146 IV 9)",
+      "test_results": [
+        {
+          "criterion": "Gravité des infractions investiguées",
+          "status": "PASS",
+          "detail": "Infractions graves contre la liberté (180, 181 CP) et le patrimoine (138, 146, 157 CP) punies de peines privatives de liberté."
+        },
+        {
+          "criterion": "État de nécessité et légitime défense de la preuve",
+          "status": "PASS",
+          "detail": "Enregistrements réalisés face à un chantage imminent et menaces de mort réitérées, sans autre moyen probatoire."
+        },
+        {
+          "criterion": "Pesée des intérêts (Intérêt public à la manifestation de la vérité)",
+          "status": "PASS",
+          "detail": "L'intérêt public à la répression des actes criminels l'emporte nettement sur l'intimité revendiquée par les auteurs de menaces."
+        },
+        {
+          "criterion": "Absence de provocation policière illicite (Art. 141 al. 2 CPP)",
+          "status": "PASS",
+          "detail": "Enregistrements privés spontanés sans concours des autorités de poursuite."
+        }
+      ],
+      "findings_fr": "100% des pièces audio et matérielles sont admises au dossier judiciaire sous ATF 147 IV 9. Aucune irrecevabilité sous Art. 141 CPP.",
+      "findings_uk": "100% аудіозаписів та матеріальних доказів повністю допустимі за прецедентом ATF 147 IV 9. Відсутні підстави для відхилення за ст. 141 КПК."
+    },
+    {
+      "step_number": 4,
+      "title_uk": "Аудит статусів фігурантів та інваріантів підпорядкування",
+      "title_fr": "Audit des statuts des parties et des invariants d'imputabilité",
+      "l03_immunity_secured": true,
+      "l04_arsen_compos_mentis": true,
+      "actors_assessment": {
+        "ACT-ADRIANO-MILLI": {
+          "role": "Tiers acquéreur de bonne foi",
+          "statute": "Art. 933 CC & Art. 105 al. 2 CPP",
+          "procedural_standing": "Immunité absolue / Aucune poursuite (L-03)",
+          "status": "SECURED"
+        },
+        "ACT-ARSEN-KOVALENKO": {
+          "role": "Victime principale & Partie plaignante au pénal et civil",
+          "statute": "Art. 115, 118 al. 1 CPP",
+          "procedural_standing": "Capacité civile totale / Compos mentis (L-04)",
+          "status": "CONFIRMED"
+        },
+        "ACT-OLENA-KOVALENKO": {
+          "role": "Auteur sous emprise / Contrainte morale",
+          "statute": "Art. 18 & Art. 48 let. a ch. 2 CP, Art. 178 let. d CPP",
+          "procedural_standing": "Personne appelée à donner des renseignements (PADR) / Exonération partielle",
+          "subordination_factor": "Manipulée et menacée par Liubov Suvorova. Trouble dissociatif documenté (Unisanté).",
+          "status": "PROTECTED"
+        },
+        "ACT-LIUBOV-SUVOROVA": {
+          "role": "Instigatrice & Autrice principale",
+          "statute": "Art. 24, 180, 181, 138, 146, 157, 303 CP & Art. 118 LEI",
+          "procedural_standing": "Prévenue principale / Mandat d'amener requis",
+          "status": "ACCUSED_PRIMARY"
+        },
+        "ACT-HANNA-SUVOROVA": {
+          "role": "Co-autrice & Complice",
+          "statute": "Art. 25, 138, 180, 303 CP",
+          "procedural_standing": "Prévenue complice / Blocage des comptes",
+          "status": "ACCUSED_COMPLICE"
+        }
+      },
+      "findings_fr": "Adriano Milli bénéficie du bouclier absolu (L-03, Art. 933 CC). Arsen Kovalenko est partie plaignante souveraine (L-04). Olena Kovalenko est requalifiée comme victime sous emprise psychologique (Art. 18, 48 CP), détournant l'entière responsabilité pénale sur Liubov et Hanna Suvorova.",
+      "findings_uk": "Адріано Міллі під абсолютним захистом імунітету (L-03, ст. 933 ЦК). Арсен Коваленко — суверенний потерпілий (L-04). Олена Коваленко захищена ст. 18 та 48 КК (дія під психологічним примусом Суворової), кримінальна відповідальність покладається на Любов та Ганну Суворових."
+    },
+    {
+      "step_number": 5,
+      "title_uk": "Синтез цивільних позовів та розрахунок арешту (ст. 263 КПК)",
+      "title_fr": "Synthèse des conclusions civiles et séquestre conservatoire (Art. 263 CPP)",
+      "total_sequestration_chf": 46850.0,
+      "target_formatted": "CHF 46'850.00",
+      "claims": [
+        {
+          "item": "Détournement bancaire direct (Wise / UBS)",
+          "amount_chf": 15000.0,
+          "basis": "Art. 138 CP & Art. 41 CO"
+        },
+        {
+          "item": "Frais de serrurerie d'urgence et remise en état (Avenue de la Concorde)",
+          "amount_chf": 850.0,
+          "basis": "Art. 144 CP & Art. 41 CO"
+        },
+        {
+          "item": "Tentatives d'extorsion et chantage financier",
+          "amount_chf": 1000.0,
+          "basis": "Art. 157 CP & Art. 41 CO"
+        },
+        {
+          "item": "Tort moral pour menaces de mort et contrainte physique réitérées",
+          "amount_chf": 30000.0,
+          "basis": "Art. 47 & 49 CO"
+        }
+      ],
+      "procedural_measures": [
+        "Séquestre conservatoire immédiat de tous comptes bancaires et actifs appartenant à Liubov et Hanna Suvorova (Art. 263 al. 1 let. b CPP).",
+        "Blocage préventif des transferts transfrontaliers vers l'Ukraine ou pays tiers.",
+        "Constitution de partie plaignante au pénal et au civil (Art. 118 al. 1 et 122 CPP)."
+      ],
+      "findings_fr": "Montant total du séquestre réquisitionné : CHF 46,850.00 au titre de la réparation du dommage matériel (Art. 41 CO) et de la réparation morale (Art. 47, 49 CO).",
+      "findings_uk": "Загальна сума клопотання про накладення арешту: CHF 46,850.00 для відшкодування майнової шкоди (ст. 41 ЗК) та моральної компенсації (ст. 47, 49 ЗК)."
+    }
+  ],
+  "summary_metrics": {
+    "total_statute_articles": 35,
+    "evidence_drawers": 61,
+    "judicial_evidence_items": 41,
+    "procedural_rooms": 9,
+    "admissible_evidence_percent": 100.0,
+    "total_sequestration_target_chf": 46850.0,
+    "invariants_compliance": {
+      "L-01_WORM": true,
+      "L-03_Adriano_Milli_Immunity": true,
+      "L-04_Arsen_Compos_Mentis": true,
+      "L-05_SHA256_Integrity": true
+    }
+  }
+}
