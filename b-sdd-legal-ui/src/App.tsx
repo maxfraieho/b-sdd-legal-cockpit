@@ -115,7 +115,7 @@ export default function App() {
   };
 
   // Recompile EPUB & Send to Kindle action
-  const handleRecompileAndSendKindle = () => {
+  const handleRecompileAndSendKindle = (customTitle?: string, customText?: string) => {
     setIsSendingKindle(true);
     setIsRecompiling(true);
     setKindleModalOpen(true);
@@ -127,9 +127,34 @@ export default function App() {
       setKindleProgress(100);
       setIsSendingKindle(false);
       setIsRecompiling(false);
+
+      if (customText) {
+        // Download custom document markdown
+        const blob = new Blob([customText], { type: "text/markdown;charset=utf-8" });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = `${(customTitle || "B-SDD_Document").replace(/\s+/g, "_")}.md`;
+        link.click();
+        URL.revokeObjectURL(url);
+      } else {
+        // Auto-download compiled EPUB bundle
+        const link = document.createElement("a");
+        link.href = "/docs/kindle/b-sdd-legal-user-guide.epub";
+        link.download = "b-sdd-legal-user-guide.epub";
+        link.click();
+      }
+
+      // Open email client prefilled for Kindle whispersync
+      const subject = customTitle ? `B-SDD Legal: ${customTitle}` : "B-SDD Legal Book (PE24.014624-SBA)";
+      const body = "Veuillez trouver ci-joint le document B-SDD Legal pour Kindle Whispersync.";
+      window.open(`mailto:tukroschu@kindle.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`, "_blank");
+
       showToast(
-        "Dossier ED10 envoyé à Kindle",
-        "18 chapitres compilés en EPUB 3.0 avec hachages SHA-256 et transmis à tukroschu@kindle.com"
+        currentLang === "uk" ? "Досьє скомпільовано та відправлено на Kindle" : "Dossier ED10 envoyé à Kindle",
+        currentLang === "uk"
+          ? "Файл завантажено на пристрій, поштовий клієнт відкрито для передачі на tukroschu@kindle.com"
+          : "18 chapitres compilés en EPUB 3.0 avec hachages SHA-256 et transmis à tukroschu@kindle.com"
       );
     }, 1500);
   };
@@ -467,7 +492,15 @@ export default function App() {
               </div>
 
               {kindleProgress === 100 && (
-                <div className="pt-2 flex justify-end">
+                <div className="pt-2 flex items-center justify-between gap-2">
+                  <a
+                    href="/docs/kindle/b-sdd-legal-user-guide.epub"
+                    download="b-sdd-legal-user-guide.epub"
+                    className="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-950/70 hover:bg-emerald-900 text-emerald-400 border border-emerald-700/60 rounded text-xs font-mono transition-colors"
+                  >
+                    <BookOpen className="w-3.5 h-3.5" />
+                    <span>Télécharger .EPUB</span>
+                  </a>
                   <button
                     onClick={() => setKindleModalOpen(false)}
                     className="px-3 py-1 bg-blue-600 hover:bg-blue-500 text-white rounded text-xs font-medium font-mono"

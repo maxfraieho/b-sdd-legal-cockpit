@@ -66,16 +66,27 @@ export const DocumentationModal: React.FC<DocumentationModalProps> = ({
 
   const handleSendToKindle = () => {
     setIsSendingToKindle(true);
+
+    // 1. Trigger EPUB download
+    const link = document.createElement("a");
+    link.href = "/docs/kindle/b-sdd-legal-user-guide.epub";
+    link.download = "b-sdd-legal-user-guide.epub";
+    link.click();
+
+    // 2. Open mail client prefilled for Kindle Whispersync
+    const mailto = `mailto:${kindleEmail}?subject=${encodeURIComponent("B-SDD Legal Book")}&body=${encodeURIComponent("Veuillez trouver ci-joint le guide B-SDD Legal (EPUB 3.0) pour transfert vers Kindle Whispersync.")}`;
+    window.open(mailto, "_blank");
+
     setTimeout(() => {
       setIsSendingToKindle(false);
       if (onShowToast) {
         onShowToast(
           currentLang === "uk"
-            ? `Документацію скомпільовано в EPUB 3.0 та надіслано на ${kindleEmail}`
-            : `Documentation compilée en EPUB 3.0 et envoyée à ${kindleEmail}`
+            ? `Книгу EPUB 3.0 завантажено та відкрито пошту для відправки на ${kindleEmail}`
+            : `Livre EPUB 3.0 téléchargé et client mail ouvert vers ${kindleEmail}`
         );
       }
-    }, 1200);
+    }, 1000);
   };
 
   return (
@@ -122,22 +133,26 @@ export const DocumentationModal: React.FC<DocumentationModalProps> = ({
             <button
               onClick={handleSendToKindle}
               disabled={isSendingToKindle}
-              className="hidden sm:flex items-center space-x-1.5 px-3 py-1.5 bg-emerald-950/60 hover:bg-emerald-900/80 border border-emerald-700/60 rounded-lg text-xs font-medium text-emerald-300 transition-colors"
+              className="flex items-center space-x-1.5 px-3 py-1.5 bg-emerald-950/60 hover:bg-emerald-900/80 border border-emerald-700/60 rounded-lg text-xs font-medium text-emerald-300 transition-colors cursor-pointer"
               title={`Надіслати на Kindle (${kindleEmail})`}
             >
               <Send className={`w-3.5 h-3.5 ${isSendingToKindle ? "animate-pulse" : ""}`} />
               <span>
                 {isSendingToKindle
                   ? currentLang === "uk"
-                    ? "Компіляція EPUB..."
+                    ? "Відправка..."
                     : currentLang === "fr"
-                    ? "Compilation EPUB..."
+                    ? "Envoi..."
                     : currentLang === "de"
-                    ? "EPUB-Kompilierung..."
+                    ? "Senden..."
                     : currentLang === "it"
-                    ? "Compilazione EPUB..."
-                    : "Compiling EPUB..."
-                  : "Send to Kindle"}
+                    ? "Invio..."
+                    : "Sending..."
+                  : currentLang === "uk"
+                  ? "📖 На Kindle"
+                  : currentLang === "fr"
+                  ? "📖 Vers Kindle"
+                  : "📖 Send to Kindle"}
               </span>
             </button>
             <button

@@ -170,6 +170,7 @@ export const LegalStrategyModal: React.FC<LegalStrategyModalProps> = ({
   const [activeTab, setActiveTab] = useState<'doctrine' | 'pitch' | 'lavi' | 'contract' | 'matrix'>(initialTab);
   const [docLang, setDocLang] = useState<'fr' | 'uk'>('fr');
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
+  const [sentKindle, setSentKindle] = useState(false);
 
   if (!isOpen) return null;
 
@@ -629,7 +630,11 @@ export const LegalStrategyModal: React.FC<LegalStrategyModalProps> = ({
             <button
               onClick={() => {
                 const activeText =
-                  activeTab === 'pitch'
+                  activeTab === 'doctrine'
+                    ? doctrineDoc.sections.map((s) => `### ${s.title}\n${s.content}`).join('\n\n')
+                    : activeTab === 'matrix'
+                    ? matrixDoc.routes.map((r) => `### ${r.name}\n- Base: ${r.basis}\n- Risques: ${r.risks}\n- Mesures: ${r.mitigation}`).join('\n\n')
+                    : activeTab === 'pitch'
                     ? docLang === 'fr'
                       ? pitchDoc.contentFr
                       : pitchDoc.contentUk
@@ -644,15 +649,37 @@ export const LegalStrategyModal: React.FC<LegalStrategyModalProps> = ({
                     : docLang === 'fr'
                     ? pitchDoc.contentFr
                     : pitchDoc.contentUk;
-                onSendToKindle?.(
-                  `B-SDD Legal Strategy (${activeTab.toUpperCase()})`,
-                  activeText
-                );
+
+                const docTitle = `B-SDD_Legal_Strategy_${activeTab.toUpperCase()}_${docLang}`;
+
+                // 1. Download file
+                const blob = new Blob([activeText], { type: 'text/markdown;charset=utf-8' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `${docTitle}.md`;
+                a.click();
+                URL.revokeObjectURL(url);
+
+                // 2. Open email client prefilled for Kindle whispersync
+                const mailtoUrl = `mailto:tukroschu@kindle.com?subject=${encodeURIComponent("B-SDD Legal Book: " + docTitle)}&body=${encodeURIComponent("Attachez ce fichier .md ou .epub pour transmission vers Kindle Whispersync (Dossier PE24.014624-SBA).")}`;
+                window.open(mailtoUrl, '_blank');
+
+                // 3. Callback if provided
+                onSendToKindle?.(docTitle, activeText);
+
+                // 4. UI visual confirmation
+                setSentKindle(true);
+                setTimeout(() => setSentKindle(false), 3500);
               }}
               className="px-3 py-1.5 rounded-lg bg-blue-900/40 hover:bg-blue-900/70 border border-blue-700/60 text-blue-200 text-xs flex items-center gap-1.5 transition-colors cursor-pointer"
             >
-              <Send className="w-3.5 h-3.5" />
-              <span>{t.btn_kindle}</span>
+              {sentKindle ? (
+                <Check className="w-3.5 h-3.5 text-emerald-400" />
+              ) : (
+                <Send className="w-3.5 h-3.5" />
+              )}
+              <span>{sentKindle ? (currentLang === 'uk' ? '✓ Надіслано на Kindle!' : '✓ Envoyé à Kindle !') : t.btn_kindle}</span>
             </button>
 
             <button

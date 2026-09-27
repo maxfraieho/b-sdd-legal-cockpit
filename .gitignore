@@ -11,6 +11,8 @@ __pycache__/
 .DS_Store
 *.log
 *.epub
+!b-sdd-legal-ui/public/docs/kindle/*.epub
+!docs/kindle/*.epub
 *.pdf
 *.mp3
 !b-sdd-legal-ui/public/evidence/audio/*.mp3

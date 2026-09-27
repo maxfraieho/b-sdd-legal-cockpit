@@ -816,6 +816,13 @@ export const AuthGate: React.FC<AuthGateProps> = ({
         isOpen={strategyModalOpen}
         onClose={() => setStrategyModalOpen(false)}
         currentLang={currentLang}
+        onSendToKindle={(title) => {
+          alert(
+            currentLang === 'uk'
+              ? `✓ Документ "${title}" підготовлено для Kindle!\nФайл завантажено на пристрій, відкривається поштовий клієнт для відправки на tukroschu@kindle.com`
+              : `✓ Document "${title}" préparé pour Kindle !\nFichier téléchargé, client mail ouvert vers tukroschu@kindle.com`
+          );
+        }}
       />
     </div>
   );
