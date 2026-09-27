@@ -29,11 +29,10 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
   onOpenQuickMenu,
 }) => {
   const tabs: { id: WorkspaceTab; labelUk: string; labelFr: string; labelEn: string; icon: any }[] = [
-    { id: "kindle_review", labelUk: "Студія", labelFr: "Studio", labelEn: "Studio", icon: FileText },
-    { id: "factbook", labelUk: "Докази", labelFr: "Preuves", labelEn: "Exhibits", icon: FolderOpen },
-    { id: "actors", labelUk: "Фігуранти", labelFr: "Parties", labelEn: "Parties", icon: Users },
-    { id: "pleadings", labelUk: "Секвестр", labelFr: "Requêtes", labelEn: "Pleadings", icon: Scale },
+    { id: "procedures", labelUk: "Процедури", labelFr: "Procédure", labelEn: "Pipeline", icon: Scale },
+    { id: "toolbox", labelUk: "Інструменти", labelFr: "Outils", labelEn: "Tools", icon: FolderOpen },
     { id: "ai_copilot", labelUk: "ШІ-Копілот", labelFr: "IA", labelEn: "AI", icon: Brain },
+    { id: "factbook", labelUk: "Докази", labelFr: "Preuves", labelEn: "Exhibits", icon: FileText },
   ];
 
   return (

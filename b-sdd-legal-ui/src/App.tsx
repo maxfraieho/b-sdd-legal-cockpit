@@ -18,6 +18,8 @@ import { commitAtomicSupersession } from "./lib/wormLedger";
 import { BordereauPiece, BORDEREAU_PIECES, ActorItem, resolveLocalized } from "./data/legalData";
 import { loadCaseActors, saveCaseActors } from "./lib/actorsManager";
 import { AiLegalCopilotView } from "./components/AiLegalCopilotView";
+import { ProceduralWorkflowView } from "./components/ProceduralWorkflowView";
+import { ToolsCatalogView } from "./components/ToolsCatalogView";
 import { CaseManagerModal } from "./components/CaseManagerModal";
 import { DocumentationModal } from "./components/DocumentationModal";
 import { MobileBottomNav } from "./components/MobileBottomNav";
@@ -33,11 +35,12 @@ import {
   loadActorsForCase,
   saveActorsForCase,
 } from "./lib/casesManager";
-import { CheckCircle2, BookOpen, Send, X, ShieldCheck } from "lucide-react";
+import { CheckCircle2, BookOpen, Send, X, ShieldCheck, PanelRightClose, PanelRightOpen, Scale } from "lucide-react";
 
 export default function App() {
-  const [currentTab, setCurrentTab] = useState<WorkspaceTab>("factbook");
+  const [currentTab, setCurrentTab] = useState<WorkspaceTab>("procedures");
   const [currentLang, setCurrentLang] = useState<SupportedLanguage>("uk");
+  const [inspectorCollapsed, setInspectorCollapsed] = useState(false);
 
   // Multi-Case State (ADR-011)
   const [cases, setCases] = useState<LegalCase[]>(() => loadAllCases());
@@ -196,18 +199,55 @@ export default function App() {
         onOpenJudicialBundle={() => setJudicialBundleOpen(true)}
         onOpenQuickMenu={() => setQuickMenuOpen(true)}
         onOpenSettings={() => setSettingsModalOpen(true)}
+        onOpenCaseSync={() => setCaseSyncModalOpen(true)}
+        onSendToKindle={handleRecompileAndSendKindle}
+        isEInkMode={isEInkMode}
+        onToggleEInkMode={() => setIsEInkMode(!isEInkMode)}
         activeCase={activeCase}
         onOpenCaseManager={() => setCaseManagerModalOpen(true)}
         mobileTab={mobileTab}
         onMobileTabChange={setMobileTab}
       />
 
-      {/* MIDDLE BODY: ZONE B (68% desktop) & ZONE C (32% desktop) */}
+      {/* MIDDLE BODY: ZONE B & ZONE C (Collapsible) */}
       <main className="flex-1 w-full flex overflow-hidden min-h-0">
         {/* ZONE B: PRIMARY LEGAL WORKSPACE */}
-        <section className={`h-full flex-col overflow-hidden w-full lg:w-[68%] ${
-          mobileTab === "workspace" ? "flex" : "hidden lg:flex"
-        }`}>
+        <section
+          className={`h-full flex-col overflow-hidden w-full ${
+            inspectorCollapsed ? "lg:w-[calc(100%-40px)]" : "lg:w-[68%]"
+          } ${mobileTab === "workspace" ? "flex" : "hidden lg:flex"}`}
+        >
+          {currentTab === "procedures" && (
+            <ProceduralWorkflowView
+              currentLang={currentLang}
+              activeCase={activeCase}
+              onTabChange={setCurrentTab}
+              onOpenJudicialBundle={() => setJudicialBundleOpen(true)}
+              onOpenCaseSync={() => setCaseSyncModalOpen(true)}
+              onOpenSwissCodes={() => setSwissCodesModalOpen(true)}
+              onOpenEvidenceWizard={() => setEvidenceWizardOpen(true)}
+              onSendToKindle={handleRecompileAndSendKindle}
+              onShowToast={showToast}
+            />
+          )}
+
+          {currentTab === "toolbox" && (
+            <ToolsCatalogView
+              currentLang={currentLang}
+              activeCase={activeCase}
+              onTabChange={setCurrentTab}
+              onOpenEvidenceWizard={() => setEvidenceWizardOpen(true)}
+              onOpenActorWizard={() => setActorWizardOpen(true)}
+              onOpenSwissCodes={() => setSwissCodesModalOpen(true)}
+              onOpenGlossary={() => setGlossaryModalOpen(true)}
+              onOpenDocs={() => setDocsModalOpen(true)}
+              onOpenJudicialBundle={() => setJudicialBundleOpen(true)}
+              onOpenCaseSync={() => setCaseSyncModalOpen(true)}
+              onSendToKindle={handleRecompileAndSendKindle}
+              onShowToast={showToast}
+            />
+          )}
+
           {currentTab === "kindle_review" && (
             <KindleVoiceReview
               currentLang={currentLang}
@@ -250,12 +290,63 @@ export default function App() {
           )}
         </section>
 
-        {/* ZONE C: CONTEXTUAL LEGAL INSPECTOR */}
-        <section className={`h-full border-l border-slate-800/80 bg-[#0B1120] overflow-hidden w-full lg:w-[32%] ${
-          mobileTab === "inspector" ? "flex flex-col" : "hidden lg:flex lg:flex-col"
-        }`}>
-          <LegalInspector currentLang={currentLang} actors={caseActors} activeCase={activeCase} />
-        </section>
+        {/* ZONE C: CONTEXTUAL LEGAL INSPECTOR (Collapsible Astryx Zone C) */}
+        {inspectorCollapsed ? (
+          <aside className="hidden lg:flex flex-col items-center justify-between py-3 w-[40px] bg-[#0A0F1D] border-l border-slate-800/90 select-none shrink-0">
+            <button
+              onClick={() => setInspectorCollapsed(false)}
+              className="p-1.5 rounded hover:bg-slate-800 text-slate-400 hover:text-white transition-colors cursor-pointer"
+              title={currentLang === "uk" ? "Розгорнути Юридичний Інспектор" : "Développer le Legal Inspector"}
+            >
+              <PanelRightOpen className="w-4 h-4 text-amber-400" />
+            </button>
+
+            <div className="flex flex-col items-center space-y-3">
+              <span className="text-[10px] font-mono font-bold text-amber-400 rotate-90 whitespace-nowrap tracking-wider">
+                INSPECTOR
+              </span>
+              <div className="h-8 w-px bg-slate-800" />
+              <div className="flex flex-col space-y-1 text-[9px] font-mono text-slate-500">
+                <span title="L-01: WORM Ledger">L-01</span>
+                <span title="L-02: Bitemporal">L-02</span>
+                <span title="L-03: Milli Shield (933 CC)" className="text-amber-400 font-bold">L-03</span>
+                <span title="L-04: Standing (115 CPP)" className="text-emerald-400 font-bold">L-04</span>
+                <span title="L-05: Offline DB">L-05</span>
+              </div>
+            </div>
+
+            <button
+              onClick={() => setInspectorCollapsed(false)}
+              className="p-1.5 rounded hover:bg-slate-800 text-slate-400 hover:text-amber-300"
+              title="Розгорнути деталі"
+            >
+              <Scale className="w-3.5 h-3.5" />
+            </button>
+          </aside>
+        ) : (
+          <section className={`h-full border-l border-slate-800/80 bg-[#0B1120] overflow-hidden w-full lg:w-[32%] relative ${
+            mobileTab === "inspector" ? "flex flex-col" : "hidden lg:flex lg:flex-col"
+          }`}>
+            {/* Collapse toggle header strip */}
+            <div className="hidden lg:flex items-center justify-between px-3 py-1 bg-[#080D1A] border-b border-slate-800 text-[10px] font-mono text-slate-400 shrink-0">
+              <span className="flex items-center space-x-1.5">
+                <Scale className="w-3 h-3 text-amber-400" />
+                <span className="font-bold text-slate-300">LEGAL INSPECTOR</span>
+              </span>
+              <button
+                onClick={() => setInspectorCollapsed(true)}
+                className="flex items-center space-x-1 text-slate-400 hover:text-white px-1.5 py-0.5 rounded hover:bg-slate-800 transition-colors"
+                title={currentLang === "uk" ? "Згорнути інспектор" : "Réduire l'inspecteur"}
+              >
+                <PanelRightClose className="w-3.5 h-3.5" />
+                <span>{currentLang === "uk" ? "Згорнути" : "Réduire"}</span>
+              </button>
+            </div>
+            <div className="flex-1 overflow-hidden">
+              <LegalInspector currentLang={currentLang} actors={caseActors} activeCase={activeCase} />
+            </div>
+          </section>
+        )}
       </main>
 
       {/* ZONE D: BOTTOM ACTION DOCK (40px) */}
