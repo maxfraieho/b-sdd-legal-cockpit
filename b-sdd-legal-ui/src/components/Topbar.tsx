@@ -24,15 +24,8 @@ import { LegalCase } from "../lib/casesManager";
 import { AstryxActionDrawer } from "./astryx/AstryxActionDrawer";
 import { AuthorizedUser, ROLE_DEFINITIONS } from "../types/auth";
 
-export type WorkspaceTab =
-  | "procedures"
-  | "toolbox"
-  | "ai_copilot"
-  | "kindle_review"
-  | "factbook"
-  | "actors"
-  | "pleadings"
-  | "worm_ledger";
+import { WorkspaceTab } from "../types/workspace";
+export type { WorkspaceTab };
 
 interface TopbarProps {
   currentTab: WorkspaceTab;

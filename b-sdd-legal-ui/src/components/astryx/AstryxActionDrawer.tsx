@@ -24,7 +24,7 @@ import {
 } from "lucide-react";
 import { SupportedLanguage } from "../../types/i18n";
 import { LegalCase } from "../../lib/casesManager";
-import { WorkspaceTab } from "../Topbar";
+import { WorkspaceTab } from "../../types/workspace";
 
 interface AstryxActionDrawerProps {
   isOpen: boolean;
