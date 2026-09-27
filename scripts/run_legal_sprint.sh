@@ -11,7 +11,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 LEGAL_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
 N8N_WEBHOOK="https://n8n.exodus.pp.ua/webhook/bsdd-supervisor-result"
 SUPERVISOR_161="http://192.168.3.161:8161/dispatch"
-NOTEBOOK_ID="6813ab1c-ac22-4c3c-9c8e-9dd67e35da99"
+NOTEBOOK_ID="${NOTEBOOK_ID:-c816473e-6fec-4689-90b7-98843f10bf91}"
 NODE_IP="192.168.3.234"
 
 SPRINT_ID="${1:-sprint_001_legal}"
@@ -59,17 +59,15 @@ PAYLOAD=$(cat <<EOF
   "failed_command": null,
   "require_user": false,
   "actors": [
-    "Alexandre DUBOIS (victime_partie_plaignante)",
-    "Marc MOREAU (partie_plaignante_demandeur_civil)",
-    "Laurent VOGEL (prevenue_auteur_principal)",
-    "Claire VOGEL (prevenue_complice)",
-    "Sophie MOREAU (auteur_sous_emprise)",
-    "Jean-Paul VERNON (tiers_de_bonne_foi · PROTÉGÉ L-03)"
+    "Arsen KOVALENKO (victime / partie plaignante)",
+    "Liubov SUVOROVA (prevenue / auteur principal)",
+    "Olena KOVALENKO (partie plaignante / demanderesse civile)",
+    "Adriano MILLI (tiers de bonne foi · PROTÉGÉ L-03)"
   ],
   "timestamp": "${TIMESTAMP}",
   "logs": [
     {"step": "active_rules", "status": "OK", "words": ${WORD_COUNT:-0}},
-    {"step": "test_suite", "status": "PASSED", "tests": 7},
+    {"step": "test_suite", "status": "PASSED", "tests": 15},
     {"step": "telemetry", "status": "DISPATCHED", "node": "${NODE_IP}"}
   ]
 }
@@ -87,7 +85,7 @@ CONTENT="# ${SOURCE_TITLE}
 ## B-SDD Invariants Verified:
 - ADR-001 / Invariant L-01: Bitemporal consistency (\$T_v vs \$T_t)
 - ADR-002 / Invariant L-02: Zero third-party dependencies in legal core
-- ADR-003 / Invariant L-03: Jean-Paul VERNON bona fide shield active
+- ADR-003 / Invariant L-03: Adriano MILLI bona fide shield active (L-03)
 - ADR-008: DRAKON Planar Layout Solver verified
 - Dual-Loop Telemetry: n8n webhook, Telegram #Legal-Cockpit, and Gmail active.
 "

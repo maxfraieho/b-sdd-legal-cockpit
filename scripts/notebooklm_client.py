@@ -13,7 +13,7 @@ import urllib.error
 from typing import Any, Dict, List, Optional
 
 NOTEBOOKLM_MCP_URL = "http://192.168.3.184:8002/mcp"
-TARGET_NOTEBOOK_ID = "6813ab1c-ac22-4c3c-9c8e-9dd67e35da99"
+TARGET_NOTEBOOK_ID = "c816473e-6fec-4689-90b7-98843f10bf91"
 
 
 class NotebookLmMcpClient:
@@ -78,6 +78,30 @@ class NotebookLmMcpClient:
                                 return text
         return None
 
+    def delete_source(self, notebook_id: str, source_id: str) -> Any:
+        return self.call_tool("sources_delete", {
+            "notebook_id": notebook_id,
+            "source_id": source_id
+        })
+
+    def create_notebook(self, title: str) -> Any:
+        return self.call_tool("notebooks_create", {
+            "title": title
+        })
+
+    def clean_sources(self, notebook_id: str) -> int:
+        sources = self.list_sources(notebook_id)
+        deleted_count = 0
+        for src in sources:
+            src_id = src.get("id") or src.get("source_id") or src.get("sourceId")
+            if src_id:
+                try:
+                    self.delete_source(notebook_id, src_id)
+                    deleted_count += 1
+                except Exception as e:
+                    logging.warning(f"Failed to delete source {src_id}: {e}")
+        return deleted_count
+
     def list_sources(self, notebook_id: str) -> List[Dict[str, Any]]:
         res = self.call_tool("sources_list", {"notebook_id": notebook_id})
         if isinstance(res, list):
@@ -95,21 +119,34 @@ class NotebookLmMcpClient:
 def main():
     parser = argparse.ArgumentParser(description="NotebookLM MCP CLI Helper")
     parser.add_argument("--notebook", default=TARGET_NOTEBOOK_ID, help="Notebook ID")
-    parser.add_argument("--action", choices=["list", "add"], default="list", help="Action")
-    parser.add_argument("--title", help="Source title")
+    parser.add_argument("--action", choices=["list", "add", "clean", "create"], default="list", help="Action")
+    parser.add_argument("--title", help="Source title or Notebook title")
     parser.add_argument("--content", help="Source text content")
     args = parser.parse_args()
 
     client = NotebookLmMcpClient()
-    if args.action == "list":
-        sources = client.list_sources(args.notebook)
-        print(json.dumps(sources, indent=2))
-    elif args.action == "add":
-        if not args.title or not args.content:
-            print("ERROR: --title and --content are required for add action.")
-            sys.exit(1)
-        res = client.add_text_source(args.notebook, args.title, args.content)
-        print(f"[SUCCESS] Ingested source '{args.title}': {res}")
+    try:
+        if args.action == "list":
+            sources = client.list_sources(args.notebook)
+            print(json.dumps(sources, indent=2))
+        elif args.action == "clean":
+            count = client.clean_sources(args.notebook)
+            print(f"[SUCCESS] Cleaned {count} transient source(s) from notebook {args.notebook}")
+        elif args.action == "create":
+            if not args.title:
+                print("ERROR: --title is required for create action.")
+                sys.exit(1)
+            res = client.create_notebook(args.title)
+            print(f"[SUCCESS] Created notebook '{args.title}': {res}")
+        elif args.action == "add":
+            if not args.title or not args.content:
+                print("ERROR: --title and --content are required for add action.")
+                sys.exit(1)
+            res = client.add_text_source(args.notebook, args.title, args.content)
+            print(f"[SUCCESS] Ingested source '{args.title}': {res}")
+    except Exception as e:
+        print(f"[ERROR] NotebookLM client operation failed: {e}", file=sys.stderr)
+        sys.exit(1)
 
 
 if __name__ == "__main__":
