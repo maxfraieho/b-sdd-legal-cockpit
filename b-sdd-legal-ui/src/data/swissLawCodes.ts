@@ -9,13 +9,13 @@ export interface LawArticle {
   code: string; // "CP", "CPP", "CC", "CO", "LEI", "LOJV", "LJPA", "LPAV", "TDIP", "ATF"
   jurisdiction: "federal" | "canton_vaud";
   article: string; // e.g. "Art. 146", "Art. 180", "Art. 933"
-  title: Record<SupportedLanguage, string>;
+  title: Partial<Record<SupportedLanguage, string>> & { uk: string; fr: string; en: string };
   category: "penal" | "procedure" | "civil" | "obligations" | "foreigners" | "cantonal_vaud" | "jurisprudence";
   content_fr: string; // Official Swiss French text (RS / BLV)
   content_uk: string; // Accurate Ukrainian legal translation
   content_en: string; // Accurate English translation
   sanction?: string; // e.g. "Peine privative de liberté de 5 ans au plus"
-  relevance_case: Record<SupportedLanguage, string>;
+  relevance_case: Partial<Record<SupportedLanguage, string>> & { uk: string; fr: string; en: string };
   corroborating_cotes: string[]; // e.g. ["P-04", "P-05", "P-14"]
   mempalace_node_id: string;
   url_fedlex?: string; // Official Fedlex / BLV canonical link

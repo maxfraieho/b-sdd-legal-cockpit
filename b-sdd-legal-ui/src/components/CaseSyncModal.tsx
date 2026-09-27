@@ -60,7 +60,7 @@ export const CaseSyncModal: React.FC<CaseSyncModalProps> = ({
   const accusedCount = actors.filter((a) =>
     ["prevenu_principal", "prevenu_complice"].includes(a.procedural_standing || "")
   ).length;
-  const protectedCount = actors.filter((a) => a.bona_fide).length;
+  const protectedCount = actors.filter((a) => a.protected_bona_fide || a.id === "ACT-ADRIANO-MILLI").length;
   const otherActorsCount = actors.length - victimCount - accusedCount - protectedCount;
 
   // Sequential Thinking Steps

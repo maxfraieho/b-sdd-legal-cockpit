@@ -41,7 +41,7 @@ export const SwissCodesModal: React.FC<SwissCodesModalProps> = ({
     const matchesSearch =
       item.article.toLowerCase().includes(q) ||
       item.code.toLowerCase().includes(q) ||
-      item.title[currentLang].toLowerCase().includes(q) ||
+      (item.title[currentLang] || item.title.uk || "").toLowerCase().includes(q) ||
       item.content_fr.toLowerCase().includes(q) ||
       item.content_uk.toLowerCase().includes(q) ||
       item.corroborating_cotes.some((c) => c.toLowerCase().includes(q));
@@ -56,7 +56,7 @@ export const SwissCodesModal: React.FC<SwissCodesModalProps> = ({
   });
 
   const handleCopyCitation = (article: LawArticle) => {
-    const text = `${article.article} — ${article.title[currentLang]}\n${
+    const text = `${article.article} — ${article.title[currentLang] || article.title.uk || ""}\n${
       currentLang === "uk" ? article.content_uk : article.content_fr
     }`;
     navigator.clipboard.writeText(text);
@@ -207,7 +207,7 @@ export const SwissCodesModal: React.FC<SwissCodesModalProps> = ({
                   </div>
 
                   <h4 className="text-xs font-semibold text-slate-100 mb-1 leading-snug">
-                    {art.title[currentLang]}
+                    {art.title[currentLang] || art.title.uk || art.title.fr}
                   </h4>
 
                   <p className="text-[11px] text-slate-400 line-clamp-2 font-serif italic mb-2 leading-relaxed">

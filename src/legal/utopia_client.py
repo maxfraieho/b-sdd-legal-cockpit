@@ -38,6 +38,11 @@ def run_psql(query: str, timeout_sec: int = 10) -> str:
             return f"ERROR ({p.returncode}): {stderr.strip()}"
         return stdout.strip()
     except subprocess.TimeoutExpired:
+        try:
+            p.kill()
+            p.communicate()
+        except Exception:
+            pass
         return "ERROR: Query timed out."
     except Exception as e:
         return f"ERROR: {e}"

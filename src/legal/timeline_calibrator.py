@@ -6,9 +6,7 @@ Invariant L-04 (Timeline Calibration & Conflict Detection).
 """
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
-import hashlib
-import json
-from typing import Dict, List, Optional, Any, Tuple, Union
+from typing import Dict, List, Optional, Any
 
 
 def _now_iso() -> str:

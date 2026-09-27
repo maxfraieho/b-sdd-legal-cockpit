@@ -8,11 +8,10 @@ Compiles an authoritative, dense legal context snapshot (<500 words budget)
 in <20 ms for agent turns, court filings, and judicial co-pilot queries.
 100% Pure Python Standard Library.
 """
-import json
 import os
 import sys
 import time
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional
@@ -24,13 +23,11 @@ if str(ROOT) not in sys.path:
 
 from src.legal.actors import (
     ProceduralStatus,
-    ActorEntity,
     ActorMatrix,
     create_swiss_benchmark_matrix,
 )
 from src.legal.timeline_calibrator import (
     TimelineCalibrator,
-    BitemporalFactEvent,
     create_swiss_benchmark_timeline,
 )
 

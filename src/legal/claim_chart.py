@@ -8,8 +8,6 @@ Phase 2 (Sprint 004) of B-SDD-LEGAL adaptation.
 Enforces Invariant L-01 (Bitemporal Evidence Linkage) and
 Invariant L-03 (Protected Parties and Clean Qualification).
 """
-import hashlib
-import json
 import os
 import sys
 from dataclasses import dataclass, field
@@ -22,7 +20,7 @@ ROOT = Path(__file__).resolve().parent.parent.parent
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from src.legal.actors import ProceduralStatus, ActorMatrix, create_swiss_benchmark_matrix
+from src.legal.actors import ActorMatrix, create_swiss_benchmark_matrix
 
 
 class CorroborationStatus(str, Enum):

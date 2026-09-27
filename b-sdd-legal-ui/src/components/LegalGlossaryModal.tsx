@@ -23,9 +23,9 @@ interface LegalGlossaryModalProps {
 interface GlossaryEntry {
   term: string;
   category: "code" | "statute" | "invariant" | "procedure" | "system";
-  title: Record<SupportedLanguage, string>;
-  description: Record<SupportedLanguage, string>;
-  details: Record<SupportedLanguage, string>;
+  title: Partial<Record<SupportedLanguage, string>> & { uk: string; fr?: string; en?: string };
+  description: Partial<Record<SupportedLanguage, string>> & { uk: string; fr?: string; en?: string };
+  details: Partial<Record<SupportedLanguage, string>> & { uk: string; fr?: string; en?: string };
   legalBasis?: string;
   badge?: string;
 }

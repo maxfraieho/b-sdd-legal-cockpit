@@ -77,6 +77,7 @@ export const CaseManagerModal: React.FC<CaseManagerModalProps> = ({
       client_name: newClientName.trim(),
       client_role: { uk: newClientRole.trim(), fr: newClientRole.trim(), en: newClientRole.trim() },
       status: "active",
+      is_benchmark: false,
       description: { uk: newDescription.trim(), fr: newDescription.trim(), en: newDescription.trim() },
       sequestration_target_chf: newTargetChf,
     });

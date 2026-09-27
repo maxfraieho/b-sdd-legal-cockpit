@@ -92,7 +92,7 @@ export interface ConfrontationItem {
   inconsistency_point: LocalizedString;
   exhibits: string[];
   certified_timestamp: string;
-  investigation_questions: Record<SupportedLanguage, string[]>;
+  investigation_questions: Partial<Record<SupportedLanguage, string[]>> & { uk?: string[]; fr?: string[]; en?: string[] };
   tactical_defense: LocalizedString;
 }
 
@@ -103,7 +103,7 @@ export interface LegalRequisition {
   autorite: string;
   urgence: 'URGENT' | 'ORDINAIRE';
   category?: 'penal' | 'civil';
-  conclusions_formelles: Record<SupportedLanguage, string[]>;
+  conclusions_formelles: Partial<Record<SupportedLanguage, string[]>> & { uk?: string[]; fr?: string[]; en?: string[] };
   corps_texte: LocalizedString;
 }
 
@@ -135,7 +135,7 @@ export interface ActorItem {
   /** Invariant L-03: Bona fide third party protection flag */
   protected_bona_fide: boolean;
   legal_reference: string;
-  droits_proceduraux: Record<SupportedLanguage, string[]>;
+  droits_proceduraux: Partial<Record<SupportedLanguage, string[]>> & { uk?: string[]; fr?: string[]; en?: string[] };
   forbidden_actions?: string[];
   avatarUrl?: string;
   photos?: ActorPhoto[];

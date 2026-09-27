@@ -631,9 +631,13 @@ export const LegalStrategyModal: React.FC<LegalStrategyModalProps> = ({
               onClick={() => {
                 const activeText =
                   activeTab === 'doctrine'
-                    ? doctrineDoc.sections.map((s) => `### ${s.title}\n${s.content}`).join('\n\n')
+                    ? LEGAL_STRATEGY_MEMORANDUM.sections
+                        .map((s) => `### ${docLang === 'fr' ? s.titleFr : s.titleUk}\n${docLang === 'fr' ? s.contentFr : s.contentUk}`)
+                        .join('\n\n')
                     : activeTab === 'matrix'
-                    ? matrixDoc.routes.map((r) => `### ${r.name}\n- Base: ${r.basis}\n- Risques: ${r.risks}\n- Mesures: ${r.mitigation}`).join('\n\n')
+                    ? (docLang === 'fr'
+                        ? "# MATRICE D'ÉVALUATION DES STRATÉGIES JURIDIQUES (PE24.014624-SBA)\n\n1. Mandat d'avocat & compensation IT (art. 363 / 394 / 120 CO) : Succès 95%\n2. Soutien étatique LAVI (art. 136 CPP / ATF 150 II 465) : Succès 85%\n3. Conseil juridique gratuit (art. 136 CPP) : Succès 65%\n4. Plainte directe sans avocat (art. 310 CPP) : Risque de classement élevé."
+                        : "# МАТРИЦЯ ОЦІНКИ ЮРИДИЧНИХ СТРАТЕГІЙ (PE24.014624-SBA)\n\n1. Адвокатський мандат та IT-залік (ст. 363 / 394 / 120 CO) : Успіх 95%\n2. Державна підтримка LAVI (ст. 136 CPP / ATF 150 II 465) : Успіх 85%\n3. Безоплатний представник (ст. 136 CPP) : Успіх 65%\n4. Самостійне подання без адвоката (ст. 310 CPP) : Високий ризик закриття справи.")
                     : activeTab === 'pitch'
                     ? docLang === 'fr'
                       ? pitchDoc.contentFr

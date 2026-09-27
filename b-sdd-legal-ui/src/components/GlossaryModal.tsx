@@ -4,11 +4,11 @@ import { SupportedLanguage } from "../types/i18n";
 
 interface GlossaryTerm {
   acronym: string;
-  fullTitle: Record<SupportedLanguage, string>;
+  fullTitle: Partial<Record<SupportedLanguage, string>> & { uk: string; fr?: string; en?: string };
   category: "penal" | "procedure" | "civil" | "bitemporal" | "institutional";
-  definition: Record<SupportedLanguage, string>;
+  definition: Partial<Record<SupportedLanguage, string>> & { uk: string; fr?: string; en?: string };
   articles: string[];
-  relevance: Record<SupportedLanguage, string>;
+  relevance: Partial<Record<SupportedLanguage, string>> & { uk: string; fr?: string; en?: string };
 }
 
 const GLOSSARY_TERMS: GlossaryTerm[] = [
@@ -213,8 +213,8 @@ export const GlossaryModal: React.FC<GlossaryModalProps> = ({ isOpen, onClose, c
     const q = searchTerm.toLowerCase();
     const matchesSearch =
       term.acronym.toLowerCase().includes(q) ||
-      term.fullTitle[currentLang].toLowerCase().includes(q) ||
-      term.definition[currentLang].toLowerCase().includes(q) ||
+      (term.fullTitle[currentLang] || term.fullTitle.uk || "").toLowerCase().includes(q) ||
+      (term.definition[currentLang] || term.definition.uk || "").toLowerCase().includes(q) ||
       term.articles.some((a) => a.toLowerCase().includes(q));
 
     const matchesCategory = selectedCategory === "all" || term.category === selectedCategory;
@@ -381,14 +381,14 @@ export const GlossaryModal: React.FC<GlossaryModalProps> = ({ isOpen, onClose, c
                         {term.acronym}
                       </span>
                       <span className="text-xs sm:text-sm font-semibold text-slate-200">
-                        {term.fullTitle[currentLang]}
+                        {term.fullTitle[currentLang] || term.fullTitle.uk || term.fullTitle.fr || ""}
                       </span>
                     </div>
 
                     <button
                       onClick={() =>
                         handleCopy(
-                          `${term.acronym} — ${term.fullTitle[currentLang]}\n${term.definition[currentLang]}`,
+                          `${term.acronym} — ${term.fullTitle[currentLang] || term.fullTitle.uk || ""}\n${term.definition[currentLang] || term.definition.uk || ""}`,
                           term.acronym
                         )
                       }
@@ -415,7 +415,7 @@ export const GlossaryModal: React.FC<GlossaryModalProps> = ({ isOpen, onClose, c
                   </div>
 
                   <p className="text-xs sm:text-sm text-slate-300 leading-relaxed mb-2.5">
-                    {term.definition[currentLang]}
+                    {term.definition[currentLang] || term.definition.uk || term.definition.fr || ""}
                   </p>
 
                   <div className="p-2 bg-blue-950/30 border border-blue-800/40 rounded flex items-start space-x-2 text-[11px] text-blue-200/90 leading-relaxed">
@@ -428,7 +428,7 @@ export const GlossaryModal: React.FC<GlossaryModalProps> = ({ isOpen, onClose, c
                           ? "Portée au dossier :"
                           : "Case Relevance:"}
                       </strong>
-                      <span>{term.relevance[currentLang]}</span>
+                      <span>{term.relevance[currentLang] || term.relevance.uk || term.relevance.fr || ""}</span>
                     </div>
                   </div>
                 </div>

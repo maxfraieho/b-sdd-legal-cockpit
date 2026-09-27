@@ -615,7 +615,7 @@ export default function App() {
         onClose={() => setDocsModalOpen(false)}
         currentLang={currentLang}
         kindleEmail={settings.kindleEmail}
-        onShowToast={showToast}
+        onShowToast={(msg) => showToast(currentLang === 'uk' ? "Документація" : "Documentation", msg)}
       />
 
       {/* MOBILE QUICK ACTION SHEET (Meta / Facebook Asterisk Sheet) */}

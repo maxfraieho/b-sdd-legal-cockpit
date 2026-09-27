@@ -289,7 +289,7 @@ export const AiLegalCopilotView: React.FC<AiLegalCopilotViewProps> = ({
         !q ||
         art.article.toLowerCase().includes(q) ||
         art.code.toLowerCase().includes(q) ||
-        art.title[currentLang].toLowerCase().includes(q) ||
+        (art.title[currentLang] || art.title.uk || "").toLowerCase().includes(q) ||
         art.content_fr.toLowerCase().includes(q) ||
         art.content_uk.toLowerCase().includes(q);
 

@@ -11,17 +11,17 @@ export type CaseType = 'penal' | 'civil' | 'administrative' | 'arbitration';
 export interface LegalCase {
   id: string;
   reference: string; // e.g. "PE24.014624-SBA"
-  title: Record<SupportedLanguage, string>;
-  court: Record<SupportedLanguage, string>;
+  title: Partial<Record<SupportedLanguage, string>> & { uk: string; fr: string; en: string };
+  court: Partial<Record<SupportedLanguage, string>> & { uk: string; fr: string; en: string };
   canton: string; // "Vaud", "Genève", "Zurich", "Berne", etc.
   type: CaseType;
   client_name: string;
-  client_role: Record<SupportedLanguage, string>;
+  client_role: Partial<Record<SupportedLanguage, string>> & { uk: string; fr: string; en: string };
   status: 'active' | 'archived' | 'closed';
   is_benchmark: boolean; // Protected benchmark case
   created_at: string;
   updated_at: string;
-  description: Record<SupportedLanguage, string>;
+  description: Partial<Record<SupportedLanguage, string>> & { uk: string; fr: string; en: string };
   sequestration_target_chf: number;
 }
 

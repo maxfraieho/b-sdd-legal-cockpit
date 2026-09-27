@@ -117,15 +117,18 @@ const SEED_RECORDS: WormLedgerRecord[] = [
 
 export async function computeSha256(text: string): Promise<string> {
   try {
-    if (typeof window !== 'undefined' && window.crypto && window.crypto.subtle) {
+    const cryptoSubtle =
+      (typeof globalThis !== 'undefined' && globalThis.crypto?.subtle) ||
+      (typeof window !== 'undefined' && window.crypto?.subtle);
+    if (cryptoSubtle) {
       const encoder = new TextEncoder();
       const data = encoder.encode(text);
-      const hashBuffer = await window.crypto.subtle.digest('SHA-256', data);
+      const hashBuffer = await cryptoSubtle.digest('SHA-256', data);
       const hashArray = Array.from(new Uint8Array(hashBuffer));
       return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
     }
   } catch {}
-  // Deterministic fallback
+  // Deterministic fallback (strictly 64-char hexadecimal per Invariant L-05)
   let hash = 0;
   for (let i = 0; i < text.length; i++) {
     const char = text.charCodeAt(i);

@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "gitnexus": {
+      "url": "http://192.168.3.184:4747/sse"
+    },
+    "bsdd_legal_gateway": {
+      "url": "http://127.0.0.1:8766/sse"
+    }
+  }
+}
