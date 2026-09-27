@@ -26,6 +26,10 @@ import { MobileBottomNav } from "./components/MobileBottomNav";
 import { MobileQuickMenuSheet } from "./components/MobileQuickMenuSheet";
 import { JudicialBundleModal } from "./components/JudicialBundleModal";
 import { CaseSyncModal } from "./components/CaseSyncModal";
+import { LegalStrategyModal } from "./components/LegalStrategyModal";
+import { AuthGate } from "./components/AuthGate";
+import { AuthorizedUser } from "./types/auth";
+import { getCurrentAuthSession, clearAuthSession } from "./lib/authManager";
 import {
   LegalCase,
   BENCHMARK_CASES,
@@ -71,6 +75,7 @@ export default function App() {
   const [quickMenuOpen, setQuickMenuOpen] = useState(false);
   const [judicialBundleOpen, setJudicialBundleOpen] = useState(false);
   const [caseSyncModalOpen, setCaseSyncModalOpen] = useState(false);
+  const [legalStrategyModalOpen, setLegalStrategyModalOpen] = useState(false);
   const [isEInkMode, setIsEInkMode] = useState(false);
 
   // Apply E-Ink Paperwhite mode to document body
@@ -153,10 +158,29 @@ export default function App() {
 
   const [mobileTab, setMobileTab] = useState<"workspace" | "inspector">("workspace");
 
+  // User Authentication & Session State
+  const [currentUser, setCurrentUser] = useState<AuthorizedUser | null>(() => {
+    return getCurrentAuthSession()?.user || null;
+  });
+
   const handleLockSession = () => {
+    clearAuthSession();
+    setCurrentUser(null);
     showToast(
-      "Session Avocat Verrouillée",
-      "Écran en mode veille sécurisé pour confidentialité clientèle (Art. 13 LLCA)",
+      currentLang === "uk" ? "Сеанс заблоковано" : "Session Avocat Verrouillée",
+      currentLang === "uk"
+        ? "Екран захищено згідно зі ст. 73 КПК / ст. 13 LLCA. Потрібна повторна авторизація."
+        : "Écran en mode veille sécurisé pour confidentialité clientèle (Art. 13 LLCA / Art. 73 CPP)",
+      "info"
+    );
+  };
+
+  const handleLogout = () => {
+    clearAuthSession();
+    setCurrentUser(null);
+    showToast(
+      currentLang === "uk" ? "Вихід з системи" : "Déconnexion",
+      currentLang === "uk" ? "Сеанс Google завершено" : "Session Google terminée",
       "info"
     );
   };
@@ -181,33 +205,54 @@ export default function App() {
   };
 
   return (
-    <div className="h-[100dvh] w-screen overflow-hidden flex flex-col bg-[#080C14] text-slate-100 font-sans">
-      {/* ZONE A: OMNI-HEADER (40px) */}
-      <Topbar
-        currentTab={currentTab}
-        onTabChange={setCurrentTab}
-        currentLang={currentLang}
-        onLangChange={setCurrentLang}
-        onRecompileEpub={handleRecompileAndSendKindle}
-        onLockSession={handleLockSession}
-        isRecompiling={isRecompiling}
-        onOpenDocs={() => setDocsModalOpen(true)}
-        onOpenGlossary={() => setGlossaryModalOpen(true)}
-        onOpenEvidenceWizard={() => setEvidenceWizardOpen(true)}
-        onOpenActorWizard={() => setActorWizardOpen(true)}
-        onOpenSwissCodes={() => setSwissCodesModalOpen(true)}
-        onOpenJudicialBundle={() => setJudicialBundleOpen(true)}
-        onOpenQuickMenu={() => setQuickMenuOpen(true)}
-        onOpenSettings={() => setSettingsModalOpen(true)}
-        onOpenCaseSync={() => setCaseSyncModalOpen(true)}
-        onSendToKindle={handleRecompileAndSendKindle}
-        isEInkMode={isEInkMode}
-        onToggleEInkMode={() => setIsEInkMode(!isEInkMode)}
-        activeCase={activeCase}
-        onOpenCaseManager={() => setCaseManagerModalOpen(true)}
-        mobileTab={mobileTab}
-        onMobileTabChange={setMobileTab}
-      />
+    <AuthGate
+      currentLang={currentLang}
+      onLanguageChange={setCurrentLang}
+      expectedPassword={settings.authPassword || "0523"}
+      autoLockMinutes={settings.autoLockMinutes || 15}
+      onUserAuthenticated={(user) => {
+        setCurrentUser(user);
+        showToast(
+          currentLang === "uk" ? `Авторизовано: ${user.name}` : `Connecté : ${user.name}`,
+          `${user.email} (${user.role})`
+        );
+      }}
+      onLockedStateChange={(locked) => {
+        if (locked) {
+          setCurrentUser(null);
+        }
+      }}
+    >
+      <div className="h-[100dvh] w-screen overflow-hidden flex flex-col bg-[#080C14] text-slate-100 font-sans">
+        {/* ZONE A: OMNI-HEADER (40px) */}
+        <Topbar
+          currentTab={currentTab}
+          onTabChange={setCurrentTab}
+          currentLang={currentLang}
+          onLangChange={setCurrentLang}
+          onRecompileEpub={handleRecompileAndSendKindle}
+          onLockSession={handleLockSession}
+          isRecompiling={isRecompiling}
+          onOpenDocs={() => setDocsModalOpen(true)}
+          onOpenGlossary={() => setGlossaryModalOpen(true)}
+          onOpenEvidenceWizard={() => setEvidenceWizardOpen(true)}
+          onOpenActorWizard={() => setActorWizardOpen(true)}
+          onOpenSwissCodes={() => setSwissCodesModalOpen(true)}
+          onOpenJudicialBundle={() => setJudicialBundleOpen(true)}
+          onOpenQuickMenu={() => setQuickMenuOpen(true)}
+          onOpenSettings={() => setSettingsModalOpen(true)}
+          onOpenCaseSync={() => setCaseSyncModalOpen(true)}
+          onOpenLegalStrategy={() => setLegalStrategyModalOpen(true)}
+          onSendToKindle={handleRecompileAndSendKindle}
+          isEInkMode={isEInkMode}
+          onToggleEInkMode={() => setIsEInkMode(!isEInkMode)}
+          activeCase={activeCase}
+          onOpenCaseManager={() => setCaseManagerModalOpen(true)}
+          mobileTab={mobileTab}
+          onMobileTabChange={setMobileTab}
+          currentUser={currentUser}
+          onLogout={handleLogout}
+        />
 
       {/* MIDDLE BODY: ZONE B & ZONE C (Collapsible) */}
       <main className="flex-1 w-full flex overflow-hidden min-h-0">
@@ -562,6 +607,8 @@ export default function App() {
         onLockSession={handleLockSession}
         isEInkMode={isEInkMode}
         onToggleEInkMode={() => setIsEInkMode(!isEInkMode)}
+        currentUser={currentUser}
+        onLogout={handleLogout}
       />
 
       {/* JUDICIAL BUNDLE PDF/A MODAL */}
@@ -583,6 +630,15 @@ export default function App() {
         onCommitWormSeal={handleWormSeal}
         onShowToast={showToast}
       />
+
+      {/* SWISS LEGAL STRATEGY & CONTRACT TEMPLATES MODAL */}
+      <LegalStrategyModal
+        isOpen={legalStrategyModalOpen}
+        onClose={() => setLegalStrategyModalOpen(false)}
+        currentLang={currentLang}
+        onSendToKindle={handleRecompileAndSendKindle}
+      />
     </div>
+    </AuthGate>
   );
 }

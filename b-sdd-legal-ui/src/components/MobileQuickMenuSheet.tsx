@@ -17,10 +17,13 @@ import {
   Eye,
   Sliders,
   Share2,
+  LogOut,
+  ShieldCheck,
 } from "lucide-react";
 import { SupportedLanguage } from "../types/i18n";
 import { LegalCase } from "../lib/casesManager";
 import { WorkspaceTab } from "./Topbar";
+import { AuthorizedUser, ROLE_DEFINITIONS } from "../types/auth";
 
 interface MobileQuickMenuSheetProps {
   isOpen: boolean;
@@ -43,6 +46,8 @@ interface MobileQuickMenuSheetProps {
   onLockSession?: () => void;
   isEInkMode?: boolean;
   onToggleEInkMode?: () => void;
+  currentUser?: AuthorizedUser | null;
+  onLogout?: () => void;
 }
 
 export const MobileQuickMenuSheet: React.FC<MobileQuickMenuSheetProps> = ({
@@ -66,6 +71,8 @@ export const MobileQuickMenuSheet: React.FC<MobileQuickMenuSheetProps> = ({
   onLockSession,
   isEInkMode = false,
   onToggleEInkMode,
+  currentUser,
+  onLogout,
 }) => {
   // Handle Escape key
   React.useEffect(() => {
@@ -562,6 +569,45 @@ export const MobileQuickMenuSheet: React.FC<MobileQuickMenuSheetProps> = ({
               </button>
             </div>
           </div>
+
+          {/* Logged in User Profile Info (Google RBAC) */}
+          {currentUser && (
+            <div className="p-3 bg-[#070B14] border border-blue-900/40 rounded-xl space-y-2">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-2.5 min-w-0">
+                  <div className="w-8 h-8 rounded-full bg-blue-600 border border-blue-400 flex items-center justify-center text-white font-bold text-xs shrink-0">
+                    {currentUser.name.charAt(0).toUpperCase()}
+                  </div>
+                  <div className="min-w-0">
+                    <div className="font-semibold text-white truncate text-xs">{currentUser.name}</div>
+                    <div className="text-[10px] text-slate-400 font-mono truncate">{currentUser.email}</div>
+                  </div>
+                </div>
+                <span
+                  className={`text-[9px] px-1.5 py-0.5 rounded border font-mono shrink-0 ${
+                    ROLE_DEFINITIONS[currentUser.role]?.badgeColor || "bg-slate-800 text-slate-300"
+                  }`}
+                >
+                  {currentUser.role === "super_admin" ? "Root Owner" : currentUser.role}
+                </span>
+              </div>
+
+              {onLogout && (
+                <div className="pt-2 border-t border-slate-800/80 flex justify-end">
+                  <button
+                    onClick={() => {
+                      onClose?.();
+                      onLogout();
+                    }}
+                    className="flex items-center space-x-1.5 text-[11px] text-rose-400 hover:text-rose-300 transition-colors"
+                  >
+                    <LogOut className="w-3.5 h-3.5" />
+                    <span>Вийти з Google-акаунта</span>
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
 
           {/* Language Switcher & System Options */}
           <div className="p-3 bg-[#070B14] border border-slate-800 rounded-xl space-y-3">

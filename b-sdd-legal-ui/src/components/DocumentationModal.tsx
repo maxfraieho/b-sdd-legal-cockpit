@@ -16,8 +16,16 @@ import {
   Database,
   Smartphone,
   Sparkles,
+  Building2,
+  Briefcase,
+  AlertTriangle,
+  Download,
 } from "lucide-react";
 import { SupportedLanguage } from "../types/i18n";
+import {
+  LEGAL_STRATEGY_MEMORANDUM,
+  LEGAL_TEMPLATES,
+} from "../data/legalStrategyData";
 
 interface DocumentationModalProps {
   isOpen: boolean;
@@ -27,7 +35,7 @@ interface DocumentationModalProps {
   onShowToast?: (message: string) => void;
 }
 
-type DocTab = "user" | "dev" | "invariants" | "shortcuts";
+type DocTab = "user" | "dev" | "strategy" | "invariants" | "shortcuts";
 
 export const DocumentationModal: React.FC<DocumentationModalProps> = ({
   isOpen,
@@ -211,6 +219,26 @@ export const DocumentationModal: React.FC<DocumentationModalProps> = ({
             </button>
 
             <button
+              onClick={() => setActiveTab("strategy")}
+              className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-colors cursor-pointer ${
+                activeTab === "strategy"
+                  ? "bg-amber-600/20 text-amber-300 border border-amber-500/50 shadow-sm"
+                  : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/40"
+              }`}
+            >
+              <Scale className="w-3.5 h-3.5 text-amber-400" />
+              <span>
+                {currentLang === "uk"
+                  ? "📜 Меморандум & LAVI / LLCA"
+                  : currentLang === "fr"
+                  ? "📜 Note Juridique & LAVI"
+                  : currentLang === "de"
+                  ? "📜 Rechtsmemorandum & OHG"
+                  : "📜 Legal Strategy & LAVI"}
+              </span>
+            </button>
+
+            <button
               onClick={() => setActiveTab("shortcuts")}
               className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-colors ${
                 activeTab === "shortcuts"
@@ -279,20 +307,26 @@ export const DocumentationModal: React.FC<DocumentationModalProps> = ({
                 </button>
                 <div className="flex items-center space-x-2 text-cyan-400 font-bold text-sm sm:text-base mb-2">
                   <Key className="w-4 h-4" />
-                  <h3>1. Безпека, Авторизація та AuthGate (PIN: 0523)</h3>
+                  <h3>1. Безпека, Google-Авторизація та Білий Список (RBAC / ст. 73 КПК)</h3>
                 </div>
                 <p className="text-slate-400 mb-3">
-                  Для захисту адвокатської таємниці робочий простір захищено авторизаційним екраном:
+                  Для дотримання судової таємниці (ст. 73 КПК Швейцарії) доступ до робочого простору здійснюється через авторизацію Google за персональним білим списком:
                 </p>
                 <ul className="list-disc list-inside space-y-1.5 text-slate-300 pl-1">
                   <li>
-                    <strong className="text-slate-200">Вхід до системи:</strong> Захисний PIN-код за замовчуванням — <span className="font-mono bg-cyan-950 px-2 py-0.5 rounded text-cyan-300 font-bold border border-cyan-800/60">0523</span>.
+                    <strong className="text-slate-200">Google-Авторизація:</strong> Вхід через офіційний обліковий запис Google (Gmail). Доступ дозволено виключно емейлам із затвердженого реєстру справи.
                   </li>
                   <li>
-                    <strong className="text-slate-200">Екстрене блокування:</strong> У верхній панелі (Topbar) натисніть іконку замка або скористайтеся комбінацією <kbd className="font-mono bg-slate-800 px-1.5 py-0.5 rounded text-[11px]">Alt+L</kbd>.
+                    <strong className="text-slate-200">Головний Адміністратор:</strong> Обліковий запис <span className="font-mono bg-amber-950/60 px-2 py-0.5 rounded text-amber-300 font-bold border border-amber-800/60">TUkroschu@gmail.com</span> володіє повними правами Root, керує білим списком та призначає ролі учасників.
                   </li>
                   <li>
-                    <strong className="text-slate-200">Зміна коду:</strong> Доступна у вікні налаштувань (Settings ➔ вкладка «Безпека»).
+                    <strong className="text-slate-200">Керування користувачами:</strong> У вікні налаштувань (⚙️ Settings ➔ вкладка «👥 Користувачі & Доступ») адміністратор може додавати нових людей, призначати ролі (Адвокат, Користувач, Спостерігач) або блокувати доступ.
+                  </li>
+                  <li>
+                    <strong className="text-slate-200">Резервний аварійний PIN:</strong> Передбачено для офлайн-доступу або збоїв зв'язку (за замовчуванням 0523, змінюється в налаштуваннях).
+                  </li>
+                  <li>
+                    <strong className="text-slate-200">Екстрене блокування сесії:</strong> У верхній панелі (Topbar) натисніть іконку замка або виберіть «Заблокувати сесію» в меню профілю.
                   </li>
                 </ul>
               </section>
@@ -496,7 +530,73 @@ export const DocumentationModal: React.FC<DocumentationModalProps> = ({
             </div>
           )}
 
-          {/* TAB 4: SHORTCUTS */}
+          {/* TAB 4: LEGAL STRATEGY, DOCTRINE & TEMPLATES (LLCA / CO / LAVI) */}
+          {activeTab === "strategy" && (
+            <div className="space-y-6">
+              <section className="bg-amber-950/20 border border-amber-500/40 rounded-xl p-4 sm:p-5">
+                <div className="flex items-center space-x-2 text-amber-400 font-bold text-sm sm:text-base mb-2">
+                  <AlertTriangle className="w-5 h-5 text-amber-400 shrink-0" />
+                  <h3>Швейцарський Правовий Меморандум & Норми LLCA / CO / LAVI</h3>
+                </div>
+                <p className="text-xs text-amber-200/90 leading-relaxed mb-3">
+                  Відповідно до ст. 12 lit. e LLCA адвокат зобов'язаний утримуватися від укладення до завершення спору будь-якої угоди, за якою його винагорода визначається пропорційно результату судового процесу (pactum de quota litis). Прямий «натуральний обмін» IT-продукту несе ризик дисциплінарної недійсності.
+                  <strong> Єдина легітимна модель заліку вимог:</strong> поділ на договір IT-підряду (ст. 363 CO) та адвокатський мандат (ст. 394 CO) із сальдуванням грошових вимог за ст. 120 CO.
+                </p>
+                <div className="p-3 bg-slate-950 rounded-lg border border-slate-800 text-[11px] text-slate-300 font-mono space-y-1">
+                  <div>• Centre LAVI Vaud: Fondation PROFA · Rue du Grand-Pont 2bis, 1003 Lausanne (+41 21 631 03 00)</div>
+                  <div>• Прецедент ATF 150 II 465 (03.06.2024): погрози (ст. 180 CP) та примус (ст. 181 CP) заподіюють шкоду психічній цілісності за LAVI.</div>
+                  <div>• Ст. 277 CC та ATF 144 IV 285: стан незабезпеченості (indigence) 26-річного сина оцінюється судом автономно без документів батьків з України.</div>
+                </div>
+              </section>
+
+              {LEGAL_STRATEGY_MEMORANDUM.sections.map((sec) => (
+                <section key={sec.id} className="bg-slate-900/50 border border-slate-800 rounded-xl p-4 sm:p-5 space-y-3">
+                  <div className="flex items-center space-x-2 text-cyan-400 font-bold text-sm sm:text-base border-b border-slate-800 pb-2">
+                    <Scale className="w-4 h-4 text-amber-400" />
+                    <h3>{currentLang === "fr" ? sec.titleFr : sec.titleUk}</h3>
+                  </div>
+                  <div className="text-xs text-slate-300 whitespace-pre-line font-sans leading-relaxed">
+                    {currentLang === "fr" ? sec.contentFr : sec.contentUk}
+                  </div>
+                </section>
+              ))}
+
+              <section className="bg-slate-900/50 border border-slate-800 rounded-xl p-4 sm:p-5 space-y-4">
+                <div className="flex items-center space-x-2 text-cyan-400 font-bold text-sm sm:text-base border-b border-slate-800 pb-2">
+                  <Briefcase className="w-4 h-4 text-emerald-400" />
+                  <h3>Офіційні Шаблони Процесуальних Документів (B-SDD Legal Templates)</h3>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                  {LEGAL_TEMPLATES.map((tmpl) => (
+                    <div key={tmpl.id} className="p-3.5 bg-[#060A14] border border-slate-800 rounded-lg flex flex-col justify-between space-y-2">
+                      <div>
+                        <span className="font-bold text-white text-xs block mb-1">
+                          {currentLang === "fr" ? tmpl.titleFr : tmpl.titleUk}
+                        </span>
+                        <p className="text-[11px] text-slate-400 line-clamp-3">
+                          {currentLang === "fr" ? tmpl.descriptionFr : tmpl.descriptionUk}
+                        </p>
+                      </div>
+
+                      <div className="pt-2 border-t border-slate-800/80 flex items-center justify-between">
+                        <button
+                          onClick={() => handleCopy(currentLang === "fr" ? tmpl.contentFr : tmpl.contentUk, tmpl.id)}
+                          className="text-[11px] text-blue-400 hover:text-blue-300 flex items-center gap-1 cursor-pointer"
+                        >
+                          {copiedSection === tmpl.id ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                          <span>Копіювати</span>
+                        </button>
+                        <span className="text-[10px] font-mono text-slate-500 uppercase">{tmpl.category}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </section>
+            </div>
+          )}
+
+          {/* TAB 5: SHORTCUTS */}
           {activeTab === "shortcuts" && (
             <div className="bg-slate-900/50 border border-slate-800 rounded-xl p-4 sm:p-5">
               <h3 className="text-sm sm:text-base font-bold text-slate-100 mb-3 flex items-center space-x-2">

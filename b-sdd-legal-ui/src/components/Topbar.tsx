@@ -15,10 +15,14 @@ import {
   FileText,
   Users,
   Database,
+  LogOut,
+  User,
+  ShieldCheck,
 } from "lucide-react";
 import { SupportedLanguage } from "../types/i18n";
 import { LegalCase } from "../lib/casesManager";
 import { AstryxActionDrawer } from "./astryx/AstryxActionDrawer";
+import { AuthorizedUser, ROLE_DEFINITIONS } from "../types/auth";
 
 export type WorkspaceTab =
   | "procedures"
@@ -49,11 +53,14 @@ interface TopbarProps {
   onSendToKindle?: () => void;
   activeCase?: LegalCase;
   onOpenCaseManager?: () => void;
+  onOpenLegalStrategy?: () => void;
   isRecompiling?: boolean;
   mobileTab?: "workspace" | "inspector";
   onMobileTabChange?: (tab: "workspace" | "inspector") => void;
   isEInkMode?: boolean;
   onToggleEInkMode?: () => void;
+  currentUser?: AuthorizedUser | null;
+  onLogout?: () => void;
 }
 
 export const Topbar: React.FC<TopbarProps> = ({
@@ -75,13 +82,17 @@ export const Topbar: React.FC<TopbarProps> = ({
   onSendToKindle,
   activeCase,
   onOpenCaseManager,
+  onOpenLegalStrategy,
   isRecompiling = false,
   mobileTab = "workspace",
   onMobileTabChange,
   isEInkMode = false,
   onToggleEInkMode,
+  currentUser,
+  onLogout,
 }) => {
   const [actionDrawerOpen, setActionDrawerOpen] = useState(false);
+  const [userDropdownOpen, setUserDropdownOpen] = useState(false);
 
   // Check if current view is a sub-tool
   const isSubTool = [
@@ -293,6 +304,120 @@ export const Topbar: React.FC<TopbarProps> = ({
             ))}
           </div>
 
+          {/* User Profile Chip (Google Auth & RBAC) */}
+          {currentUser && (
+            <div className="relative">
+              <button
+                onClick={() => setUserDropdownOpen(!userDropdownOpen)}
+                className="flex items-center space-x-1.5 px-2 py-1 rounded-md bg-[#070B12] hover:bg-slate-800/80 border border-slate-800/90 text-slate-300 hover:text-white transition-all text-[11px] font-mono cursor-pointer"
+                title={`${currentUser.name} (${currentUser.email})`}
+              >
+                <div className="w-5 h-5 rounded-full bg-blue-600 border border-blue-400/60 flex items-center justify-center text-white text-[10px] font-bold shrink-0">
+                  {currentUser.name.charAt(0).toUpperCase()}
+                </div>
+                <span className="hidden xl:inline max-w-[120px] truncate text-slate-200">
+                  {currentUser.name.split(' ')[0]}
+                </span>
+                <span
+                  className={`text-[9px] px-1 py-0.2 rounded border font-mono ${
+                    ROLE_DEFINITIONS[currentUser.role]?.badgeColor || 'bg-slate-800 text-slate-400'
+                  }`}
+                >
+                  {currentUser.role === 'super_admin' ? 'Root' : currentUser.role}
+                </span>
+                <ChevronDown className="w-3 h-3 text-slate-400" />
+              </button>
+
+              {userDropdownOpen && (
+                <div
+                  className="absolute right-0 mt-1.5 w-64 bg-[#0B1120] border border-slate-800 rounded-xl shadow-2xl p-3 z-50 animate-fadeIn text-xs"
+                  onClick={() => setUserDropdownOpen(false)}
+                >
+                  <div className="pb-2.5 mb-2.5 border-b border-slate-800">
+                    <div className="font-bold text-white flex items-center gap-1.5">
+                      <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+                      <span>{currentUser.name}</span>
+                    </div>
+                    <div className="text-[11px] text-slate-400 font-mono truncate mt-0.5">
+                      {currentUser.email}
+                    </div>
+                    <div className="mt-1.5">
+                      <span
+                        className={`text-[10px] px-2 py-0.5 rounded border font-mono ${
+                          ROLE_DEFINITIONS[currentUser.role]?.badgeColor || 'bg-slate-800 text-slate-400'
+                        }`}
+                      >
+                        {ROLE_DEFINITIONS[currentUser.role]?.titleUk || currentUser.role}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="space-y-1">
+                    {onOpenLegalStrategy && (
+                      <button
+                        onClick={() => {
+                          setUserDropdownOpen(false);
+                          onOpenLegalStrategy();
+                        }}
+                        className="w-full text-left px-2 py-1.5 rounded-lg hover:bg-slate-800/80 text-amber-300 hover:text-amber-200 flex items-center gap-2 cursor-pointer"
+                      >
+                        <Scale className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                        <span>
+                          {currentLang === 'uk'
+                            ? 'Правовий Меморандум (LLCA/CO)'
+                            : currentLang === 'fr'
+                            ? 'Note Juridique & Modèles'
+                            : currentLang === 'de'
+                            ? 'Rechtliches Memorandum'
+                            : currentLang === 'it'
+                            ? 'Nota Giuridica & Modelli'
+                            : 'Legal Strategy & Contracts'}
+                        </span>
+                      </button>
+                    )}
+
+                    {onOpenSettings && (
+                      <button
+                        onClick={() => {
+                          setUserDropdownOpen(false);
+                          onOpenSettings();
+                        }}
+                        className="w-full text-left px-2 py-1.5 rounded-lg hover:bg-slate-800/80 text-slate-300 hover:text-white flex items-center gap-2"
+                      >
+                        <Users className="w-3.5 h-3.5 text-blue-400" />
+                        <span>Керування доступом & Користувачі</span>
+                      </button>
+                    )}
+
+                    <button
+                      onClick={() => {
+                        setUserDropdownOpen(false);
+                        onLockSession();
+                      }}
+                      className="w-full text-left px-2 py-1.5 rounded-lg hover:bg-slate-800/80 text-slate-300 hover:text-amber-300 flex items-center gap-2"
+                    >
+                      <Lock className="w-3.5 h-3.5 text-amber-400" />
+                      <span>Заблокувати сесію</span>
+                    </button>
+
+                    {onLogout && (
+                      <button
+                        onClick={() => {
+                          setUserDropdownOpen(false);
+                          onLogout();
+                        }}
+                        className="w-full text-left px-2 py-1.5 rounded-lg hover:bg-rose-950/40 text-rose-400 hover:text-rose-200 flex items-center gap-2 pt-1 border-t border-slate-800/80 mt-1"
+                      >
+                        <LogOut className="w-3.5 h-3.5" />
+                        <span>Вийти з Google-акаунта</span>
+                      </button>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
           {/* Settings Modal Button */}
           {onOpenSettings && (
             <button
@@ -341,6 +466,7 @@ export const Topbar: React.FC<TopbarProps> = ({
         onOpenCaseSync={onOpenCaseSync}
         onSendToKindle={onSendToKindle}
         onOpenSettings={onOpenSettings}
+        onOpenLegalStrategy={onOpenLegalStrategy}
         onLockSession={onLockSession}
         isEInkMode={isEInkMode}
         onToggleEInkMode={onToggleEInkMode}

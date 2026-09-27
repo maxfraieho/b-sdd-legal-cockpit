@@ -1,90 +1,94 @@
-# Документація Розробника та Інженера · B-SDD Legal Advocate Cockpit
-### Developer, Architecture & Integration Guide (v2.5 Release)
+# 🛠️ Документація Розробника та Інженера · B-SDD Legal Advocate Cockpit
+### Developer, Architecture & Integration Guide (v2.6 Release)
+**Архітектура:** Bitemporal Spec-Driven Development (B-SDD) · **Стандарт:** ISO/IEC 27037 / CPP RS 312.0  
+**Стек:** TypeScript, React 19, Tailwind CSS v4, Pure Python 3 (Stdlib-only Core), Vite, Cloudflare Pages, Amazon Kindle Whispersync.
 
 ---
 
-## 1. Архітектура Системи та Філософія B-SDD
+## 1. Архітектура Системи та Методологія B-SDD
 
-**B-SDD Legal Advocate Cockpit** розроблено на засадах **Bitemporal Spec-Driven Development (B-SDD)** — методології розробки програмного забезпечення для юридичних, фінансових та регуляторних систем, де будь-яка інформація розглядається у двох часових вимірах з абсолютним математичним та криптографічним контролем незмінності.
+**B-SDD Legal Advocate Cockpit** спроєктовано за принципами **Bitemporal Spec-Driven Development (B-SDD)** — методології розробки програмного забезпечення для судових, фінансових та регуляторних систем із математичним контролем незмінності фактів.
+
+```
+       Valid Time (Tv)  ──────────────────────────────► [Реальні факти у фізичному світі]
+             │
+             │ Бітемпоральне калібрування (Timeline Calibrator)
+             ▼
+    Transaction Time (Tt) ────────────────────────────► [WORM Ledger Utopia DB / SHA-256]
+```
 
 ### 1.1. Двовимірний часовий простір (Bitemporality)
-1. **$T_v$ (Valid Time / Час факту)**: інтервал часу $[T_{v\_start}, T_{v\_end}]$, протягом якого подія відбулася в реальному світі (наприклад, здійснення телефонного дзвінка з погрозами 15.07.2024 о 19:30).
-2. **$T_t$ (Transaction Time / Час фіксації)**: момент часу, коли інформація про подію була внесена до протоколу поліції або зафіксована в реєстрі Utopia DB.
+1. **$T_v$ (Valid Time / Час факту)**: Інтервал часу $[T_{v\_start}, T_{v\_end}]$, протягом якого діяння відбулося в реальному світі (наприклад, погроза телефоном 15.07.2024 о 19:30).
+2. **$T_t$ (Transaction Time / Час фіксації)**: Момент часу, коли інформація про подію була зафіксована слідчим у протоколі або внесена до реєстру Utopia DB.
+- Дельта $\Delta T = |T_t - T_v|$ є об'єктивним криміналістичним індикатором для викриття маніпуляцій датами та ретроспективних правок протилежної сторони.
 
-Різниця $\Delta T = |T_t - T_v|$ є ключовим індикатором для детекції фальсифікацій: штучна затримка внесення протоколу або ретроспективна зміна версій однозначно виявляється аналітичним ядром.
-
-```
-       Valid Time (Tv)  ──────────────────────────────► [Реальні факти]
-             │
-             │ Бітемпоральне зіставлення (Timeline Calibrator)
-             ▼
-    Transaction Time (Tt) ────────────────────────────► [WORM Ledger Utopia DB]
-```
-
-### 1.2. П'ять Базових Інваріантів (Invariants L-01 – L-05)
-Кожна операція в системі перевіряється на відповідність незмінним законам цілісності:
-- **L-01 (Bitemporal Immutability)**: Заборона перезапису записів `in-place`. Оновлення здійснюється виключно через *атомарну суперсесію (supersession)* зі створенням нового вузла в ланцюгу та деактивацією старого.
-- **L-02 (Zero External Dependencies)**: Юридичне ядро міркувань (`src/legal/`) виконується на чистому Python без зовнішніх бібліотек (stdlib-only), що унеможливлює збої від оновлень сторонніх пакетів.
-- **L-03 (Bona Fide Shield / Імунітет добросовісної особи)**: Абсолютний процедурний імунітет для добросовісних помічників за ст. 933 Цивільного кодексу Швейцарії (захист волонтера Адріано Міллі від зловмисних зустрічних звинувачень).
-- **L-04 (Minor Victim Protection)**: Неповнолітня жертва зберігає процесуальний статус потерпілого / цивільного позивача за будь-яких обставин.
-- **L-05 (Cryptographic Proof)**: Кожен речовий доказ (аудіо, фото, документ, експертиза) обов'язково містить валідний контрольний геш SHA-256.
+### 1.2. П'ять Базових Інваріантів Системи (Invariants L-01 – L-05)
+Кожна операція у кодовій базі суворо валідується модулем `tests/test_invariants.py`:
+- **L-01 (Bitemporal Immutability)**: Заборона перезапису записів `in-place`. Будь-яке оновлення здійснюється виключно через *атомарну суперсесію (supersession)* зі створенням нового вузла в ланцюгу та деактивацією старого.
+- **L-02 (Zero External Dependencies)**: Юридичне ядро міркувань (`src/legal/`) виконується на чистому Python без сторонніх бібліотек (stdlib-only), що унеможливлює вразливості в ланцюгу постачання (supply chain attacks).
+- **L-03 (Bona Fide Shield / Імунітет третіх осіб)**: Автоматичний процесуальний імунітет для добросовісних помічників за ст. 933 Цивільного кодексу Швейцарії (імунітет волонтера Адріано Міллі від зустрічних позовів).
+- **L-04 (Minor / Victim Standing)**: Неповнолітня чи вразлива жертва безумовно зберігає статус цивільного позивача (partie plaignante / ст. 115, 118 КПК) незалежно від процесуальних заперечень обвинуваченого.
+- **L-05 (Cryptographic Proof)**: Кожен доказ (аудіозапис, світлина EXIF, довідка Unisanté, банківська виписка) обов'язково містить валідний контрольний геш SHA-256.
 
 ---
 
-## 2. Структура Репозиторію
+## 2. Структура Каталогів Проєкту
 
 ```
 b-sdd-legal-cockpit/
 ├── b-sdd-legal-ui/                  # Frontend SPA (React 19 + TypeScript + Vite)
-│   ├── public/                      # Статичні активи, докази, іконки, svg
-│   │   └── evidence/                # Фото EXIF (P-06, P-10), аудіозаписи (P-01..P-08), pdf
+│   ├── public/                      # Статичні активи, докази, аудіо, світлини EXIF
 │   ├── src/
-│   │   ├── components/              # UI компоненти робочого простору
-│   │   │   ├── Topbar.tsx           # Верхня навігаційна панель, статус, мобільний таб
-│   │   │   ├── KindleVoiceReview.tsx# Двоколонковий Diff-редактор, диктування, EPUB 3.0
-│   │   │   ├── EvidenceFactbook.tsx # Кабінет речових доказів (Bordereau), аудіо, EXIF фото
+│   │   ├── components/              # UI компоненти
+│   │   │   ├── AuthGate.tsx         # Двоетапний шлюз авторизації (Stealth PIN + Google RBAC)
+│   │   │   ├── LegalStrategyModal.tsx # Модальне вікно швейцарської стратегії, доктрини та шаблонів
+│   │   │   ├── Topbar.tsx           # Верхня навігаційна панель, мовний перемикач, профіль користувача
+│   │   │   ├── SettingsModal.tsx    # Налаштування, вибір моделей ШІ та керування Google RBAC
+│   │   │   ├── KindleVoiceReview.tsx# Split-Diff редактор досьє, диктування, відправка на Kindle
+│   │   │   ├── EvidenceFactbook.tsx # Опис речових доказів (Bordereau), аудіоплеєр, EXIF Lightbox
 │   │   │   ├── EvidenceIngestionWizard.tsx # Майстер додавання доказів через ШІ
-│   │   │   ├── SettingsModal.tsx    # Модальне вікно вибору ШІ-провайдерів та бази законів
-│   │   │   ├── SwissCodesModal.tsx  # Переглядач статей швейцарських та кантональних кодексів
-│   │   │   ├── WormLedgerView.tsx   # Аудит незмінності Utopia DB WORM Ledger
-│   │   │   ├── LegalInspector.tsx   # Акторська матриця, Claim Chart, розрахунок збитків
-│   │   │   ├── GlossaryModal.tsx    # Декодер абревіатур та правничий глосарій
-│   │   │   ├── AuthGate.tsx         # Екран авторизації за PIN-кодом (0523)
-│   │   │   └── ActionDock.tsx       # Плаваюча док-панель швидких дій
+│   │   │   ├── JudicialBundleModal.tsx # Компілятор судового пакету PDF/A
+│   │   │   ├── CaseSyncModal.tsx    # ШІ-синхронізація справи та послідовне мислення
+│   │   │   ├── SwissCodesModal.tsx  # Переглядач 35 статей кодексів Швейцарії (CP, CPP, CC, CO)
+│   │   │   └── WormLedgerView.tsx   # Аудит журналу незмінності WORM Utopia DB
 │   │   ├── data/
 │   │   │   ├── legalData.ts         # Масив доказів (P-01..P-15), 18 розділів досьє, актори
-│   │   │   ├── swissLawCodes.ts     # База кодексів (CP, CPP, CC, CO, LOJV, ATF), сховище
-│   │   │   └── translations.ts      # Словник тримовного інтерфейсу (UK, FR, EN)
+│   │   │   ├── legalStrategyData.ts # Доктрина LLCA, норми CO/LAVI, шаблони договорів та заяви LAVI
+│   │   │   └── swissLawCodes.ts     # Тексти статей кодексів швейцарського та кантонального права
 │   │   ├── lib/
-│   │   │   ├── translator.ts        # Клієнт взаємодії з ШІ-проксі (.184) та Gemini API
-│   │   │   └── bitemporal.ts        # Розрахунок SHA-256, WORM-суперсесія, ledger state
+│   │   │   ├── authManager.ts       # Менеджер білого списку Google, ролей та сесій
+│   │   │   ├── casesManager.ts      # Менеджер мульти-кейсів (ADR-011)
+│   │   │   ├── bitemporal.ts        # Обчислення SHA-256, WORM-суперсесія
+│   │   │   └── translator.ts        # Клієнт взаємодії з ШІ-проксі (.184) та Gemini API
 │   │   ├── types/
-│   │   │   ├── i18n.ts              # Типи локалізації, ролей ШІ та провайдерів
-│   │   │   └── legal.ts             # Типи процесуальних одиниць, транзакцій, акторів
+│   │   │   ├── auth.ts              # Типи ролей (RBAC), дозволів та сесій
+│   │   │   ├── i18n.ts              # Типи локалізації (uk, fr, de, it, en)
+│   │   │   └── legal.ts             # Типи процесуальних одиниць, акторів та доказів
 │   │   ├── index.css                # Глобальні стилі Tailwind CSS v4
 │   │   └── main.tsx                 # Точка входу додатку з ErrorBoundary
-│   ├── package.json                 # Залежності frontend (React 19, Lucide, Tailwind 4)
+│   ├── package.json                 # Специфікація залежностей Frontend
 │   └── vite.config.ts               # Конфігурація Vite (порт 3000, host 0.0.0.0)
 │
-├── daemon/                          # Автономний супервайзер процесів
+├── daemon/                          # Супервайзер процесів
 │   └── legal_supervisor_daemon.py   # Сервісний демон моніторингу фонових задач
 │
-├── deploy/                          # Скрипти розгортання та шлюз MCP
+├── deploy/                          # Шлюз MCP (Model Context Protocol)
 │   └── mcp_gateway/
 │       ├── legal_gateway.py         # FastAPI сервер Model Context Protocol (:8766)
-│       ├── toolkit_legal.py         # Опис та обробники 30 юридичних інструментів
-│       └── legal_config.json        # Конфігурація хостів, портів та CORS
+│       └── toolkit_legal.py         # 30 юридичних інструментів процедурного аналізу
 │
-├── docs/                            # Документація проекту
+├── docs/                            # Повна проєктна документація
+│   ├── USER_GUIDE.md                # Посібник користувача та адвоката
+│   ├── DEVELOPER_GUIDE.md           # Посібник інженера та архітектора (цей документ)
 │   ├── ARCHITECTURE.md              # Системна специфікація топології та протоколів
-│   ├── USER_GUIDE.md                # Посібник користувача для юриста та клієнта
-│   ├── DEVELOPER_GUIDE.md           # Посібник розробника (цей документ)
-│   └── FEEDBACK_LOOP_SPEC.md        # Специфікація 5 контурів зворотного зв'язку
+│   ├── CLOUDFLARE_PAGES_DEPLOYMENT_AGENT_PROMPT.md # Промпт автономного агента публікації
+│   ├── KINDLE_USER_GUIDE_CH_LEGAL_TECH.md # Kindle-версія посібника користувача
+│   └── KINDLE_DEVELOPER_ARCH_SPEC.md      # Kindle-версія документації розробника
 │
-├── scripts/                         # Допоміжні скрипти автоматизації
-│   ├── deploy_cloudflare_pages.sh   # Автоматичний білд та пуш на Cloudflare Pages
-│   ├── run_legal_sprint.sh          # Скрипт запуску автономного юридичного спринту
-│   └── generate_legal_book.py       # Компілятор EPUB 3.0 книги доказів для Kindle
+├── scripts/                         # Автоматизація
+│   ├── deploy_cloudflare_pages.sh   # Скрипт збірки та публікації на Cloudflare Pages
+│   ├── generate_legal_book.py       # Компілятор EPUB 3.0 книг для Amazon Kindle
+│   └── run_legal_sprint.sh          # Скрипт запуску автономного юридичного спринту
 │
 ├── src/legal/                       # Sovereign Python Core (Чистий Python без залежностей)
 │   ├── actors.py                    # Матриця процесуальних статусів та зв'язків
@@ -92,146 +96,110 @@ b-sdd-legal-cockpit/
 │   ├── preflight_compiler.py        # Детермінований компілятор юридичних рішень
 │   └── timeline_calibrator.py       # Алгоритми калібрації бітемпоральних міток
 │
-├── tests/                           # Набір автоматичних тестів Python
-│   ├── test_actors.py               # Тести імунітету L-03 та статусу неповнолітнього L-04
-│   ├── test_claim_chart.py          # Тести кореляції доказів
-│   ├── test_invariants.py           # Перевірка виконання всіх 5 інваріантів B-SDD
-│   └── test_preflight.py            # Тестування обмеження на обсяг висновків (<500 слів)
-│
-├── metadata.json                    # Маніфест додатка Google AI Studio Build
-└── package.json                     # Кореневий npm маніфест монорепозиторію
+└── tests/                           # Набір автоматичних тестів Python
+    ├── test_actors.py               # Тести імунітету L-03 та статусу неповнолітнього L-04
+    ├── test_claim_chart.py          # Тести кореляції доказів
+    ├── test_invariants.py           # Перевірка виконання всіх 5 інваріантів B-SDD
+    └── test_preflight.py            # Тестування обмеження на обсяг висновків (<500 слів)
 ```
 
 ---
 
-## 3. Технологічний Стек Frontend
+## 3. Модуль Авторизації, Google Whitelist та RBAC (`authManager.ts`)
 
-- **Фреймворк**: React 19 (`19.2.6`) з React Hooks (`useState`, `useEffect`, `useRef`, `useCallback`).
-- **Мова програмування**: TypeScript 5.7+ з суворою типізацією (`strict: true`).
-- **Стилізація**: Tailwind CSS v4 (`@tailwindcss/vite` 4.0.9). Усі стилі підключаються через `@import "tailwindcss";` у файлі `index.css`.
-- **Набір іконок**: `lucide-react` (0.575+).
-- **Збирач проекту**: Vite 6 (`6.0.0`) з HMR (налаштований на порт 3000 для середовища контейнера).
+Модуль `src/lib/authManager.ts` та компонент `src/components/AuthGate.tsx` реалізують дворівневу модель доступу відповідно до вимог таємниці слідства (**ст. 73 КПК Швейцарії**) та адвокатської таємниці (**ст. 13 LLCA**):
 
----
+### 3.1. Ролі та дозволи (RBAC Matrix)
 
-## 4. ШІ-Інфраструктура та Провайдери
+| Роль | Системний ідентифікатор | Права доступу | Типові користувачі |
+|---|---|---|---|
+| **Super Admin** | `super_admin` | Повний контроль: білий список, редагування коду, WORM-печатки, скидання паролів | Автор системи (`TUkroschu@gmail.com`) |
+| **Law Firm Admin** | `admin` | Керування досьє, додавання юристів бюро, експорт судового бандлу | Старший партнер швейцарського бюро |
+| **Advocate / Lawyer** | `lawyer` | Редагування досьє, додавання доказів через майстер, диктування, відправка на Kindle | Провідний адвокат справи, судовий повірений |
+| **Client / User** | `user` | Перегляд матеріалів справи, завантаження доказів у драфт, перегляд стану | Потерпілий (Арсен Коваленко) |
 
-Система підтримує три взаємозамінні варіанти виконання інтелектуальних завдань:
-
-### 4.1. Локальний / Віддалений ШІ-проксі (хост `.184`)
-- **Протокол**: OpenAI-compatible REST API.
-- **Ендпоінт**: `http://192.168.3.184:18880/v1/chat/completions`.
-- **Слоти моделей на сервері**:
-  - `slot-1`: `qwen/qwen-2.5-72b-instruct` (глибока аналітика, розбір заплутаних фабул).
-  - `slot-2`: `meta/llama-3.3-70b-instruct` (оптимальний баланс швидкості та строгості міркувань).
-  - `slot-3`: `mistralai/mistral-large-2407` (перевага для процесуальних текстів французькою мовою).
-  - `custom`: пряме ручне введення ідентифікатора моделі.
-- **Діагностика**: функція `testLLMProxyConnection` надсилає пінг на `/models` або робить мінімальний запит генерації для підтвердження живості сокета.
-
-### 4.2. Хмарний рушій Google Gemini
-- **Моделі**: `gemini-3.8-flash` (миттєвий аналіз за 300–600 мс), `gemini-3.8-pro` (глибока правова експертиза).
-- **Параметри**: `temperature: 0.1` – `0.2` (максимальна фактична точність без домислів).
-- **Інтеграція**: через системний бекенд AI Studio Build (`MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API`) або клієнтський Bearer-запит.
-
-### 4.3. Автономний MemPalace KùzuDB Engine
-- **Автономність**: 100% Offline режим, що не потребує мережевих викликів.
-- **Принцип роботи**: прямий збіг ознак доказу з графовими шаблонами правопорушень (Graph Traversal over 8,746 nodes) та застосування детермінованих евристик швейцарського кримінального процесу.
-
----
-
-## 5. Архітектура Моделі Законодавства (`swissLawCodes.ts`)
-
-Модель даних швейцарських законів спроектована для підтримки як загальнофедеральних нормативних актів, так і кантонального права кантону Во:
-
+### 3.2. Алгоритм верифікації email (`verifyEmailAccess`)
 ```typescript
-export interface LawArticle {
-  id: string;                      // Унікальний ідентифікатор ("CP-146", "LOJV-12")
-  code: string;                    // Кодекс ("CP", "CPP", "CC", "CO", "LOJV", "ATF")
-  jurisdiction: "federal" | "canton_vaud"; // Юрисдикція
-  article: string;                 // Офіційне позначення ("Art. 146 CP")
-  title: Record<SupportedLanguage, string>; // Тримовна назва (uk, fr, en)
-  category: "penal" | "procedure" | "civil" | "obligations" | "foreigners" | "cantonal_vaud" | "jurisprudence";
-  content_fr: string;              // Офіційний французький текст (Recueil systématique / BLV)
-  content_uk: string;              // Авторизований переклад українською
-  content_en: string;              // Англійський переклад
-  sanction?: string;               // Санкція (наприклад, "Peine privative de liberté de 5 ans au plus")
-  relevance_case: Record<SupportedLanguage, string>; // Зв'язок із поточною справою
-  corroborating_cotes: string[];   // Прив'язані речові докази (["P-04", "P-05", "P-14"])
-  mempalace_node_id: string;       // Ідентифікатор вузла в графі MemPalace
+export function verifyEmailAccess(email: string): {
+  allowed: boolean;
+  user: AuthorizedUser | null;
+  reason?: string;
 }
 ```
+1. Якщо режим «Суворого білого списку» активний (`isStrictWhitelistMode() === true`), система здійснює регістронезалежний пошук адреси в локальному реєстрі дозволених користувачів `localStorage.getItem('b_sdd_authorized_users_v2')`.
+2. Якщо акаунт знайдено та його прапорець `isActive === true`, створюється сесія `AuthSession` у `sessionStorage` із міткою часу та методом авторизації (`google` або `pin`).
+3. Якщо акаунт деактивовано, генерується відмова `account_suspended`.
+4. Якщо пошта відсутня у списку, генерується відмова `not_in_whitelist` із блокуванням інтерфейсу за ст. 73 КПК Швейцарії.
 
-### Персистентність та Синхронізація:
-1. **Збереження стану**: перелік активних статей зберігається у `localStorage` під ключем `b_sdd_enabled_laws_v1`.
-2. **Користувацькі статті**: нові або відредаговані норми кешуються у `b_sdd_custom_laws_v1`.
-3. **Експорт / Імпорт**: підтримується повна серіалізація корпусу у валідний JSON-файл за структурою `{ version: "2.5", exported_at: string, count: number, articles: LawArticle[] }`.
-
----
-
-## 6. Model Context Protocol (MCP 2024-11-05) Gateway
-
-Gateway розташований у каталозі `deploy/mcp_gateway/` і запущений як сервіс FastAPI на порту `:8766`.
-
-### 6.1. Транспортні канали
-- `GET /sse` — Server-Sent Events потік для підключення Claude Desktop, Gemini Spark та агентів.
-- `POST /messages?session_id=...` — Прийом команд JSON-RPC 2.0.
-- `HEAD /` та `HEAD /sse` — Підтримка зондуючих пінгів Cloudflare Edge (відповідь `200 OK` без затримки).
-
-### 6.2. Каталог 30 Інструментів (MCP Tools)
-- **Юридичні операції (8 інструментів)**:
-  `legal_dossier_search`, `legal_transcripts_query`, `legal_actor_matrix_get`, `legal_evidence_get`, `legal_sprint_dispatch`, `legal_supervisor_status`, `legal_epub_rebuild`, `utopia_db_query`.
-- **Документація та плани (6 інструментів)**:
-  `legal_docs_list`, `legal_docs_read`, `legal_docs_write`, `legal_plan_save`, `legal_plans_list`, `legal_plan_get`.
-- **WORM Ledger & Utopia DB (3 інструменти)**:
-  `utopia_bitemporal_query`, `utopia_record_worm_ledger`, `utopia_check_invariants`.
-- **GitNexus Code Intelligence (3 інструменти)**:
-  `gitnexus_ast_query`, `gitnexus_blast_radius`, `gitnexus_symbol_search`.
-- **DRAKON Візуальні Алгоритми (4 інструменти)**:
-  `drakon_planar_validate`, `drakon_svg_export`, `drakon_code_compile`, `drakon_macro_flow_synthesis`.
-- **Astryx Canvas Primitives (3 інструменти)**:
-  `astryx_canvas_push`, `astryx_canvas_get`, `astryx_deploy_trigger`.
-- **Процедурні навички (3 інструменти)**:
-  `skills_catalog_inspect`, `skills_rule_of_two_crystallize`, `skills_verify_immutability`.
+### 3.3. Автоблокування та очищення чутливих даних у пам'яті
+- Глобальний слухач дій користувача (`mousemove`, `keydown`, `click`) кожні 30 секунд оновлює мітку `b_sdd_auth_timestamp`.
+- У разі бездіяльності понад `autoLockMinutes` (за замовчуванням 15 хв) автоматично викликається функція `handleLock()`, яка:
+  - Видаляє активну сесію з оперативної пам'яті та `sessionStorage`;
+  - Переводить інтерфейс у стан `isPinStageUnlocked = false`;
+  - Очищає буфери введення.
 
 ---
 
-## 7. Компіляція, Тестування та Розгортання
+## 4. Інтернаціоналізація та 5-мовна локалізація (i18n)
 
-### 7.1. Локальний запуск UI
+Система підтримує 5 мовних локалей у суворій відповідності до швейцарської та міжнародної правозастосовної практики:
+1. **Українська (`uk`)**: Основна мова взаємодії автора та потерпілого.
+2. **Français (`fr`)**: Офіційна мова судочинства кантону Во (**Langue de la procédure**, ст. 67 КПК Швейцарії). Усі клопотання, заяви LAVI та договори за замовчуванням формуються французькою.
+3. **Deutsch (`de`)**: Офіційна мова Федерального суду Швейцарії (ATF) та німецькомовних кантонів (BGFA, OR, StPO).
+4. **Italiano (`it`)**: Офіційна мова Швейцарської Конфедерації (Ticino / Grigioni).
+5. **English (`en`)**: Міжнародна мова криміналістичних стандартів ISO/IEC 27037 та IT-експертизи.
+
+Локалізаційні структури визначені у `src/types/i18n.ts`, словники — у `src/data/translations.ts`, а спеціальні переклади шлюзу доступу — у константі `AUTH_I18N` всередині `src/components/AuthGate.tsx`.
+
+---
+
+## 5. Компіляція та Автоматизована Публікація на Cloudflare Pages
+
+Проєкт оптимізовано для безсерверного хостингу на високошвидкісній мережі **Cloudflare Pages** із захистом від DDoS, підтримкою custom headers та SSL.
+
+### 5.1. Автоматичний скрипт публікації (`scripts/deploy_cloudflare_pages.sh`)
 ```bash
-# Перехід у робочу директорію клієнта
-cd b-sdd-legal-ui
-
-# Встановлення пакетів
-npm install
-
-# Запуск середовища розробки
-npm run dev
+bash scripts/deploy_cloudflare_pages.sh
 ```
 
-### 7.2. Перевірка збірки та компіляція
-```bash
-# Збірка продакшн-бандлу
-npm run build
+**Етапи виконання пайплайну:**
+1. **Pre-flight Invariant Verification**: запуск модульних тестів Python (`python3 -m unittest discover tests`);
+2. **Production Bundle Build**: компіляція React SPA через Vite (`npm run build` у каталозі `b-sdd-legal-ui/`);
+3. **Синхронізація артефактів**: передача каталогу `dist/` на сервер розгортання;
+4. **Cloudflare Deployment**: деплой через `wrangler pages deploy` на проєкт `b-sdd-legal-ui` із закріпленням production-гілки `main`.
 
-# Лінтування та перевірка типів
-npm run lint
+### 5.2. Вимоги до змінних середовища Cloudflare
+- `CLOUDFLARE_API_TOKEN`: Токен з правами *Cloudflare Pages: Edit*.
+- `CLOUDFLARE_ACCOUNT_ID`: Ідентифікатор облікового запису Cloudflare (`c354ea45a11a1e1c14f1f41fe780cb34`).
+
+---
+
+## 6. Компілятор EPUB 3.0 та передача на Amazon Kindle
+
+Для роботи адвоката під час судових засідань без підключення до мережі передбачено експорт досьє у сертифікований стандарт **EPUB 3.0** за допомогою скрипта `scripts/generate_legal_book.py`.
+
+### 6.1. Особливості компілятора:
+- **100% чистий Python (Stdlib-only)**: Використовує виключно стандартні модулі `zipfile`, `xml.etree`, `html`, `re`, `argparse`.
+- **Сумісність з Amazon Kindle Whispersync**: Генерує валідні файли `mimetype`, `META-INF/container.xml`, `OEBPS/content.opf` та навігацію `OEBPS/nav.xhtml`.
+- **Стилізація для E-Ink**: Вбудований файл `style.css` з оптимізованими гарнітурами для електронного чорнила, чіткими таблицями та блоками коду.
+
+### 6.2. Команда компіляції документації у формат книги:
+```bash
+# Компіляція посібника користувача:
+python3 scripts/generate_legal_book.py \
+  --dossier docs/kindle/user_guide \
+  --output docs/kindle/b-sdd-legal-user-guide.epub \
+  --title "B-SDD Legal Advocate Cockpit · Керівництво Користувача" \
+  --author "B-SDD Sovereign Engineering"
+
+# Компіляція інженерної документації:
+python3 scripts/generate_legal_book.py \
+  --dossier docs/kindle/dev_guide \
+  --output docs/kindle/b-sdd-legal-dev-guide.epub \
+  --title "B-SDD Legal Advocate Cockpit · Документація Розробника" \
+  --author "B-SDD Sovereign Engineering"
 ```
 
-### 7.3. Автоматичні тести бекенду (Python Invariants)
-```bash
-# Запуск повного комплекту з 15 модульних тестів
-python3 -m unittest discover tests
-```
-Критерій успіху: 15/15 тестів завершуються статусом `OK` менш ніж за 0.5 секунди.
-
-### 7.4. Системні служби Linux (systemd)
-Для постійної роботи шлюзу та демона на виробничому сервері передбачені юніти:
-- `/etc/systemd/system/legal-mcp-gateway.service`
-- `/etc/systemd/system/legal-supervisor.service`
-
-Перезапуск служб після оновлення коду:
-```bash
-sudo systemctl restart legal-mcp-gateway
-sudo systemctl restart legal-supervisor
-```
+### 6.3. Відправка на пристрій Kindle:
+Файл надсилається з дозволеної адреси електронної пошти на захищену адресу пристрою користувача:
+`tukroschu@kindle.com` з темою листа `B-SDD Legal Dossier`.

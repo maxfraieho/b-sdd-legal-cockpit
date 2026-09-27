@@ -56,7 +56,30 @@ import {
   BookOpen,
   Filter,
   Search,
+  Users,
+  UserPlus,
+  UserCheck,
+  UserX,
+  Mail,
+  Shield,
+  ExternalLink,
+  Edit2,
+  Lock,
 } from 'lucide-react';
+import {
+  loadAuthorizedUsers,
+  saveAuthorizedUsers,
+  addAuthorizedUser,
+  updateAuthorizedUser,
+  removeAuthorizedUser,
+  toggleUserStatus,
+  isStrictWhitelistMode,
+  setStrictWhitelistMode,
+  exportUsersToJson,
+  importUsersFromJson,
+  PRIMARY_SUPER_ADMIN_EMAIL,
+} from '../lib/authManager';
+import { AuthorizedUser, UserRole, ROLE_DEFINITIONS } from '../types/auth';
 
 interface SettingsModalProps {
   isOpen: boolean;
@@ -77,7 +100,17 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
   onOverridesChange,
   currentLang,
 }) => {
-  const [activeTab, setActiveTab] = useState<'ai_agent' | 'laws_corpus' | 'tunnel' | 'translations' | 'security'>('ai_agent');
+  const [activeTab, setActiveTab] = useState<'ai_agent' | 'laws_corpus' | 'tunnel' | 'translations' | 'users_access' | 'security'>('ai_agent');
+
+  // --- Authorized Users & RBAC state ---
+  const [authorizedUsers, setAuthorizedUsers] = useState<AuthorizedUser[]>(() => loadAuthorizedUsers());
+  const [strictWhitelist, setStrictWhitelist] = useState<boolean>(() => isStrictWhitelistMode());
+  const [newUserEmail, setNewUserEmail] = useState('');
+  const [newUserName, setNewUserName] = useState('');
+  const [newUserRole, setNewUserRole] = useState<UserRole>('user');
+  const [newUserNotes, setNewUserNotes] = useState('');
+  const [userActionMsg, setUserActionMsg] = useState<{ text: string; type: 'success' | 'error' } | null>(null);
+  const [editingUserId, setEditingUserId] = useState<string | null>(null);
 
   // --- AI Agent & Provider settings state ---
   const [aiProviderMode, setAiProviderMode] = useState<AIProviderMode>(settings.aiProviderMode || 'local_proxy');
@@ -327,6 +360,97 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
     return matchesSearch && matchesCat;
   });
 
+  // User Management Handlers (RBAC & Google Whitelist)
+  const handleAddNewUser = (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    if (!newUserEmail.trim()) {
+      setUserActionMsg({ text: 'Вкажіть адресу електронної пошти Google', type: 'error' });
+      return;
+    }
+    const added = addAuthorizedUser({
+      email: newUserEmail.trim(),
+      name: newUserName.trim() || newUserEmail.trim().split('@')[0],
+      role: newUserRole,
+      notes: newUserNotes.trim(),
+    });
+    setAuthorizedUsers(loadAuthorizedUsers());
+    setNewUserEmail('');
+    setNewUserName('');
+    setNewUserNotes('');
+    setUserActionMsg({
+      text: `Користувача ${added.email} успішно додано з роллю "${ROLE_DEFINITIONS[added.role].titleUk}"!`,
+      type: 'success',
+    });
+    setTimeout(() => setUserActionMsg(null), 4000);
+  };
+
+  const handleToggleUserStatus = (id: string) => {
+    toggleUserStatus(id);
+    setAuthorizedUsers(loadAuthorizedUsers());
+  };
+
+  const handleRemoveUser = (id: string, email: string) => {
+    if (email.toLowerCase() === PRIMARY_SUPER_ADMIN_EMAIL.toLowerCase()) {
+      alert('Неможливо видалити Головного Адміністратора досьє.');
+      return;
+    }
+    if (window.confirm(`Ви дійсно бажаєте вилучити ${email} з білого списку?`)) {
+      removeAuthorizedUser(id);
+      setAuthorizedUsers(loadAuthorizedUsers());
+      setUserActionMsg({ text: `Користувача ${email} вилучено з доступу`, type: 'success' });
+      setTimeout(() => setUserActionMsg(null), 3000);
+    }
+  };
+
+  const handleUpdateRole = (id: string, role: UserRole) => {
+    updateAuthorizedUser(id, {
+      role,
+      permissions: ROLE_DEFINITIONS[role].defaultPermissions,
+    });
+    setAuthorizedUsers(loadAuthorizedUsers());
+    setEditingUserId(null);
+  };
+
+  const handleToggleStrictMode = (checked: boolean) => {
+    setStrictWhitelist(checked);
+    setStrictWhitelistMode(checked);
+    setUserActionMsg({
+      text: checked
+        ? 'Строгий білий список увімкнено: лише дозволені Google-акаунти матимуть доступ'
+        : 'Строгий білий список вимкнено',
+      type: 'success',
+    });
+    setTimeout(() => setUserActionMsg(null), 3000);
+  };
+
+  const handleExportUsers = () => {
+    const jsonStr = exportUsersToJson();
+    const dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(jsonStr);
+    const downloadAnchor = document.createElement('a');
+    downloadAnchor.setAttribute('href', dataStr);
+    downloadAnchor.setAttribute('download', `b_sdd_authorized_users_${new Date().toISOString().slice(0, 10)}.json`);
+    document.body.appendChild(downloadAnchor);
+    downloadAnchor.click();
+    downloadAnchor.remove();
+  };
+
+  const handleImportUsers = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      const res = importUsersFromJson(reader.result as string);
+      if (res.success) {
+        setAuthorizedUsers(loadAuthorizedUsers());
+        setUserActionMsg({ text: `Успішно імпортовано ${res.count} користувачів!`, type: 'success' });
+      } else {
+        setUserActionMsg({ text: `Помилка імпорту: ${res.error}`, type: 'error' });
+      }
+      setTimeout(() => setUserActionMsg(null), 4000);
+    };
+    reader.readAsText(file);
+  };
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-slate-950/85 backdrop-blur-md animate-fade-in font-sans select-text">
       <div className="bg-[#0B1120] border border-blue-600/40 rounded-2xl w-full max-w-5xl max-h-[92vh] flex flex-col shadow-2xl overflow-hidden">
@@ -412,6 +536,21 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                 {Object.keys(overrides).length}
               </span>
             )}
+          </button>
+
+          <button
+            onClick={() => setActiveTab('users_access')}
+            className={`flex items-center gap-2 py-2.5 px-3 text-xs sm:text-sm font-medium border-b-2 transition-colors whitespace-nowrap ${
+              activeTab === 'users_access'
+                ? 'border-blue-500 text-blue-400 font-bold bg-blue-950/30'
+                : 'border-transparent text-slate-400 hover:text-slate-200'
+            }`}
+          >
+            <Users className="w-4 h-4 text-amber-400" />
+            <span>👥 Користувачі & Доступ</span>
+            <span className="ml-1 px-1.5 py-0.2 rounded-full text-[10px] bg-blue-950 text-blue-300 border border-blue-800">
+              {authorizedUsers.length}
+            </span>
           </button>
 
           <button
@@ -1246,7 +1385,285 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
           )}
 
           {/* ========================================================================= */}
-          {/* TAB 5: SECURITY & ACCESS                                                 */}
+          {/* TAB 5: USERS & GOOGLE WHITELIST ACCESS CONTROL (RBAC)                     */}
+          {/* ========================================================================= */}
+          {activeTab === 'users_access' && (
+            <div className="space-y-5">
+              {/* Action feedback message */}
+              {userActionMsg && (
+                <div
+                  className={`p-3 rounded-xl text-xs flex items-center justify-between border ${
+                    userActionMsg.type === 'success'
+                      ? 'bg-emerald-950/40 border-emerald-500/50 text-emerald-200'
+                      : 'bg-rose-950/40 border-rose-500/50 text-rose-200'
+                  }`}
+                >
+                  <div className="flex items-center gap-2">
+                    <CheckCircle className="w-4 h-4 shrink-0" />
+                    <span>{userActionMsg.text}</span>
+                  </div>
+                  <button onClick={() => setUserActionMsg(null)} className="text-slate-400 hover:text-white">
+                    ✕
+                  </button>
+                </div>
+              )}
+
+              {/* Portal URL & Swiss Secrecy Banner */}
+              <div className="bg-[#070B14] border border-blue-600/30 rounded-xl p-4 space-y-3">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                  <div>
+                    <h3 className="text-sm font-semibold text-white flex items-center gap-2">
+                      <Shield className="w-4 h-4 text-amber-400" />
+                      <span>Посилання для авторизації користувачів</span>
+                    </h3>
+                    <p className="text-xs text-slate-400 mt-0.5">
+                      Надішліть це посилання учасникам команди. Авторизуватися зможуть тільки внесені до білого списку.
+                    </p>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() =>
+                        handleCopy(
+                          'https://ais-dev-e2sihlyjbjzxc5lxx4nkc2-147404199355.europe-west3.run.app',
+                          'portal_url'
+                        )
+                      }
+                      className="px-3 py-1.5 bg-blue-600/20 hover:bg-blue-600/30 border border-blue-500/40 text-blue-300 hover:text-white rounded-lg text-xs font-mono flex items-center gap-1.5 transition-colors"
+                    >
+                      {copiedKey === 'portal_url' ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                      <span>Скопіювати посилання</span>
+                    </button>
+                  </div>
+                </div>
+
+                <div className="p-2.5 bg-slate-950 rounded-lg border border-slate-800 font-mono text-[11px] text-blue-300 break-all select-all flex items-center justify-between">
+                  <span>https://ais-dev-e2sihlyjbjzxc5lxx4nkc2-147404199355.europe-west3.run.app</span>
+                </div>
+
+                <div className="pt-2 flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-t border-slate-800/80">
+                  <div className="flex items-center gap-3">
+                    <label className="relative inline-flex items-center cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={strictWhitelist}
+                        onChange={(e) => handleToggleStrictMode(e.target.checked)}
+                        className="sr-only peer"
+                      />
+                      <div className="w-9 h-5 bg-slate-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-600"></div>
+                      <span className="ml-2.5 text-xs font-medium text-slate-200">
+                        Строгий контроль доступу (тільки білий список)
+                      </span>
+                    </label>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={handleExportUsers}
+                      className="text-xs text-slate-400 hover:text-slate-200 flex items-center gap-1 px-2 py-1 rounded bg-slate-900 border border-slate-800"
+                      title="Експорт списку користувачів"
+                    >
+                      <Download className="w-3.5 h-3.5" />
+                      <span>Експорт</span>
+                    </button>
+                    <label className="text-xs text-slate-400 hover:text-slate-200 flex items-center gap-1 px-2 py-1 rounded bg-slate-900 border border-slate-800 cursor-pointer">
+                      <Upload className="w-3.5 h-3.5" />
+                      <span>Імпорт</span>
+                      <input type="file" accept=".json" onChange={handleImportUsers} className="hidden" />
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              {/* Form: Add New User */}
+              <div className="bg-[#070B14] border border-slate-800 rounded-xl p-4 space-y-3">
+                <h4 className="text-xs font-bold uppercase tracking-wider text-slate-300 flex items-center gap-2">
+                  <UserPlus className="w-4 h-4 text-blue-400" />
+                  <span>Додати нового користувача Google до списку доступу</span>
+                </h4>
+
+                <form onSubmit={handleAddNewUser} className="space-y-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div className="sm:col-span-1">
+                      <label className="block text-[11px] font-medium text-slate-400 mb-1">
+                        Google Email (Gmail)*:
+                      </label>
+                      <input
+                        type="email"
+                        required
+                        placeholder="colleague@gmail.com"
+                        value={newUserEmail}
+                        onChange={(e) => setNewUserEmail(e.target.value)}
+                        className="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-white font-mono text-xs focus:ring-1 focus:ring-blue-500"
+                      />
+                    </div>
+
+                    <div className="sm:col-span-1">
+                      <label className="block text-[11px] font-medium text-slate-400 mb-1">
+                        Ім'я / Посада:
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="Адвокат Олена Франклін"
+                        value={newUserName}
+                        onChange={(e) => setNewUserName(e.target.value)}
+                        className="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-white text-xs focus:ring-1 focus:ring-blue-500"
+                      />
+                    </div>
+
+                    <div className="sm:col-span-1">
+                      <label className="block text-[11px] font-medium text-slate-400 mb-1">
+                        Роль у досьє:
+                      </label>
+                      <select
+                        value={newUserRole}
+                        onChange={(e) => setNewUserRole(e.target.value as UserRole)}
+                        className="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-white text-xs"
+                      >
+                        <option value="user">👤 Користувач / Довіритель</option>
+                        <option value="lawyer">⚖️ Адвокат / Юрист</option>
+                        <option value="admin">🛡️ Адміністратор справи</option>
+                        <option value="super_admin">👑 Головний Адміністратор</option>
+                        <option value="viewer">👁️ Спостерігач (Тільки читання)</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] font-medium text-slate-400 mb-1">
+                      Підстава допуску / Нотатки:
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="Ордер на захист від 15.08.2024 / договір про правову допомогу"
+                      value={newUserNotes}
+                      onChange={(e) => setNewUserNotes(e.target.value)}
+                      className="w-full px-3 py-1.5 bg-slate-900 border border-slate-700 rounded-lg text-white text-xs"
+                    />
+                  </div>
+
+                  <div className="flex justify-end">
+                    <button
+                      type="submit"
+                      className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-xs font-semibold flex items-center gap-1.5 shadow transition-all"
+                    >
+                      <UserPlus className="w-3.5 h-3.5" />
+                      <span>Додати користувача</span>
+                    </button>
+                  </div>
+                </form>
+              </div>
+
+              {/* Authorized Users List */}
+              <div className="bg-[#070B14] border border-slate-800 rounded-xl p-4 space-y-3">
+                <div className="flex items-center justify-between">
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-slate-300 flex items-center gap-2">
+                    <Users className="w-4 h-4 text-emerald-400" />
+                    <span>Список авторизованих користувачів ({authorizedUsers.length})</span>
+                  </h4>
+                  <span className="text-[11px] text-slate-500 font-mono">
+                    Головний адміністратор: {PRIMARY_SUPER_ADMIN_EMAIL}
+                  </span>
+                </div>
+
+                <div className="space-y-2 max-h-72 overflow-y-auto pr-1">
+                  {authorizedUsers.map((user) => {
+                    const isSuper = user.email.toLowerCase() === PRIMARY_SUPER_ADMIN_EMAIL.toLowerCase();
+                    const roleMeta = ROLE_DEFINITIONS[user.role];
+                    const isEditing = editingUserId === user.id;
+
+                    return (
+                      <div
+                        key={user.id}
+                        className={`p-3 rounded-xl border flex flex-col sm:flex-row sm:items-center justify-between gap-3 transition-colors ${
+                          user.isActive
+                            ? 'bg-slate-900/60 border-slate-800'
+                            : 'bg-slate-950/40 border-slate-900 opacity-60'
+                        }`}
+                      >
+                        <div className="flex items-center gap-3 min-w-0">
+                          <div className="w-9 h-9 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-200 font-bold shrink-0">
+                            {user.name.charAt(0).toUpperCase()}
+                          </div>
+                          <div className="min-w-0">
+                            <div className="flex items-center gap-2">
+                              <span className="font-semibold text-white text-xs truncate">{user.name}</span>
+                              {isSuper && (
+                                <span className="px-1.5 py-0.2 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30 text-[9px] font-mono">
+                                  Root Owner
+                                </span>
+                              )}
+                            </div>
+                            <div className="text-[11px] text-slate-400 font-mono truncate">{user.email}</div>
+                            {user.notes && (
+                              <div className="text-[10px] text-slate-500 truncate mt-0.5">{user.notes}</div>
+                            )}
+                          </div>
+                        </div>
+
+                        <div className="flex items-center gap-2 shrink-0">
+                          {/* Role selector / display */}
+                          {isEditing ? (
+                            <select
+                              value={user.role}
+                              disabled={isSuper}
+                              onChange={(e) => handleUpdateRole(user.id, e.target.value as UserRole)}
+                              className="px-2 py-1 bg-slate-950 border border-blue-500 rounded text-xs text-white"
+                            >
+                              <option value="user">Користувач</option>
+                              <option value="lawyer">Адвокат</option>
+                              <option value="admin">Адміністратор</option>
+                              <option value="super_admin">Головний Адмін</option>
+                              <option value="viewer">Спостерігач</option>
+                            </select>
+                          ) : (
+                            <button
+                              onClick={() => !isSuper && setEditingUserId(user.id)}
+                              disabled={isSuper}
+                              className={`px-2 py-0.5 rounded text-[10px] font-mono border ${
+                                roleMeta?.badgeColor || 'bg-slate-800 text-slate-300 border-slate-700'
+                              } ${!isSuper ? 'hover:ring-1 hover:ring-blue-400 cursor-pointer' : ''}`}
+                              title={!isSuper ? 'Натисніть для зміни ролі' : 'Неможливо змінити роль Root'}
+                            >
+                              {roleMeta?.titleUk || user.role}
+                            </button>
+                          )}
+
+                          {/* Status toggle */}
+                          <button
+                            onClick={() => handleToggleUserStatus(user.id)}
+                            disabled={isSuper}
+                            className={`px-2 py-1 rounded text-[10px] font-semibold transition-colors ${
+                              user.isActive
+                                ? 'bg-emerald-950/60 text-emerald-400 border border-emerald-800/60 hover:bg-emerald-900/60'
+                                : 'bg-rose-950/60 text-rose-400 border border-rose-800/60 hover:bg-rose-900/60'
+                            } ${isSuper ? 'cursor-not-allowed opacity-80' : ''}`}
+                            title={isSuper ? 'Головний адміністратор завжди активний' : 'Змінити статус доступу'}
+                          >
+                            {user.isActive ? '🟢 Дозволено' : '🔴 Заблоковано'}
+                          </button>
+
+                          {/* Delete button */}
+                          {!isSuper && (
+                            <button
+                              onClick={() => handleRemoveUser(user.id, user.email)}
+                              className="p-1.5 text-slate-500 hover:text-rose-400 hover:bg-rose-950/30 rounded-lg transition-colors"
+                              title="Видалити зі списку"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* ========================================================================= */}
+          {/* TAB 6: SECURITY & SYSTEM INVARIANTS                                      */}
           {/* ========================================================================= */}
           {activeTab === 'security' && (
             <div className="space-y-5">
@@ -1259,17 +1676,17 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-xs font-medium text-slate-300 mb-1.5">
-                      Пароль / PIN адвоката для входу:
+                      Резервний PIN-код адвоката (Master PIN):
                     </label>
                     <input
-                      type="text"
+                      type="password"
                       value={authPassword}
                       onChange={e => setAuthPassword(e.target.value)}
-                      placeholder="0523"
+                      placeholder="••••"
                       className="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-white font-mono text-xs focus:ring-1 focus:ring-blue-500"
                     />
                     <span className="text-[10px] text-slate-500 mt-1 block">
-                      За замовчуванням: 0523. Захищає від несанкціонованого перегляду.
+                      Використовується для аварійного входу при недоступності сервісів Google.
                     </span>
                   </div>
 

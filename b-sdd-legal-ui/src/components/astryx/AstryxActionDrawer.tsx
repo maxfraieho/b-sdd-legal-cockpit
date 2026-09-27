@@ -40,6 +40,7 @@ interface AstryxActionDrawerProps {
   onOpenCaseSync?: () => void;
   onSendToKindle?: () => void;
   onOpenSettings?: () => void;
+  onOpenLegalStrategy?: () => void;
   onLockSession?: () => void;
   isEInkMode?: boolean;
   onToggleEInkMode?: () => void;
@@ -60,6 +61,7 @@ export const AstryxActionDrawer: React.FC<AstryxActionDrawerProps> = ({
   onOpenCaseSync,
   onSendToKindle,
   onOpenSettings,
+  onOpenLegalStrategy,
   onLockSession,
   isEInkMode = false,
   onToggleEInkMode,
@@ -381,6 +383,38 @@ export const AstryxActionDrawer: React.FC<AstryxActionDrawerProps> = ({
                     </div>
                     <div className="text-[10px] text-slate-400 font-sans">
                       CP, CPP, CC, CO, LEI · Повний двомовний текст статей
+                    </div>
+                  </div>
+                </div>
+                <ChevronRight className="w-4 h-4 text-slate-500 group-hover:text-slate-300" />
+              </button>
+
+              <button
+                onClick={() => handleAction(onOpenLegalStrategy)}
+                className="w-full text-left p-2.5 rounded-lg bg-[#0F172A] hover:bg-[#1E293B] border border-blue-500/30 text-slate-200 hover:text-white transition-all group flex items-center justify-between"
+              >
+                <div className="flex items-center space-x-3">
+                  <div className="p-1.5 rounded bg-blue-500/10 text-blue-400 group-hover:scale-110 transition-transform">
+                    <BookOpen className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <div className="font-bold text-blue-300 group-hover:text-blue-200">
+                      {currentLang === "uk"
+                        ? "⚖️ Меморандум & Шаблони (LLCA / CO / LAVI)"
+                        : currentLang === "fr"
+                        ? "⚖️ Note Juridique & Modèles (LLCA / CO / LAVI)"
+                        : currentLang === "de"
+                        ? "⚖️ Rechtsmemorandum & Vorlagen (BGFA / OR / OHG)"
+                        : currentLang === "it"
+                        ? "⚖️ Nota Giuridica & Modelli (LLCA / CO / LAVI)"
+                        : "⚖️ Legal Strategy & Contracts (LLCA / CO / LAVI)"}
+                    </div>
+                    <div className="text-[10px] text-slate-400 font-sans">
+                      {currentLang === "uk"
+                        ? "Аналіз заборони quota litis, договір заліку (ст. 120 CO) та заява LAVI"
+                        : currentLang === "fr"
+                        ? "Analyse quota litis, contrat de compensation (art. 120 CO) et LAVI"
+                        : "Quota litis compliance, Art. 120 CO set-off contract & LAVI"}
                     </div>
                   </div>
                 </div>
