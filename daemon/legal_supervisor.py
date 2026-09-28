@@ -126,7 +126,7 @@ def run_sprint_task(sprint_id: str, instruction: str, prompt: str, source: str):
         )
 
         script_path = PROJECT_ROOT / "scripts" / "run_legal_sprint.sh"
-        cmd = ["bash", str(script_path), sprint_id, instruction]
+        cmd = ["bash", str(script_path), sprint_id, instruction, prompt]
 
         try:
             proc = subprocess.run(

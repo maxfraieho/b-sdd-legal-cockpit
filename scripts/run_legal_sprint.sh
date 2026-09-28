@@ -16,10 +16,14 @@ NODE_IP="192.168.3.234"
 
 SPRINT_ID="${1:-sprint_001_legal}"
 INSTRUCTION="${2:-PING_HOST_234_AUTONOMY}"
+PROMPT="${3:-}"
 
 echo "=============================================================================="
 echo " [B-SDD LEGAL] Initiating Autonomous Sprint on Node ${NODE_IP}"
 echo " Sprint: ${SPRINT_ID} | Instruction: ${INSTRUCTION}"
+if [ -n "${PROMPT}" ]; then
+  echo " Prompt: ${PROMPT}"
+fi
 echo "=============================================================================="
 
 # 1. Verify Active Rules budget (< 500 words SLA)
@@ -33,6 +37,18 @@ if [ -f "${RULES_FILE}" ]; then
   fi
 else
   echo "WARNING: .context/active_rules.md not found!"
+fi
+
+# 1b. Autonomous AI Task Execution via Antigravity CLI (agy)
+if [ -n "${PROMPT}" ]; then
+  echo "[AGY RUNNER] Executing task via Antigravity CLI (agy)..."
+  AGY_BIN="$(which agy 2>/dev/null || echo "/home/vokov/.local/bin/agy")"
+  if [ -x "${AGY_BIN}" ]; then
+    echo "[AGY RUNNER] Invoking ${AGY_BIN} with non-interactive prompt..."
+    "${AGY_BIN}" -p "${PROMPT}" --dangerously-skip-permissions || echo "[AGY RUNNER] Task completed or exited with status $?"
+  else
+    echo "WARNING: agy binary not found at ${AGY_BIN}, skipping autonomous prompt execution"
+  fi
 fi
 
 # 2. Run Test Suite

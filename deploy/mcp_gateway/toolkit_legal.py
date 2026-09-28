@@ -1,8 +1,8 @@
 """
 B-SDD MCP Gateway Toolkit: Legal Criminal Dossier & Evidence (Canton de Vaud).
-Exposes Swiss CPP legal tools with Invariant L-03 (Jean-Paul Vernon bona fide shield),
-Art. 122 CPP victim protection (Alexandre Dubois), and direct proxying to Node .234.
-100% Pure Python Standard Library (ADR-002).
+Exposes Swiss CPP legal tools with Invariant L-03 (Adriano Milli bona fide shield),
+Art. 115, 118, 122 CPP adult victim protection (Arsen Kovalenko), and direct proxying to Node .234.
+100% Pure Python Standard Library (ADR-002, Invariants L-01..L-05).
 """
 import json
 import logging
@@ -37,7 +37,7 @@ def legal_transcripts_query(recording_id: Optional[str] = None, keyword: Optiona
     return _call_node_234("/api/tools/legal_transcripts_query", {"recording_id": recording_id, "keyword": keyword})
 
 def legal_actor_matrix_get() -> Any:
-    """Returns all actors and formal procedural roles under Swiss CPP with Jean-Paul Vernon bona fide shield."""
+    """Returns all actors and formal procedural roles under Swiss CPP with Adriano Milli bona fide shield."""
     return _call_node_234("/api/tools/legal_actor_matrix_get", {})
 
 def legal_evidence_get(evidence_id: Optional[str] = None) -> Any:
@@ -59,6 +59,26 @@ def legal_epub_rebuild() -> Any:
 def utopia_db_query(sql_query: str) -> Any:
     """Executes SQL query against the Utopia Bitemporal DB on host 192.168.3.251."""
     return _call_node_234("/api/tools/utopia_db_query", {"sql_query": sql_query})
+
+def legal_feedback_reconcile(text: str, handler: str = "agy", target_chapter: Optional[str] = None) -> Any:
+    """Performs 5-stage sequential thinking feedback calibration and blast radius calculation."""
+    try:
+        from src.legal.feedback_supervisor import (
+            ReconciliationSupervisor,
+            ReconciliationRequest,
+            HandlerType,
+        )
+        ht = HandlerType.AGY_AUTONOMOUS if str(handler).lower() in ("agy", "antigravity") else HandlerType.GEMINI_SPARK
+        req = ReconciliationRequest(text=text, handler=ht, target_chapter=target_chapter)
+        supervisor = ReconciliationSupervisor()
+        verdict = supervisor.process(req)
+        return verdict.to_dict()
+    except Exception as e:
+        return {"error": f"Feedback reconciliation failed: {e}"}
+
+def legal_appwrite_status() -> Any:
+    """Queries Appwrite Cloud legal_vault and evidence vault connectivity and status."""
+    return _call_node_234("/api/tools/legal_appwrite_status", {})
 
 def get_tools_spec() -> List[Dict[str, Any]]:
     return [
@@ -141,6 +161,27 @@ def get_tools_spec() -> List[Dict[str, Any]]:
                     "sql_query": {"type": "string", "description": "SQL statement (SELECT only recommended)."}
                 },
                 "required": ["sql_query"]
+            }
+        },
+        {
+            "name": "legal_feedback_reconcile",
+            "description": "Executes 5-stage sequential thinking feedback reconciliation, invariant checks (L-01..L-05), and blast radius impact analysis.",
+            "inputSchema": {
+                "type": "object",
+                "properties": {
+                    "text": {"type": "string", "description": "Review notes, deposition clarification, or user feedback text."},
+                    "handler": {"type": "string", "description": "Handler engine: 'agy' (Antigravity CLI) or 'gemini' (Gemini Spark). Default: 'agy'."},
+                    "target_chapter": {"type": "string", "description": "Optional specific chapter target (e.g. 'CH-01', 'CH-03')."}
+                },
+                "required": ["text"]
+            }
+        },
+        {
+            "name": "legal_appwrite_status",
+            "description": "Checks connectivity and sync status with Appwrite Cloud Vault (legal_vault database and legal-evidence-vault bucket).",
+            "inputSchema": {
+                "type": "object",
+                "properties": {}
             }
         }
     ]

@@ -132,6 +132,14 @@ def dispatch_tool_call(name: str, args: Dict[str, Any]) -> Any:
         return toolkit_legal.legal_epub_rebuild()
     elif name == "utopia_db_query":
         return toolkit_legal.utopia_db_query(sql_query=args.get("sql_query", ""))
+    elif name == "legal_feedback_reconcile":
+        return toolkit_legal.legal_feedback_reconcile(
+            text=args.get("text", ""),
+            handler=args.get("handler", "agy"),
+            target_chapter=args.get("target_chapter")
+        )
+    elif name == "legal_appwrite_status":
+        return toolkit_legal.legal_appwrite_status()
 
     # 2. Documentation & Planning Tools (Spark Architect)
     elif name == "legal_docs_list":
