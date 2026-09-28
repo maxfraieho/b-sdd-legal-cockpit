@@ -65,6 +65,7 @@ import {
   ExternalLink,
   Edit2,
   Lock,
+  Fingerprint,
 } from 'lucide-react';
 import {
   loadAuthorizedUsers,

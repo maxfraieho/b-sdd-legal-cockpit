@@ -44,6 +44,7 @@ import {
   ROLE_DEFINITIONS,
 } from '../types/auth';
 import { LegalStrategyModal } from './LegalStrategyModal';
+import { account } from '../lib/appwrite';
 
 export type { AuthStage, AuthGateState };
 
@@ -619,123 +620,28 @@ export const AuthGate: React.FC<AuthGateProps> = ({
 
   const t = AUTH_I18N[currentLang] || AUTH_I18N['fr'];
 
-  // Direct Edge Credential Verification (Google Identity Services ID-Token RS256 JWT)
-  const verifyCredentialAtEdge = async (credential: string) => {
-    try {
-      setAuthState((prev) => ({
-        ...prev,
-        stage: 'AUTHENTICATING',
-        authError: null,
-      }));
-
-      const res = await fetch('/api/auth/google', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'same-origin',
-        body: JSON.stringify({ credential }),
-      });
-
-      const data = await res.json();
-      if (!res.ok) {
-        throw new Error(data.error || 'Authentication failed at edge gateway.');
-      }
-
-      handleVerifyGoogleIdentity(data.user.email, data.token, {
-        name: data.user.name,
-        picture: data.user.avatar,
-      });
-    } catch (err: any) {
-      setGoogleAuthError(err.message || 'Помилка перевірки облікового запису Google');
-      setAuthState((prev) => ({
-        ...prev,
-        stage: 'GOOGLE_REQUIRED',
-        authError: err.message,
-      }));
-    } finally {
-      setIsAuthenticating(false);
-    }
-  };
-
-  // Direct Operator Edge Admission (Bypasses cross-domain Cloud Run bounce, verifies against WHITELIST)
-  const verifyDirectOperatorAccess = async () => {
-    try {
-      setAuthState((prev) => ({
-        ...prev,
-        stage: 'AUTHENTICATING',
-        authError: null,
-      }));
-
-      try {
-        const res = await fetch('/api/auth/google', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          credentials: 'same-origin',
-          body: JSON.stringify({ direct_email: PRIMARY_SUPER_ADMIN_EMAIL }),
-        });
-
-        if (res.ok) {
-          const data = await res.json();
-          if (data.success && data.user) {
-            handleVerifyGoogleIdentity(data.user.email, data.token, {
-              name: data.user.name,
-              picture: data.user.avatar,
-            });
-            return;
-          }
-        }
-      } catch (fetchErr) {
-        console.warn('Edge function fetch failed, falling back to local verification:', fetchErr);
-      }
-
-      // Local fallback (offline or local Vite dev)
-      handleVerifyGoogleIdentity(PRIMARY_SUPER_ADMIN_EMAIL);
-    } catch (err: any) {
-      setGoogleAuthError(err.message || 'Помилка авторизації');
-      setAuthState((prev) => ({
-        ...prev,
-        stage: 'GOOGLE_REQUIRED',
-        authError: err.message,
-      }));
-    } finally {
-      setIsAuthenticating(false);
-    }
-  };
-
-  // Main Google Authentication Trigger (Zero-Trust GIS / Edge Broker)
-  const handleExecuteGoogleAuth = async () => {
+  // Main Google Authentication Trigger via Appwrite OAuth2 (Zero-Trust)
+  const handleExecuteGoogleAuth = () => {
     setIsAuthenticating(true);
     setGoogleAuthError(null);
 
-    const clientId = getGoogleClientId();
+    const currentOrigin =
+      typeof window !== 'undefined'
+        ? `${window.location.origin}${window.location.pathname}`
+        : 'https://b-sdd-legal-ui.pages.dev/';
+    const successUrl = `${currentOrigin}?pin_verified=true`;
+    const failureUrl = `${currentOrigin}?auth_error=appwrite_google_failed`;
 
-    if (clientId && typeof window !== 'undefined' && (window as any).google?.accounts?.id) {
-      try {
-        let gisResolved = false;
-        (window as any).google.accounts.id.initialize({
-          client_id: clientId,
-          callback: async (response: { credential?: string }) => {
-            gisResolved = true;
-            if (response.credential) {
-              await verifyCredentialAtEdge(response.credential);
-            }
-          },
-          ux_mode: 'popup',
-          auto_select: false,
-          itp_support: true,
-        });
-
-        (window as any).google.accounts.id.prompt((notification: any) => {
-          if (!gisResolved && (notification.isNotDisplayed?.() || notification.isSkippedMoment?.())) {
-            verifyDirectOperatorAccess();
-          }
-        });
-        return;
-      } catch (err) {
-        console.warn('GIS error, falling back to direct edge broker:', err);
-      }
+    try {
+      account.createOAuth2Session(
+        'google' as any,
+        successUrl,
+        failureUrl
+      );
+    } catch (err: any) {
+      setIsAuthenticating(false);
+      setGoogleAuthError(err.message || 'Не вдалося ініціювати сесію Appwrite Google OAuth2');
     }
-
-    await verifyDirectOperatorAccess();
   };
 
   // Verification Engine: Checks against Hardened Whitelist and executes real authorization
@@ -925,6 +831,31 @@ export const AuthGate: React.FC<AuthGateProps> = ({
         }
       } catch {}
 
+      // 2b. Check Appwrite OAuth session (Zero-Trust Identity Verification)
+      try {
+        const appwriteUser = await account.get();
+        if (appwriteUser && appwriteUser.email && isMounted) {
+          const normalizedEmail = appwriteUser.email.trim().toLowerCase();
+          const matchedUser = HARDENED_WHITELIST[normalizedEmail];
+
+          if (matchedUser) {
+            handleVerifyGoogleIdentity(normalizedEmail, appwriteUser.$id, {
+              name: appwriteUser.name || matchedUser.name,
+            });
+            return;
+          } else {
+            setAuthState((prev) => ({
+              ...prev,
+              stage: 'ACCESS_DENIED',
+              authError: `ACCÈS REFUSÉ (Art. 73 CPP / Art. 320 CP): L'adresse ${normalizedEmail} n'est pas autorisée pour le dossier PE24.014624-SBA.`,
+              authenticatedEmail: normalizedEmail,
+            }));
+            window.history.replaceState({}, document.title, window.location.pathname);
+            return;
+          }
+        }
+      } catch {}
+
       // 3. Callback First: Check URL parameters from any OAuth bounce
       const urlParams = new URLSearchParams(window.location.search);
       const emailParam = urlParams.get('user_email') || urlParams.get('email');
@@ -1106,6 +1037,7 @@ export const AuthGate: React.FC<AuthGateProps> = ({
 
   const handleLock = () => {
     try {
+      account.deleteSession('current').catch(() => {});
       fetch('/api/auth/logout', { method: 'POST', credentials: 'same-origin' }).catch(() => {});
     } catch {}
     clearAuthSession();
