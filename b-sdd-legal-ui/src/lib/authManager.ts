@@ -8,6 +8,35 @@ import { AuthorizedUser, AuthSession, UserRole, ROLE_DEFINITIONS } from '../type
 const STORAGE_USERS_KEY = 'b_sdd_authorized_google_users_v1';
 const STORAGE_SESSION_KEY = 'b_sdd_auth_session_v1';
 const STORAGE_STRICT_MODE_KEY = 'b_sdd_strict_whitelist_mode';
+export const STORAGE_CLOUD_RUN_ENDPOINT_KEY = 'b_sdd_cloud_run_auth_endpoint';
+
+// Active Google Cloud Run Identity Gateway (ais-dev-cy5vorrb7cys2mpbzcua5g)
+export const DEFAULT_CLOUD_RUN_AUTH_ENDPOINT =
+  'https://ais-dev-cy5vorrb7cys2mpbzcua5g-147404199355.europe-west3.run.app';
+
+export function getCloudRunAuthEndpoint(): string {
+  try {
+    const custom = localStorage.getItem(STORAGE_CLOUD_RUN_ENDPOINT_KEY);
+    if (custom && custom.trim().startsWith('https://')) {
+      if (custom.includes('e2sihlyjbjzxc5lxx4nkc2')) {
+        localStorage.setItem(STORAGE_CLOUD_RUN_ENDPOINT_KEY, DEFAULT_CLOUD_RUN_AUTH_ENDPOINT);
+        return DEFAULT_CLOUD_RUN_AUTH_ENDPOINT;
+      }
+      return custom.trim();
+    }
+  } catch {}
+  return DEFAULT_CLOUD_RUN_AUTH_ENDPOINT;
+}
+
+export function setCloudRunAuthEndpoint(url: string): void {
+  try {
+    if (url && url.trim().startsWith('https://')) {
+      localStorage.setItem(STORAGE_CLOUD_RUN_ENDPOINT_KEY, url.trim());
+    } else {
+      localStorage.removeItem(STORAGE_CLOUD_RUN_ENDPOINT_KEY);
+    }
+  } catch {}
+}
 
 // Canonical Super Admin and initial team configuration
 export const PRIMARY_SUPER_ADMIN_EMAIL = 'TUkroschu@gmail.com';

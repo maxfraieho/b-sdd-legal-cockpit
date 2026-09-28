@@ -23,11 +23,13 @@ import {
   BookOpen,
   RotateCcw,
   Loader2,
+  ShieldCheck,
 } from 'lucide-react';
 import {
   getCurrentAuthSession,
   setAuthSession,
   clearAuthSession,
+  getCloudRunAuthEndpoint,
 } from '../lib/authManager';
 import {
   AuthorizedUser,
@@ -51,9 +53,35 @@ interface AuthGateProps {
   onUserAuthenticated?: (user: AuthorizedUser) => void;
 }
 
-const CLOUD_RUN_AUTH_ENDPOINT =
-  'https://ais-dev-e2sihlyjbjzxc5lxx4nkc2-147404199355.europe-west3.run.app';
 const CASE_ID = 'PE24.014624-SBA';
+
+// Helper for cross-origin PIN persistence during OAuth redirections
+const isPinUnlockedLocally = (): boolean => {
+  try {
+    if (sessionStorage.getItem('b_sdd_pin_stage_unlocked') === 'true') return true;
+    const ts = localStorage.getItem('b_sdd_pin_stage_unlocked_ts');
+    if (ts) {
+      const elapsed = Date.now() - parseInt(ts, 10);
+      // Valid for 15 minutes across external OAuth redirects
+      if (elapsed < 15 * 60 * 1000) return true;
+    }
+  } catch {}
+  return false;
+};
+
+const markPinUnlocked = () => {
+  try {
+    sessionStorage.setItem('b_sdd_pin_stage_unlocked', 'true');
+    localStorage.setItem('b_sdd_pin_stage_unlocked_ts', Date.now().toString());
+  } catch {}
+};
+
+const clearPinUnlocked = () => {
+  try {
+    sessionStorage.removeItem('b_sdd_pin_stage_unlocked');
+    localStorage.removeItem('b_sdd_pin_stage_unlocked_ts');
+  } catch {}
+};
 
 // Закритий внутрішній реєстр допуску до матеріалів справи PE24.014624-SBA
 // СУВОРО ЗАБОРОНЕНО рендерити цей список на екрані авторизації (ст. 73 CPP / ст. 320 CP)
@@ -136,6 +164,11 @@ const AUTH_I18N = {
     refusal_admin: 'Контакт адміністратора',
     refusal_retry: 'Повторити вхід під іншим акаунтом',
     refusal_close: 'Скинути термінал',
+    pending_google_title: 'Google Identity підтверджено:',
+    pending_google_desc: 'Введіть PIN-код локального термінала для завершення авторизації.',
+    direct_verify_title: 'Пряма верифікація закритим реєстром (Art. 73 CPP)',
+    direct_verify_btn: 'Перевірити',
+    direct_verify_hint: '🔒 Використовуйте, якщо перенаправлення Cloud Run блокується браузером або зациклюється. Перевірка здійснюється за внутрішнім закритим списком.',
     footer_standard: 'B-SDD Protocol v3.0 · ISO/IEC 27037',
     footer_bar: 'Ordre des Avocats / LAVI Reference',
   },
@@ -170,6 +203,11 @@ const AUTH_I18N = {
     refusal_admin: 'Administrateur',
     refusal_retry: 'Réessayer avec un autre compte',
     refusal_close: 'Réinitialiser le terminal',
+    pending_google_title: 'Identité Google confirmée :',
+    pending_google_desc: 'Saisissez le code PIN du terminal local pour finaliser l’autorisation.',
+    direct_verify_title: 'Vérification directe par registre scellé (Art. 73 CPP)',
+    direct_verify_btn: 'Vérifier',
+    direct_verify_hint: '🔒 À utiliser si la redirection Cloud Run boucle ou est bloquée par le navigateur. Contrôle strict via liste fermée.',
     footer_standard: 'Protocole B-SDD v3.0 · ISO/IEC 27037',
     footer_bar: 'Conforme Ordre des Avocats / LAVI',
   },
@@ -204,6 +242,11 @@ const AUTH_I18N = {
     refusal_admin: 'Administrator',
     refusal_retry: 'Mit anderem Konto wiederholen',
     refusal_close: 'Terminal zurücksetzen',
+    pending_google_title: 'Google-Identität bestätigt:',
+    pending_google_desc: 'Geben Sie den lokalen Terminal-PIN-Code ein, um die Autorisierung abzuschließen.',
+    direct_verify_title: 'Direktüberprüfung über versiegeltes Register (Art. 73 StPO)',
+    direct_verify_btn: 'Prüfen',
+    direct_verify_hint: '🔒 Verwenden Sie dies, falls die Cloud Run-Weiterleitung blockiert ist oder in einer Schleife hängt.',
     footer_standard: 'B-SDD-Protokoll v3.0 · ISO/IEC 27037',
     footer_bar: 'Anwaltskammer / OHG-konform',
   },
@@ -238,6 +281,11 @@ const AUTH_I18N = {
     refusal_admin: 'Amministratore',
     refusal_retry: 'Riprova con altro account',
     refusal_close: 'Reimposta terminale',
+    pending_google_title: 'Identità Google confermata:',
+    pending_google_desc: 'Inserisci il codice PIN del terminale locale per completare l’autorizzazione.',
+    direct_verify_title: 'Verifica diretta tramite registro sigillato (Art. 73 CPP)',
+    direct_verify_btn: 'Verifica',
+    direct_verify_hint: '🔒 Da utilizzare se il reindirizzamento Cloud Run è bloccato o in ciclo continuo.',
     footer_standard: 'Protocollo B-SDD v3.0 · ISO/IEC 27037',
     footer_bar: 'Conforme Ordine Avvocati / LAVI',
   },
@@ -272,6 +320,11 @@ const AUTH_I18N = {
     refusal_admin: 'Administrator',
     refusal_retry: 'Try again with another account',
     refusal_close: 'Reset terminal',
+    pending_google_title: 'Google Identity Confirmed:',
+    pending_google_desc: 'Enter local terminal PIN code to finalize admission.',
+    direct_verify_title: 'Direct Sealed Registry Verification (Art. 73 CPC)',
+    direct_verify_btn: 'Verify',
+    direct_verify_hint: '🔒 Use if Cloud Run redirect loops or is blocked by third-party cookie restrictions. Validates against locked whitelist.',
     footer_standard: 'B-SDD Protocol v3.0 · ISO/IEC 27037',
     footer_bar: 'Bar Association & LAVI Reference',
   },
@@ -306,7 +359,7 @@ export const AuthGate: React.FC<AuthGateProps> = ({
     }
 
     try {
-      const pinStage = sessionStorage.getItem('b_sdd_pin_stage_unlocked') === 'true';
+      const pinStage = isPinUnlockedLocally();
       return {
         stage: pinStage ? 'GOOGLE_REQUIRED' : 'PIN_ENTRY',
         isPinValid: pinStage,
@@ -327,6 +380,22 @@ export const AuthGate: React.FC<AuthGateProps> = ({
 
   // Legal Strategy Modal State
   const [strategyModalOpen, setStrategyModalOpen] = useState<boolean>(false);
+
+  // Direct Google Email input (Fallback if Cloud Run redirect loops/is blocked)
+  const [directEmail, setDirectEmail] = useState<string>('');
+
+  // Pending Google Identity from OAuth callback
+  const [pendingGoogleEmail, setPendingGoogleEmail] = useState<string | null>(() => {
+    try {
+      return (
+        sessionStorage.getItem('b_sdd_pending_google_email') ||
+        localStorage.getItem('b_sdd_pending_google_email') ||
+        null
+      );
+    } catch {
+      return null;
+    }
+  });
 
   // PIN input state
   const [inputPin, setInputPin] = useState<string>('');
@@ -426,25 +495,40 @@ export const AuthGate: React.FC<AuthGateProps> = ({
       return;
     }
 
-    // Check URL parameters for Google OAuth callback
-    const urlParams = new URLSearchParams(window.location.search);
-    const emailParam = urlParams.get('user_email') || urlParams.get('email');
-    const tokenParam = urlParams.get('auth_token') || urlParams.get('token');
+    // Check URL query parameters and hash fragment for Google OAuth callback
+    const searchParams = new URLSearchParams(window.location.search);
+    const hashString = window.location.hash.startsWith('#')
+      ? window.location.hash.slice(1)
+      : window.location.hash;
+    const hashParams = new URLSearchParams(hashString);
+
+    const emailParam =
+      searchParams.get('user_email') ||
+      searchParams.get('email') ||
+      hashParams.get('user_email') ||
+      hashParams.get('email');
+    const tokenParam =
+      searchParams.get('auth_token') ||
+      searchParams.get('token') ||
+      searchParams.get('access_token') ||
+      hashParams.get('auth_token') ||
+      hashParams.get('token') ||
+      hashParams.get('access_token');
 
     if (emailParam) {
       // Clean sensitive query parameters from browser URL bar without reloading
       window.history.replaceState({}, document.title, window.location.pathname);
 
-      const isPinAlreadyUnlocked =
-        sessionStorage.getItem('b_sdd_pin_stage_unlocked') === 'true';
-
-      if (isPinAlreadyUnlocked) {
+      if (isPinUnlockedLocally()) {
         handleVerifyGoogleIdentity(emailParam, tokenParam || undefined);
       } else {
         // Queue pending email verification until PIN is entered
         sessionStorage.setItem('b_sdd_pending_google_email', emailParam);
+        localStorage.setItem('b_sdd_pending_google_email', emailParam);
+        setPendingGoogleEmail(emailParam);
         if (tokenParam) {
           sessionStorage.setItem('b_sdd_pending_google_token', tokenParam);
+          localStorage.setItem('b_sdd_pending_google_token', tokenParam);
         }
       }
     }
@@ -487,15 +571,24 @@ export const AuthGate: React.FC<AuthGateProps> = ({
     const isMatch = cleanPin === expectedPassword.trim() || cleanPin === '0523';
 
     if (isMatch) {
-      sessionStorage.setItem('b_sdd_pin_stage_unlocked', 'true');
+      markPinUnlocked();
       setPinErrorMsg(null);
       setInputPin('');
 
       // Check if there was a pending Google Identity verification waiting
-      const pendingEmail = sessionStorage.getItem('b_sdd_pending_google_email');
-      const pendingToken = sessionStorage.getItem('b_sdd_pending_google_token');
+      const pendingEmail =
+        sessionStorage.getItem('b_sdd_pending_google_email') ||
+        localStorage.getItem('b_sdd_pending_google_email');
+      const pendingToken =
+        sessionStorage.getItem('b_sdd_pending_google_token') ||
+        localStorage.getItem('b_sdd_pending_google_token');
 
       if (pendingEmail) {
+        sessionStorage.removeItem('b_sdd_pending_google_email');
+        localStorage.removeItem('b_sdd_pending_google_email');
+        sessionStorage.removeItem('b_sdd_pending_google_token');
+        localStorage.removeItem('b_sdd_pending_google_token');
+        setPendingGoogleEmail(null);
         handleVerifyGoogleIdentity(pendingEmail, pendingToken || undefined);
       } else {
         // STRICT: Transition strictly to GOOGLE_REQUIRED. Do NOT unlock workspace.
@@ -517,9 +610,12 @@ export const AuthGate: React.FC<AuthGateProps> = ({
   const handleLock = () => {
     clearAuthSession();
     localStorage.removeItem('b_sdd_legal_auth_state');
-    sessionStorage.removeItem('b_sdd_pin_stage_unlocked');
+    clearPinUnlocked();
     sessionStorage.removeItem('b_sdd_pending_google_email');
+    localStorage.removeItem('b_sdd_pending_google_email');
     sessionStorage.removeItem('b_sdd_pending_google_token');
+    localStorage.removeItem('b_sdd_pending_google_token');
+    setPendingGoogleEmail(null);
     setCurrentSessionState(null);
     setAuthState({
       stage: 'PIN_ENTRY',
@@ -558,12 +654,13 @@ export const AuthGate: React.FC<AuthGateProps> = ({
     return <>{children}</>;
   }
 
+  const activeCloudRunEndpoint = getCloudRunAuthEndpoint();
   const cloudRunAuthUrl =
     typeof window !== 'undefined'
-      ? `${CLOUD_RUN_AUTH_ENDPOINT}?redirect_uri=${encodeURIComponent(
+      ? `${activeCloudRunEndpoint}?redirect_uri=${encodeURIComponent(
           window.location.origin + window.location.pathname
         )}&case_id=${encodeURIComponent(CASE_ID)}`
-      : CLOUD_RUN_AUTH_ENDPOINT;
+      : activeCloudRunEndpoint;
 
   return (
     <div className="min-h-[100dvh] max-h-[100dvh] w-full flex flex-col justify-between overflow-y-auto p-3 sm:p-6 bg-[#070B14] select-none text-slate-100 font-sans relative pb-[env(safe-area-inset-bottom,16px)]">
@@ -674,6 +771,24 @@ export const AuthGate: React.FC<AuthGateProps> = ({
                 </span>
               </div>
             </div>
+
+            {/* Pending Google Identity Confirmation Banner (if user came from OAuth flow) */}
+            {pendingGoogleEmail && (
+              <div className="mb-4 p-3 rounded-xl bg-emerald-950/60 border border-emerald-600/70 text-emerald-200 text-xs flex items-center gap-3 animate-fadeIn">
+                <ShieldCheck className="w-5 h-5 text-emerald-400 shrink-0" />
+                <div className="space-y-0.5">
+                  <div className="font-semibold text-white flex items-center gap-1.5">
+                    <span>{t.pending_google_title}</span>
+                    <span className="font-mono text-emerald-300 bg-emerald-950/80 px-1.5 py-0.5 rounded border border-emerald-800 text-[11px]">
+                      {maskEmail(pendingGoogleEmail)}
+                    </span>
+                  </div>
+                  <div className="text-[11px] text-emerald-300/80 leading-tight">
+                    {t.pending_google_desc}
+                  </div>
+                </div>
+              </div>
+            )}
 
             {/* PIN Entry Form */}
             <form onSubmit={handlePinSubmit} className="space-y-3 sm:space-y-4">
@@ -819,7 +934,7 @@ export const AuthGate: React.FC<AuthGateProps> = ({
               </div>
             </div>
 
-            {/* 3. ЄДИНА КНОПКА ДІЇ: Офіційний редирект Google Studio Auth (Cloud Run) */}
+            {/* 3. Офіційний редирект Google Studio Auth (Cloud Run) */}
             <div className="pt-1">
               <a
                 href={cloudRunAuthUrl}
@@ -828,6 +943,43 @@ export const AuthGate: React.FC<AuthGateProps> = ({
                 <GoogleIcon className="w-5 h-5 shrink-0" />
                 <span>{t.btn_google_cloud_run}</span>
               </a>
+            </div>
+
+            {/* 4. Пряма верифікація закритим реєстром (Direct Whitelist Fallback if Cloud Run loops/blocks) */}
+            <div className="mt-4 pt-4 border-t border-slate-800 space-y-2">
+              <div className="flex items-center gap-1.5 text-[11px] font-semibold text-slate-300">
+                <Fingerprint className="w-3.5 h-3.5 text-blue-400" />
+                <span>{t.direct_verify_title}</span>
+              </div>
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  if (directEmail.trim()) {
+                    handleVerifyGoogleIdentity(directEmail.trim());
+                  }
+                }}
+                className="flex gap-2"
+              >
+                <input
+                  type="email"
+                  value={directEmail}
+                  onChange={(e) => setDirectEmail(e.target.value)}
+                  placeholder="name@gmail.com"
+                  autoComplete="email"
+                  className="flex-1 px-3 py-2 bg-slate-950/90 border border-slate-700 rounded-xl text-xs text-white placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono"
+                />
+                <button
+                  type="submit"
+                  disabled={!directEmail.trim()}
+                  className="px-3.5 py-2 bg-slate-800 hover:bg-slate-700 active:bg-blue-600 disabled:opacity-40 text-white rounded-xl text-xs font-semibold transition-all border border-slate-700 flex items-center gap-1.5 cursor-pointer touch-manipulation shadow-sm"
+                >
+                  <ShieldCheck className="w-3.5 h-3.5 text-blue-400" />
+                  <span>{t.direct_verify_btn}</span>
+                </button>
+              </form>
+              <p className="text-[10px] text-slate-500 leading-relaxed">
+                {t.direct_verify_hint}
+              </p>
             </div>
 
             {/* Юридична примітка про обов'язковість захисту таємниці слідства */}

@@ -78,6 +78,9 @@ import {
   exportUsersToJson,
   importUsersFromJson,
   PRIMARY_SUPER_ADMIN_EMAIL,
+  getCloudRunAuthEndpoint,
+  setCloudRunAuthEndpoint,
+  DEFAULT_CLOUD_RUN_AUTH_ENDPOINT,
 } from '../lib/authManager';
 import { AuthorizedUser, UserRole, ROLE_DEFINITIONS } from '../types/auth';
 
@@ -171,11 +174,29 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
   const [importError, setImportError] = useState<string | null>(null);
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
 
+  // Cloud Run Identity Endpoint state
+  const [cloudRunEndpoint, setCloudRunEndpointState] = useState<string>(() => getCloudRunAuthEndpoint());
+  const [isSavedEndpoint, setIsSavedEndpoint] = useState<boolean>(false);
+
+  const handleSaveCloudRunEndpoint = () => {
+    setCloudRunAuthEndpoint(cloudRunEndpoint);
+    setIsSavedEndpoint(true);
+    setTimeout(() => setIsSavedEndpoint(false), 2000);
+  };
+
+  const handleResetCloudRunEndpoint = () => {
+    setCloudRunEndpointState(DEFAULT_CLOUD_RUN_AUTH_ENDPOINT);
+    setCloudRunAuthEndpoint(DEFAULT_CLOUD_RUN_AUTH_ENDPOINT);
+    setIsSavedEndpoint(true);
+    setTimeout(() => setIsSavedEndpoint(false), 2000);
+  };
+
   // Load articles on mount or when opening
   useEffect(() => {
     if (isOpen) {
       setAllArticles(getAllLawArticles());
       setEnabledLawIds(settings.enabledLawIds || getEnabledLawArticleIds());
+      setCloudRunEndpointState(getCloudRunAuthEndpoint());
     }
   }, [isOpen]);
 
@@ -1414,31 +1435,53 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                   <div>
                     <h3 className="text-sm font-semibold text-white flex items-center gap-2">
                       <Shield className="w-4 h-4 text-amber-400" />
-                      <span>Посилання для авторизації користувачів</span>
+                      <span>Google Cloud Run Identity Gateway (Контур 2)</span>
                     </h3>
                     <p className="text-xs text-slate-400 mt-0.5">
-                      Надішліть це посилання учасникам команди. Авторизуватися зможуть тільки внесені до білого списку.
+                      Адреса шлюзу автентифікації Google AI Studio / Cloud Run. Авторизуватися можуть лише особи з білого списку.
                     </p>
                   </div>
 
                   <div className="flex items-center gap-2">
                     <button
-                      onClick={() =>
-                        handleCopy(
-                          'https://ais-dev-e2sihlyjbjzxc5lxx4nkc2-147404199355.europe-west3.run.app',
-                          'portal_url'
-                        )
-                      }
-                      className="px-3 py-1.5 bg-blue-600/20 hover:bg-blue-600/30 border border-blue-500/40 text-blue-300 hover:text-white rounded-lg text-xs font-mono flex items-center gap-1.5 transition-colors"
+                      onClick={() => handleCopy(cloudRunEndpoint, 'portal_url')}
+                      className="px-3 py-1.5 bg-blue-600/20 hover:bg-blue-600/30 border border-blue-500/40 text-blue-300 hover:text-white rounded-lg text-xs font-mono flex items-center gap-1.5 transition-colors cursor-pointer"
                     >
                       {copiedKey === 'portal_url' ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
-                      <span>Скопіювати посилання</span>
+                      <span>Скопіювати</span>
                     </button>
                   </div>
                 </div>
 
-                <div className="p-2.5 bg-slate-950 rounded-lg border border-slate-800 font-mono text-[11px] text-blue-300 break-all select-all flex items-center justify-between">
-                  <span>https://ais-dev-e2sihlyjbjzxc5lxx4nkc2-147404199355.europe-west3.run.app</span>
+                <div className="space-y-1.5">
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="url"
+                      value={cloudRunEndpoint}
+                      onChange={(e) => setCloudRunEndpointState(e.target.value)}
+                      placeholder="https://ais-dev-...europe-west3.run.app"
+                      className="flex-1 bg-slate-950 border border-slate-700 focus:border-blue-500 rounded-lg px-3 py-2 text-xs font-mono text-blue-300 focus:outline-none"
+                    />
+                    <button
+                      type="button"
+                      onClick={handleSaveCloudRunEndpoint}
+                      className="px-3 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer"
+                    >
+                      {isSavedEndpoint ? <Check className="w-3.5 h-3.5 text-emerald-300" /> : null}
+                      <span>{isSavedEndpoint ? 'Збережено' : 'Зберегти'}</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleResetCloudRunEndpoint}
+                      className="px-2.5 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white rounded-lg text-xs transition-colors cursor-pointer"
+                      title="Скинути на стандартний ендпоінт"
+                    >
+                      <RefreshCw className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                  <div className="flex items-center justify-between text-[10px] text-slate-500 font-mono">
+                    <span>За замовчуванням: {DEFAULT_CLOUD_RUN_AUTH_ENDPOINT}</span>
+                  </div>
                 </div>
 
                 <div className="pt-2 flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-t border-slate-800/80">
