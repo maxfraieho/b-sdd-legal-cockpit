@@ -79,6 +79,7 @@ import {
   exportUsersToJson,
   importUsersFromJson,
   PRIMARY_SUPER_ADMIN_EMAIL,
+  getCurrentAuthSession,
   getCloudRunAuthEndpoint,
   setCloudRunAuthEndpoint,
   DEFAULT_CLOUD_RUN_AUTH_ENDPOINT,
@@ -397,6 +398,22 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
   // User Management Handlers (RBAC & Google Whitelist)
   const handleAddNewUser = (e?: React.FormEvent) => {
     if (e) e.preventDefault();
+
+    // STRICT: Only primary Super Admin (tukroschu@gmail.com) has permission to add new emails
+    const session = getCurrentAuthSession();
+    const isSuperAdmin =
+      !session ||
+      session.user.email.toLowerCase() === PRIMARY_SUPER_ADMIN_EMAIL.toLowerCase() ||
+      session.user.role === 'super_admin';
+
+    if (!isSuperAdmin) {
+      setUserActionMsg({
+        text: `Лише Головний Адміністратор (${PRIMARY_SUPER_ADMIN_EMAIL}) має право додавати нових користувачів.`,
+        type: 'error',
+      });
+      return;
+    }
+
     if (!newUserEmail.trim()) {
       setUserActionMsg({ text: 'Вкажіть адресу електронної пошти Google', type: 'error' });
       return;
@@ -1563,10 +1580,15 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
 
               {/* Form: Add New User */}
               <div className="bg-[#070B14] border border-slate-800 rounded-xl p-4 space-y-3">
-                <h4 className="text-xs font-bold uppercase tracking-wider text-slate-300 flex items-center gap-2">
-                  <UserPlus className="w-4 h-4 text-blue-400" />
-                  <span>Додати нового користувача Google до списку доступу</span>
-                </h4>
+                <div className="flex items-center justify-between">
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-slate-300 flex items-center gap-2">
+                    <UserPlus className="w-4 h-4 text-blue-400" />
+                    <span>Додати нового користувача Google до списку доступу</span>
+                  </h4>
+                  <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-blue-950/80 border border-blue-800/80 text-blue-300">
+                    Лише Адміністратор ({PRIMARY_SUPER_ADMIN_EMAIL})
+                  </span>
+                </div>
 
                 <form onSubmit={handleAddNewUser} className="space-y-3">
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">

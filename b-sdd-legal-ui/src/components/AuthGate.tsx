@@ -138,10 +138,6 @@ const HARDENED_WHITELIST: Record<string, { name: string; role: UserRole }> = {
     name: 'Арсен Коваленко (Потерпілий ст. 115, 118 КПК)',
     role: 'user',
   },
-  'kovalenko.lubov5110@gmail.com': {
-    name: 'Любов Коваленко (Мати потерпілого / Член сімʼї)',
-    role: 'user',
-  },
   'vokov.dev@gmail.com': {
     name: 'Інженер безпеки B-SDD',
     role: 'admin',
