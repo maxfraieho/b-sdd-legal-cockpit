@@ -27,9 +27,25 @@ export interface AuthorizedUser {
   permissions: UserPermissions;
 }
 
+export type AuthStage = 
+  | 'PIN_ENTRY'          // Контур 1: Ввід локального PIN термінала
+  | 'GOOGLE_REQUIRED'    // Контур 2: PIN підтверджено, очікується Google Identity
+  | 'AUTHENTICATING'     // Обробка зворотного виклику / токена
+  | 'AUTHENTICATED'      // Обидва фактори підтверджено, доступ відкрито
+  | 'ACCESS_DENIED';     // Відмова: Google акаунт не у Whitelist (ст. 73 CPP)
+
+export interface AuthGateState {
+  stage: AuthStage;
+  isPinValid: boolean;
+  isGoogleAuthenticated: boolean;
+  authenticatedEmail: string | null;
+  authError: string | null;
+  sessionToken?: string | null;
+}
+
 export interface AuthSession {
   user: AuthorizedUser;
-  authMethod: 'google' | 'pin';
+  authMethod: 'google' | 'pin' | 'google_cloud_run';
   token?: string;
   timestamp: number;
 }

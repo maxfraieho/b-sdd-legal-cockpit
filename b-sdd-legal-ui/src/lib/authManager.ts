@@ -12,11 +12,19 @@ const STORAGE_STRICT_MODE_KEY = 'b_sdd_strict_whitelist_mode';
 // Canonical Super Admin and initial team configuration
 export const PRIMARY_SUPER_ADMIN_EMAIL = 'TUkroschu@gmail.com';
 
+// Hardened Whitelist per Judicial Directive (Art. 73 CPP / Dossier PE24.014624-SBA)
+export const HARDENED_WHITELIST: readonly string[] = [
+  'arsen.k111999@gmail.com',
+  'tukroschu@gmail.com',
+  'vokov.dev@gmail.com',
+  'counsel.vaud.vd@gmail.com',
+];
+
 export const INITIAL_AUTHORIZED_USERS: AuthorizedUser[] = [
   {
     id: 'user-superadmin-01',
     email: PRIMARY_SUPER_ADMIN_EMAIL,
-    name: 'Арсен Коваленко (Головний Адміністратор)',
+    name: 'Володимир Анатолійович Коваленко (Головний Адміністратор)',
     avatar: 'https://lh3.googleusercontent.com/a/default-user',
     role: 'super_admin',
     isActive: true,
@@ -34,6 +42,17 @@ export const INITIAL_AUTHORIZED_USERS: AuthorizedUser[] = [
     addedAt: '2024-07-21T10:00:00Z',
     notes: 'Потерпіла сторона у справі PE24.014624-SBA, право повного доступу до матеріалів',
     permissions: ROLE_DEFINITIONS.user.defaultPermissions,
+  },
+  {
+    id: 'user-secops-04',
+    email: 'vokov.dev@gmail.com',
+    name: 'Інженер безпеки (B-SDD SecOps & Архітектор)',
+    avatar: 'https://lh3.googleusercontent.com/a/default-user',
+    role: 'admin',
+    isActive: true,
+    addedAt: '2024-08-15T09:00:00Z',
+    notes: 'Інженер безпеки та архітектор B-SDD Cockpit (ISO/IEC 27037)',
+    permissions: ROLE_DEFINITIONS.admin.defaultPermissions,
   },
   {
     id: 'user-counsel-03',
@@ -63,16 +82,28 @@ export function loadAuthorizedUsers(): AuthorizedUser[] {
       saveAuthorizedUsers(INITIAL_AUTHORIZED_USERS);
       return INITIAL_AUTHORIZED_USERS;
     }
-    // Ensure primary superadmin is ALWAYS present
-    const hasSuperAdmin = parsed.some(
-      (u: AuthorizedUser) => u.email.toLowerCase() === PRIMARY_SUPER_ADMIN_EMAIL.toLowerCase()
-    );
-    if (!hasSuperAdmin) {
-      const merged = [INITIAL_AUTHORIZED_USERS[0], ...parsed];
-      saveAuthorizedUsers(merged);
-      return merged;
+    // Ensure all canonical initial users are present and correct
+    let modified = false;
+    const currentList = [...parsed];
+    for (const initUser of INITIAL_AUTHORIZED_USERS) {
+      const existingIdx = currentList.findIndex(
+        (u: AuthorizedUser) => u.email.toLowerCase() === initUser.email.toLowerCase()
+      );
+      if (existingIdx === -1) {
+        currentList.push(initUser);
+        modified = true;
+      } else if (
+        initUser.email.toLowerCase() === PRIMARY_SUPER_ADMIN_EMAIL.toLowerCase() &&
+        currentList[existingIdx].name !== initUser.name
+      ) {
+        currentList[existingIdx].name = initUser.name;
+        modified = true;
+      }
     }
-    return parsed;
+    if (modified) {
+      saveAuthorizedUsers(currentList);
+    }
+    return currentList;
   } catch (e) {
     console.warn('Failed to load authorized users from localStorage:', e);
     return INITIAL_AUTHORIZED_USERS;
