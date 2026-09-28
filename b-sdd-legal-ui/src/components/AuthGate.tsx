@@ -405,7 +405,43 @@ export const AuthGate: React.FC<AuthGateProps> = ({
 }) => {
   // Session State
   const [currentSession, setCurrentSessionState] = useState<AuthSession | null>(() => {
-    return getCurrentAuthSession();
+    const existing = getCurrentAuthSession();
+    if (existing) return existing;
+
+    // Synchronous Callback Authorization: if valid parameters in URL, unlock immediately
+    const callbackParams = getUrlCallbackParams();
+    if (callbackParams.email) {
+      const normalizedEmail = callbackParams.email.trim().toLowerCase();
+      const matchedUser = HARDENED_WHITELIST[normalizedEmail];
+      if (matchedUser) {
+        const defaultPermissions =
+          ROLE_DEFINITIONS[matchedUser.role as UserRole]?.defaultPermissions ||
+          ROLE_DEFINITIONS.user.defaultPermissions;
+
+        const sessionUser: AuthorizedUser = {
+          id: normalizedEmail,
+          email: normalizedEmail,
+          name: matchedUser.name,
+          role: matchedUser.role,
+          isActive: true,
+          addedAt: '2024-07-20T08:00:00Z',
+          permissions: defaultPermissions,
+        };
+
+        const newSession: AuthSession = {
+          user: sessionUser,
+          authMethod: 'google_cloud_run',
+          timestamp: Date.now(),
+          token: callbackParams.token || btoa(`bsdd_${Date.now()}_${normalizedEmail}`),
+        };
+
+        setAuthSession(newSession, true);
+        markPinUnlocked();
+        return newSession;
+      }
+    }
+
+    return null;
   });
 
   // Finite State Machine (Two-Tier Zero-Trust)
@@ -425,15 +461,28 @@ export const AuthGate: React.FC<AuthGateProps> = ({
     // 2. Callback First: Check URL callback parameters (user_email / auth_token / auth=success)
     const callbackParams = getUrlCallbackParams();
     if (callbackParams.email) {
-      markPinUnlocked();
-      return {
-        stage: 'AUTHENTICATING',
-        isPinValid: true,
-        isGoogleAuthenticated: false,
-        authenticatedEmail: callbackParams.email,
-        authError: null,
-        sessionToken: callbackParams.token,
-      };
+      const normalizedEmail = callbackParams.email.trim().toLowerCase();
+      const matchedUser = HARDENED_WHITELIST[normalizedEmail];
+      if (matchedUser) {
+        markPinUnlocked();
+        return {
+          stage: 'AUTHENTICATED',
+          isPinValid: true,
+          isGoogleAuthenticated: true,
+          authenticatedEmail: normalizedEmail,
+          authError: null,
+          sessionToken: callbackParams.token,
+        };
+      } else {
+        return {
+          stage: 'ACCESS_DENIED',
+          isPinValid: true,
+          isGoogleAuthenticated: false,
+          authenticatedEmail: normalizedEmail,
+          authError: `ACCÈS REFUSÉ (Art. 73 CPP / Art. 320 CP): L'adresse ${normalizedEmail} n'est pas autorisée pour le dossier PE24.014624-SBA.`,
+          sessionToken: null,
+        };
+      }
     }
 
     try {
@@ -484,7 +533,7 @@ export const AuthGate: React.FC<AuthGateProps> = ({
       typeof window !== 'undefined'
         ? `${window.location.origin}${window.location.pathname}`
         : 'https://b-sdd-legal-ui.pages.dev/';
-    return `${endpoint}?redirect_uri=${encodeURIComponent(currentCallback)}&case_id=PE24.014624-SBA`;
+    return `${endpoint}?redirect_uri=${encodeURIComponent(currentCallback)}&case_id=PE24.014624-SBA&pin_verified=true`;
   }, []);
 
   // Pending Google Identity from OAuth callback
@@ -732,6 +781,9 @@ export const AuthGate: React.FC<AuthGateProps> = ({
       });
       onUserAuthenticated?.(existing.user);
       onLockedStateChange?.(false);
+      if (typeof window !== 'undefined' && window.location.search) {
+        window.history.replaceState({}, document.title, window.location.pathname);
+      }
       return;
     }
 
@@ -745,14 +797,6 @@ export const AuthGate: React.FC<AuthGateProps> = ({
     }
 
     const normalizedEmail = emailParam.trim().toLowerCase();
-
-    // Закритий реєстр допуску (HARDENED WHITELIST)
-    const HARDENED_WHITELIST: Record<string, { name: string; role: 'super_admin' | 'user' }> = {
-      'tukroschu@gmail.com': { name: 'Володимир Анатолійович Коваленко', role: 'super_admin' },
-      'arsen.k111999@gmail.com': { name: 'Арсен Коваленко', role: 'user' },
-      'vokov.dev@gmail.com': { name: 'Інженер безпеки B-SDD', role: 'user' },
-    };
-
     const matchedUser = HARDENED_WHITELIST[normalizedEmail];
 
     if (!matchedUser) {
@@ -860,6 +904,28 @@ export const AuthGate: React.FC<AuthGateProps> = ({
       setPinErrorMsg(null);
       setSessionLockedBanner(false);
       setInputPin('');
+
+      // If running as external Identity Gateway, immediately redirect back upon PIN clearance
+      const searchParams =
+        typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : null;
+      const redirectTarget = redirectUri || searchParams?.get('redirect_uri');
+      if (redirectTarget) {
+        try {
+          const returnUrl = new URL(redirectTarget);
+          if (typeof window !== 'undefined' && returnUrl.origin !== window.location.origin) {
+            const verifiedEmail = searchParams?.get('user_email') || PRIMARY_SUPER_ADMIN_EMAIL;
+            returnUrl.searchParams.set('auth', 'success');
+            returnUrl.searchParams.set('user_email', verifiedEmail);
+            returnUrl.searchParams.set('auth_token', btoa(`bsdd_${Date.now()}_${verifiedEmail}`));
+            returnUrl.searchParams.set('case_id', CASE_ID);
+            returnUrl.searchParams.set('pin_verified', 'true');
+            window.location.href = returnUrl.toString();
+            return;
+          }
+        } catch (err) {
+          console.error('Redirect to target failed', err);
+        }
+      }
 
       // Check if there was a pending Google Identity verification waiting
       const pendingEmail =

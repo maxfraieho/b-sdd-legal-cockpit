@@ -12,13 +12,13 @@ export const STORAGE_CLOUD_RUN_ENDPOINT_KEY = 'b_sdd_cloud_run_auth_endpoint';
 
 // Active Google Cloud Run Identity Gateway (requested by user)
 export const DEFAULT_CLOUD_RUN_AUTH_ENDPOINT =
-  'https://ais-dev-e2sihlyjbjzxc5lxx4nkc2-147404199355.europe-west3.run.app';
+  'https://ais-dev-cy5vorrb7cys2mpbzcua5g-147404199355.europe-west3.run.app';
 
 export function getCloudRunAuthEndpoint(): string {
   try {
     const custom = localStorage.getItem(STORAGE_CLOUD_RUN_ENDPOINT_KEY);
     if (custom && custom.trim().startsWith('https://')) {
-      if (custom.includes('europe-west2.run.app') || custom.includes('ais-dev-cy5vorrb7cys2mpbzcua5g')) {
+      if (custom.includes('europe-west2.run.app') || custom.includes('ais-dev-e2sihlyjbjzxc5lxx4nkc2')) {
         localStorage.setItem(STORAGE_CLOUD_RUN_ENDPOINT_KEY, DEFAULT_CLOUD_RUN_AUTH_ENDPOINT);
         return DEFAULT_CLOUD_RUN_AUTH_ENDPOINT;
       }
