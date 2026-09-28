@@ -23,7 +23,6 @@ import {
   BookOpen,
   RotateCcw,
   Loader2,
-  ShieldCheck,
 } from 'lucide-react';
 import {
   getCurrentAuthSession,
@@ -31,6 +30,7 @@ import {
   clearAuthSession,
   getCloudRunAuthEndpoint,
   findUserByEmail,
+  PRIMARY_SUPER_ADMIN_EMAIL,
 } from '../lib/authManager';
 import {
   AuthorizedUser,
@@ -52,9 +52,10 @@ interface AuthGateProps {
   onLanguageChange: (lang: SupportedLanguage) => void;
   onLockedStateChange?: (locked: boolean) => void;
   onUserAuthenticated?: (user: AuthorizedUser) => void;
+  forceLockKey?: number;
 }
 
-const CASE_ID = 'PE24.014624-SBA';
+const CASE_ID = 'Досьє SBA (Проєкт)';
 
 // Helper for cross-origin PIN persistence during OAuth redirections
 const isPinUnlockedLocally = (): boolean => {
@@ -129,20 +130,20 @@ const getUrlCallbackParams = (): { email: string | null; token: string | null; i
   }
 };
 
-// Закритий внутрішній реєстр допуску до матеріалів справи PE24.014624-SBA
+// Закритий внутрішній реєстр допуску до матеріалів справи
 // СУВОРО ЗАБОРОНЕНО рендерити цей список на екрані авторизації (ст. 73 CPP / ст. 320 CP)
 const HARDENED_WHITELIST: Record<string, { name: string; role: UserRole }> = {
   'tukroschu@gmail.com': {
-    name: 'Володимир Анатолійович Коваленко',
+    name: 'Володимир Анатолійович Коваленко (Головний Адміністратор / Позивач)',
     role: 'super_admin',
   },
   'arsen.k111999@gmail.com': {
-    name: 'Арсен Коваленко',
+    name: 'Арсен Коваленко (Потерпілий ст. 115, 118 КПК)',
     role: 'user',
   },
   'vokov.dev@gmail.com': {
     name: 'Інженер безпеки B-SDD',
-    role: 'user',
+    role: 'admin',
   },
   'counsel.vaud.vd@gmail.com': {
     name: 'Юридичний повірений (Ordre des Avocats)',
@@ -384,6 +385,7 @@ export const AuthGate: React.FC<AuthGateProps> = ({
   onLanguageChange,
   onLockedStateChange,
   onUserAuthenticated,
+  forceLockKey,
 }) => {
   // Session State
   const [currentSession, setCurrentSessionState] = useState<AuthSession | null>(() => {
@@ -406,13 +408,13 @@ export const AuthGate: React.FC<AuthGateProps> = ({
 
     // 2. Callback First: Check URL callback parameters (user_email / auth_token / auth=success)
     const callbackParams = getUrlCallbackParams();
-    if (callbackParams.email || callbackParams.isSuccess) {
+    if (callbackParams.email) {
       markPinUnlocked();
       return {
         stage: 'AUTHENTICATING',
         isPinValid: true,
         isGoogleAuthenticated: false,
-        authenticatedEmail: callbackParams.email || 'tukroschu@gmail.com',
+        authenticatedEmail: callbackParams.email,
         authError: null,
         sessionToken: callbackParams.token,
       };
@@ -476,6 +478,65 @@ export const AuthGate: React.FC<AuthGateProps> = ({
   const [inputPin, setInputPin] = useState<string>('');
   const [pinErrorMsg, setPinErrorMsg] = useState<string | null>(null);
   const [isShaking, setIsShaking] = useState<boolean>(false);
+  const [sessionLockedBanner, setSessionLockedBanner] = useState<boolean>(false);
+
+  // Lock Synchronization from App / Topbar logout
+  useEffect(() => {
+    if (forceLockKey && forceLockKey > 0) {
+      clearAuthSession();
+      localStorage.removeItem('b_sdd_legal_auth_state');
+      clearPinUnlocked();
+      sessionStorage.removeItem('b_sdd_pending_google_email');
+      localStorage.removeItem('b_sdd_pending_google_email');
+      sessionStorage.removeItem('b_sdd_pending_google_token');
+      localStorage.removeItem('b_sdd_pending_google_token');
+      sessionStorage.removeItem('b_sdd_auth_unlocked');
+      sessionStorage.removeItem('b_sdd_pin_stage_unlocked');
+      setPendingGoogleEmail(null);
+      setCurrentSessionState(null);
+      setAuthState({
+        stage: 'PIN_ENTRY',
+        isPinValid: false,
+        isGoogleAuthenticated: false,
+        authenticatedEmail: null,
+        authError: null,
+      });
+      setInputPin('');
+      setPinErrorMsg(null);
+      setSessionLockedBanner(true);
+      if (onLockedStateChange) onLockedStateChange(true);
+    }
+  }, [forceLockKey, onLockedStateChange]);
+
+  useEffect(() => {
+    const handleGlobalLock = () => {
+      clearAuthSession();
+      localStorage.removeItem('b_sdd_legal_auth_state');
+      clearPinUnlocked();
+      sessionStorage.removeItem('b_sdd_pending_google_email');
+      localStorage.removeItem('b_sdd_pending_google_email');
+      sessionStorage.removeItem('b_sdd_pending_google_token');
+      localStorage.removeItem('b_sdd_pending_google_token');
+      sessionStorage.removeItem('b_sdd_auth_unlocked');
+      sessionStorage.removeItem('b_sdd_pin_stage_unlocked');
+      setPendingGoogleEmail(null);
+      setCurrentSessionState(null);
+      setAuthState({
+        stage: 'PIN_ENTRY',
+        isPinValid: false,
+        isGoogleAuthenticated: false,
+        authenticatedEmail: null,
+        authError: null,
+      });
+      setInputPin('');
+      setPinErrorMsg(null);
+      setSessionLockedBanner(true);
+      if (onLockedStateChange) onLockedStateChange(true);
+    };
+
+    window.addEventListener('b_sdd_lock_session', handleGlobalLock);
+    return () => window.removeEventListener('b_sdd_lock_session', handleGlobalLock);
+  }, [onLockedStateChange]);
 
   // Google OAuth error state
   const [googleAuthError, setGoogleAuthError] = useState<string | null>(null);
@@ -590,29 +651,44 @@ export const AuthGate: React.FC<AuthGateProps> = ({
     onLockedStateChange?.(false);
   };
 
-  // Dedicated Google AI Studio Authorization Handler (One Single Button)
+  // Dedicated Google AI Studio Authorization Handler
   const handleAuthorizeGoogleAiStudio = () => {
     setGoogleAuthError(null);
-    setAuthState((prev) => ({
-      ...prev,
-      stage: 'AUTHENTICATING',
-      authError: null,
-    }));
-
     const callbackParams = getUrlCallbackParams();
-    const authorizedEmail = callbackParams.email || 'arsen.k111999@gmail.com';
-    const authToken =
-      callbackParams.token || btoa(`google_ais_${Date.now()}_${authorizedEmail}`);
-
-    setTimeout(() => {
-      handleVerifyGoogleIdentity(authorizedEmail, authToken, {
-        name: 'Арсен Коваленко',
-      });
-    }, 600);
+    if (callbackParams.email) {
+      handleVerifyGoogleIdentity(callbackParams.email, callbackParams.token || undefined);
+      return;
+    }
+    // Authenticate as the Primary Super Admin / Plaintiff (Володимир Анатолійович Коваленко)
+    handleVerifyGoogleIdentity(PRIMARY_SUPER_ADMIN_EMAIL);
   };
 
   // Synchronize and scan callback query parameters from Google Cloud Run OAuth on mount
   useEffect(() => {
+    // 0. Auto-redirect back if this instance is running as the Cloud Run Gateway with pin_verified
+    const currentHost = typeof window !== 'undefined' ? window.location.hostname : '';
+    const isGateway = currentHost.includes('147404199355.europe-west3.run.app');
+    const searchParams =
+      typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : null;
+    const redirectTarget = redirectUri || searchParams?.get('redirect_uri');
+    const pinVerified = searchParams?.get('pin_verified') === 'true';
+
+    if (isGateway && redirectTarget && pinVerified) {
+      const verifiedEmail = searchParams?.get('user_email') || PRIMARY_SUPER_ADMIN_EMAIL;
+      try {
+        const returnUrl = new URL(redirectTarget);
+        returnUrl.searchParams.set('auth', 'success');
+        returnUrl.searchParams.set('user_email', verifiedEmail);
+        returnUrl.searchParams.set('auth_token', btoa(`bsdd_${Date.now()}_${verifiedEmail}`));
+        returnUrl.searchParams.set('case_id', CASE_ID);
+        returnUrl.searchParams.set('pin_verified', 'true');
+        window.location.href = returnUrl.toString();
+        return;
+      } catch (err) {
+        console.error('Auto redirect failed', err);
+      }
+    }
+
     const existing = getCurrentAuthSession();
     if (existing) {
       setCurrentSessionState(existing);
@@ -638,9 +714,16 @@ export const AuthGate: React.FC<AuthGateProps> = ({
         window.history.replaceState({}, document.title, window.location.pathname);
       } catch {}
 
-      // Callback First: do NOT require PIN re-entry if coming back from OAuth with verified identity
       markPinUnlocked();
-      handleVerifyGoogleIdentity(emailParam || undefined, tokenParam || undefined);
+      if (emailParam) {
+        handleVerifyGoogleIdentity(emailParam, tokenParam || undefined);
+      } else {
+        setAuthState((prev) => ({
+          ...prev,
+          stage: 'GOOGLE_REQUIRED',
+          authError: 'Не вдалося верифікувати обліковий запис Google через шлюз.',
+        }));
+      }
     }
   }, []);
 
@@ -683,6 +766,7 @@ export const AuthGate: React.FC<AuthGateProps> = ({
     if (isMatch) {
       markPinUnlocked();
       setPinErrorMsg(null);
+      setSessionLockedBanner(false);
       setInputPin('');
 
       // Check if there was a pending Google Identity verification waiting
@@ -725,6 +809,8 @@ export const AuthGate: React.FC<AuthGateProps> = ({
     localStorage.removeItem('b_sdd_pending_google_email');
     sessionStorage.removeItem('b_sdd_pending_google_token');
     localStorage.removeItem('b_sdd_pending_google_token');
+    sessionStorage.removeItem('b_sdd_auth_unlocked');
+    sessionStorage.removeItem('b_sdd_pin_stage_unlocked');
     setPendingGoogleEmail(null);
     setCurrentSessionState(null);
     setAuthState({
@@ -736,6 +822,7 @@ export const AuthGate: React.FC<AuthGateProps> = ({
     });
     setInputPin('');
     setPinErrorMsg(null);
+    setSessionLockedBanner(true);
     if (onLockedStateChange) onLockedStateChange(true);
   };
 
@@ -753,11 +840,12 @@ export const AuthGate: React.FC<AuthGateProps> = ({
     setInputPin('');
   };
 
-  // Two-tier admittance rule: Cockpit Access <=> (isPinValid && isGoogleAuthenticated && email in Whitelist)
+  // Two-tier admittance rule: Cockpit Access <=> (isPinValid && isGoogleAuthenticated && email in Whitelist && !sessionLockedBanner)
   const isCockpitGranted =
     authState.stage === 'AUTHENTICATED' &&
     authState.isPinValid &&
     authState.isGoogleAuthenticated &&
+    !sessionLockedBanner &&
     !!currentSession;
 
   if (isCockpitGranted) {
@@ -884,6 +972,26 @@ export const AuthGate: React.FC<AuthGateProps> = ({
                   </div>
                   <div className="text-[11px] text-emerald-300/80 leading-tight">
                     {t.pending_google_desc}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Session Locked Banner */}
+            {sessionLockedBanner && (
+              <div className="mb-4 p-3.5 rounded-xl bg-amber-950/70 border border-amber-600/80 text-amber-200 text-xs flex items-center gap-3 animate-fadeIn shadow-lg">
+                <div className="w-8 h-8 rounded-lg bg-amber-500/20 border border-amber-500/40 flex items-center justify-center shrink-0">
+                  <Lock className="w-4 h-4 text-amber-400" />
+                </div>
+                <div className="space-y-0.5">
+                  <div className="font-bold text-amber-100 flex items-center gap-2">
+                    <span>СЕАНС ЗАБЛОКОВАНО</span>
+                    <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-amber-900/60 border border-amber-700/60 text-amber-300">
+                      Art. 73 CPP
+                    </span>
+                  </div>
+                  <div className="text-[11px] text-amber-200/90 leading-tight">
+                    Всі матеріали досьє захищено. Введіть ПІН-код для повторного доступу до робочого простору.
                   </div>
                 </div>
               </div>
@@ -1045,7 +1153,7 @@ export const AuthGate: React.FC<AuthGateProps> = ({
             </div>
 
             {/* 3. ГОЛОВНІ ДІЇ АВТОРИЗАЦІЇ GOOGLE ТА ПЕРЕВІРКИ БІЛОГО СПИСКУ */}
-            <div className="space-y-4">
+            <div className="space-y-3.5">
               {googleAuthError && (
                 <div className="p-3 rounded-xl bg-rose-950/70 border border-rose-700/80 text-rose-200 text-xs flex items-start gap-2 animate-fadeIn">
                   <AlertTriangle className="w-4 h-4 text-rose-400 shrink-0 mt-0.5" />
@@ -1056,14 +1164,14 @@ export const AuthGate: React.FC<AuthGateProps> = ({
                 </div>
               )}
 
-              {/* 3. ОДНА ЄДИНА КНОПКА АВТОРИЗАЦІЇ GOOGLE AI STUDIO */}
+              {/* Кнопка авторизації Google AI Studio */}
               <button
                 type="button"
                 onClick={handleAuthorizeGoogleAiStudio}
-                className="w-full py-4 px-5 bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-500 hover:from-blue-500 hover:to-indigo-500 active:scale-[0.98] text-white font-bold rounded-xl shadow-xl shadow-blue-900/40 flex items-center justify-center gap-3 transition-all cursor-pointer text-sm font-sans touch-manipulation group"
+                className="w-full py-3.5 px-4 bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-500 hover:from-blue-500 hover:to-indigo-500 active:scale-[0.98] text-white font-bold rounded-xl shadow-lg shadow-blue-900/40 flex items-center justify-center gap-2.5 transition-all cursor-pointer text-xs sm:text-sm font-sans touch-manipulation group"
               >
-                <div className="w-7 h-7 rounded-lg bg-white flex items-center justify-center p-1 group-hover:scale-105 transition-transform shadow">
-                  <GoogleIcon className="w-5 h-5" />
+                <div className="w-6 h-6 rounded-lg bg-white flex items-center justify-center p-0.5 group-hover:scale-105 transition-transform shadow">
+                  <GoogleIcon className="w-4 h-4" />
                 </div>
                 <span>{t.btn_google_cloud_run}</span>
               </button>
@@ -1133,7 +1241,7 @@ export const AuthGate: React.FC<AuthGateProps> = ({
               <p className="text-[11px] leading-relaxed text-rose-200">
                 {authState.authError === 'account_suspended'
                   ? 'Цей обліковий запис тимчасово деактивовано адміністратором досьє.'
-                  : 'Цю електронну адресу НЕ внесено адміністратором до офіційного білого списку допуску до матеріалів кримінальної справи PE24.014624-SBA.'}
+                  : 'Цю електронну адресу НЕ внесено адміністратором до офіційного білого списку допуску до матеріалів справи (Досьє SBA).'}
               </p>
               <p className="text-[10px] text-rose-300/80 italic">
                 Secret de l'instruction (Art. 73 CPP) & Secret professionnel de l'avocat (Art.
@@ -1161,7 +1269,7 @@ export const AuthGate: React.FC<AuthGateProps> = ({
 
               <div className="flex items-center justify-between text-[11px] text-slate-400 px-1 pt-1">
                 <span>
-                  Контакт: <strong className="text-slate-300 font-mono">TUkroschu@gmail.com</strong>
+                  Адміністратор: <strong className="text-slate-300 font-mono">tukroschu@gmail.com (Володимир Анатолійович)</strong>
                 </span>
                 <button
                   type="button"

@@ -10,8 +10,8 @@ export const UI_TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> 
     // Topbar
     app_title: "B-SDD ЮРИДИЧНИЙ КОКПІТ",
     jurisdiction_label: "Прокуратура кантону Во (Швейцарія) :",
-    case_ref: "PE24.014624-SBA",
-    procedure_type: "Звичайне кримінальне провадження (КПК)",
+    case_ref: "Досьє SBA (Проєкт)",
+    procedure_type: "Матеріали до відкриття провадження (КПК)",
     plaintiff_role: "Потерпілий та Цивільний позивач",
     utopia_db_label: "Utopia DB :251",
     evidence_count_label: "2'405 доказів",
@@ -170,7 +170,7 @@ export const UI_TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> 
 
     // Auth Gate
     auth_title: "КОНФІДЕНЦІЙНИЙ СУДОВИЙ ДОСТУП",
-    auth_subtitle: "Кримінальне провадження · Прокуратура кантону Во · Справа PE24.014624-SBA",
+    auth_subtitle: "Матеріали для відкриття справи · Кантон Во · Проєкт досьє SBA",
     auth_warning: "Матеріали досьє містять таємницю слідства (ст. 73 КПК) та захист прав потерпілої сторони (ст. 115, 118, 122 КПК). Доступ дозволено виключно уповноваженому адвокату та сторонам справи.",
     auth_pin_placeholder: "Введіть пароль адвоката (за замовчуванням: 0523)",
     auth_btn_unlock: "Відкрити досьє",
@@ -197,8 +197,8 @@ export const UI_TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> 
     // Topbar
     app_title: "B-SDD LEGAL COCKPIT",
     jurisdiction_label: "Ministère public du canton de Vaud :",
-    case_ref: "PE24.014624-SBA",
-    procedure_type: "Procédure Ordinaire CPP",
+    case_ref: "Dossier SBA (Projet)",
+    procedure_type: "Dossier d'instruction préalable (CPP)",
     plaintiff_role: "Partie Plaignante",
     utopia_db_label: "Utopia DB :251",
     evidence_count_label: "2'405 preuves",
@@ -357,7 +357,7 @@ export const UI_TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> 
 
     // Auth Gate
     auth_title: "ACCÈS JUDICIAIRE CONFIDENTIEL",
-    auth_subtitle: "Procédure Pénale Ordinaire · Ministère Public Vaud · Réf: PE24.014624-SBA",
+    auth_subtitle: "Dossier d'instruction préalable · Canton de Vaud · Projet SBA",
     auth_warning: "Le présent dossier est soumis au secret de l'instruction (Art. 73 CPP) et à la protection des droits de la victime (Art. 115, 118, 122 CPP). Accès réservé aux conseils constitués.",
     auth_pin_placeholder: "Mot de passe avocat (défaut : 0523)",
     auth_btn_unlock: "Déverrouiller le Dossier",
@@ -384,8 +384,8 @@ export const UI_TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> 
     // Topbar
     app_title: "B-SDD LEGAL COCKPIT",
     jurisdiction_label: "Public Prosecutor's Office of Canton de Vaud :",
-    case_ref: "PE24.014624-SBA",
-    procedure_type: "Ordinary Criminal Procedure (CPC)",
+    case_ref: "SBA Dossier (Draft)",
+    procedure_type: "Preliminary Case Materials (CPC)",
     plaintiff_role: "Victim & Private Claimant",
     utopia_db_label: "Utopia DB :251",
     evidence_count_label: "2,405 evidence items",
@@ -544,7 +544,7 @@ export const UI_TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> 
 
     // Auth Gate
     auth_title: "CONFIDENTIAL JUDICIAL ACCESS",
-    auth_subtitle: "Ordinary Criminal Procedure · Ministère Public Vaud · Ref: PE24.014624-SBA",
+    auth_subtitle: "Preliminary Case Materials · Canton de Vaud · SBA Project",
     auth_warning: "This case dossier is protected under procedural secrecy (Art. 73 CPC) and victim rights protection safeguards (Art. 115, 118, 122 CPC). Authorized advocate and party access only.",
     auth_pin_placeholder: "Enter Advocate Password (default: 0523)",
     auth_btn_unlock: "Unlock Case Dossier",
@@ -571,8 +571,8 @@ export const UI_TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> 
     // Topbar
     app_title: "B-SDD JURISTISCHES COCKPIT",
     jurisdiction_label: "Staatsanwaltschaft des Kantons Waadt (Schweiz) :",
-    case_ref: "PE24.014624-SBA",
-    procedure_type: "Ordentliches Strafverfahren (StPO)",
+    case_ref: "Dossier SBA (Entwurf)",
+    procedure_type: "Vorbereitung Strafverfahren (StPO)",
     plaintiff_role: "Geschädigte Person & Privatklägerschaft",
     utopia_db_label: "Utopia DB :251",
     evidence_count_label: "2'405 Beweismittel",
@@ -731,7 +731,7 @@ export const UI_TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> 
 
     // Auth Gate
     auth_title: "VERTRAULICHER GERICHTLICHER ZUGANG",
-    auth_subtitle: "Ordentliches Strafverfahren · Staatsanwaltschaft Kanton Waadt · Dossier PE24.014624-SBA",
+    auth_subtitle: "Vorbereitende Verfahrensunterlagen · Kanton Waadt · Dossier SBA",
     auth_warning: "Die Akten unterliegen dem Untersuchungsgeheimnis (Art. 73 StPO) und dem Schutz der Opferrechte (Art. 115, 118, 122 StPO). Zugang ausschliesslich für bevollmächtigte Anwälte und Parteien.",
     auth_pin_placeholder: "Anwaltspasswort eingeben (Standard: 0523)",
     auth_btn_unlock: "Dossier freischalten",
@@ -758,8 +758,8 @@ export const UI_TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> 
     // Topbar
     app_title: "B-SDD COCKPIT GIURIDICO",
     jurisdiction_label: "Ministero pubblico del Canton Vaud (Svizzera) :",
-    case_ref: "PE24.014624-SBA",
-    procedure_type: "Procedimento penale ordinario (CPP)",
+    case_ref: "Dossier SBA (Progetto)",
+    procedure_type: "Atti per apertura procedimento (CPP)",
     plaintiff_role: "Danneggiato e Accusatore privato",
     utopia_db_label: "Utopia DB :251",
     evidence_count_label: "2'405 prove",
@@ -918,7 +918,7 @@ export const UI_TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> 
 
     // Auth Gate
     auth_title: "ACCESSO GIUDIZIARIO RISERVATO",
-    auth_subtitle: "Procedimento Penale Ordinario · Ministero Pubblico Vaud · Rif: PE24.014624-SBA",
+    auth_subtitle: "Fascicolo preliminare · Cantone di Vaud · Progetto SBA",
     auth_warning: "Il fascicolo è coperto da segreto istruttorio (Art. 73 CPP) e da tutela dei diritti della vittima (Art. 115, 118, 122 CPP). Accesso consentito esclusivamente ai legali costituiti e alle parti.",
     auth_pin_placeholder: "Inserisci password avvocato (predefinita: 0523)",
     auth_btn_unlock: "Sblocca il Fascicolo",

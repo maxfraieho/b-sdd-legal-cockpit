@@ -7,6 +7,7 @@ import {
   Brain,
   Menu,
   ShieldCheck,
+  GitBranch,
 } from "lucide-react";
 import { WorkspaceTab } from "./Topbar";
 import { SupportedLanguage } from "../types/i18n";
@@ -29,7 +30,7 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
   onOpenQuickMenu,
 }) => {
   const tabs: { id: WorkspaceTab; labelUk: string; labelFr: string; labelEn: string; icon: any }[] = [
-    { id: "procedures", labelUk: "Процедури", labelFr: "Procédure", labelEn: "Pipeline", icon: Scale },
+    { id: "procedures", labelUk: "Процедури", labelFr: "Procédure", labelEn: "Pipeline", icon: GitBranch },
     { id: "toolbox", labelUk: "Інструменти", labelFr: "Outils", labelEn: "Tools", icon: FolderOpen },
     { id: "ai_copilot", labelUk: "ШІ-Копілот", labelFr: "IA", labelEn: "AI", icon: Brain },
     { id: "factbook", labelUk: "Докази", labelFr: "Preuves", labelEn: "Exhibits", icon: FileText },

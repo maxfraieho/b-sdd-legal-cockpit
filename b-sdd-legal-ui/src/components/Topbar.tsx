@@ -18,6 +18,8 @@ import {
   LogOut,
   User,
   ShieldCheck,
+  GitBranch,
+  FolderKanban,
 } from "lucide-react";
 import { SupportedLanguage } from "../types/i18n";
 import { LegalCase } from "../lib/casesManager";
@@ -110,8 +112,8 @@ export const Topbar: React.FC<TopbarProps> = ({
                 : "Changer de dossier ou créer un nouveau cas"
             }
           >
-            <Scale className="w-3.5 h-3.5 text-amber-400 shrink-0" />
-            <span>{activeCase ? activeCase.reference : "PE24.014624-SBA"}</span>
+            <FolderKanban className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+            <span>{activeCase && activeCase.reference !== "PE24.014624-SBA" ? activeCase.reference : "Досьє SBA (Проєкт)"}</span>
             <ChevronDown className="w-3 h-3 text-amber-400/80 shrink-0" />
           </button>
 
@@ -146,17 +148,17 @@ export const Topbar: React.FC<TopbarProps> = ({
             }`}
             title="Процедурний маршрут справи за КПК Швейцарії (5 стадій)"
           >
-            <Scale className="w-3.5 h-3.5 text-amber-300 shrink-0" />
+            <GitBranch className="w-3.5 h-3.5 text-blue-300 shrink-0" />
             <span>
               {currentLang === "uk"
-                ? "⚖️ Процедури (5)"
+                ? "Процедури (5)"
                 : currentLang === "fr"
-                ? "⚖️ Procédure (5)"
+                ? "Procédure (5)"
                 : currentLang === "de"
-                ? "⚖️ Verfahren (5)"
+                ? "Verfahren (5)"
                 : currentLang === "it"
-                ? "⚖️ Procedura (5)"
-                : "⚖️ Pipeline (5)"}
+                ? "Procedura (5)"
+                : "Pipeline (5)"}
             </span>
           </button>
 

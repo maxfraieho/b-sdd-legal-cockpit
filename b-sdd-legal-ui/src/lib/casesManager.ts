@@ -33,7 +33,7 @@ export const BENCHMARK_CASE_ID = 'PE24.014624-SBA';
 export const BENCHMARK_CASES: LegalCase[] = [
   {
     id: BENCHMARK_CASE_ID,
-    reference: 'PE24.014624-SBA',
+    reference: 'Досьє SBA (Проєкт)',
     title: {
       uk: 'Справа Коваленко проти Суворової (Шахрайство, погрози, наклеп)',
       fr: 'Affaire Kovalenko c/ Suvorova (Escroquerie, menaces, dénonciation calomnieuse)',
@@ -164,7 +164,13 @@ export function loadAllCases(): LegalCase[] {
     }
     const parsed = JSON.parse(raw);
     if (Array.isArray(parsed) && parsed.length > 0) {
-      return parsed;
+      const normalized = parsed.map((c: LegalCase) => {
+        if (c.reference === 'PE24.014624-SBA') {
+          return { ...c, reference: 'Досьє SBA (Проєкт)' };
+        }
+        return c;
+      });
+      return normalized;
     }
     return BENCHMARK_CASES;
   } catch (err) {

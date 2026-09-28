@@ -190,14 +190,19 @@ export default function App() {
   const [currentUser, setCurrentUser] = useState<AuthorizedUser | null>(() => {
     return getCurrentAuthSession()?.user || null;
   });
+  const [forceLockKey, setForceLockKey] = useState<number>(0);
 
   const handleLockSession = () => {
     clearAuthSession();
     setCurrentUser(null);
+    setForceLockKey((prev) => prev + 1);
+    if (typeof window !== "undefined") {
+      window.dispatchEvent(new CustomEvent("b_sdd_lock_session"));
+    }
     showToast(
       currentLang === "uk" ? "Сеанс заблоковано" : "Session Avocat Verrouillée",
       currentLang === "uk"
-        ? "Екран захищено згідно зі ст. 73 КПК / ст. 13 LLCA. Потрібна повторна авторизація."
+        ? "Матеріали захищено згідно зі ст. 73 КПК. Потрібен ПІН-код для доступу."
         : "Écran en mode veille sécurisé pour confidentialité clientèle (Art. 13 LLCA / Art. 73 CPP)",
       "info"
     );
@@ -206,9 +211,13 @@ export default function App() {
   const handleLogout = () => {
     clearAuthSession();
     setCurrentUser(null);
+    setForceLockKey((prev) => prev + 1);
+    if (typeof window !== "undefined") {
+      window.dispatchEvent(new CustomEvent("b_sdd_lock_session"));
+    }
     showToast(
       currentLang === "uk" ? "Вихід з системи" : "Déconnexion",
-      currentLang === "uk" ? "Сеанс Google завершено" : "Session Google terminée",
+      currentLang === "uk" ? "Сеанс заблоковано. Потрібен ввід ПІН-коду." : "Session Google terminée",
       "info"
     );
   };
@@ -238,6 +247,7 @@ export default function App() {
       onLanguageChange={setCurrentLang}
       expectedPassword={settings.authPassword || "0523"}
       autoLockMinutes={settings.autoLockMinutes || 15}
+      forceLockKey={forceLockKey}
       onUserAuthenticated={(user) => {
         setCurrentUser(user);
         showToast(

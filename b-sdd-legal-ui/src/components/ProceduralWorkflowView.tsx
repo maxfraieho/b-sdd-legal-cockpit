@@ -24,6 +24,7 @@ import {
   Calendar,
   Eye,
   Info,
+  GitBranch,
 } from "lucide-react";
 import { SupportedLanguage } from "../types/i18n";
 import { LegalCase } from "../lib/casesManager";
@@ -111,7 +112,7 @@ export const ProceduralWorkflowView: React.FC<ProceduralWorkflowViewProps> = ({
         <div className="flex items-center justify-between mb-3 border-b border-slate-800 pb-2.5">
           <div className="flex items-center space-x-2">
             <span className="p-1 rounded bg-amber-500/10 text-amber-400 border border-amber-500/30">
-              <Scale className="w-4 h-4" />
+              <GitBranch className="w-4 h-4" />
             </span>
             <div>
               <h2 className="text-xs sm:text-sm font-mono font-bold text-slate-100 flex items-center gap-2">
@@ -131,7 +132,7 @@ export const ProceduralWorkflowView: React.FC<ProceduralWorkflowViewProps> = ({
 
           <div className="flex items-center space-x-2">
             <span className="hidden sm:inline-block text-[11px] font-mono text-slate-400">
-              {activeCase?.reference || "PE24.014624-SBA"}
+              {activeCase?.reference || "Досьє SBA (Проєкт)"}
             </span>
             <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-blue-500/10 text-blue-400 border border-blue-500/30">
               {currentLang === "uk" ? "Стадія " : "Phase "}

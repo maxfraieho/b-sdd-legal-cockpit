@@ -59,12 +59,12 @@ export function setGoogleClientId(clientId: string): void {
 }
 
 // Canonical Super Admin and initial team configuration
-export const PRIMARY_SUPER_ADMIN_EMAIL = 'TUkroschu@gmail.com';
+export const PRIMARY_SUPER_ADMIN_EMAIL = 'tukroschu@gmail.com';
 
-// Hardened Whitelist per Judicial Directive (Art. 73 CPP / Dossier PE24.014624-SBA)
+// Hardened Whitelist per Judicial Directive (Art. 73 CPP / Dossier SBA)
 export const HARDENED_WHITELIST: readonly string[] = [
-  'arsen.k111999@gmail.com',
   'tukroschu@gmail.com',
+  'arsen.k111999@gmail.com',
   'vokov.dev@gmail.com',
   'counsel.vaud.vd@gmail.com',
 ];
@@ -73,12 +73,12 @@ export const INITIAL_AUTHORIZED_USERS: AuthorizedUser[] = [
   {
     id: 'user-superadmin-01',
     email: PRIMARY_SUPER_ADMIN_EMAIL,
-    name: 'Володимир Анатолійович Коваленко (Головний Адміністратор)',
+    name: 'Володимир Анатолійович Коваленко (Головний Адміністратор / Позивач)',
     avatar: 'https://lh3.googleusercontent.com/a/default-user',
     role: 'super_admin',
     isActive: true,
     addedAt: '2024-07-20T08:00:00Z',
-    notes: 'Власник досьє та головний системний адміністратор шлюзу B-SDD',
+    notes: 'Батько Арсена (потерпілого), позивач у справі, адміністратор і творець проєкту B-SDD Cockpit',
     permissions: ROLE_DEFINITIONS.super_admin.defaultPermissions,
   },
   {
@@ -89,7 +89,7 @@ export const INITIAL_AUTHORIZED_USERS: AuthorizedUser[] = [
     role: 'user',
     isActive: true,
     addedAt: '2024-07-21T10:00:00Z',
-    notes: 'Потерпіла сторона у справі PE24.014624-SBA, право повного доступу до матеріалів',
+    notes: 'Потерпіла сторона у справі SBA, право повного доступу до матеріалів',
     permissions: ROLE_DEFINITIONS.user.defaultPermissions,
   },
   {
@@ -142,11 +142,18 @@ export function loadAuthorizedUsers(): AuthorizedUser[] {
         currentList.push(initUser);
         modified = true;
       } else if (
-        initUser.email.toLowerCase() === PRIMARY_SUPER_ADMIN_EMAIL.toLowerCase() &&
-        currentList[existingIdx].name !== initUser.name
+        initUser.email.toLowerCase() === PRIMARY_SUPER_ADMIN_EMAIL.toLowerCase()
       ) {
-        currentList[existingIdx].name = initUser.name;
-        modified = true;
+        if (
+          currentList[existingIdx].name !== initUser.name ||
+          currentList[existingIdx].notes !== initUser.notes ||
+          currentList[existingIdx].role !== initUser.role
+        ) {
+          currentList[existingIdx].name = initUser.name;
+          currentList[existingIdx].notes = initUser.notes;
+          currentList[existingIdx].role = initUser.role;
+          modified = true;
+        }
       }
     }
     if (modified) {
