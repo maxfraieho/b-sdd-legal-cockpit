@@ -16,6 +16,17 @@ from src.legal.timeline_calibrator import (
     BitemporalFactEvent,
     TimelineCalibrator,
 )
+from src.legal.advocate_voice_notes import (
+    AdvocateVoiceNote,
+    AdvocateVoiceNoteEngine,
+    AudioSegment,
+    SwissArticleSubsumption,
+    NoteStatus,
+    InvariantViolationError,
+    BonaFideProtectionViolation,
+    AdultVictimProtectionViolation,
+    CryptographicSealMismatchError,
+)
 
 __all__ = [
     "ProceduralStatus",
@@ -27,4 +38,14 @@ __all__ = [
     "create_swiss_benchmark_matrix",
     "BitemporalFactEvent",
     "TimelineCalibrator",
+    "AdvocateVoiceNote",
+    "AdvocateVoiceNoteEngine",
+    "AudioSegment",
+    "SwissArticleSubsumption",
+    "NoteStatus",
+    "InvariantViolationError",
+    "BonaFideProtectionViolation",
+    "AdultVictimProtectionViolation",
+    "CryptographicSealMismatchError",
 ]
+
