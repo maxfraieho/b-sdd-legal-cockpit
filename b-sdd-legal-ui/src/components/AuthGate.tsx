@@ -44,7 +44,7 @@ import {
   ROLE_DEFINITIONS,
 } from '../types/auth';
 import { LegalStrategyModal } from './LegalStrategyModal';
-import { account } from '../lib/appwrite';
+import { account, signInWithProvider } from '../lib/appwrite';
 
 export type { AuthStage, AuthGateState };
 
@@ -149,22 +149,19 @@ const HARDENED_WHITELIST: Record<string, { name: string; role: UserRole }> = {
 };
 
 const GoogleIcon = ({ className = 'w-5 h-5' }: { className?: string }) => (
-  <svg className={className} viewBox="0 0 24 24">
+  <svg
+    className={className}
+    width="24"
+    height="24"
+    viewBox="0 0 24 24"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
     <path
-      fill="#EA4335"
-      d="M12 5c1.6 0 3 .6 4.1 1.7l3.1-3.1C17.3 1.8 14.8 1 12 1 7.5 1 3.7 3.6 1.9 7.3l3.7 2.9C6.5 7.4 9 5 12 5z"
-    />
-    <path
-      fill="#4285F4"
-      d="M23.5 12.3c0-.8-.1-1.6-.2-2.3H12v4.6h6.5c-.3 1.5-1.1 2.8-2.4 3.7l3.7 2.9c2.2-2 3.7-5 3.7-8.9z"
-    />
-    <path
-      fill="#FBBC05"
-      d="M5.6 14.8c-.2-.7-.4-1.5-.4-2.8 0-1.3.2-2.1.4-2.8L1.9 6.3C.7 8.7 0 10.3 0 12s.7 3.3 1.9 5.7l3.7-2.9z"
-    />
-    <path
-      fill="#34A853"
-      d="M12 23c3.2 0 6-1.1 8-3l-3.7-2.9c-1.1.7-2.5 1.2-4.3 1.2-3 0-5.5-2.4-6.4-5.2L1.9 16C3.7 19.7 7.5 23 12 23z"
+      fillRule="evenodd"
+      clipRule="evenodd"
+      d="M15.7034 7.91133C14.7554 7.02509 13.4903 6.54228 12.1813 6.56212C9.78605 6.56212 7.75176 8.14611 7.02642 10.279V10.2791C6.64183 11.3968 6.64183 12.6071 7.02642 13.7249H7.02979C7.75849 15.8545 9.78941 17.4385 12.1847 17.4385C13.4211 17.4385 14.4826 17.1285 15.3053 16.5809V16.5787C16.2735 15.9504 16.9348 14.9616 17.1406 13.8439H12.1813V10.3783H20.8414C20.9494 10.9802 21 11.5952 21 12.207C21 14.9443 20.002 17.2586 18.2655 18.826L18.2673 18.8274C16.7458 20.203 14.6576 21 12.1813 21C8.70985 21 5.53527 19.082 3.97666 16.043V16.043C2.67445 13.5 2.67445 10.5039 3.97666 7.96096H3.97668L3.97666 7.96094C5.53527 4.9186 8.70985 3.00061 12.1813 3.00061C14.4619 2.97415 16.6649 3.8141 18.3247 5.34188L15.7034 7.91133Z"
+      fill="#C4C6D7"
     />
   </svg>
 );
@@ -620,27 +617,17 @@ export const AuthGate: React.FC<AuthGateProps> = ({
 
   const t = AUTH_I18N[currentLang] || AUTH_I18N['fr'];
 
-  // Main Google Authentication Trigger via Appwrite OAuth2 (Zero-Trust)
-  const handleExecuteGoogleAuth = () => {
+  // Main Google Authentication Trigger via Appwrite OAuth2 Token Flow
+  const handleExecuteGoogleAuth = async () => {
     setIsAuthenticating(true);
     setGoogleAuthError(null);
 
-    const currentOrigin =
-      typeof window !== 'undefined'
-        ? `${window.location.origin}${window.location.pathname}`
-        : 'https://b-sdd-legal-ui.pages.dev/';
-    const successUrl = `${currentOrigin}?pin_verified=true`;
-    const failureUrl = `${currentOrigin}?auth_error=appwrite_google_failed`;
-
     try {
-      account.createOAuth2Session(
-        'google' as any,
-        successUrl,
-        failureUrl
-      );
+      // createOAuth2Token navigates the browser to the provider; do not redirect manually.
+      await signInWithProvider();
     } catch (err: any) {
       setIsAuthenticating(false);
-      setGoogleAuthError(err.message || 'Не вдалося ініціювати сесію Appwrite Google OAuth2');
+      setGoogleAuthError(err?.message || 'Не вдалося ініціювати сесію Appwrite Google OAuth2');
     }
   };
 
@@ -1415,7 +1402,7 @@ export const AuthGate: React.FC<AuthGateProps> = ({
                 <span>
                   {isAuthenticating
                     ? t.authenticating_title
-                    : t.btn_google_cloud_run}
+                    : 'Sign in with Google'}
                 </span>
               </button>
             </div>

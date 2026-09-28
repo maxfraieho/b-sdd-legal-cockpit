@@ -1,6 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import App from "./App";
+import { Router } from "./Router";
 import "./index.css";
 
 interface ErrorBoundaryProps {
@@ -74,7 +74,7 @@ if (rootElement) {
   root.render(
     <React.StrictMode>
       <ErrorBoundary>
-        <App />
+        <Router />
       </ErrorBoundary>
     </React.StrictMode>
   );
