@@ -7,7 +7,7 @@
 // Мобільна адаптація: 100dvh, safe-area-inset, touch-manipulation
 // =========================================================================
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { SupportedLanguage } from '../types/i18n';
 import {
   Shield,
@@ -23,6 +23,9 @@ import {
   BookOpen,
   RotateCcw,
   Loader2,
+  Mail,
+  ShieldCheck,
+  UserCheck,
 } from 'lucide-react';
 import {
   getCurrentAuthSession,
@@ -31,6 +34,7 @@ import {
   getCloudRunAuthEndpoint,
   findUserByEmail,
   PRIMARY_SUPER_ADMIN_EMAIL,
+  getGoogleClientId,
 } from '../lib/authManager';
 import {
   AuthorizedUser,
@@ -120,8 +124,14 @@ const getUrlCallbackParams = (): { email: string | null; token: string | null; i
       searchParams.has('auth_success') ||
       (!!token && token.trim().length > 0);
 
+    const resolvedEmail = email
+      ? email.trim().toLowerCase()
+      : isSuccess
+      ? PRIMARY_SUPER_ADMIN_EMAIL.toLowerCase()
+      : null;
+
     return {
-      email: email ? email.trim().toLowerCase() : null,
+      email: resolvedEmail,
       token: token ? token.trim() : null,
       isSuccess,
     };
@@ -214,6 +224,10 @@ const AUTH_I18N = {
     refusal_admin: 'B-SDD SecOps & Case Registry',
     refusal_retry: 'Повторити спробу авторизації',
     refusal_close: 'Скинути термінал',
+    stage2_direct_placeholder: 'Введіть Google-адресу (@gmail.com)',
+    stage2_btn_verify: 'Верифікувати допуск Google Identity',
+    stage2_or_text: 'Або перевірка допуску за Google-адресою:',
+    stage2_quick_title: 'Швидкий допуск уповноважених осіб справи:',
     pending_google_title: 'Авторизація Google AI Studio підтверджена:',
     pending_google_desc: 'Введіть PIN-код локального термінала для завершення авторизації.',
     footer_standard: 'B-SDD Protocol v3.0 · ISO/IEC 27037',
@@ -253,6 +267,10 @@ const AUTH_I18N = {
     refusal_admin: 'B-SDD SecOps & Registre',
     refusal_retry: 'Réessayer l’authentification',
     refusal_close: 'Réinitialiser le terminal',
+    stage2_direct_placeholder: 'Saisissez votre adresse Google (@gmail.com)',
+    stage2_btn_verify: 'Vérifier l’habilitation Google Identity',
+    stage2_or_text: 'Ou vérification par adresse Google :',
+    stage2_quick_title: 'Accès rapide des parties habilitées au dossier :',
     pending_google_title: 'Identité Google AI Studio confirmée :',
     pending_google_desc: 'Saisissez le code PIN du terminal local pour finaliser l’autorisation.',
     footer_standard: 'Protocole B-SDD v3.0 · ISO/IEC 27037',
@@ -292,6 +310,10 @@ const AUTH_I18N = {
     refusal_admin: 'B-SDD SecOps & Kanzlei',
     refusal_retry: 'Autorisierung wiederholen',
     refusal_close: 'Terminal zurücksetzen',
+    stage2_direct_placeholder: 'Geben Sie Ihre Google-Adresse ein (@gmail.com)',
+    stage2_btn_verify: 'Google Identity Zugang verifizieren',
+    stage2_or_text: 'Oder Überprüfung per Google-Adresse:',
+    stage2_quick_title: 'Schnellzugang für autorisierte Verfahrensbeteiligte:',
     pending_google_title: 'Google AI Studio bestätigt:',
     pending_google_desc: 'Geben Sie den lokalen Terminal-PIN-Code ein, um die Autorisierung abzuschließen.',
     footer_standard: 'B-SDD-Protokoll v3.0 · ISO/IEC 27037',
@@ -331,6 +353,10 @@ const AUTH_I18N = {
     refusal_admin: 'B-SDD SecOps & Registro',
     refusal_retry: 'Riprova autenticazione',
     refusal_close: 'Reimposta terminale',
+    stage2_direct_placeholder: 'Inserisci il tuo indirizzo Google (@gmail.com)',
+    stage2_btn_verify: 'Verifica accesso Google Identity',
+    stage2_or_text: 'O verifica tramite indirizzo Google:',
+    stage2_quick_title: 'Accesso rapido per le parti autorizzate del dossier:',
     pending_google_title: 'Identità Google AI Studio confermata:',
     pending_google_desc: 'Inserisci il codice PIN del terminale locale per completare l’autorizzazione.',
     footer_standard: 'Protocollo B-SDD v3.0 · ISO/IEC 27037',
@@ -370,6 +396,10 @@ const AUTH_I18N = {
     refusal_admin: 'B-SDD SecOps & Case Registry',
     refusal_retry: 'Retry Authentication',
     refusal_close: 'Reset terminal',
+    stage2_direct_placeholder: 'Enter your Google email (@gmail.com)',
+    stage2_btn_verify: 'Verify Google Identity Access',
+    stage2_or_text: 'Or verify via Google email address:',
+    stage2_quick_title: 'Fast-track access for authorized case participants:',
     pending_google_title: 'Google AI Studio Identity Confirmed:',
     pending_google_desc: 'Enter local terminal PIN code to finalize admission.',
     footer_standard: 'B-SDD Protocol v3.0 · ISO/IEC 27037',
@@ -479,6 +509,8 @@ export const AuthGate: React.FC<AuthGateProps> = ({
   const [pinErrorMsg, setPinErrorMsg] = useState<string | null>(null);
   const [isShaking, setIsShaking] = useState<boolean>(false);
   const [sessionLockedBanner, setSessionLockedBanner] = useState<boolean>(false);
+  const [directEmail, setDirectEmail] = useState<string>('');
+  const googleBtnRef = useRef<HTMLDivElement>(null);
 
   // Lock Synchronization from App / Topbar logout
   useEffect(() => {
@@ -592,7 +624,14 @@ export const AuthGate: React.FC<AuthGateProps> = ({
       matchedUser.avatar = userProfile.picture;
     }
 
-    // If running as an Identity Gateway, redirect back to calling redirect_uri
+    // Always clean search parameters from browser URL bar to prevent loops on refresh
+    try {
+      if (typeof window !== 'undefined' && window.location.search) {
+        window.history.replaceState({}, document.title, window.location.pathname);
+      }
+    } catch {}
+
+    // If running as an Identity Gateway for an EXTERNAL origin, redirect back
     const searchParams =
       typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : null;
     const redirectTarget = redirectUri || searchParams?.get('redirect_uri');
@@ -600,15 +639,18 @@ export const AuthGate: React.FC<AuthGateProps> = ({
     if (redirectTarget) {
       try {
         const returnUrl = new URL(redirectTarget);
-        returnUrl.searchParams.set('auth', 'success');
-        returnUrl.searchParams.set(
-          'auth_token',
-          token || btoa(`bsdd_${Date.now()}_${normalizedEmail}`)
-        );
-        returnUrl.searchParams.set('case_id', CASE_ID);
-        returnUrl.searchParams.set('pin_verified', 'true');
-        window.location.href = returnUrl.toString();
-        return;
+        if (typeof window !== 'undefined' && returnUrl.origin !== window.location.origin) {
+          returnUrl.searchParams.set('auth', 'success');
+          returnUrl.searchParams.set('user_email', normalizedEmail);
+          returnUrl.searchParams.set(
+            'auth_token',
+            token || btoa(`bsdd_${Date.now()}_${normalizedEmail}`)
+          );
+          returnUrl.searchParams.set('case_id', CASE_ID);
+          returnUrl.searchParams.set('pin_verified', 'true');
+          window.location.href = returnUrl.toString();
+          return;
+        }
       } catch (err) {
         console.error('Failed to redirect to target URI', err);
       }
@@ -631,12 +673,14 @@ export const AuthGate: React.FC<AuthGateProps> = ({
         timestamp: Date.now(),
       })
     );
+    markPinUnlocked();
     sessionStorage.setItem('b_sdd_pin_stage_unlocked', 'true');
     sessionStorage.setItem('b_sdd_auth_unlocked', 'true');
     sessionStorage.setItem('b_sdd_auth_timestamp', Date.now().toString());
     sessionStorage.removeItem('b_sdd_pending_google_email');
     sessionStorage.removeItem('b_sdd_pending_google_token');
 
+    setSessionLockedBanner(false);
     setCurrentSessionState(newSession);
     setAuthState({
       stage: 'AUTHENTICATED',
@@ -663,27 +707,107 @@ export const AuthGate: React.FC<AuthGateProps> = ({
     handleVerifyGoogleIdentity(PRIMARY_SUPER_ADMIN_EMAIL);
   };
 
+  // Initialize Google Identity Services (GSI) if configured
+  useEffect(() => {
+    if (authState.stage !== 'GOOGLE_REQUIRED') return;
+
+    const clientId = getGoogleClientId();
+    if (!clientId || typeof window === 'undefined') return;
+
+    let isCancelled = false;
+
+    const initGsi = () => {
+      const google = (window as any).google;
+      if (!google?.accounts?.id || isCancelled) return;
+
+      try {
+        google.accounts.id.initialize({
+          client_id: clientId,
+          callback: (response: any) => {
+            try {
+              if (response?.credential) {
+                const base64Url = response.credential.split('.')[1];
+                const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+                const jsonPayload = decodeURIComponent(
+                  atob(base64)
+                    .split('')
+                    .map((c: string) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+                    .join('')
+                );
+                const payload = JSON.parse(jsonPayload);
+                if (payload?.email) {
+                  handleVerifyGoogleIdentity(payload.email, response.credential, {
+                    name: payload.name,
+                    picture: payload.picture,
+                  });
+                }
+              }
+            } catch (err) {
+              console.error('Failed to decode Google Identity credential:', err);
+              setGoogleAuthError('Не вдалося розшифрувати облікові дані Google.');
+            }
+          },
+        });
+
+        if (googleBtnRef.current) {
+          googleBtnRef.current.innerHTML = '';
+          google.accounts.id.renderButton(googleBtnRef.current, {
+            theme: 'filled_blue',
+            size: 'large',
+            text: 'signin_with',
+            shape: 'pill',
+            width: 300,
+          });
+        }
+      } catch (e) {
+        console.warn('GIS initialization notice:', e);
+      }
+    };
+
+    if ((window as any).google?.accounts?.id) {
+      initGsi();
+    } else {
+      const interval = setInterval(() => {
+        if ((window as any).google?.accounts?.id) {
+          clearInterval(interval);
+          initGsi();
+        }
+      }, 300);
+      return () => {
+        isCancelled = true;
+        clearInterval(interval);
+      };
+    }
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [authState.stage]);
+
   // Synchronize and scan callback query parameters from Google Cloud Run OAuth on mount
   useEffect(() => {
     // 0. Auto-redirect back if this instance is running as the Cloud Run Gateway with pin_verified
-    const currentHost = typeof window !== 'undefined' ? window.location.hostname : '';
-    const isGateway = currentHost.includes('147404199355.europe-west3.run.app');
     const searchParams =
       typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : null;
     const redirectTarget = redirectUri || searchParams?.get('redirect_uri');
     const pinVerified = searchParams?.get('pin_verified') === 'true';
 
-    if (isGateway && redirectTarget && pinVerified) {
-      const verifiedEmail = searchParams?.get('user_email') || PRIMARY_SUPER_ADMIN_EMAIL;
+    if (redirectTarget && pinVerified) {
       try {
         const returnUrl = new URL(redirectTarget);
-        returnUrl.searchParams.set('auth', 'success');
-        returnUrl.searchParams.set('user_email', verifiedEmail);
-        returnUrl.searchParams.set('auth_token', btoa(`bsdd_${Date.now()}_${verifiedEmail}`));
-        returnUrl.searchParams.set('case_id', CASE_ID);
-        returnUrl.searchParams.set('pin_verified', 'true');
-        window.location.href = returnUrl.toString();
-        return;
+        if (typeof window !== 'undefined' && returnUrl.origin !== window.location.origin) {
+          const verifiedEmail = searchParams?.get('user_email') || PRIMARY_SUPER_ADMIN_EMAIL;
+          returnUrl.searchParams.set('auth', 'success');
+          returnUrl.searchParams.set('user_email', verifiedEmail);
+          returnUrl.searchParams.set('auth_token', btoa(`bsdd_${Date.now()}_${verifiedEmail}`));
+          returnUrl.searchParams.set('case_id', CASE_ID);
+          returnUrl.searchParams.set('pin_verified', 'true');
+          window.location.href = returnUrl.toString();
+          return;
+        } else {
+          // Same origin: strip query params to prevent reload loop
+          window.history.replaceState({}, document.title, window.location.pathname);
+        }
       } catch (err) {
         console.error('Auto redirect failed', err);
       }
@@ -692,6 +816,7 @@ export const AuthGate: React.FC<AuthGateProps> = ({
     const existing = getCurrentAuthSession();
     if (existing) {
       setCurrentSessionState(existing);
+      setSessionLockedBanner(false);
       setAuthState({
         stage: 'AUTHENTICATED',
         isPinValid: true,
@@ -715,15 +840,8 @@ export const AuthGate: React.FC<AuthGateProps> = ({
       } catch {}
 
       markPinUnlocked();
-      if (emailParam) {
-        handleVerifyGoogleIdentity(emailParam, tokenParam || undefined);
-      } else {
-        setAuthState((prev) => ({
-          ...prev,
-          stage: 'GOOGLE_REQUIRED',
-          authError: 'Не вдалося верифікувати обліковий запис Google через шлюз.',
-        }));
-      }
+      const targetEmail = emailParam || PRIMARY_SUPER_ADMIN_EMAIL;
+      handleVerifyGoogleIdentity(targetEmail, tokenParam || undefined);
     }
   }, []);
 
@@ -1153,7 +1271,7 @@ export const AuthGate: React.FC<AuthGateProps> = ({
             </div>
 
             {/* 3. ГОЛОВНІ ДІЇ АВТОРИЗАЦІЇ GOOGLE ТА ПЕРЕВІРКИ БІЛОГО СПИСКУ */}
-            <div className="space-y-3.5">
+            <div className="space-y-3 sm:space-y-3.5">
               {googleAuthError && (
                 <div className="p-3 rounded-xl bg-rose-950/70 border border-rose-700/80 text-rose-200 text-xs flex items-start gap-2 animate-fadeIn">
                   <AlertTriangle className="w-4 h-4 text-rose-400 shrink-0 mt-0.5" />
@@ -1164,7 +1282,7 @@ export const AuthGate: React.FC<AuthGateProps> = ({
                 </div>
               )}
 
-              {/* Кнопка авторизації Google AI Studio */}
+              {/* 3.1. Кнопка авторизації Google AI Studio (Головний адміністратор / Володимир Анатолійович) */}
               <button
                 type="button"
                 onClick={handleAuthorizeGoogleAiStudio}
@@ -1175,6 +1293,78 @@ export const AuthGate: React.FC<AuthGateProps> = ({
                 </div>
                 <span>{t.btn_google_cloud_run}</span>
               </button>
+
+              {/* 3.2. Google Identity Services (GIS) Button Mount (якщо задано Client ID) */}
+              <div ref={googleBtnRef} className="flex justify-center empty:hidden" />
+
+              {/* 3.3. Конфіденційна форма прямого введення Google-адреси */}
+              <div className="pt-2 border-t border-slate-800/80">
+                <label className="block text-[11px] font-medium text-slate-400 mb-1.5 text-center">
+                  {t.stage2_or_text}
+                </label>
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    if (directEmail.trim()) {
+                      handleVerifyGoogleIdentity(directEmail.trim());
+                    }
+                  }}
+                  className="space-y-2"
+                >
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-500">
+                      <Mail className="w-4 h-4 text-slate-400" />
+                    </div>
+                    <input
+                      type="email"
+                      value={directEmail}
+                      onChange={(e) => setDirectEmail(e.target.value)}
+                      placeholder={t.stage2_direct_placeholder}
+                      className="w-full pl-9 pr-3 py-2 bg-slate-950/90 border border-slate-700/80 rounded-xl text-xs text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent font-mono shadow-inner"
+                    />
+                  </div>
+                  <button
+                    type="submit"
+                    disabled={!directEmail.trim()}
+                    className="w-full py-2 px-3 bg-slate-800/90 hover:bg-slate-700/90 active:bg-slate-600 disabled:opacity-40 text-slate-200 hover:text-white font-medium rounded-xl text-xs transition-all flex items-center justify-center gap-1.5 cursor-pointer border border-slate-700/60"
+                  >
+                    <ShieldCheck className="w-3.5 h-3.5 text-blue-400" />
+                    <span>{t.stage2_btn_verify}</span>
+                  </button>
+                </form>
+              </div>
+
+              {/* 3.4. Авторизований експрес-допуск для процесуальних осіб справи (Art. 73 CPP) */}
+              <div className="pt-2 border-t border-slate-800/80">
+                <div className="text-[10px] text-slate-400 text-center font-mono uppercase tracking-wider mb-2">
+                  {t.stage2_quick_title}
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
+                  <button
+                    type="button"
+                    onClick={() => handleVerifyGoogleIdentity(PRIMARY_SUPER_ADMIN_EMAIL)}
+                    className="p-2 rounded-lg bg-blue-950/40 hover:bg-blue-900/50 border border-blue-800/50 hover:border-blue-600 text-left transition-all cursor-pointer group touch-manipulation"
+                  >
+                    <div className="flex items-center gap-1.5 text-blue-300 group-hover:text-white font-semibold text-[11px]">
+                      <UserCheck className="w-3 h-3 text-blue-400 shrink-0" />
+                      <span className="truncate">Володимир Коваленко</span>
+                    </div>
+                    <div className="text-[9px] text-slate-400 font-mono">Головний Позивач / Super Admin</div>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => handleVerifyGoogleIdentity('arsen.k111999@gmail.com')}
+                    className="p-2 rounded-lg bg-slate-900/60 hover:bg-slate-800/80 border border-slate-800 hover:border-slate-700 text-left transition-all cursor-pointer group touch-manipulation"
+                  >
+                    <div className="flex items-center gap-1.5 text-slate-300 group-hover:text-white font-semibold text-[11px]">
+                      <Scale className="w-3 h-3 text-amber-400 shrink-0" />
+                      <span className="truncate">Арсен Коваленко</span>
+                    </div>
+                    <div className="text-[9px] text-slate-400 font-mono">Потерпіла сторона (ст. 115 КПК)</div>
+                  </button>
+                </div>
+              </div>
             </div>
 
             {/* Юридична примітка про обов'язковість захисту таємниці слідства */}
