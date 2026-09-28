@@ -321,7 +321,7 @@ export const AstryxActionDrawer: React.FC<AstryxActionDrawerProps> = ({
                         : "📖 Send to Kindle (Whispersync)"}
                     </div>
                     <div className="text-[10px] text-slate-400 font-sans">
-                      tukroschu@kindle.com · 18 chapitres EPUB 3.0
+                      Kindle Whispersync · 18 chapitres EPUB 3.0
                     </div>
                   </div>
                 </div>

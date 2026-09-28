@@ -2204,9 +2204,9 @@ export const DOSSIER_CHAPTERS: DossierChapter[] = [
     },
     status: "verified",
     summary: {
-      uk: "Повна синхронізація 18 розділів досьє з криптографічним леджером WORM та бездротова відправка на tukroschu@kindle.com.",
-      fr: "Consolidation des 18 chapitres avec scellement cryptographique WORM et envoi sans fil à tukroschu@kindle.com.",
-      en: "Consolidation of all 18 chapters with WORM cryptographic seal and wireless dispatch to tukroschu@kindle.com.",
+      uk: "Повна синхронізація 18 розділів досьє з криптографічним леджером WORM та бездротова відправка на Kindle Whispersync.",
+      fr: "Consolidation des 18 chapitres avec scellement cryptographique WORM et envoi sans fil vers Kindle Whispersync.",
+      en: "Consolidation of all 18 chapters with WORM cryptographic seal and wireless dispatch to Kindle Whispersync.",
     },
     outdated_claim: {
       uk: "Незведена та фрагментована структура матеріалів справи без наскрізного контролю версій.",

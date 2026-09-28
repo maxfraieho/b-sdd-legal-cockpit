@@ -475,11 +475,11 @@ export const PROCEDURAL_STAGES: ProceduralStage[] = [
       {
         id: "CP-5-2",
         label: {
-          uk: "Синхронізація на Kindle Whispersync (tukroschu@kindle.com / EPUB 3.0)",
-          fr: "Transmission sans fil vers Kindle Whispersync (tukroschu@kindle.com / EPUB 3.0)",
-          de: "Drahtlose Übertragung an Kindle Whispersync (tukroschu@kindle.com / EPUB 3.0)",
-          it: "Invio wireless a Kindle Whispersync (tukroschu@kindle.com / EPUB 3.0)",
-          en: "Wireless dispatch to Kindle Whispersync (tukroschu@kindle.com / EPUB 3.0)",
+          uk: "Синхронізація на Kindle Whispersync (EPUB 3.0)",
+          fr: "Transmission sans fil vers Kindle Whispersync (EPUB 3.0)",
+          de: "Drahtlose Übertragung an Kindle Whispersync (EPUB 3.0)",
+          it: "Invio wireless a Kindle Whispersync (EPUB 3.0)",
+          en: "Wireless dispatch to Kindle Whispersync (EPUB 3.0)",
         },
         isCompleted: true,
         legalBasis: "Whispersync EPUB 3.0",

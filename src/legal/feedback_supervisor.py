@@ -75,7 +75,7 @@ class ReconciliationRequest:
     target_chapter: Optional[str] = None
     target_actor_ids: List[str] = field(default_factory=list)
     t_v: Optional[str] = None
-    author_id: str = "tukroschu@gmail.com"
+    author_id: str = "supervisor@b-sdd.internal"
     request_id: str = field(default_factory=lambda: f"REQ-{uuid.uuid4().hex[:8]}")
 
 

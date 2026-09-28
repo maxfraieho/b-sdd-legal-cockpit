@@ -233,10 +233,10 @@ export const ActionDock: React.FC<ActionDockProps> = ({
           }`}
           title={
             currentLang === 'uk' ? "Зібрати 18 розділів в EPUB та надіслати на Kindle" :
-            currentLang === 'fr' ? "Compiler les 18 chapitres et envoyer sans fil à tukroschu@kindle.com" :
-            currentLang === 'de' ? "18 Kapitel in EPUB kompilieren und an tukroschu@kindle.com senden" :
-            currentLang === 'it' ? "Compilare 18 capitoli in EPUB e inviare a tukroschu@kindle.com" :
-            "Compile 18 chapters to EPUB and dispatch to tukroschu@kindle.com"
+            currentLang === 'fr' ? "Compiler les 18 chapitres et envoyer sans fil vers Kindle Whispersync" :
+            currentLang === 'de' ? "18 Kapitel in EPUB kompilieren und an Kindle Whispersync senden" :
+            currentLang === 'it' ? "Compilare 18 capitoli in EPUB e inviare a Kindle Whispersync" :
+            "Compile 18 chapters to EPUB and dispatch to Kindle Whispersync"
           }
         >
           {isSendingKindle ? (

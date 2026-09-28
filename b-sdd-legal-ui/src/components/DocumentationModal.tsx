@@ -41,7 +41,7 @@ export const DocumentationModal: React.FC<DocumentationModalProps> = ({
   isOpen,
   onClose,
   currentLang,
-  kindleEmail = "tukroschu@kindle.com",
+  kindleEmail = "",
   onShowToast,
 }) => {
   const [activeTab, setActiveTab] = useState<DocTab>("user");
@@ -74,7 +74,9 @@ export const DocumentationModal: React.FC<DocumentationModalProps> = ({
     link.click();
 
     // 2. Open mail client prefilled for Kindle Whispersync
-    const mailto = `mailto:${kindleEmail}?subject=${encodeURIComponent("B-SDD Legal Book")}&body=${encodeURIComponent("Veuillez trouver ci-joint le guide B-SDD Legal (EPUB 3.0) pour transfert vers Kindle Whispersync.")}`;
+    const mailto = kindleEmail
+      ? `mailto:${kindleEmail}?subject=${encodeURIComponent("B-SDD Legal Book")}&body=${encodeURIComponent("Veuillez trouver ci-joint le guide B-SDD Legal (EPUB 3.0) pour transfert vers Kindle Whispersync.")}`
+      : `mailto:?subject=${encodeURIComponent("B-SDD Legal Book")}&body=${encodeURIComponent("Veuillez trouver ci-joint le guide B-SDD Legal (EPUB 3.0) pour transfert vers Kindle Whispersync.")}`;
     window.open(mailto, "_blank");
 
     setTimeout(() => {
@@ -82,8 +84,8 @@ export const DocumentationModal: React.FC<DocumentationModalProps> = ({
       if (onShowToast) {
         onShowToast(
           currentLang === "uk"
-            ? `Книгу EPUB 3.0 завантажено та відкрито пошту для відправки на ${kindleEmail}`
-            : `Livre EPUB 3.0 téléchargé et client mail ouvert vers ${kindleEmail}`
+            ? "Книгу EPUB 3.0 завантажено та підготовлено для Kindle Whispersync"
+            : "Livre EPUB 3.0 téléchargé et préparé pour Kindle Whispersync"
         );
       }
     }, 1000);
@@ -134,7 +136,7 @@ export const DocumentationModal: React.FC<DocumentationModalProps> = ({
               onClick={handleSendToKindle}
               disabled={isSendingToKindle}
               className="flex items-center space-x-1.5 px-3 py-1.5 bg-emerald-950/60 hover:bg-emerald-900/80 border border-emerald-700/60 rounded-lg text-xs font-medium text-emerald-300 transition-colors cursor-pointer"
-              title={`Надіслати на Kindle (${kindleEmail})`}
+              title={kindleEmail ? `Надіслати на Kindle (${kindleEmail})` : "Надіслати на Kindle Whispersync"}
             >
               <Send className={`w-3.5 h-3.5 ${isSendingToKindle ? "animate-pulse" : ""}`} />
               <span>
@@ -332,7 +334,7 @@ export const DocumentationModal: React.FC<DocumentationModalProps> = ({
                     <strong className="text-slate-200">Google-Авторизація:</strong> Вхід через офіційний обліковий запис Google (Gmail). Доступ дозволено виключно емейлам із затвердженого реєстру справи.
                   </li>
                   <li>
-                    <strong className="text-slate-200">Головний Адміністратор:</strong> Обліковий запис <span className="font-mono bg-amber-950/60 px-2 py-0.5 rounded text-amber-300 font-bold border border-amber-800/60">TUkroschu@gmail.com</span> володіє повними правами Root, керує білим списком та призначає ролі учасників.
+                    <strong className="text-slate-200">Головний Адміністратор:</strong> Керуючий власник досьє володіє повними правами Root, керує білим списком та призначає ролі учасників.
                   </li>
                   <li>
                     <strong className="text-slate-200">Керування користувачами:</strong> У вікні налаштувань (⚙️ Settings ➔ вкладка «👥 Користувачі & Доступ») адміністратор може додавати нових людей, призначати ролі (Адвокат, Користувач, Спостерігач) або блокувати доступ.

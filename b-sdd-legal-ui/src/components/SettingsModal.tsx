@@ -1562,7 +1562,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                     <span>Список авторизованих користувачів ({authorizedUsers.length})</span>
                   </h4>
                   <span className="text-[11px] text-slate-500 font-mono">
-                    Головний адміністратор: {PRIMARY_SUPER_ADMIN_EMAIL}
+                    Art. 73 CPP · Конфіденційний реєстр доступу
                   </span>
                 </div>
 
@@ -1594,7 +1594,9 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                                 </span>
                               )}
                             </div>
-                            <div className="text-[11px] text-slate-400 font-mono truncate">{user.email}</div>
+                            <div className="text-[11px] text-slate-400 font-mono truncate">
+                              {user.email.replace(/(.{2})(.*)(@.*)/, '$1***$3')}
+                            </div>
                             {user.notes && (
                               <div className="text-[10px] text-slate-500 truncate mt-0.5">{user.notes}</div>
                             )}

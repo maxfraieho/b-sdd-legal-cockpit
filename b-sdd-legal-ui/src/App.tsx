@@ -150,13 +150,14 @@ export default function App() {
       // Open email client prefilled for Kindle whispersync
       const subject = customTitle ? `B-SDD Legal: ${customTitle}` : "B-SDD Legal Book (PE24.014624-SBA)";
       const body = "Veuillez trouver ci-joint le document B-SDD Legal pour Kindle Whispersync.";
-      window.open(`mailto:tukroschu@kindle.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`, "_blank");
+      const targetKindle = settings.kindleEmail ? `mailto:${settings.kindleEmail}?` : "mailto:?";
+      window.open(`${targetKindle}subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`, "_blank");
 
       showToast(
         currentLang === "uk" ? "Досьє скомпільовано та відправлено на Kindle" : "Dossier ED10 envoyé à Kindle",
         currentLang === "uk"
-          ? "Файл завантажено на пристрій, поштовий клієнт відкрито для передачі на tukroschu@kindle.com"
-          : "18 chapitres compilés en EPUB 3.0 avec hachages SHA-256 et transmis à tukroschu@kindle.com"
+          ? "Файл завантажено на пристрій, поштовий клієнт відкрито для передачі на Kindle Whispersync"
+          : "18 chapitres compilés en EPUB 3.0 avec hachages SHA-256 et transmis à Kindle Whispersync"
       );
     }, 1500);
   };
@@ -470,7 +471,7 @@ export default function App() {
                 Exportation des 18 chapitres et transmission sécurisée vers :
               </p>
               <div className="p-2 bg-[#070B12] rounded border border-slate-800 font-mono text-xs text-blue-300 flex items-center justify-between">
-                <span>tukroschu@kindle.com</span>
+                <span>{settings.kindleEmail || "Amazon Kindle Whispersync"}</span>
                 <span className="text-[10px] text-emerald-400 font-bold">Amazon Whispersync</span>
               </div>
 

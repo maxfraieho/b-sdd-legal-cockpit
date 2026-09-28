@@ -28,7 +28,6 @@ import {
   getCurrentAuthSession,
   setAuthSession,
   clearAuthSession,
-  PRIMARY_SUPER_ADMIN_EMAIL,
 } from '../lib/authManager';
 import {
   AuthorizedUser,
@@ -898,7 +897,7 @@ export const AuthGate: React.FC<AuthGateProps> = ({
 
               <div className="flex items-center justify-between text-[11px] text-slate-400 px-1 pt-1">
                 <span>
-                  {t.refusal_admin}: {PRIMARY_SUPER_ADMIN_EMAIL}
+                  {t.refusal_admin}: B-SDD Security & Case Registry
                 </span>
                 <button
                   type="button"
@@ -927,8 +926,8 @@ export const AuthGate: React.FC<AuthGateProps> = ({
         onSendToKindle={(title) => {
           alert(
             currentLang === 'uk'
-              ? `✓ Документ "${title}" підготовлено для Kindle!\nФайл завантажено на пристрій, відкривається поштовий клієнт для відправки на tukroschu@kindle.com`
-              : `✓ Document "${title}" préparé pour Kindle !\nFichier téléchargé, client mail ouvert vers tukroschu@kindle.com`
+              ? `✓ Документ "${title}" підготовлено для Kindle Whispersync!\nФайл завантажено на пристрій, відкривається поштовий клієнт.`
+              : `✓ Document "${title}" préparé pour Kindle Whispersync !\nFichier téléchargé, client mail ouvert.`
           );
         }}
       />

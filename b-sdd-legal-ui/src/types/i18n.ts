@@ -83,12 +83,12 @@ export const DEFAULT_SETTINGS: AppSettings = {
   authPassword: '0523',
   autoLockMinutes: 15,
   manualEditMode: false,
-  kindleEmail: 'tukroschu@kindle.com',
-  senderEmail: 'arsen.k111999@gmail.com',
+  kindleEmail: '',
+  senderEmail: '',
   autoSendKindleOnWorm: false,
-  googleAccountConnected: true,
-  googleAccountEmail: 'arsen.k111999@gmail.com',
-  googleDocsFolderUrl: 'https://docs.google.com/document/d/1Zt-case-pe24-014624-sba/edit',
+  googleAccountConnected: false,
+  googleAccountEmail: '',
+  googleDocsFolderUrl: '',
 };
 
 export type TranslationOverrides = Record<string, string>;

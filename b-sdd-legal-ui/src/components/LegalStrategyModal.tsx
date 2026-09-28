@@ -666,7 +666,7 @@ export const LegalStrategyModal: React.FC<LegalStrategyModalProps> = ({
                 URL.revokeObjectURL(url);
 
                 // 2. Open email client prefilled for Kindle whispersync
-                const mailtoUrl = `mailto:tukroschu@kindle.com?subject=${encodeURIComponent("B-SDD Legal Book: " + docTitle)}&body=${encodeURIComponent("Attachez ce fichier .md ou .epub pour transmission vers Kindle Whispersync (Dossier PE24.014624-SBA).")}`;
+                const mailtoUrl = `mailto:?subject=${encodeURIComponent("B-SDD Legal Book: " + docTitle)}&body=${encodeURIComponent("Attachez ce fichier .md ou .epub pour transmission vers Kindle Whispersync (Dossier PE24.014624-SBA).")}`;
                 window.open(mailtoUrl, '_blank');
 
                 // 3. Callback if provided
