@@ -193,6 +193,17 @@ BENCHMARK_ACTORS: Dict[str, ActorEntity] = {
         bona_fide_protection=False,
         notes="Complainant and civil claimant (Art. 118, 122 CPP), legal representative of minor victim."
     ),
+    "ACT-VOLODYMYR-KOVALENKO": ActorEntity(
+        actor_id="ACT-VOLODYMYR-KOVALENKO",
+        name="Volodymyr KOVALENKO",
+        procedural_status=ProceduralStatus.PARTIE_PLAIGNANTE_CIVIL,
+        influence_degree=0.8,
+        material_dependency=False,
+        cohabitation=False,
+        financial_claims=["Restitution of $15'000 USD (Art. 122 CPP)", "Damages under Art. 41 CO"],
+        bona_fide_protection=False,
+        notes="Complainant and civil claimant (Art. 115, 118, 122 CPP). Father of adult victim Arsen Kovalenko (b. 05.11.1999). Born 16.04.1975."
+    ),
     "ACT-ACCUSED-PRINCIPAL": ActorEntity(
         actor_id="ACT-ACCUSED-PRINCIPAL",
         name="Laurent VOGEL",
@@ -266,6 +277,20 @@ def create_swiss_benchmark_matrix() -> ActorMatrix:
         relation_type=RelationType.FINANCIAL_CLAIM,
         weight=1.0,
         description="Formal claim of CHF 15'000 misappropriated funds"
+    )
+    matrix.add_relation(
+        from_actor_id="ACT-VOLODYMYR-KOVALENKO",
+        to_actor_id="ACT-ACCUSED-PRINCIPAL",
+        relation_type=RelationType.FINANCIAL_CLAIM,
+        weight=1.0,
+        description="Claim for restitution of $15'000 USD and moral damages CHF 10'000"
+    )
+    matrix.add_relation(
+        from_actor_id="ACT-VOLODYMYR-KOVALENKO",
+        to_actor_id="ACT-VICTIM-MINOR",
+        relation_type=RelationType.ASSISTANCE,
+        weight=1.0,
+        description="Paternal legal representation and assistance under Art. 117 CPP"
     )
     matrix.add_relation(
         from_actor_id="ACT-BONA-FIDE-THIRD-PARTY",

@@ -27,6 +27,7 @@ import { MobileQuickMenuSheet } from "./components/MobileQuickMenuSheet";
 import { JudicialBundleModal } from "./components/JudicialBundleModal";
 import { CaseSyncModal } from "./components/CaseSyncModal";
 import { LegalStrategyModal } from "./components/LegalStrategyModal";
+import { FeedbackSupervisorModal } from "./components/FeedbackSupervisorModal";
 import { AuthGate } from "./components/AuthGate";
 import { AuthorizedUser } from "./types/auth";
 import { getCurrentAuthSession, clearAuthSession } from "./lib/authManager";
@@ -76,6 +77,7 @@ export default function App() {
   const [judicialBundleOpen, setJudicialBundleOpen] = useState(false);
   const [caseSyncModalOpen, setCaseSyncModalOpen] = useState(false);
   const [legalStrategyModalOpen, setLegalStrategyModalOpen] = useState(false);
+  const [feedbackSupervisorOpen, setFeedbackSupervisorOpen] = useState(false);
   const [isEInkMode, setIsEInkMode] = useState(false);
 
   // Apply E-Ink Paperwhite mode to document body
@@ -425,6 +427,7 @@ export default function App() {
         onWormSeal={handleWormSeal}
         onSendToKindle={handleRecompileAndSendKindle}
         onOpenCaseSync={() => setCaseSyncModalOpen(true)}
+        onOpenFeedbackSupervisor={() => setFeedbackSupervisorOpen(true)}
         isSealing={isSealing}
         isSendingKindle={isSendingKindle}
         sequestrationAmount={`CHF ${activeCase.sequestration_target_chf.toLocaleString("fr-CH", { minimumFractionDigits: 2 })}`}
@@ -662,6 +665,19 @@ export default function App() {
         currentLang={currentLang}
         onCommitWormSeal={handleWormSeal}
         onShowToast={showToast}
+      />
+
+      {/* FEEDBACK & RECONCILIATION SUPERVISOR MODAL (Spark / AGY / Utopia) */}
+      <FeedbackSupervisorModal
+        isOpen={feedbackSupervisorOpen}
+        onClose={() => setFeedbackSupervisorOpen(false)}
+        currentLang={currentLang}
+        onCalibrationSaved={(summary) => {
+          showToast(
+            currentLang === "uk" ? "Калібрацію зафіксовано" : "Calibration enregistrée",
+            summary
+          );
+        }}
       />
 
       {/* SWISS LEGAL STRATEGY & CONTRACT TEMPLATES MODAL */}

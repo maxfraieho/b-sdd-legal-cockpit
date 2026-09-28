@@ -27,6 +27,14 @@ from src.legal.advocate_voice_notes import (
     AdultVictimProtectionViolation,
     CryptographicSealMismatchError,
 )
+from src.legal.feedback_supervisor import (
+    ReconciliationSupervisor,
+    ReconciliationRequest,
+    ReconciliationVerdict,
+    HandlerType,
+    ReconciliationStatus,
+    SequentialStep,
+)
 
 __all__ = [
     "ProceduralStatus",
@@ -47,5 +55,12 @@ __all__ = [
     "BonaFideProtectionViolation",
     "AdultVictimProtectionViolation",
     "CryptographicSealMismatchError",
+    "ReconciliationSupervisor",
+    "ReconciliationRequest",
+    "ReconciliationVerdict",
+    "HandlerType",
+    "ReconciliationStatus",
+    "SequentialStep",
 ]
+
 

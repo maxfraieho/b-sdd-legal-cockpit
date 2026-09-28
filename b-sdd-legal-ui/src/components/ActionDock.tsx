@@ -9,6 +9,7 @@ import {
   Activity,
   Info,
   Sparkles,
+  Cpu,
 } from "lucide-react";
 import { SupportedLanguage } from "../types/i18n";
 
@@ -17,6 +18,7 @@ interface ActionDockProps {
   onWormSeal: () => void;
   onSendToKindle: () => void;
   onOpenCaseSync?: () => void;
+  onOpenFeedbackSupervisor?: () => void;
   isSealing?: boolean;
   isSendingKindle?: boolean;
   sequestrationAmount?: string; // Default: "CHF 47'700.00"
@@ -27,6 +29,7 @@ export const ActionDock: React.FC<ActionDockProps> = ({
   onWormSeal,
   onSendToKindle,
   onOpenCaseSync,
+  onOpenFeedbackSupervisor,
   isSealing = false,
   isSendingKindle = false,
   sequestrationAmount = "CHF 47'700.00",
@@ -168,6 +171,24 @@ export const ActionDock: React.FC<ActionDockProps> = ({
             <Sparkles className="w-3.5 h-3.5 text-purple-300 animate-pulse" />
             <span className="font-mono text-[11px] sm:text-xs">
               {currentLang === 'uk' ? '⚡ ШІ-Синхронізація' : currentLang === 'fr' ? '⚡ Sync IA' : '⚡ AI Sync'}
+            </span>
+          </button>
+        )}
+
+        {/* Feedback & Reconciliation Supervisor (Spark / AGY / Utopia) */}
+        {onOpenFeedbackSupervisor && (
+          <button
+            onClick={onOpenFeedbackSupervisor}
+            className="flex items-center space-x-1 sm:space-x-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-medium transition-all shadow-sm min-h-[32px] bg-gradient-to-r from-blue-900/90 to-cyan-800/90 hover:from-blue-800 hover:to-cyan-700 text-cyan-200 hover:text-white border border-cyan-500/50"
+            title={
+              currentLang === 'uk' ? "Супервізор зворотного зв'язку & калібрація фактів (Spark / AGY / Utopia)" :
+              currentLang === 'fr' ? "Superviseur de rétroaction & calibration (Spark / AGY / Utopia)" :
+              "Feedback & Reconciliation Supervisor (Spark / AGY / Utopia)"
+            }
+          >
+            <Cpu className="w-3.5 h-3.5 text-cyan-300" />
+            <span className="font-mono text-[11px] sm:text-xs">
+              {currentLang === 'uk' ? '🧠 Супервізор уточнень' : currentLang === 'fr' ? '🧠 Superviseur' : '🧠 Supervisor'}
             </span>
           </button>
         )}
