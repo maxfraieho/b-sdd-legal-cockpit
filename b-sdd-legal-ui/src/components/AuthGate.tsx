@@ -23,15 +23,14 @@ import {
   BookOpen,
   RotateCcw,
   Loader2,
-  Mail,
   ShieldCheck,
-  UserCheck,
 } from 'lucide-react';
 import {
   getCurrentAuthSession,
   setAuthSession,
   clearAuthSession,
   getCloudRunAuthEndpoint,
+  DEFAULT_CLOUD_RUN_AUTH_ENDPOINT,
   findUserByEmail,
   PRIMARY_SUPER_ADMIN_EMAIL,
   getGoogleClientId,
@@ -96,9 +95,9 @@ const clearPinUnlocked = () => {
 };
 
 // Callback First: Parse Google OAuth callback parameters from URL query and hash
-const getUrlCallbackParams = (): { email: string | null; token: string | null; isSuccess: boolean } => {
+const getUrlCallbackParams = (): { email: string | null; token: string | null } => {
   try {
-    if (typeof window === 'undefined') return { email: null, token: null, isSuccess: false };
+    if (typeof window === 'undefined') return { email: null, token: null };
     const searchParams = new URLSearchParams(window.location.search);
     const hashString = window.location.hash.startsWith('#')
       ? window.location.hash.slice(1)
@@ -117,26 +116,13 @@ const getUrlCallbackParams = (): { email: string | null; token: string | null; i
       hashParams.get('auth_token') ||
       hashParams.get('token') ||
       hashParams.get('access_token');
-    const isSuccess =
-      searchParams.get('auth') === 'success' ||
-      hashParams.get('auth') === 'success' ||
-      searchParams.get('auth') === 'verified' ||
-      searchParams.has('auth_success') ||
-      (!!token && token.trim().length > 0);
-
-    const resolvedEmail = email
-      ? email.trim().toLowerCase()
-      : isSuccess
-      ? PRIMARY_SUPER_ADMIN_EMAIL.toLowerCase()
-      : null;
 
     return {
-      email: resolvedEmail,
+      email: email ? email.trim().toLowerCase() : null,
       token: token ? token.trim() : null,
-      isSuccess,
     };
   } catch {
-    return { email: null, token: null, isSuccess: false };
+    return { email: null, token: null };
   }
 };
 
@@ -491,6 +477,16 @@ export const AuthGate: React.FC<AuthGateProps> = ({
   // Legal Strategy Modal State
   const [strategyModalOpen, setStrategyModalOpen] = useState<boolean>(false);
 
+  // Canonical Cloud Run OAuth URL (Strict Directive 0.txt: single link/href, zero onClick bypass)
+  const cloudRunAuthUrl = React.useMemo(() => {
+    const endpoint = getCloudRunAuthEndpoint() || DEFAULT_CLOUD_RUN_AUTH_ENDPOINT;
+    const currentCallback =
+      typeof window !== 'undefined'
+        ? `${window.location.origin}${window.location.pathname}`
+        : 'https://b-sdd-legal-ui.pages.dev/';
+    return `${endpoint}?redirect_uri=${encodeURIComponent(currentCallback)}&case_id=PE24.014624-SBA`;
+  }, []);
+
   // Pending Google Identity from OAuth callback
   const [pendingGoogleEmail, setPendingGoogleEmail] = useState<string | null>(() => {
     try {
@@ -509,8 +505,6 @@ export const AuthGate: React.FC<AuthGateProps> = ({
   const [pinErrorMsg, setPinErrorMsg] = useState<string | null>(null);
   const [isShaking, setIsShaking] = useState<boolean>(false);
   const [sessionLockedBanner, setSessionLockedBanner] = useState<boolean>(false);
-  const [directEmail, setDirectEmail] = useState<string>('');
-  const googleBtnRef = useRef<HTMLDivElement>(null);
 
   // Lock Synchronization from App / Topbar logout
   useEffect(() => {
@@ -695,96 +689,7 @@ export const AuthGate: React.FC<AuthGateProps> = ({
     onLockedStateChange?.(false);
   };
 
-  // Dedicated Google AI Studio Authorization Handler
-  const handleAuthorizeGoogleAiStudio = () => {
-    setGoogleAuthError(null);
-    const callbackParams = getUrlCallbackParams();
-    if (callbackParams.email) {
-      handleVerifyGoogleIdentity(callbackParams.email, callbackParams.token || undefined);
-      return;
-    }
-    // Authenticate as the Primary Super Admin / Plaintiff (Володимир Анатолійович Коваленко)
-    handleVerifyGoogleIdentity(PRIMARY_SUPER_ADMIN_EMAIL);
-  };
-
-  // Initialize Google Identity Services (GSI) if configured
-  useEffect(() => {
-    if (authState.stage !== 'GOOGLE_REQUIRED') return;
-
-    const clientId = getGoogleClientId();
-    if (!clientId || typeof window === 'undefined') return;
-
-    let isCancelled = false;
-
-    const initGsi = () => {
-      const google = (window as any).google;
-      if (!google?.accounts?.id || isCancelled) return;
-
-      try {
-        google.accounts.id.initialize({
-          client_id: clientId,
-          callback: (response: any) => {
-            try {
-              if (response?.credential) {
-                const base64Url = response.credential.split('.')[1];
-                const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-                const jsonPayload = decodeURIComponent(
-                  atob(base64)
-                    .split('')
-                    .map((c: string) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
-                    .join('')
-                );
-                const payload = JSON.parse(jsonPayload);
-                if (payload?.email) {
-                  handleVerifyGoogleIdentity(payload.email, response.credential, {
-                    name: payload.name,
-                    picture: payload.picture,
-                  });
-                }
-              }
-            } catch (err) {
-              console.error('Failed to decode Google Identity credential:', err);
-              setGoogleAuthError('Не вдалося розшифрувати облікові дані Google.');
-            }
-          },
-        });
-
-        if (googleBtnRef.current) {
-          googleBtnRef.current.innerHTML = '';
-          google.accounts.id.renderButton(googleBtnRef.current, {
-            theme: 'filled_blue',
-            size: 'large',
-            text: 'signin_with',
-            shape: 'pill',
-            width: 300,
-          });
-        }
-      } catch (e) {
-        console.warn('GIS initialization notice:', e);
-      }
-    };
-
-    if ((window as any).google?.accounts?.id) {
-      initGsi();
-    } else {
-      const interval = setInterval(() => {
-        if ((window as any).google?.accounts?.id) {
-          clearInterval(interval);
-          initGsi();
-        }
-      }, 300);
-      return () => {
-        isCancelled = true;
-        clearInterval(interval);
-      };
-    }
-
-    return () => {
-      isCancelled = true;
-    };
-  }, [authState.stage]);
-
-  // Synchronize and scan callback query parameters from Google Cloud Run OAuth on mount
+  // Strict Callback First mount lifecycle (Directive 0.txt - Section 3.B)
   useEffect(() => {
     // 0. Auto-redirect back if this instance is running as the Cloud Run Gateway with pin_verified
     const searchParams =
@@ -830,19 +735,88 @@ export const AuthGate: React.FC<AuthGateProps> = ({
       return;
     }
 
-    // Callback First: Check URL query parameters and hash fragment for Google OAuth callback
-    const { email: emailParam, token: tokenParam, isSuccess } = getUrlCallbackParams();
+    const urlParams = new URLSearchParams(window.location.search);
+    const emailParam = urlParams.get('user_email') || urlParams.get('email');
+    const tokenParam = urlParams.get('auth_token') || urlParams.get('token');
 
-    if (emailParam || isSuccess) {
-      // Clean sensitive query parameters from browser URL bar without reloading
-      try {
-        window.history.replaceState({}, document.title, window.location.pathname);
-      } catch {}
-
-      markPinUnlocked();
-      const targetEmail = emailParam || PRIMARY_SUPER_ADMIN_EMAIL;
-      handleVerifyGoogleIdentity(targetEmail, tokenParam || undefined);
+    // КРИТИЧНО: Якщо параметрів немає в URL — жодних дій! Залишаємось у стані блокування!
+    if (!emailParam) {
+      return;
     }
+
+    const normalizedEmail = emailParam.trim().toLowerCase();
+
+    // Закритий реєстр допуску (HARDENED WHITELIST)
+    const HARDENED_WHITELIST: Record<string, { name: string; role: 'super_admin' | 'user' }> = {
+      'tukroschu@gmail.com': { name: 'Володимир Анатолійович Коваленко', role: 'super_admin' },
+      'arsen.k111999@gmail.com': { name: 'Арсен Коваленко', role: 'user' },
+      'vokov.dev@gmail.com': { name: 'Інженер безпеки B-SDD', role: 'user' },
+    };
+
+    const matchedUser = HARDENED_WHITELIST[normalizedEmail];
+
+    if (!matchedUser) {
+      // Адреси немає в білому списку — жорстке судове блокування!
+      setAuthState((prev) => ({
+        ...prev,
+        stage: 'ACCESS_DENIED',
+        authError: `ACCÈS REFUSÉ (Art. 73 CPP / Art. 320 CP): L'adresse ${normalizedEmail} n'est pas autorisée pour le dossier PE24.014624-SBA.`,
+      }));
+      window.history.replaceState({}, document.title, window.location.pathname);
+      return;
+    }
+
+    // ТІЛЬКИ ПРИ ЗБІГУ З WHITELIST:
+    const defaultPermissions =
+      ROLE_DEFINITIONS[matchedUser.role as UserRole]?.defaultPermissions ||
+      ROLE_DEFINITIONS.user.defaultPermissions;
+
+    const sessionUser: AuthorizedUser = {
+      id: normalizedEmail,
+      email: normalizedEmail,
+      name: matchedUser.name,
+      role: matchedUser.role as UserRole,
+      isActive: true,
+      addedAt: '2024-07-20T08:00:00Z',
+      permissions: defaultPermissions,
+    };
+
+    const newSession: AuthSession = {
+      user: sessionUser,
+      authMethod: 'google_cloud_run',
+      timestamp: Date.now(),
+      token: tokenParam || btoa(`bsdd_${Date.now()}_${normalizedEmail}`),
+    };
+
+    setAuthSession(newSession, true);
+    localStorage.setItem(
+      'b_sdd_legal_auth_state',
+      JSON.stringify({
+        isPinValid: true,
+        isGoogleAuthenticated: true,
+        email: normalizedEmail,
+        timestamp: Date.now(),
+      })
+    );
+    markPinUnlocked();
+    sessionStorage.setItem('b_sdd_pin_stage_unlocked', 'true');
+    sessionStorage.setItem('b_sdd_auth_unlocked', 'true');
+    sessionStorage.setItem('b_sdd_auth_timestamp', Date.now().toString());
+
+    setCurrentSessionState(newSession);
+    setSessionLockedBanner(false);
+    setAuthState({
+      stage: 'AUTHENTICATED',
+      isPinValid: true,
+      isGoogleAuthenticated: true,
+      authenticatedEmail: normalizedEmail,
+      authError: null,
+      sessionToken: tokenParam || null,
+    });
+
+    onUserAuthenticated?.(sessionUser);
+    onLockedStateChange?.(false);
+    window.history.replaceState({}, document.title, window.location.pathname);
   }, []);
 
   // Activity tracker for auto-lock
@@ -1255,14 +1229,10 @@ export const AuthGate: React.FC<AuthGateProps> = ({
                   {t.stage2_court_desc}
                 </span>
                 <div className="mt-2 pt-2 border-t border-blue-900/40 flex items-center justify-between">
-                  <button
-                    type="button"
-                    onClick={() => setStrategyModalOpen(true)}
-                    className="text-[10px] text-amber-300 hover:text-white underline flex items-center gap-1 cursor-pointer touch-manipulation"
-                  >
+                  <span className="text-[10px] text-amber-300/90 flex items-center gap-1">
                     <BookOpen className="w-3 h-3" />
                     <span>{t.btn_legal_memo}</span>
-                  </button>
+                  </span>
                   <span className="text-[10px] font-mono text-blue-400">
                     CPP Art. 73 · Art. 115 / LAVI Art. 13
                   </span>
@@ -1270,7 +1240,7 @@ export const AuthGate: React.FC<AuthGateProps> = ({
               </div>
             </div>
 
-            {/* 3. ГОЛОВНІ ДІЇ АВТОРИЗАЦІЇ GOOGLE ТА ПЕРЕВІРКИ БІЛОГО СПИСКУ */}
+            {/* 3. ГОЛОВНА І ЄДИНА ДІЯ АВТОРИЗАЦІЇ GOOGLE CLOUD RUN (СТ. 73 КПК) */}
             <div className="space-y-3 sm:space-y-3.5">
               {googleAuthError && (
                 <div className="p-3 rounded-xl bg-rose-950/70 border border-rose-700/80 text-rose-200 text-xs flex items-start gap-2 animate-fadeIn">
@@ -1282,89 +1252,16 @@ export const AuthGate: React.FC<AuthGateProps> = ({
                 </div>
               )}
 
-              {/* 3.1. Кнопка авторизації Google AI Studio (Головний адміністратор / Володимир Анатолійович) */}
-              <button
-                type="button"
-                onClick={handleAuthorizeGoogleAiStudio}
-                className="w-full py-3.5 px-4 bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-500 hover:from-blue-500 hover:to-indigo-500 active:scale-[0.98] text-white font-bold rounded-xl shadow-lg shadow-blue-900/40 flex items-center justify-center gap-2.5 transition-all cursor-pointer text-xs sm:text-sm font-sans touch-manipulation group"
+              {/* ЄДИНА КНОПКА: Google AI Studio / Cloud Run OAuth (чистий тег <a> без onClick) */}
+              <a
+                href={cloudRunAuthUrl}
+                className="w-full py-3.5 px-4 bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-500 hover:from-blue-500 hover:to-indigo-500 active:scale-[0.98] text-white font-bold rounded-xl shadow-lg shadow-blue-900/40 flex items-center justify-center gap-2.5 transition-all text-xs sm:text-sm font-sans touch-manipulation group decoration-transparent no-underline"
               >
                 <div className="w-6 h-6 rounded-lg bg-white flex items-center justify-center p-0.5 group-hover:scale-105 transition-transform shadow">
                   <GoogleIcon className="w-4 h-4" />
                 </div>
                 <span>{t.btn_google_cloud_run}</span>
-              </button>
-
-              {/* 3.2. Google Identity Services (GIS) Button Mount (якщо задано Client ID) */}
-              <div ref={googleBtnRef} className="flex justify-center empty:hidden" />
-
-              {/* 3.3. Конфіденційна форма прямого введення Google-адреси */}
-              <div className="pt-2 border-t border-slate-800/80">
-                <label className="block text-[11px] font-medium text-slate-400 mb-1.5 text-center">
-                  {t.stage2_or_text}
-                </label>
-                <form
-                  onSubmit={(e) => {
-                    e.preventDefault();
-                    if (directEmail.trim()) {
-                      handleVerifyGoogleIdentity(directEmail.trim());
-                    }
-                  }}
-                  className="space-y-2"
-                >
-                  <div className="relative">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-500">
-                      <Mail className="w-4 h-4 text-slate-400" />
-                    </div>
-                    <input
-                      type="email"
-                      value={directEmail}
-                      onChange={(e) => setDirectEmail(e.target.value)}
-                      placeholder={t.stage2_direct_placeholder}
-                      className="w-full pl-9 pr-3 py-2 bg-slate-950/90 border border-slate-700/80 rounded-xl text-xs text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent font-mono shadow-inner"
-                    />
-                  </div>
-                  <button
-                    type="submit"
-                    disabled={!directEmail.trim()}
-                    className="w-full py-2 px-3 bg-slate-800/90 hover:bg-slate-700/90 active:bg-slate-600 disabled:opacity-40 text-slate-200 hover:text-white font-medium rounded-xl text-xs transition-all flex items-center justify-center gap-1.5 cursor-pointer border border-slate-700/60"
-                  >
-                    <ShieldCheck className="w-3.5 h-3.5 text-blue-400" />
-                    <span>{t.stage2_btn_verify}</span>
-                  </button>
-                </form>
-              </div>
-
-              {/* 3.4. Авторизований експрес-допуск для процесуальних осіб справи (Art. 73 CPP) */}
-              <div className="pt-2 border-t border-slate-800/80">
-                <div className="text-[10px] text-slate-400 text-center font-mono uppercase tracking-wider mb-2">
-                  {t.stage2_quick_title}
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
-                  <button
-                    type="button"
-                    onClick={() => handleVerifyGoogleIdentity(PRIMARY_SUPER_ADMIN_EMAIL)}
-                    className="p-2 rounded-lg bg-blue-950/40 hover:bg-blue-900/50 border border-blue-800/50 hover:border-blue-600 text-left transition-all cursor-pointer group touch-manipulation"
-                  >
-                    <div className="flex items-center gap-1.5 text-blue-300 group-hover:text-white font-semibold text-[11px]">
-                      <UserCheck className="w-3 h-3 text-blue-400 shrink-0" />
-                      <span className="truncate">Володимир Коваленко</span>
-                    </div>
-                    <div className="text-[9px] text-slate-400 font-mono">Головний Позивач / Super Admin</div>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => handleVerifyGoogleIdentity('arsen.k111999@gmail.com')}
-                    className="p-2 rounded-lg bg-slate-900/60 hover:bg-slate-800/80 border border-slate-800 hover:border-slate-700 text-left transition-all cursor-pointer group touch-manipulation"
-                  >
-                    <div className="flex items-center gap-1.5 text-slate-300 group-hover:text-white font-semibold text-[11px]">
-                      <Scale className="w-3 h-3 text-amber-400 shrink-0" />
-                      <span className="truncate">Арсен Коваленко</span>
-                    </div>
-                    <div className="text-[9px] text-slate-400 font-mono">Потерпіла сторона (ст. 115 КПК)</div>
-                  </button>
-                </div>
-              </div>
+              </a>
             </div>
 
             {/* Юридична примітка про обов'язковість захисту таємниці слідства */}

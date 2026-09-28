@@ -18,7 +18,7 @@ export function getCloudRunAuthEndpoint(): string {
   try {
     const custom = localStorage.getItem(STORAGE_CLOUD_RUN_ENDPOINT_KEY);
     if (custom && custom.trim().startsWith('https://')) {
-      if (custom.includes('europe-west2.run.app')) {
+      if (custom.includes('europe-west2.run.app') || custom.includes('ais-dev-cy5vorrb7cys2mpbzcua5g')) {
         localStorage.setItem(STORAGE_CLOUD_RUN_ENDPOINT_KEY, DEFAULT_CLOUD_RUN_AUTH_ENDPOINT);
         return DEFAULT_CLOUD_RUN_AUTH_ENDPOINT;
       }
