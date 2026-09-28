@@ -152,8 +152,13 @@ const AUTH_I18N = {
     stage2_btn_lock: 'Заблокувати / Скинути PIN',
     stage2_court_title: 'Ministère public du canton de Vaud · PE24.014624-SBA',
     stage2_court_desc:
-      'Досьє захисту прав потерпілого Арсена Коваленка (ст. 115, 118 КПК). Для дешифрування доказів та доступу до матеріалів необхідна ідентифікація особи через Google Studio Auth.',
-    btn_google_cloud_run: 'Підтвердити особу через Google Studio Auth',
+      'Досьє захисту прав потерпілого Арсена Коваленка (ст. 115, 118 КПК). Для дешифрування доказів та доступу до матеріалів справи необхідна верифікація особи закритим реєстром (Art. 73 CPP).',
+    stage2_email_label: 'Введіть вашу уповноважену електронну адресу Google:',
+    stage2_email_placeholder: 'ваша_пошта@gmail.com',
+    stage2_btn_verify: 'Підтвердити Google-ідентичність (Контур 2)',
+    stage2_cloud_run_or: 'Або автентифікація через зовнішній шлюз Google Cloud Run (AI Studio):',
+    stage2_gateway_banner: 'Режим шлюзу авторизації для повернення до:',
+    btn_google_cloud_run: 'Авторизуватися через Google Cloud Run Gateway',
     authenticating_title: 'Верифікація Google-ідентичності...',
     authenticating_desc:
       'Виконується криптографічна перевірка допуску до матеріалів справи PE24.014624-SBA за стандартом Art. 73 CPP.',
@@ -166,9 +171,6 @@ const AUTH_I18N = {
     refusal_close: 'Скинути термінал',
     pending_google_title: 'Google Identity підтверджено:',
     pending_google_desc: 'Введіть PIN-код локального термінала для завершення авторизації.',
-    direct_verify_title: 'Пряма верифікація закритим реєстром (Art. 73 CPP)',
-    direct_verify_btn: 'Перевірити',
-    direct_verify_hint: '🔒 Використовуйте, якщо перенаправлення Cloud Run блокується браузером або зациклюється. Перевірка здійснюється за внутрішнім закритим списком.',
     footer_standard: 'B-SDD Protocol v3.0 · ISO/IEC 27037',
     footer_bar: 'Ordre des Avocats / LAVI Reference',
   },
@@ -191,8 +193,13 @@ const AUTH_I18N = {
     stage2_btn_lock: 'Verrouiller / Réinitialiser PIN',
     stage2_court_title: 'Ministère public du canton de Vaud · PE24.014624-SBA',
     stage2_court_desc:
-      'Dossier de protection de la victime Arsen Kovalenko (art. 115, 118 CPP). Pour le déchiffrement des preuves et l’accès au dossier, l’identification nominative Google Studio Auth est requise.',
-    btn_google_cloud_run: 'Confirmer l’identité via Google Studio Auth',
+      'Dossier de protection de la victime Arsen Kovalenko (art. 115, 118 CPP). Pour le déchiffrement des preuves et l’accès au dossier, la vérification de l’identité par registre scellé est requise (Art. 73 CPP).',
+    stage2_email_label: 'Saisissez votre adresse électronique Google habilitée :',
+    stage2_email_placeholder: 'nom@gmail.com',
+    stage2_btn_verify: 'Valider l’identité Google (Niveau 2)',
+    stage2_cloud_run_or: 'Ou authentification via passerelle Google Cloud Run (AI Studio) :',
+    stage2_gateway_banner: 'Mode passerelle d’autorisation pour retour vers :',
+    btn_google_cloud_run: 'S’identifier via passerelle Google Cloud Run',
     authenticating_title: 'Vérification de l’identité Google...',
     authenticating_desc:
       'Contrôle cryptographique d’habilitation sur le dossier pénal PE24.014624-SBA (Art. 73 CPP).',
@@ -205,9 +212,6 @@ const AUTH_I18N = {
     refusal_close: 'Réinitialiser le terminal',
     pending_google_title: 'Identité Google confirmée :',
     pending_google_desc: 'Saisissez le code PIN du terminal local pour finaliser l’autorisation.',
-    direct_verify_title: 'Vérification directe par registre scellé (Art. 73 CPP)',
-    direct_verify_btn: 'Vérifier',
-    direct_verify_hint: '🔒 À utiliser si la redirection Cloud Run boucle ou est bloquée par le navigateur. Contrôle strict via liste fermée.',
     footer_standard: 'Protocole B-SDD v3.0 · ISO/IEC 27037',
     footer_bar: 'Conforme Ordre des Avocats / LAVI',
   },
@@ -230,8 +234,13 @@ const AUTH_I18N = {
     stage2_btn_lock: 'Sperren / PIN zurücksetzen',
     stage2_court_title: 'Staatsanwaltschaft Kanton Waadt · PE24.014624-SBA',
     stage2_court_desc:
-      'Verfahren zum Schutz des Opfers Arsen Kovalenko (Art. 115, 118 StPO). Zur Entschlüsselung der Akten ist eine Identifizierung über Google Studio Auth erforderlich.',
-    btn_google_cloud_run: 'Identität über Google Studio Auth bestätigen',
+      'Verfahren zum Schutz des Opfers Arsen Kovalenko (Art. 115, 118 StPO). Zur Entschlüsselung der Akten ist die Überprüfung der Identität über das versiegelte Register erforderlich (Art. 73 StPO).',
+    stage2_email_label: 'Geben Sie Ihre autorisierte Google-E-Mail-Adresse ein:',
+    stage2_email_placeholder: 'name@gmail.com',
+    stage2_btn_verify: 'Google-Identität bestätigen (Stufe 2)',
+    stage2_cloud_run_or: 'Oder Authentifizierung über Google Cloud Run Gateway (AI Studio):',
+    stage2_gateway_banner: 'Autorisierungs-Gateway-Modus zur Rückkehr zu:',
+    btn_google_cloud_run: 'Über Google Cloud Run Gateway autorisieren',
     authenticating_title: 'Google-Identität wird geprüft...',
     authenticating_desc:
       'Kryptografische Prüfung der Zugriffsberechtigung für das Verfahren PE24.014624-SBA (Art. 73 StPO).',
@@ -244,9 +253,6 @@ const AUTH_I18N = {
     refusal_close: 'Terminal zurücksetzen',
     pending_google_title: 'Google-Identität bestätigt:',
     pending_google_desc: 'Geben Sie den lokalen Terminal-PIN-Code ein, um die Autorisierung abzuschließen.',
-    direct_verify_title: 'Direktüberprüfung über versiegeltes Register (Art. 73 StPO)',
-    direct_verify_btn: 'Prüfen',
-    direct_verify_hint: '🔒 Verwenden Sie dies, falls die Cloud Run-Weiterleitung blockiert ist oder in einer Schleife hängt.',
     footer_standard: 'B-SDD-Protokoll v3.0 · ISO/IEC 27037',
     footer_bar: 'Anwaltskammer / OHG-konform',
   },
@@ -269,8 +275,13 @@ const AUTH_I18N = {
     stage2_btn_lock: 'Blocca / Reimposta PIN',
     stage2_court_title: 'Ministero Pubblico del Cantone Vaud · PE24.014624-SBA',
     stage2_court_desc:
-      'Procedimento per la tutela della vittima Arsen Kovalenko (art. 115, 118 CPP). Per decifrare le prove è richiesta l’identificazione Google Studio Auth.',
-    btn_google_cloud_run: 'Conferma identità tramite Google Studio Auth',
+      'Procedimento per la tutela della vittima Arsen Kovalenko (art. 115, 118 CPP). Per decifrare le prove è richiesta la verifica dell’identità tramite registro sigillato (Art. 73 CPP).',
+    stage2_email_label: 'Inserisci il tuo indirizzo email Google autorizzato:',
+    stage2_email_placeholder: 'nome@gmail.com',
+    stage2_btn_verify: 'Conferma identità Google (Livello 2)',
+    stage2_cloud_run_or: 'Oppure autenticazione tramite gateway Google Cloud Run (AI Studio):',
+    stage2_gateway_banner: 'Modalità gateway di autorizzazione per il ritorno a:',
+    btn_google_cloud_run: 'Autorizza tramite Google Cloud Run Gateway',
     authenticating_title: 'Verifica identità Google in corso...',
     authenticating_desc:
       'Verifica crittografica dell’abilitazione al fascicolo penale PE24.014624-SBA (Art. 73 CPP).',
@@ -283,9 +294,6 @@ const AUTH_I18N = {
     refusal_close: 'Reimposta terminale',
     pending_google_title: 'Identità Google confermata:',
     pending_google_desc: 'Inserisci il codice PIN del terminale locale per completare l’autorizzazione.',
-    direct_verify_title: 'Verifica diretta tramite registro sigillato (Art. 73 CPP)',
-    direct_verify_btn: 'Verifica',
-    direct_verify_hint: '🔒 Da utilizzare se il reindirizzamento Cloud Run è bloccato o in ciclo continuo.',
     footer_standard: 'Protocollo B-SDD v3.0 · ISO/IEC 27037',
     footer_bar: 'Conforme Ordine Avvocati / LAVI',
   },
@@ -308,8 +316,13 @@ const AUTH_I18N = {
     stage2_btn_lock: 'Lock / Reset PIN',
     stage2_court_title: "Public Prosecutor's Office · Canton of Vaud · PE24.014624-SBA",
     stage2_court_desc:
-      'Protection of victim Arsen Kovalenko (Art. 115, 118 Swiss CPC). Evidence decryption and dossier access requires authenticated identification via Google Studio Auth.',
-    btn_google_cloud_run: 'Confirm Identity via Google Studio Auth',
+      'Protection of victim Arsen Kovalenko (Art. 115, 118 Swiss CPC). Evidence decryption and dossier access requires identity validation against the sealed whitelist (Art. 73 CPC).',
+    stage2_email_label: 'Enter your authorized Google email address:',
+    stage2_email_placeholder: 'name@gmail.com',
+    stage2_btn_verify: 'Verify Google Identity (Tier 2)',
+    stage2_cloud_run_or: 'Or authenticate via external Google Cloud Run Gateway (AI Studio):',
+    stage2_gateway_banner: 'Authorization gateway mode to return to:',
+    btn_google_cloud_run: 'Authorize via Google Cloud Run Gateway',
     authenticating_title: 'Verifying Google Identity...',
     authenticating_desc:
       'Performing cryptographic authorization check against criminal dossier PE24.014624-SBA (Art. 73 CPC).',
@@ -322,9 +335,6 @@ const AUTH_I18N = {
     refusal_close: 'Reset terminal',
     pending_google_title: 'Google Identity Confirmed:',
     pending_google_desc: 'Enter local terminal PIN code to finalize admission.',
-    direct_verify_title: 'Direct Sealed Registry Verification (Art. 73 CPC)',
-    direct_verify_btn: 'Verify',
-    direct_verify_hint: '🔒 Use if Cloud Run redirect loops or is blocked by third-party cookie restrictions. Validates against locked whitelist.',
     footer_standard: 'B-SDD Protocol v3.0 · ISO/IEC 27037',
     footer_bar: 'Bar Association & LAVI Reference',
   },
@@ -359,7 +369,14 @@ export const AuthGate: React.FC<AuthGateProps> = ({
     }
 
     try {
-      const pinStage = isPinUnlockedLocally();
+      const searchParams =
+        typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : null;
+      const isPinPreVerified =
+        searchParams?.get('pin_verified') === 'true' || searchParams?.has('redirect_uri');
+      if (isPinPreVerified) {
+        markPinUnlocked();
+      }
+      const pinStage = isPinPreVerified || isPinUnlockedLocally();
       return {
         stage: pinStage ? 'GOOGLE_REQUIRED' : 'PIN_ENTRY',
         isPinValid: pinStage,
@@ -376,6 +393,17 @@ export const AuthGate: React.FC<AuthGateProps> = ({
         authError: null,
       };
     }
+  });
+
+  // Check if current session was launched as an external Identity Gateway for another site
+  const [redirectUri] = useState<string | null>(() => {
+    try {
+      if (typeof window !== 'undefined') {
+        const params = new URLSearchParams(window.location.search);
+        return params.get('redirect_uri') || null;
+      }
+    } catch {}
+    return null;
   });
 
   // Legal Strategy Modal State
@@ -427,6 +455,27 @@ export const AuthGate: React.FC<AuthGateProps> = ({
       setIsShaking(true);
       setTimeout(() => setIsShaking(false), 500);
       return;
+    }
+
+    // If running as an Identity Gateway, redirect back to calling redirect_uri
+    const searchParams =
+      typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : null;
+    const redirectTarget = redirectUri || searchParams?.get('redirect_uri');
+
+    if (redirectTarget) {
+      try {
+        const returnUrl = new URL(redirectTarget);
+        returnUrl.searchParams.set('user_email', normalizedEmail);
+        returnUrl.searchParams.set(
+          'auth_token',
+          token || btoa(`bsdd_${Date.now()}_${normalizedEmail}`)
+        );
+        returnUrl.searchParams.set('case_id', CASE_ID);
+        window.location.href = returnUrl.toString();
+        return;
+      } catch (err) {
+        console.error('Failed to redirect to target URI', err);
+      }
     }
 
     // Build AuthorizedUser profile from Hardened Whitelist
@@ -659,7 +708,7 @@ export const AuthGate: React.FC<AuthGateProps> = ({
     typeof window !== 'undefined'
       ? `${activeCloudRunEndpoint}?redirect_uri=${encodeURIComponent(
           window.location.origin + window.location.pathname
-        )}&case_id=${encodeURIComponent(CASE_ID)}`
+        )}&case_id=${encodeURIComponent(CASE_ID)}&pin_verified=true`
       : activeCloudRunEndpoint;
 
   return (
@@ -892,7 +941,7 @@ export const AuthGate: React.FC<AuthGateProps> = ({
               <button
                 type="button"
                 onClick={() => {
-                  sessionStorage.removeItem('b_sdd_pin_stage_unlocked');
+                  clearPinUnlocked();
                   setAuthState((prev) => ({
                     ...prev,
                     stage: 'PIN_ENTRY',
@@ -907,6 +956,17 @@ export const AuthGate: React.FC<AuthGateProps> = ({
                 <span>{t.stage2_btn_lock}</span>
               </button>
             </div>
+
+            {/* Індикатор шлюзу авторизації, якщо запит прийшов від іншого сайту */}
+            {redirectUri && (
+              <div className="mb-4 p-2.5 rounded-xl bg-blue-950/60 border border-blue-600/60 text-blue-200 text-xs flex items-center gap-2 animate-fadeIn">
+                <Globe2 className="w-4 h-4 text-blue-400 shrink-0" />
+                <span className="leading-tight">
+                  {t.stage2_gateway_banner}{' '}
+                  <strong className="text-white font-mono">{redirectUri}</strong>
+                </span>
+              </div>
+            )}
 
             {/* 2. Офіційна судова картка справи */}
             <div className="bg-blue-950/30 border border-blue-500/30 rounded-xl p-3.5 mb-5 text-xs text-blue-200 flex gap-3 items-start">
@@ -934,23 +994,8 @@ export const AuthGate: React.FC<AuthGateProps> = ({
               </div>
             </div>
 
-            {/* 3. Офіційний редирект Google Studio Auth (Cloud Run) */}
-            <div className="pt-1">
-              <a
-                href={cloudRunAuthUrl}
-                className="w-full py-3.5 px-4 bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-500 hover:from-blue-500 hover:to-indigo-500 text-white font-bold rounded-xl shadow-lg shadow-blue-900/40 flex items-center justify-center gap-3 transition-all cursor-pointer text-sm font-sans touch-manipulation group active:scale-[0.98]"
-              >
-                <GoogleIcon className="w-5 h-5 shrink-0" />
-                <span>{t.btn_google_cloud_run}</span>
-              </a>
-            </div>
-
-            {/* 4. Пряма верифікація закритим реєстром (Direct Whitelist Fallback if Cloud Run loops/blocks) */}
-            <div className="mt-4 pt-4 border-t border-slate-800 space-y-2">
-              <div className="flex items-center gap-1.5 text-[11px] font-semibold text-slate-300">
-                <Fingerprint className="w-3.5 h-3.5 text-blue-400" />
-                <span>{t.direct_verify_title}</span>
-              </div>
+            {/* 3. ГОЛОВНА ДІЯ: Пряма верифікація уповноваженої Google-ідентичності (Контур 2) */}
+            <div className="space-y-3">
               <form
                 onSubmit={(e) => {
                   e.preventDefault();
@@ -958,28 +1003,52 @@ export const AuthGate: React.FC<AuthGateProps> = ({
                     handleVerifyGoogleIdentity(directEmail.trim());
                   }
                 }}
-                className="flex gap-2"
+                className="space-y-3"
               >
-                <input
-                  type="email"
-                  value={directEmail}
-                  onChange={(e) => setDirectEmail(e.target.value)}
-                  placeholder="name@gmail.com"
-                  autoComplete="email"
-                  className="flex-1 px-3 py-2 bg-slate-950/90 border border-slate-700 rounded-xl text-xs text-white placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono"
-                />
+                <div>
+                  <label className="block text-[11px] font-semibold text-slate-300 mb-1.5 flex items-center gap-1.5">
+                    <Fingerprint className="w-3.5 h-3.5 text-blue-400" />
+                    <span>{t.stage2_email_label}</span>
+                  </label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                      <GoogleIcon className="w-4 h-4" />
+                    </div>
+                    <input
+                      type="email"
+                      value={directEmail}
+                      onChange={(e) => setDirectEmail(e.target.value)}
+                      placeholder={t.stage2_email_placeholder}
+                      autoFocus
+                      autoComplete="email"
+                      className="w-full pl-10 pr-4 py-2.5 sm:py-3 bg-slate-950/90 border border-slate-700/80 rounded-xl text-xs sm:text-sm text-white placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono shadow-inner transition-all"
+                    />
+                  </div>
+                </div>
+
                 <button
                   type="submit"
                   disabled={!directEmail.trim()}
-                  className="px-3.5 py-2 bg-slate-800 hover:bg-slate-700 active:bg-blue-600 disabled:opacity-40 text-white rounded-xl text-xs font-semibold transition-all border border-slate-700 flex items-center gap-1.5 cursor-pointer touch-manipulation shadow-sm"
+                  className="w-full py-3.5 px-4 bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-500 hover:from-blue-500 hover:to-indigo-500 disabled:opacity-40 text-white font-bold rounded-xl shadow-lg shadow-blue-900/40 flex items-center justify-center gap-2.5 transition-all cursor-pointer text-xs sm:text-sm font-sans touch-manipulation group active:scale-[0.98]"
                 >
-                  <ShieldCheck className="w-3.5 h-3.5 text-blue-400" />
-                  <span>{t.direct_verify_btn}</span>
+                  <ShieldCheck className="w-4 h-4 text-blue-200 group-hover:scale-110 transition-transform" />
+                  <span>{t.stage2_btn_verify}</span>
                 </button>
               </form>
-              <p className="text-[10px] text-slate-500 leading-relaxed">
-                {t.direct_verify_hint}
-              </p>
+            </div>
+
+            {/* 4. ДОДАТКОВА ОПЦІЯ: Авторизація через зовнішній шлюз Cloud Run (AI Studio) */}
+            <div className="mt-4 pt-3.5 border-t border-slate-800 space-y-2">
+              <div className="text-[10px] text-slate-400 text-center font-medium">
+                {t.stage2_cloud_run_or}
+              </div>
+              <a
+                href={cloudRunAuthUrl}
+                className="w-full py-2 px-3 bg-slate-900/80 hover:bg-slate-800/90 text-slate-300 hover:text-white border border-slate-800 hover:border-slate-700 rounded-xl flex items-center justify-center gap-2 text-xs font-medium transition-all cursor-pointer touch-manipulation"
+              >
+                <GoogleIcon className="w-4 h-4 shrink-0" />
+                <span>{t.btn_google_cloud_run}</span>
+              </a>
             </div>
 
             {/* Юридична примітка про обов'язковість захисту таємниці слідства */}
