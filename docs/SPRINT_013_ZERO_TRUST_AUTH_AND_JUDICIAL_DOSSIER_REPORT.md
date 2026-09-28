@@ -61,9 +61,9 @@ Pour satisfaire aux exigences impératives du secret de l'instruction (Art. 73 C
                            ▼
 ┌────────────────────────────────────────────────────────┐
 │ FILTRE WHITELIST RENFORCÉ (Hardened Registry)          │
-│  - arsen.k111999@gmail.com (Partie plaignante, 115 CPP)│
-│  - tukroschu@gmail.com (Administrateur principal)      │
-│  - vokov.dev@gmail.com (Architecte SecOps B-SDD)       │
+│  - ar***@gmail.com (Partie plaignante, 115 CPP)        │
+│  - tu***@gmail.com (Administrateur principal)          │
+│  - vo***@gmail.com (Architecte SecOps B-SDD)           │
 │  - counsel.vaud.vd@gmail.com (Avocat plaidant constitué│
 └──────────────┬──────────────────────────┬──────────────┘
                │ Si autorisé              │ Si non autorisé
@@ -135,7 +135,7 @@ Le dossier judiciaire complet, les pièces probatoires et le système d'authenti
 1. **Portail Web Public (Production Cloudflare Pages) :**  
    👉 **https://b-sdd-legal-ui.pages.dev**  
    - Sas d'entrée actif : saisir le PIN `0523` (Contour 1) puis confirmer via le portail d'identité Google (Contour 2).
-   - Accès garanti pour : `arsen.k111999@gmail.com`, `tukroschu@gmail.com`, `vokov.dev@gmail.com`.
+   - Accès garanti pour : `ar***@gmail.com`, `tu***@gmail.com`, `vo***@gmail.com`.
 2. **Consultation hors-ligne & Liseuse Kindle :**  
    Les guides et mémoires légaux compilés au format EPUB 3.0 sont disponibles dans `b-sdd-legal-ui/public/docs/kindle/` et téléchargeables directement depuis le cockpit :
    - `b-sdd-legal-user-guide.epub` (Guide judiciaire et des droits de la victime LAVI)

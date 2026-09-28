@@ -72,9 +72,9 @@ During manual UI testing, clicking the buttons intended to send documentation or
    Both files were placed into `b-sdd-legal-ui/public/docs/kindle/` and whitelisted in `.gitignore` to ensure they persist across git builds and deploy directly to Cloudflare Pages.
 
 2. **Automated Browser File Download & Whispersync Launch:**
-   - In `LegalStrategyModal.tsx`: Clicking "Envoyer à Kindle" dynamically packages the active strategy tab (Doctrine, Pitch, LAVI, Contract, or Matrix) into a UTF-8 Markdown file (`.md`), initiates an instant browser download via DOM link injection, and opens the default email client with a pre-filled message addressed to `tukroschu@kindle.com` with subject `B-SDD Legal Book: [Title]`. A green checkmark (`✓ Надіслано на Kindle!`) provides clear visual confirmation.
+   - In `LegalStrategyModal.tsx`: Clicking "Envoyer à Kindle" dynamically packages the active strategy tab (Doctrine, Pitch, LAVI, Contract, or Matrix) into a UTF-8 Markdown file (`.md`), initiates an instant browser download via DOM link injection, and opens the default email client with a pre-filled message addressed to `tu***@kindle.com` with subject `B-SDD Legal Book: [Title]`. A green checkmark (`✓ Надіслано на Kindle!`) provides clear visual confirmation.
    - In `AuthGate.tsx`: Added an explicit `onSendToKindle` handler providing dialog confirmation and status feedback.
-   - In `DocumentationModal.tsx`: Removed viewport hiding (`flex` instead of `hidden sm:flex`), triggers automatic download of `b-sdd-legal-user-guide.epub`, opens prefilled mailto to `tukroschu@kindle.com`, and displays a toast notification.
+   - In `DocumentationModal.tsx`: Removed viewport hiding (`flex` instead of `hidden sm:flex`), triggers automatic download of `b-sdd-legal-user-guide.epub`, opens prefilled mailto to `tu***@kindle.com`, and displays a toast notification.
    - In `App.tsx`: Added an explicit `Télécharger .EPUB` button right next to the "Fermer" button when the Kindle Whispersync progress bar reaches 100%.
 
 ---

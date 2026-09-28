@@ -3,7 +3,7 @@
 **Видання для Amazon Kindle / E-Ink**  
 **Версія:** 2.6.0 · **Стандарти:** B-SDD v1.2 / ISO/IEC 27037 / CPP RS 312.0  
 **Стек:** TypeScript, React 19, Pure Python Core (Stdlib-only), Cloudflare Pages  
-**Адреса Kindle:** `tukroschu@kindle.com`
+**Адреса Kindle:** `tu***@kindle.com` (Whispersync Service)
 
 ---
 

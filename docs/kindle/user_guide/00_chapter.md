@@ -3,7 +3,7 @@
 **Видання для Amazon Kindle / E-Ink**  
 **Версія:** 2.6.0 · **Юрисдикція:** Canton de Vaud / Confédération Suisse  
 **Справа:** Ministère public vaudois · Réf. PE24.014624-SBA  
-**Адреса Kindle:** `tukroschu@kindle.com`
+**Адреса Kindle:** `tu***@kindle.com` (Whispersync Service)
 
 ---
 

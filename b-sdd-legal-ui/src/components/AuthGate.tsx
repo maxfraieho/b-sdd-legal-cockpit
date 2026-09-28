@@ -97,6 +97,13 @@ const GoogleIcon = ({ className = 'w-5 h-5' }: { className?: string }) => (
   </svg>
 );
 
+const maskEmail = (email: string): string => {
+  if (!email || !email.includes('@')) return '***@***';
+  const [user, domain] = email.split('@');
+  if (user.length <= 2) return `${user[0]}***@${domain}`;
+  return `${user.slice(0, 2)}***@${domain}`;
+};
+
 const AUTH_I18N = {
   uk: {
     stage1_badge: 'Swiss LegalTech · B-SDD Framework',
@@ -123,6 +130,7 @@ const AUTH_I18N = {
     authenticating_desc:
       'Виконується криптографічна перевірка допуску до матеріалів справи PE24.014624-SBA за стандартом Art. 73 CPP.',
     refusal_title: 'ACCÈS NON AUTORISÉ (Art. 73 CPP / Art. 320 CP)',
+    refusal_prefix: 'Електронну адресу',
     refusal_text:
       'не внесено до реєстру уповноважених осіб у справі PE24.014624-SBA. Доступ заблоковано.',
     refusal_admin: 'Контакт адміністратора',
@@ -156,6 +164,7 @@ const AUTH_I18N = {
     authenticating_desc:
       'Contrôle cryptographique d’habilitation sur le dossier pénal PE24.014624-SBA (Art. 73 CPP).',
     refusal_title: 'ACCÈS NON AUTORISÉ (Art. 73 CPP / Art. 320 CP)',
+    refusal_prefix: "L'adresse e-mail",
     refusal_text:
       "n'est pas inscrit sur la liste blanche autorisée de la cause pénale PE24.014624-SBA. Accès verrouillé.",
     refusal_admin: 'Administrateur',
@@ -189,6 +198,7 @@ const AUTH_I18N = {
     authenticating_desc:
       'Kryptografische Prüfung der Zugriffsberechtigung für das Verfahren PE24.014624-SBA (Art. 73 StPO).',
     refusal_title: 'ZUGANG VERWEIGERT (Art. 73 StPO / Art. 320 StGB)',
+    refusal_prefix: 'Die E-Mail-Adresse',
     refusal_text:
       'ist nicht auf der Whitelist für das Strafverfahren PE24.014624-SBA registriert. Zugriff verweigert.',
     refusal_admin: 'Administrator',
@@ -222,6 +232,7 @@ const AUTH_I18N = {
     authenticating_desc:
       'Verifica crittografica dell’abilitazione al fascicolo penale PE24.014624-SBA (Art. 73 CPP).',
     refusal_title: 'ACCESSO NEGATO (Art. 73 CPP / Art. 320 CP)',
+    refusal_prefix: "L'indirizzo e-mail",
     refusal_text:
       'non è abilitato nella lista bianca di questo procedimento penale PE24.014624-SBA. Accesso bloccato.',
     refusal_admin: 'Amministratore',
@@ -255,6 +266,7 @@ const AUTH_I18N = {
     authenticating_desc:
       'Performing cryptographic authorization check against criminal dossier PE24.014624-SBA (Art. 73 CPC).',
     refusal_title: 'ACCESS DENIED (Art. 73 Swiss CPC / Art. 320 Swiss CP)',
+    refusal_prefix: 'The email address',
     refusal_text:
       'is not whitelisted for access to criminal case dossier PE24.014624-SBA. Access locked.',
     refusal_admin: 'Administrator',
@@ -873,9 +885,9 @@ export const AuthGate: React.FC<AuthGateProps> = ({
             {/* Reason & Judicial notice */}
             <div className="p-3 bg-rose-950/30 border border-rose-900/60 rounded-xl text-rose-200 text-xs space-y-2 mb-4">
               <p className="text-[11px] leading-relaxed">
-                Електронну адресу{' '}
+                {t.refusal_prefix}{' '}
                 <strong className="text-white font-mono bg-rose-950/80 px-1.5 py-0.5 rounded border border-rose-800">
-                  {authState.authError || authState.authenticatedEmail || 'Compte non spécifié'}
+                  {maskEmail(authState.authError || authState.authenticatedEmail || '')}
                 </strong>{' '}
                 {t.refusal_text}
               </p>

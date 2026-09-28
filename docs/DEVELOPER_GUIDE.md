@@ -202,4 +202,4 @@ python3 scripts/generate_legal_book.py \
 
 ### 6.3. Відправка на пристрій Kindle:
 Файл надсилається з дозволеної адреси електронної пошти на захищену адресу пристрою користувача:
-`tukroschu@kindle.com` з темою листа `B-SDD Legal Dossier`.
+`tu***@kindle.com` з темою листа `B-SDD Legal Dossier`.
