@@ -1,7 +1,7 @@
 # 🛠️ Документація Розробника та Інженера · B-SDD Legal Advocate Cockpit
-### Developer, Architecture & Integration Guide (v2.6 Release)
+### Developer, Architecture & Integration Guide (v2.7 Release)
 **Архітектура:** Bitemporal Spec-Driven Development (B-SDD) · **Стандарт:** ISO/IEC 27037 / CPP RS 312.0  
-**Стек:** TypeScript, React 19, Tailwind CSS v4, Pure Python 3 (Stdlib-only Core), Vite, Cloudflare Pages, Amazon Kindle Whispersync.
+**Стек:** TypeScript, React 19, Tailwind CSS v4, Pure Python 3 (Stdlib-only Core), Appwrite Cloud SDK, Vite, Cloudflare Pages, Amazon Kindle Whispersync.
 
 ---
 
@@ -14,21 +14,21 @@
              │
              │ Бітемпоральне калібрування (Timeline Calibrator)
              ▼
-    Transaction Time (Tt) ────────────────────────────► [WORM Ledger Utopia DB / SHA-256]
+    Transaction Time (Tt) ────────────────────────────► [WORM Vault: Appwrite Cloud / Utopia DB / SHA-256]
 ```
 
 ### 1.1. Двовимірний часовий простір (Bitemporality)
 1. **$T_v$ (Valid Time / Час факту)**: Інтервал часу $[T_{v\_start}, T_{v\_end}]$, протягом якого діяння відбулося в реальному світі (наприклад, погроза телефоном 15.07.2024 о 19:30).
-2. **$T_t$ (Transaction Time / Час фіксації)**: Момент часу, коли інформація про подію була зафіксована слідчим у протоколі або внесена до реєстру Utopia DB.
+2. **$T_t$ (Transaction Time / Час фіксації)**: Момент часу, коли інформація про подію була зафіксована слідчим у протоколі або внесена до реєстру Utopia DB / Appwrite Cloud WORM.
 - Дельта $\Delta T = |T_t - T_v|$ є об'єктивним криміналістичним індикатором для викриття маніпуляцій датами та ретроспективних правок протилежної сторони.
 
 ### 1.2. П'ять Базових Інваріантів Системи (Invariants L-01 – L-05)
 Кожна операція у кодовій базі суворо валідується модулем `tests/test_invariants.py`:
-- **L-01 (Bitemporal Immutability)**: Заборона перезапису записів `in-place`. Будь-яке оновлення здійснюється виключно через *атомарну суперсесію (supersession)* зі створенням нового вузла в ланцюгу та деактивацією старого.
+- **L-01 (Bitemporal Immutability)**: Заборона перезапису записів `in-place`. Будь-яке оновлення здійснюється виключно через *атомарну суперсесію (supersession)* зі створенням нового вузла в ланцюгу та деактивацією старого (`supersedes_id`, `is_active: false`).
 - **L-02 (Zero External Dependencies)**: Юридичне ядро міркувань (`src/legal/`) виконується на чистому Python без сторонніх бібліотек (stdlib-only), що унеможливлює вразливості в ланцюгу постачання (supply chain attacks).
 - **L-03 (Bona Fide Shield / Імунітет третіх осіб)**: Автоматичний процесуальний імунітет для добросовісних помічників за ст. 933 Цивільного кодексу Швейцарії (імунітет волонтера Адріано Міллі від зустрічних позовів).
 - **L-04 (Minor / Victim Standing)**: Неповнолітня чи вразлива жертва безумовно зберігає статус цивільного позивача (partie plaignante / ст. 115, 118 КПК) незалежно від процесуальних заперечень обвинуваченого.
-- **L-05 (Cryptographic Proof)**: Кожен доказ (аудіозапис, світлина EXIF, довідка Unisanté, банківська виписка) обов'язково містить валідний контрольний геш SHA-256.
+- **L-05 (Cryptographic Proof)**: Кожен доказ (аудіозапис, світлина EXIF, довідка Unisanté, банківська виписка) обов'язково містить валідний контрольний геш SHA-256 та клієнтську валідацію за стандартом ISO/IEC 27037.
 
 ---
 
@@ -40,7 +40,7 @@ b-sdd-legal-cockpit/
 │   ├── public/                      # Статичні активи, докази, аудіо, світлини EXIF
 │   ├── src/
 │   │   ├── components/              # UI компоненти
-│   │   │   ├── AuthGate.tsx         # Двоетапний шлюз авторизації (Stealth PIN + Google RBAC)
+│   │   │   ├── AuthGate.tsx         # Двоетапний шлюз авторизації (Stealth PIN + Appwrite/Google OAuth)
 │   │   │   ├── LegalStrategyModal.tsx # Модальне вікно швейцарської стратегії, доктрини та шаблонів
 │   │   │   ├── Topbar.tsx           # Верхня навігаційна панель, мовний перемикач, профіль користувача
 │   │   │   ├── SettingsModal.tsx    # Налаштування, вибір моделей ШІ та керування Google RBAC
@@ -50,12 +50,14 @@ b-sdd-legal-cockpit/
 │   │   │   ├── JudicialBundleModal.tsx # Компілятор судового пакету PDF/A
 │   │   │   ├── CaseSyncModal.tsx    # ШІ-синхронізація справи та послідовне мислення
 │   │   │   ├── SwissCodesModal.tsx  # Переглядач 35 статей кодексів Швейцарії (CP, CPP, CC, CO)
-│   │   │   └── WormLedgerView.tsx   # Аудит журналу незмінності WORM Utopia DB
+│   │   │   └── WormLedgerView.tsx   # Аудит журналу незмінності WORM Utopia DB / Appwrite
 │   │   ├── data/
 │   │   │   ├── legalData.ts         # Масив доказів (P-01..P-15), 18 розділів досьє, актори
 │   │   │   ├── legalStrategyData.ts # Доктрина LLCA, норми CO/LAVI, шаблони договорів та заяви LAVI
 │   │   │   └── swissLawCodes.ts     # Тексти статей кодексів швейцарського та кантонального права
 │   │   ├── lib/
+│   │   │   ├── appwrite.ts          # Клієнт Appwrite SDK та сесії OAuth2
+│   │   │   ├── appwriteDb.ts        # WORM-адаптер Appwrite Cloud із локальним кешем та захистом від збоїв
 │   │   │   ├── authManager.ts       # Менеджер білого списку Google, ролей та сесій
 │   │   │   ├── casesManager.ts      # Менеджер мульти-кейсів (ADR-011)
 │   │   │   ├── bitemporal.ts        # Обчислення SHA-256, WORM-суперсесія
@@ -82,10 +84,13 @@ b-sdd-legal-cockpit/
 │   ├── DEVELOPER_GUIDE.md           # Посібник інженера та архітектора (цей документ)
 │   ├── ARCHITECTURE.md              # Системна специфікація топології та протоколів
 │   ├── CLOUDFLARE_PAGES_DEPLOYMENT_AGENT_PROMPT.md # Промпт автономного агента публікації
+│   ├── SPRINT_014_APPWRITE_CLOUD_AND_PRIVACY_HARDENING_REPORT.md # Звіт спринту 014
 │   ├── KINDLE_USER_GUIDE_CH_LEGAL_TECH.md # Kindle-версія посібника користувача
 │   └── KINDLE_DEVELOPER_ARCH_SPEC.md      # Kindle-версія документації розробника
 │
 ├── scripts/                         # Автоматизація
+│   ├── provision_appwrite.mjs       # Декларативне створення БД, колекцій та бакетів Appwrite
+│   ├── seed_appwrite.mjs            # Початкове завантаження справи PE24.014624-SBA та WORM доказів
 │   ├── deploy_cloudflare_pages.sh   # Скрипт збірки та публікації на Cloudflare Pages
 │   ├── generate_legal_book.py       # Компілятор EPUB 3.0 книг для Amazon Kindle
 │   └── run_legal_sprint.sh          # Скрипт запуску автономного юридичного спринту
@@ -96,24 +101,28 @@ b-sdd-legal-cockpit/
 │   ├── preflight_compiler.py        # Детермінований компілятор юридичних рішень
 │   └── timeline_calibrator.py       # Алгоритми калібрації бітемпоральних міток
 │
-└── tests/                           # Набір автоматичних тестів Python
+└── tests/                           # Набір автоматичних тестів Python (26/26 OK)
     ├── test_actors.py               # Тести імунітету L-03 та статусу неповнолітнього L-04
+    ├── test_advocate_voice_notes.py # Тести обробки нотаток адвоката та інваріантів WORM
     ├── test_claim_chart.py          # Тести кореляції доказів
+    ├── test_feedback_supervisor.py  # Тести супервайзера зворотного зв'язку
     ├── test_invariants.py           # Перевірка виконання всіх 5 інваріантів B-SDD
+    ├── test_legal_core.py           # Тести базового юридичного ядра
+    ├── test_planar.py               # Тести планарного розв'язувача ДРАКОН
     └── test_preflight.py            # Тестування обмеження на обсяг висновків (<500 слів)
 ```
 
 ---
 
-## 3. Модуль Авторизації, Google Whitelist та RBAC (`authManager.ts`)
+## 3. Модуль Авторизації, Google Whitelist, RBAC та Appwrite Cloud
 
-Модуль `src/lib/authManager.ts` та компонент `src/components/AuthGate.tsx` реалізують дворівневу модель доступу відповідно до вимог таємниці слідства (**ст. 73 КПК Швейцарії**) та адвокатської таємниці (**ст. 13 LLCA**):
+Модуль `src/lib/authManager.ts`, адаптер `src/lib/appwrite.ts`, `src/lib/appwriteDb.ts` та компонент `src/components/AuthGate.tsx` реалізують дворівневу модель доступу відповідно до вимог таємниці слідства (**ст. 73 КПК Швейцарії**) та адвокатської таємниці (**ст. 13 LLCA**):
 
 ### 3.1. Ролі та дозволи (RBAC Matrix)
 
 | Роль | Системний ідентифікатор | Права доступу | Типові користувачі |
 |---|---|---|---|
-| **Super Admin** | `super_admin` | Повний контроль: білий список, редагування коду, WORM-печатки, скидання паролів | Автор системи (`TUkroschu@gmail.com`) |
+| **Super Admin** | `super_admin` | Повний контроль: білий список, редагування коду, WORM-печатки, додавання користувачів | Автор системи (Головний адміністратор) |
 | **Law Firm Admin** | `admin` | Керування досьє, додавання юристів бюро, експорт судового бандлу | Старший партнер швейцарського бюро |
 | **Advocate / Lawyer** | `lawyer` | Редагування досьє, додавання доказів через майстер, диктування, відправка на Kindle | Провідний адвокат справи, судовий повірений |
 | **Client / User** | `user` | Перегляд матеріалів справи, завантаження доказів у драфт, перегляд стану | Потерпілий (Арсен Коваленко) |
@@ -137,6 +146,21 @@ export function verifyEmailAccess(email: string): {
   - Видаляє активну сесію з оперативної пам'яті та `sessionStorage`;
   - Переводить інтерфейс у стан `isPinStageUnlocked = false`;
   - Очищає буфери введення.
+
+### 3.4. Архітектура інтеграції Appwrite Cloud (`appwrite.ts`, `appwriteDb.ts`)
+- **Хмарний інстанс:** Frankfurt Region (`https://fra.cloud.appwrite.io/v1`), Project ID: `6abab6b5003a4b7b1560`.
+- **База даних `legal_vault`:**
+  - Колекція `cases`: зберігання метаданих судових проваджень (номер справи, орган юстиції, процесуальний статус).
+  - Колекція `worm_records`: журнал бітемпоральних записів із суворим дотриманням інваріанту L-01 (immutable append-only / supersession pattern).
+  - Колекція `actors`: реєстр фігурантів із процесуальними імунітетами (Art. 933 CC для bona fide осіб).
+- **Сховище `legal-evidence-vault`:** бакет для криптографічно верифікованих файлів доказів із контрольною сумою SHA-256 (ISO/IEC 27037).
+- **Web OAuth2 Session Flow:** використання методу `account.createOAuth2Session(OAuthProvider.Google, ...)` замість токенів реєстрації, що гарантує ідемпотентний вхід без конфліктів 409 (`user_already_exists`).
+- **Offline-First Resilience:** клієнтський адаптер `appwriteDb.ts` реалізує безпечні обгортки викликів із автоматичним перемиканням на локальний WORM-кеш у разі мережевих збоїв.
+
+### 3.5. Безпека секретів та конфіденційність (Art. 73 CPP / Art. 13 LLCA)
+- **Zero Client Secret Exposure:** Клієнтський код Vite використовує виключно публічний Client SDK Appwrite (Project ID). Жодні Server API Keys не потрапляють у клієнтський бандл.
+- **Повна деідентифікація адміністраторів:** Пошта головного адміністратора повністю вилучена з публічного рендерингу JSX, тостів та модальних вікон блокування доступу. Відображається виключно системне позначення *«B-SDD SecOps & Case Registry»*.
+- **Суворе обмеження делегування прав:** додавання нових авторизованих поштових скриньок у налаштуваннях заблоковано для всіх, окрім головного адміністратора (`isSuperAdmin`).
 
 ---
 
