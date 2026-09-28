@@ -30,34 +30,39 @@ if (typeof window !== 'undefined') {
 }
 
 /**
- * Initiates the Google OAuth2 token flow.
- * Note: createOAuth2Token navigates the browser to the provider; do not redirect manually.
+ * Initiates the Google OAuth2 session flow.
+ * Uses createOAuth2Session so existing users are seamlessly authenticated
+ * without 409 user_already_exists conflicts.
  */
 export async function signInWithProvider(): Promise<void> {
   const success = `${window.location.origin}/auth/success`;
   const failure = `${window.location.origin}/auth/failure`;
 
-  // createOAuth2Token navigates the browser to the provider; do not redirect manually.
-  await account.createOAuth2Token({
-    provider: OAuthProvider.Google, // "google"
+  // createOAuth2Session handles both initial login and re-authentication for existing users
+  account.createOAuth2Session(
+    OAuthProvider.Google,
     success,
-    failure,
-  });
+    failure
+  );
 }
 
 /**
  * Handles the OAuth success callback on /auth/success.
- * Reads userId + secret from the query string, creates a session, and redirects to /dashboard.
+ * Reads userId + secret if present (token flow), or verifies existing session (session flow).
  */
-export async function handleOAuthSuccess(): Promise<Models.Session> {
+export async function handleOAuthSuccess(): Promise<Models.Session | Models.User<Models.Preferences>> {
   const url = new URL(window.location.href);
   const secret = url.searchParams.get('secret');
   const userId = url.searchParams.get('userId');
-  if (!secret || !userId) {
-    throw new Error('Missing OAuth credentials (userId or secret)');
+
+  if (secret && userId) {
+    const session = await account.createSession({ userId, secret });
+    return session;
   }
-  const session = await account.createSession({ userId, secret });
-  return session;
+
+  // When createOAuth2Session is used, session is established by Appwrite automatically
+  const user = await account.get();
+  return user;
 }
 
 /**

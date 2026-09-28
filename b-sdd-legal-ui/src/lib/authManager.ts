@@ -65,6 +65,7 @@ export const PRIMARY_SUPER_ADMIN_EMAIL = 'tukroschu@gmail.com';
 export const HARDENED_WHITELIST: readonly string[] = [
   'tukroschu@gmail.com',
   'arsen.k111999@gmail.com',
+  'kovalenko.lubov5110@gmail.com',
   'vokov.dev@gmail.com',
   'counsel.vaud.vd@gmail.com',
 ];
@@ -90,6 +91,17 @@ export const INITIAL_AUTHORIZED_USERS: AuthorizedUser[] = [
     isActive: true,
     addedAt: '2024-07-21T10:00:00Z',
     notes: 'Потерпіла сторона у справі SBA, право повного доступу до матеріалів',
+    permissions: ROLE_DEFINITIONS.user.defaultPermissions,
+  },
+  {
+    id: 'user-family-05',
+    email: 'kovalenko.lubov5110@gmail.com',
+    name: 'Любов Коваленко (Мати потерпілого / Член сімʼї)',
+    avatar: 'https://lh3.googleusercontent.com/a/default-user',
+    role: 'user',
+    isActive: true,
+    addedAt: '2024-07-22T08:00:00Z',
+    notes: 'Мати потерпілого Арсена у справі SBA, член сімʼї позивача',
     permissions: ROLE_DEFINITIONS.user.defaultPermissions,
   },
   {

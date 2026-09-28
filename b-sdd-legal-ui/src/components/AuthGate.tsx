@@ -138,6 +138,10 @@ const HARDENED_WHITELIST: Record<string, { name: string; role: UserRole }> = {
     name: 'Арсен Коваленко (Потерпілий ст. 115, 118 КПК)',
     role: 'user',
   },
+  'kovalenko.lubov5110@gmail.com': {
+    name: 'Любов Коваленко (Мати потерпілого / Член сімʼї)',
+    role: 'user',
+  },
   'vokov.dev@gmail.com': {
     name: 'Інженер безпеки B-SDD',
     role: 'admin',
@@ -617,13 +621,13 @@ export const AuthGate: React.FC<AuthGateProps> = ({
 
   const t = AUTH_I18N[currentLang] || AUTH_I18N['fr'];
 
-  // Main Google Authentication Trigger via Appwrite OAuth2 Token Flow
+  // Main Google Authentication Trigger via Appwrite OAuth2 Session Flow
   const handleExecuteGoogleAuth = async () => {
     setIsAuthenticating(true);
     setGoogleAuthError(null);
 
     try {
-      // createOAuth2Token navigates the browser to the provider; do not redirect manually.
+      // createOAuth2Session navigates the browser to the provider; do not redirect manually.
       await signInWithProvider();
     } catch (err: any) {
       setIsAuthenticating(false);

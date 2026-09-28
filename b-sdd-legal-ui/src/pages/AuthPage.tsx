@@ -57,12 +57,12 @@ export const AuthPage: React.FC = () => {
     setErrorMessage(null);
 
     try {
-      // createOAuth2Token navigates the browser to the provider; do not redirect manually.
+      // createOAuth2Session navigates the browser to the provider; do not redirect manually.
       await signInWithProvider();
     } catch (err: any) {
       setIsSigningIn(false);
       setErrorMessage(
-        err?.message || 'Failed to initiate Google OAuth2 token session with Appwrite.'
+        err?.message || 'Failed to initiate Google OAuth2 session with Appwrite.'
       );
     }
   };
