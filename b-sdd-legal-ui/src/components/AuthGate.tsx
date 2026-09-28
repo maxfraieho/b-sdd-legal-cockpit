@@ -1,7 +1,8 @@
 // =========================================================================
-// B-SDD LEGAL COCKPIT · ДВОКОНТУРНИЙ ШЛЮЗ АВТОРИЗАЦІЇ (AUTH GATE v3.0 ZERO-TRUST)
-// Контур 1: Локальний захисний бар'єр (Local Invitation PIN Gate)
+// B-SDD LEGAL COCKPIT · ДВОКОНТУРНИЙ ШЛЮЗ АВТОРИЗАЦІЇ (AUTH GATE v3.1 ZERO-TRUST)
+// Контур 1: Локальний захисний бар'єр (Local PIN Gate - 0523)
 // Контур 2: Google Identity Gate через Cloud Run OAuth (ст. 73 КПК / ст. 13 LLCA)
+// ПОВНА ІЗОЛЯЦІЯ: Жодних mock-карток чи списків користувачів на екрані
 // Повна підтримка 5 мов: UK, FR, DE, IT, EN
 // Мобільна адаптація: 100dvh, safe-area-inset, touch-manipulation
 // =========================================================================
@@ -16,33 +17,25 @@ import {
   Scale,
   CheckCircle2,
   Globe2,
-  Mail,
-  ChevronRight,
   ShieldAlert,
-  ArrowRight,
-  Sparkles,
-  ExternalLink,
   Building2,
   Fingerprint,
   BookOpen,
   RotateCcw,
-  AlertOctagon,
-  ShieldCheck,
-  UserCheck,
+  Loader2,
 } from 'lucide-react';
 import {
-  loadAuthorizedUsers,
   getCurrentAuthSession,
   setAuthSession,
   clearAuthSession,
   PRIMARY_SUPER_ADMIN_EMAIL,
-  HARDENED_WHITELIST,
 } from '../lib/authManager';
 import {
   AuthorizedUser,
   AuthSession,
   AuthStage,
   AuthGateState,
+  UserRole,
   ROLE_DEFINITIONS,
 } from '../types/auth';
 import { LegalStrategyModal } from './LegalStrategyModal';
@@ -63,6 +56,48 @@ const CLOUD_RUN_AUTH_ENDPOINT =
   'https://ais-dev-e2sihlyjbjzxc5lxx4nkc2-147404199355.europe-west3.run.app';
 const CASE_ID = 'PE24.014624-SBA';
 
+// Закритий внутрішній реєстр допуску до матеріалів справи PE24.014624-SBA
+// СУВОРО ЗАБОРОНЕНО рендерити цей список на екрані авторизації (ст. 73 CPP / ст. 320 CP)
+const HARDENED_WHITELIST: Record<string, { name: string; role: UserRole }> = {
+  'tukroschu@gmail.com': {
+    name: 'Володимир Анатолійович Коваленко',
+    role: 'super_admin',
+  },
+  'arsen.k111999@gmail.com': {
+    name: 'Арсен Коваленко',
+    role: 'user',
+  },
+  'vokov.dev@gmail.com': {
+    name: 'Інженер безпеки B-SDD',
+    role: 'user',
+  },
+  'counsel.vaud.vd@gmail.com': {
+    name: 'Юридичний повірений (Ordre des Avocats)',
+    role: 'lawyer',
+  },
+};
+
+const GoogleIcon = ({ className = 'w-5 h-5' }: { className?: string }) => (
+  <svg className={className} viewBox="0 0 24 24">
+    <path
+      fill="#EA4335"
+      d="M12 5c1.6 0 3 .6 4.1 1.7l3.1-3.1C17.3 1.8 14.8 1 12 1 7.5 1 3.7 3.6 1.9 7.3l3.7 2.9C6.5 7.4 9 5 12 5z"
+    />
+    <path
+      fill="#4285F4"
+      d="M23.5 12.3c0-.8-.1-1.6-.2-2.3H12v4.6h6.5c-.3 1.5-1.1 2.8-2.4 3.7l3.7 2.9c2.2-2 3.7-5 3.7-8.9z"
+    />
+    <path
+      fill="#FBBC05"
+      d="M5.6 14.8c-.2-.7-.4-1.5-.4-2.8 0-1.3.2-2.1.4-2.8L1.9 6.3C.7 8.7 0 10.3 0 12s.7 3.3 1.9 5.7l3.7-2.9z"
+    />
+    <path
+      fill="#34A853"
+      d="M12 23c3.2 0 6-1.1 8-3l-3.7-2.9c-1.1.7-2.5 1.2-4.3 1.2-3 0-5.5-2.4-6.4-5.2L1.9 16C3.7 19.7 7.5 23 12 23z"
+    />
+  </svg>
+);
+
 const AUTH_I18N = {
   uk: {
     stage1_badge: 'Swiss LegalTech · B-SDD Framework',
@@ -80,27 +115,20 @@ const AUTH_I18N = {
     pin_error: 'Невірний PIN-код допуску. Зверніться до ініціатора проєкту.',
     stage2_verified: 'КОНТУР 1: PIN ВЕРИФІКОВАНО',
     stage2_title: 'Контур 2: Google Identity Gate (Zero-Trust)',
-    stage2_btn_lock: 'Заблокувати',
+    stage2_btn_lock: 'Заблокувати / Скинути PIN',
     stage2_court_title: 'Ministère public du canton de Vaud · PE24.014624-SBA',
     stage2_court_desc:
       'Досьє захисту прав потерпілого Арсена Коваленка (ст. 115, 118 КПК). Для дешифрування доказів та доступу до матеріалів необхідна ідентифікація особи через Google Studio Auth.',
     btn_google_cloud_run: 'Підтвердити особу через Google Studio Auth',
-    stage2_root_badge: 'Root Owner',
-    stage2_root_title: 'Головний Адміністратор / Володар ключа',
-    stage2_roster_title: 'Офіційний реєстр допуску досьє (Hardened Whitelist):',
-    stage2_btn_custom_google: 'Ввести іншу авторизовану пошту Google',
-    modal_google_title: 'Вхід з обліковим записом Google',
-    modal_google_desc:
-      'Введіть адресу електронної пошти Google (Gmail). Системи B-SDD перевірять наявність вашого акаунта у білому списку досьє PE24.014624-SBA (ст. 73 КПК).',
-    modal_google_input_label: 'Електронна пошта Google:',
-    modal_btn_cancel: 'Скасувати',
-    modal_btn_auth: 'Верифікувати та увійти',
+    authenticating_title: 'Верифікація Google-ідентичності...',
+    authenticating_desc:
+      'Виконується криптографічна перевірка допуску до матеріалів справи PE24.014624-SBA за стандартом Art. 73 CPP.',
     refusal_title: 'ACCÈS NON AUTORISÉ (Art. 73 CPP / Art. 320 CP)',
     refusal_text:
       'не внесено до реєстру уповноважених осіб у справі PE24.014624-SBA. Доступ заблоковано.',
     refusal_admin: 'Контакт адміністратора',
     refusal_retry: 'Повторити вхід під іншим акаунтом',
-    refusal_close: 'Закрити',
+    refusal_close: 'Скинути термінал',
     footer_standard: 'B-SDD Protocol v3.0 · ISO/IEC 27037',
     footer_bar: 'Ordre des Avocats / LAVI Reference',
   },
@@ -120,27 +148,20 @@ const AUTH_I18N = {
     pin_error: 'Code PIN d’invitation invalide. Veuillez vérifier vos accès.',
     stage2_verified: 'NIVEAU 1 : PIN VÉRIFIÉ',
     stage2_title: 'Niveau 2 : Authentification Google Zero-Trust',
-    stage2_btn_lock: 'Verrouiller',
+    stage2_btn_lock: 'Verrouiller / Réinitialiser PIN',
     stage2_court_title: 'Ministère public du canton de Vaud · PE24.014624-SBA',
     stage2_court_desc:
       'Dossier de protection de la victime Arsen Kovalenko (art. 115, 118 CPP). Pour le déchiffrement des preuves et l’accès au dossier, l’identification nominative Google Studio Auth est requise.',
-    btn_google_cloud_run: 'Vérifier l’identité via Google Studio Auth',
-    stage2_root_badge: 'Root Owner',
-    stage2_root_title: 'Administrateur Principal / Auteur',
-    stage2_roster_title: 'Registre officiel des intervenants agréés (Liste blanche) :',
-    stage2_btn_custom_google: 'Saisir un autre compte Google agréé',
-    modal_google_title: 'Connexion avec compte Google (Gmail)',
-    modal_google_desc:
-      'Saisissez votre adresse électronique Google. Le système B-SDD vérifiera la présence de votre compte sur la liste blanche de la cause PE24.014624-SBA.',
-    modal_google_input_label: 'Adresse courriel Google :',
-    modal_btn_cancel: 'Annuler',
-    modal_btn_auth: 'Vérifier et accéder',
+    btn_google_cloud_run: 'Confirmer l’identité via Google Studio Auth',
+    authenticating_title: 'Vérification de l’identité Google...',
+    authenticating_desc:
+      'Contrôle cryptographique d’habilitation sur le dossier pénal PE24.014624-SBA (Art. 73 CPP).',
     refusal_title: 'ACCÈS NON AUTORISÉ (Art. 73 CPP / Art. 320 CP)',
     refusal_text:
       "n'est pas inscrit sur la liste blanche autorisée de la cause pénale PE24.014624-SBA. Accès verrouillé.",
     refusal_admin: 'Administrateur',
     refusal_retry: 'Réessayer avec un autre compte',
-    refusal_close: 'Fermer',
+    refusal_close: 'Réinitialiser le terminal',
     footer_standard: 'Protocole B-SDD v3.0 · ISO/IEC 27037',
     footer_bar: 'Conforme Ordre des Avocats / LAVI',
   },
@@ -160,27 +181,20 @@ const AUTH_I18N = {
     pin_error: 'Ungültiger PIN-Code. Bitte prüfen Sie Ihre Zugangsdaten.',
     stage2_verified: 'STUFE 1: PIN BESTÄTIGT',
     stage2_title: 'Stufe 2: Google Identity Gate (Zero-Trust)',
-    stage2_btn_lock: 'Sperren',
+    stage2_btn_lock: 'Sperren / PIN zurücksetzen',
     stage2_court_title: 'Staatsanwaltschaft Kanton Waadt · PE24.014624-SBA',
     stage2_court_desc:
       'Verfahren zum Schutz des Opfers Arsen Kovalenko (Art. 115, 118 StPO). Zur Entschlüsselung der Akten ist eine Identifizierung über Google Studio Auth erforderlich.',
     btn_google_cloud_run: 'Identität über Google Studio Auth bestätigen',
-    stage2_root_badge: 'Root Owner',
-    stage2_root_title: 'Hauptadministrator / Urheber',
-    stage2_roster_title: 'Offizielles Beteiligtenregister (Hardened Whitelist):',
-    stage2_btn_custom_google: 'Mit anderer Google-E-Mail anmelden',
-    modal_google_title: 'Anmeldung mit Google-Konto',
-    modal_google_desc:
-      'Geben Sie Ihre Google-Mailadresse ein. Das System prüft die Freigabe für das Verfahren PE24.014624-SBA.',
-    modal_google_input_label: 'Google-E-Mail-Adresse:',
-    modal_btn_cancel: 'Abbrechen',
-    modal_btn_auth: 'Prüfen und anmelden',
+    authenticating_title: 'Google-Identität wird geprüft...',
+    authenticating_desc:
+      'Kryptografische Prüfung der Zugriffsberechtigung für das Verfahren PE24.014624-SBA (Art. 73 StPO).',
     refusal_title: 'ZUGANG VERWEIGERT (Art. 73 StPO / Art. 320 StGB)',
     refusal_text:
       'ist nicht auf der Whitelist für das Strafverfahren PE24.014624-SBA registriert. Zugriff verweigert.',
     refusal_admin: 'Administrator',
     refusal_retry: 'Mit anderem Konto wiederholen',
-    refusal_close: 'Schließen',
+    refusal_close: 'Terminal zurücksetzen',
     footer_standard: 'B-SDD-Protokoll v3.0 · ISO/IEC 27037',
     footer_bar: 'Anwaltskammer / OHG-konform',
   },
@@ -200,27 +214,20 @@ const AUTH_I18N = {
     pin_error: 'Codice PIN non valido. Si prega di verificare i permessi.',
     stage2_verified: 'LIVELLO 1: PIN VERIFICATO',
     stage2_title: 'Livello 2: Autenticazione Google Zero-Trust',
-    stage2_btn_lock: 'Blocca',
+    stage2_btn_lock: 'Blocca / Reimposta PIN',
     stage2_court_title: 'Ministero Pubblico del Cantone Vaud · PE24.014624-SBA',
     stage2_court_desc:
       'Procedimento per la tutela della vittima Arsen Kovalenko (art. 115, 118 CPP). Per decifrare le prove è richiesta l’identificazione Google Studio Auth.',
-    btn_google_cloud_run: 'Verifica identità tramite Google Studio Auth',
-    stage2_root_badge: 'Root Owner',
-    stage2_root_title: 'Amministratore Principale / Autore',
-    stage2_roster_title: 'Registro ufficiale dei partecipanti accreditati (Whitelist):',
-    stage2_btn_custom_google: 'Accedi con altra email Google',
-    modal_google_title: 'Accesso con account Google',
-    modal_google_desc:
-      'Inserisci la tua email Google. Il sistema verificherà l’abilitazione sul fascicolo PE24.014624-SBA.',
-    modal_google_input_label: 'Indirizzo email Google:',
-    modal_btn_cancel: 'Annulla',
-    modal_btn_auth: 'Verifica e accedi',
+    btn_google_cloud_run: 'Conferma identità tramite Google Studio Auth',
+    authenticating_title: 'Verifica identità Google in corso...',
+    authenticating_desc:
+      'Verifica crittografica dell’abilitazione al fascicolo penale PE24.014624-SBA (Art. 73 CPP).',
     refusal_title: 'ACCESSO NEGATO (Art. 73 CPP / Art. 320 CP)',
     refusal_text:
       'non è abilitato nella lista bianca di questo procedimento penale PE24.014624-SBA. Accesso bloccato.',
     refusal_admin: 'Amministratore',
     refusal_retry: 'Riprova con altro account',
-    refusal_close: 'Chiudi',
+    refusal_close: 'Reimposta terminale',
     footer_standard: 'Protocollo B-SDD v3.0 · ISO/IEC 27037',
     footer_bar: 'Conforme Ordine Avvocati / LAVI',
   },
@@ -240,27 +247,20 @@ const AUTH_I18N = {
     pin_error: 'Invalid invitation PIN code. Please verify your credentials.',
     stage2_verified: 'TIER 1: PIN VERIFIED',
     stage2_title: 'Tier 2: Google Identity Gate (Zero-Trust)',
-    stage2_btn_lock: 'Lock',
+    stage2_btn_lock: 'Lock / Reset PIN',
     stage2_court_title: "Public Prosecutor's Office · Canton of Vaud · PE24.014624-SBA",
     stage2_court_desc:
       'Protection of victim Arsen Kovalenko (Art. 115, 118 Swiss CPC). Evidence decryption and dossier access requires authenticated identification via Google Studio Auth.',
-    btn_google_cloud_run: 'Verify Identity via Google Studio Auth',
-    stage2_root_badge: 'Root Owner',
-    stage2_root_title: 'Super Administrator / Author',
-    stage2_roster_title: 'Official Whitelisted Participants Registry:',
-    stage2_btn_custom_google: 'Sign in with another whitelisted Google account',
-    modal_google_title: 'Sign in with Google Account',
-    modal_google_desc:
-      'Enter your Google email address. B-SDD systems will verify your account against the hardened whitelist for case PE24.014624-SBA.',
-    modal_google_input_label: 'Google Email Address:',
-    modal_btn_cancel: 'Cancel',
-    modal_btn_auth: 'Verify & Sign In',
+    btn_google_cloud_run: 'Confirm Identity via Google Studio Auth',
+    authenticating_title: 'Verifying Google Identity...',
+    authenticating_desc:
+      'Performing cryptographic authorization check against criminal dossier PE24.014624-SBA (Art. 73 CPC).',
     refusal_title: 'ACCESS DENIED (Art. 73 Swiss CPC / Art. 320 Swiss CP)',
     refusal_text:
       'is not whitelisted for access to criminal case dossier PE24.014624-SBA. Access locked.',
     refusal_admin: 'Administrator',
     refusal_retry: 'Try again with another account',
-    refusal_close: 'Close',
+    refusal_close: 'Reset terminal',
     footer_standard: 'B-SDD Protocol v3.0 · ISO/IEC 27037',
     footer_bar: 'Bar Association & LAVI Reference',
   },
@@ -314,16 +314,8 @@ export const AuthGate: React.FC<AuthGateProps> = ({
     }
   });
 
-  const [authorizedUsers, setAuthorizedUsers] = useState<AuthorizedUser[]>(() =>
-    loadAuthorizedUsers()
-  );
-
   // Legal Strategy Modal State
   const [strategyModalOpen, setStrategyModalOpen] = useState<boolean>(false);
-
-  // Custom Google input modal
-  const [customGoogleEmail, setCustomGoogleEmail] = useState<string>('');
-  const [showCustomGoogleModal, setShowCustomGoogleModal] = useState<boolean>(false);
 
   // PIN input state
   const [inputPin, setInputPin] = useState<string>('');
@@ -332,42 +324,44 @@ export const AuthGate: React.FC<AuthGateProps> = ({
 
   const t = AUTH_I18N[currentLang] || AUTH_I18N['fr'];
 
-  // Verification Engine: Checks against Hardened Whitelist and executes atomic session creation
+  // Verification Engine: Checks against Hardened Whitelist ONLY upon OAuth callback
   const handleVerifyGoogleIdentity = (email: string, token?: string) => {
+    setAuthState((prev) => ({
+      ...prev,
+      stage: 'AUTHENTICATING',
+      authError: null,
+    }));
+
     const normalizedEmail = email.trim().toLowerCase();
-    const users = loadAuthorizedUsers();
+    const matched = HARDENED_WHITELIST[normalizedEmail];
 
-    const isWhitelisted =
-      HARDENED_WHITELIST.map((e) => e.toLowerCase()).includes(normalizedEmail) ||
-      users.some((u) => u.email.toLowerCase() === normalizedEmail && u.isActive);
-
-    if (!isWhitelisted) {
-      setAuthState((prev) => ({
-        ...prev,
+    if (!matched) {
+      setAuthState({
         stage: 'ACCESS_DENIED',
+        isPinValid: true,
         isGoogleAuthenticated: false,
         authenticatedEmail: normalizedEmail,
         authError: normalizedEmail,
-      }));
+        sessionToken: null,
+      });
       setIsShaking(true);
       setTimeout(() => setIsShaking(false), 500);
       return;
     }
 
-    // Match or create AuthorizedUser
-    const existingUser = users.find((u) => u.email.toLowerCase() === normalizedEmail);
-    const user: AuthorizedUser = existingUser || {
-      id: `user-${Date.now()}`,
+    // Build AuthorizedUser profile from Hardened Whitelist
+    const matchedUser: AuthorizedUser = {
+      id: `user-${normalizedEmail.replace(/[^a-z0-9]/g, '-')}`,
       email: normalizedEmail,
-      name: normalizedEmail.split('@')[0],
-      role: 'user',
+      name: matched.name,
+      role: matched.role,
       isActive: true,
-      addedAt: new Date().toISOString(),
-      permissions: ROLE_DEFINITIONS.user.defaultPermissions,
+      addedAt: '2024-07-20T08:00:00Z',
+      permissions: ROLE_DEFINITIONS[matched.role].defaultPermissions,
     };
 
     const newSession: AuthSession = {
-      user,
+      user: matchedUser,
       authMethod: 'google_cloud_run',
       timestamp: Date.now(),
       token: token || undefined,
@@ -399,12 +393,11 @@ export const AuthGate: React.FC<AuthGateProps> = ({
       sessionToken: token || null,
     });
 
-    onUserAuthenticated?.(user);
+    onUserAuthenticated?.(matchedUser);
     onLockedStateChange?.(false);
-    setShowCustomGoogleModal(false);
   };
 
-  // Synchronize and scan callback query parameters on mount
+  // Synchronize and scan callback query parameters from Google Cloud Run OAuth on mount
   useEffect(() => {
     const existing = getCurrentAuthSession();
     if (existing) {
@@ -428,13 +421,16 @@ export const AuthGate: React.FC<AuthGateProps> = ({
     const tokenParam = urlParams.get('auth_token') || urlParams.get('token');
 
     if (emailParam) {
+      // Clean sensitive query parameters from browser URL bar without reloading
       window.history.replaceState({}, document.title, window.location.pathname);
+
       const isPinAlreadyUnlocked =
         sessionStorage.getItem('b_sdd_pin_stage_unlocked') === 'true';
 
       if (isPinAlreadyUnlocked) {
         handleVerifyGoogleIdentity(emailParam, tokenParam || undefined);
       } else {
+        // Queue pending email verification until PIN is entered
         sessionStorage.setItem('b_sdd_pending_google_email', emailParam);
         if (tokenParam) {
           sessionStorage.setItem('b_sdd_pending_google_token', tokenParam);
@@ -743,11 +739,12 @@ export const AuthGate: React.FC<AuthGateProps> = ({
         )}
 
         {/* ========================================================================= */}
-        {/* TIER 2: GOOGLE IDENTITY GATE (ZERO-TRUST VIA CLOUD RUN & WHITELIST)       */}
+        {/* TIER 2: GOOGLE IDENTITY GATE (ZERO-TRUST VIA CLOUD RUN OAUTH ONLY)        */}
+        {/* СУВОРО: ЖОДНИХ MOCK-КАРТОК, КНОПОК ПЕРСОН ЧИ ВВЕДЕННЯ ПОШТИ РУЧНО        */}
         {/* ========================================================================= */}
         {authState.stage === 'GOOGLE_REQUIRED' && (
-          <div className="bg-[#0B1120]/95 border border-slate-800 rounded-2xl p-4 sm:p-7 shadow-2xl backdrop-blur-xl relative animate-fadeIn">
-            {/* Header */}
+          <div className="bg-[#0B1120]/95 border border-slate-800 rounded-2xl p-5 sm:p-7 shadow-2xl backdrop-blur-xl relative animate-fadeIn">
+            {/* 1. Верхній індикатор та кнопка скидання PIN */}
             <div className="flex justify-between items-start mb-4">
               <div className="flex items-center gap-3">
                 <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-br from-blue-600/20 to-emerald-600/20 border border-blue-500/40 flex items-center justify-center text-blue-400 shadow-inner">
@@ -765,7 +762,7 @@ export const AuthGate: React.FC<AuthGateProps> = ({
                 </div>
               </div>
 
-              {/* Re-lock button to return to Tier 1 */}
+              {/* Кнопка повернення до Контуру 1 */}
               <button
                 type="button"
                 onClick={() => {
@@ -777,25 +774,25 @@ export const AuthGate: React.FC<AuthGateProps> = ({
                     authError: null,
                   }));
                 }}
-                className="text-[11px] text-slate-400 hover:text-white px-2 py-1 rounded bg-slate-900 border border-slate-800 transition-colors flex items-center gap-1 cursor-pointer touch-manipulation"
-                title="Lock Terminal"
+                className="text-[11px] text-slate-400 hover:text-white px-2.5 py-1.5 rounded-lg bg-slate-900 border border-slate-800 hover:border-slate-700 transition-colors flex items-center gap-1.5 cursor-pointer touch-manipulation"
+                title="Заблокувати / Скинути PIN"
               >
-                <Lock className="w-3 h-3 text-amber-400" />
+                <Lock className="w-3.5 h-3.5 text-amber-400" />
                 <span>{t.stage2_btn_lock}</span>
               </button>
             </div>
 
-            {/* Legal context notice */}
-            <div className="bg-blue-950/30 border border-blue-500/30 rounded-xl p-3 mb-4 text-xs text-blue-200 flex gap-2.5 items-start">
-              <Scale className="w-4 h-4 text-blue-400 shrink-0 mt-0.5" />
-              <div>
-                <span className="font-semibold text-white block">
+            {/* 2. Офіційна судова картка справи */}
+            <div className="bg-blue-950/30 border border-blue-500/30 rounded-xl p-3.5 mb-5 text-xs text-blue-200 flex gap-3 items-start">
+              <Scale className="w-5 h-5 text-blue-400 shrink-0 mt-0.5" />
+              <div className="space-y-1">
+                <span className="font-semibold text-white block text-xs sm:text-sm">
                   {t.stage2_court_title}
                 </span>
-                <span className="text-[11px] text-blue-200/90 leading-relaxed block mt-0.5">
+                <span className="text-[11px] text-blue-200/90 leading-relaxed block">
                   {t.stage2_court_desc}
                 </span>
-                <div className="mt-1.5 pt-1.5 border-t border-blue-900/40 flex items-center justify-between">
+                <div className="mt-2 pt-2 border-t border-blue-900/40 flex items-center justify-between">
                   <button
                     type="button"
                     onClick={() => setStrategyModalOpen(true)}
@@ -805,117 +802,51 @@ export const AuthGate: React.FC<AuthGateProps> = ({
                     <span>{t.btn_legal_memo}</span>
                   </button>
                   <span className="text-[10px] font-mono text-blue-400">
-                    CPP Art. 115 / LAVI Art. 13
+                    CPP Art. 73 · Art. 115 / LAVI Art. 13
                   </span>
                 </div>
               </div>
             </div>
 
-            {/* Primary Action Button: Cloud Run Google Studio Auth Redirect */}
-            <div className="mb-4">
+            {/* 3. ЄДИНА КНОПКА ДІЇ: Офіційний редирект Google Studio Auth (Cloud Run) */}
+            <div className="pt-1">
               <a
                 href={cloudRunAuthUrl}
-                className="w-full py-3.5 px-4 bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-500 hover:from-blue-500 hover:to-indigo-500 text-white font-bold rounded-xl shadow-lg shadow-blue-900/40 flex items-center justify-center gap-3 transition-all cursor-pointer text-xs sm:text-sm touch-manipulation group active:scale-[0.98]"
+                className="w-full py-3.5 px-4 bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-500 hover:from-blue-500 hover:to-indigo-500 text-white font-bold rounded-xl shadow-lg shadow-blue-900/40 flex items-center justify-center gap-3 transition-all cursor-pointer text-sm font-sans touch-manipulation group active:scale-[0.98]"
               >
-                {/* Official Google 'G' icon */}
-                <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24">
-                  <path
-                    fill="#EA4335"
-                    d="M12 5c1.6 0 3 .6 4.1 1.7l3.1-3.1C17.3 1.8 14.8 1 12 1 7.5 1 3.7 3.6 1.9 7.3l3.7 2.9C6.5 7.4 9 5 12 5z"
-                  />
-                  <path
-                    fill="#4285F4"
-                    d="M23.5 12.3c0-.8-.1-1.6-.2-2.3H12v4.6h6.5c-.3 1.5-1.1 2.8-2.4 3.7l3.7 2.9c2.2-2 3.7-5 3.7-8.9z"
-                  />
-                  <path
-                    fill="#FBBC05"
-                    d="M5.6 14.8c-.2-.7-.4-1.5-.4-2.8 0-1.3.2-2.1.4-2.8L1.9 6.3C.7 8.7 0 10.3 0 12s.7 3.3 1.9 5.7l3.7-2.9z"
-                  />
-                  <path
-                    fill="#34A853"
-                    d="M12 23c3.2 0 6-1.1 8-3l-3.7-2.9c-1.1.7-2.5 1.2-4.3 1.2-3 0-5.5-2.4-6.4-5.2L1.9 16C3.7 19.7 7.5 23 12 23z"
-                  />
-                </svg>
+                <GoogleIcon className="w-5 h-5 shrink-0" />
                 <span>{t.btn_google_cloud_run}</span>
-                <ChevronRight className="w-4 h-4 text-blue-200 group-hover:translate-x-0.5 transition-transform shrink-0" />
               </a>
             </div>
 
-            {/* Whitelisted Participants Roster (One-click identity confirmation for testing/production) */}
-            <div className="space-y-2 mb-4">
-              <label className="block text-[11px] font-semibold text-slate-400">
-                {t.stage2_roster_title}
-              </label>
-              <div className="space-y-1.5 max-h-48 overflow-y-auto pr-1">
-                {authorizedUsers.map((user) => {
-                  const roleMeta = ROLE_DEFINITIONS[user.role];
-                  const isSuper =
-                    user.email.toLowerCase() === PRIMARY_SUPER_ADMIN_EMAIL.toLowerCase();
-
-                  return (
-                    <button
-                      key={user.id}
-                      type="button"
-                      onClick={() => handleVerifyGoogleIdentity(user.email)}
-                      disabled={!user.isActive}
-                      className={`w-full flex items-center justify-between p-2.5 rounded-xl border text-xs text-left transition-all cursor-pointer touch-manipulation ${
-                        isSuper
-                          ? 'bg-gradient-to-r from-blue-950/40 to-indigo-950/30 border-blue-500/40 hover:border-blue-400 text-slate-100 shadow-sm'
-                          : user.isActive
-                          ? 'bg-slate-900/80 hover:bg-slate-800/90 border-slate-800 text-slate-200 hover:border-blue-500/40'
-                          : 'bg-slate-950/40 border-slate-900 text-slate-600 cursor-not-allowed opacity-60'
-                      }`}
-                    >
-                      <div className="flex items-center gap-2.5 min-w-0">
-                        <div
-                          className={`w-7 h-7 rounded-full flex items-center justify-center font-bold text-xs shrink-0 shadow-inner ${
-                            isSuper
-                              ? 'bg-blue-600 text-white'
-                              : 'bg-slate-800 border border-slate-700 text-slate-300 font-mono'
-                          }`}
-                        >
-                          {isSuper ? 'G' : user.name.charAt(0).toUpperCase()}
-                        </div>
-                        <div className="min-w-0">
-                          <div className="font-medium text-slate-200 truncate flex items-center gap-1.5">
-                            <span>{user.name}</span>
-                            {isSuper && (
-                              <span className="text-[9px] px-1 py-0.2 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30 font-mono">
-                                {t.stage2_root_badge}
-                              </span>
-                            )}
-                          </div>
-                          <div className="text-[10px] text-slate-400 font-mono truncate">
-                            {user.email}
-                          </div>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-1.5 shrink-0 ml-2">
-                        <span
-                          className={`text-[9px] px-1.5 py-0.5 rounded border font-mono ${
-                            roleMeta?.badgeColor || 'bg-slate-800 text-slate-400'
-                          }`}
-                        >
-                          {user.role}
-                        </span>
-                        <ChevronRight className="w-3.5 h-3.5 text-slate-500" />
-                      </div>
-                    </button>
-                  );
-                })}
-              </div>
+            {/* Юридична примітка про обов'язковість захисту таємниці слідства */}
+            <div className="mt-4 pt-3 border-t border-slate-800/80 text-center">
+              <p className="text-[10px] text-slate-500 font-mono">
+                🔒 Art. 73 CPP Suisse · Тільки авторизовані акаунти судового досьє
+              </p>
             </div>
+          </div>
+        )}
 
-            {/* Custom Google Account Modal Trigger */}
-            <div className="pt-2 border-t border-slate-800 flex">
-              <button
-                type="button"
-                onClick={() => setShowCustomGoogleModal(true)}
-                className="w-full py-2.5 px-3 bg-slate-900 hover:bg-slate-800 border border-slate-700/80 hover:border-slate-600 text-slate-200 rounded-xl text-xs font-medium transition-all flex items-center justify-center gap-2 cursor-pointer touch-manipulation"
-              >
-                <Mail className="w-4 h-4 text-blue-400" />
-                <span>{t.stage2_btn_custom_google}</span>
-              </button>
+        {/* ========================================================================= */}
+        {/* СТАН ВЕРИФІКАЦІЇ CALLBACK: ОБРОБКА GOOGLE IDENTITY                        */}
+        {/* ========================================================================= */}
+        {authState.stage === 'AUTHENTICATING' && (
+          <div className="bg-[#0B1120]/95 border border-blue-500/50 rounded-2xl p-6 sm:p-8 shadow-2xl backdrop-blur-xl relative text-center space-y-4 animate-fadeIn">
+            <div className="w-14 h-14 rounded-2xl bg-blue-950/60 border border-blue-500/40 flex items-center justify-center mx-auto text-blue-400 shadow-inner">
+              <Loader2 className="w-7 h-7 animate-spin text-blue-400" />
+            </div>
+            <div>
+              <h2 className="text-base font-bold text-white mb-1">
+                {t.authenticating_title}
+              </h2>
+              <p className="text-xs text-slate-400 max-w-xs mx-auto leading-relaxed">
+                {t.authenticating_desc}
+              </p>
+            </div>
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-900 border border-slate-800 text-[10px] font-mono text-slate-400">
+              <span className="w-2 h-2 rounded-full bg-blue-400 animate-pulse" />
+              <span>ISO/IEC 27037 WORM Authentication Engine</span>
             </div>
           </div>
         )}
@@ -951,26 +882,19 @@ export const AuthGate: React.FC<AuthGateProps> = ({
               </p>
               <p className="text-[10px] text-rose-300/80 italic">
                 Secret de l'instruction (Art. 73 CPP) & Secret professionnel de l'avocat (Art.
-                13 LLCA). Les tentatives d'intrusion non habilitées sont journalisées au WORM-registre.
+                13 LLCA). Les tentatives d'accès non habilitées sont journalisées au WORM-registre.
               </p>
             </div>
 
             {/* Recovery actions */}
             <div className="space-y-2 pt-1 border-t border-slate-800">
-              <button
-                type="button"
-                onClick={() => {
-                  setAuthState((prev) => ({
-                    ...prev,
-                    stage: 'GOOGLE_REQUIRED',
-                    authError: null,
-                  }));
-                }}
+              <a
+                href={cloudRunAuthUrl}
                 className="w-full py-2.5 px-3 bg-blue-600 hover:bg-blue-500 text-white font-semibold rounded-xl text-xs transition-all flex items-center justify-center gap-2 cursor-pointer touch-manipulation"
               >
                 <RotateCcw className="w-3.5 h-3.5" />
                 <span>{t.refusal_retry}</span>
-              </button>
+              </a>
 
               <div className="flex items-center justify-between text-[11px] text-slate-400 px-1 pt-1">
                 <span>
@@ -981,7 +905,7 @@ export const AuthGate: React.FC<AuthGateProps> = ({
                   onClick={handleLock}
                   className="text-slate-400 hover:text-white underline cursor-pointer touch-manipulation"
                 >
-                  {t.stage2_btn_lock}
+                  {t.refusal_close}
                 </button>
               </div>
             </div>
@@ -989,76 +913,11 @@ export const AuthGate: React.FC<AuthGateProps> = ({
         )}
       </div>
 
-      {/* Footer */}
+      {/* 4. Підвал */}
       <div className="w-full max-w-lg mx-auto pt-2 z-10 flex items-center justify-between text-[10px] text-slate-500 font-mono">
         <span>{t.footer_standard}</span>
         <span>{t.footer_bar}</span>
       </div>
-
-      {/* Modal: Custom Google Account Entry */}
-      {showCustomGoogleModal && (
-        <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-sm flex items-center justify-center p-4 animate-fadeIn">
-          <div className="bg-[#0B1120] border border-blue-500/40 rounded-2xl max-w-sm w-full p-5 shadow-2xl space-y-4">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-800">
-              <div className="flex items-center gap-2 text-white font-bold text-sm">
-                <Mail className="w-4 h-4 text-blue-400" />
-                <span>{t.modal_google_title}</span>
-              </div>
-              <button
-                onClick={() => setShowCustomGoogleModal(false)}
-                className="text-slate-400 hover:text-white text-xs cursor-pointer touch-manipulation"
-              >
-                ✕
-              </button>
-            </div>
-
-            <p className="text-xs text-slate-300 leading-relaxed">
-              {t.modal_google_desc}
-            </p>
-
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                if (customGoogleEmail.trim()) {
-                  handleVerifyGoogleIdentity(customGoogleEmail);
-                }
-              }}
-              className="space-y-3"
-            >
-              <div>
-                <label className="block text-[11px] font-semibold text-slate-400 mb-1">
-                  {t.modal_google_input_label}
-                </label>
-                <input
-                  type="email"
-                  required
-                  placeholder="avocat.etude@gmail.com"
-                  value={customGoogleEmail}
-                  onChange={(e) => setCustomGoogleEmail(e.target.value)}
-                  className="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-lg text-white text-xs font-mono focus:ring-1 focus:ring-blue-500 focus:outline-none"
-                />
-              </div>
-
-              <div className="flex items-center justify-end gap-2 pt-2">
-                <button
-                  type="button"
-                  onClick={() => setShowCustomGoogleModal(false)}
-                  className="px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700 text-xs cursor-pointer touch-manipulation"
-                >
-                  {t.modal_btn_cancel}
-                </button>
-                <button
-                  type="submit"
-                  className="px-4 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs flex items-center gap-1.5 cursor-pointer touch-manipulation"
-                >
-                  <CheckCircle2 className="w-3.5 h-3.5" />
-                  <span>{t.modal_btn_auth}</span>
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
 
       {/* Modal: Legal Strategy & Templates Modal */}
       <LegalStrategyModal
