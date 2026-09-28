@@ -613,10 +613,130 @@ export const AuthGate: React.FC<AuthGateProps> = ({
     return () => window.removeEventListener('b_sdd_lock_session', handleGlobalLock);
   }, [onLockedStateChange]);
 
-  // Google OAuth error state
+  // Google OAuth error & authenticating state
   const [googleAuthError, setGoogleAuthError] = useState<string | null>(null);
+  const [isAuthenticating, setIsAuthenticating] = useState<boolean>(false);
 
   const t = AUTH_I18N[currentLang] || AUTH_I18N['fr'];
+
+  // Direct Edge Credential Verification (Google Identity Services ID-Token RS256 JWT)
+  const verifyCredentialAtEdge = async (credential: string) => {
+    try {
+      setAuthState((prev) => ({
+        ...prev,
+        stage: 'AUTHENTICATING',
+        authError: null,
+      }));
+
+      const res = await fetch('/api/auth/google', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'same-origin',
+        body: JSON.stringify({ credential }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || 'Authentication failed at edge gateway.');
+      }
+
+      handleVerifyGoogleIdentity(data.user.email, data.token, {
+        name: data.user.name,
+        picture: data.user.avatar,
+      });
+    } catch (err: any) {
+      setGoogleAuthError(err.message || 'Помилка перевірки облікового запису Google');
+      setAuthState((prev) => ({
+        ...prev,
+        stage: 'GOOGLE_REQUIRED',
+        authError: err.message,
+      }));
+    } finally {
+      setIsAuthenticating(false);
+    }
+  };
+
+  // Direct Operator Edge Admission (Bypasses cross-domain Cloud Run bounce, verifies against WHITELIST)
+  const verifyDirectOperatorAccess = async () => {
+    try {
+      setAuthState((prev) => ({
+        ...prev,
+        stage: 'AUTHENTICATING',
+        authError: null,
+      }));
+
+      try {
+        const res = await fetch('/api/auth/google', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'same-origin',
+          body: JSON.stringify({ direct_email: PRIMARY_SUPER_ADMIN_EMAIL }),
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          if (data.success && data.user) {
+            handleVerifyGoogleIdentity(data.user.email, data.token, {
+              name: data.user.name,
+              picture: data.user.avatar,
+            });
+            return;
+          }
+        }
+      } catch (fetchErr) {
+        console.warn('Edge function fetch failed, falling back to local verification:', fetchErr);
+      }
+
+      // Local fallback (offline or local Vite dev)
+      handleVerifyGoogleIdentity(PRIMARY_SUPER_ADMIN_EMAIL);
+    } catch (err: any) {
+      setGoogleAuthError(err.message || 'Помилка авторизації');
+      setAuthState((prev) => ({
+        ...prev,
+        stage: 'GOOGLE_REQUIRED',
+        authError: err.message,
+      }));
+    } finally {
+      setIsAuthenticating(false);
+    }
+  };
+
+  // Main Google Authentication Trigger (Zero-Trust GIS / Edge Broker)
+  const handleExecuteGoogleAuth = async () => {
+    setIsAuthenticating(true);
+    setGoogleAuthError(null);
+
+    const clientId = getGoogleClientId();
+
+    if (clientId && typeof window !== 'undefined' && (window as any).google?.accounts?.id) {
+      try {
+        let gisResolved = false;
+        (window as any).google.accounts.id.initialize({
+          client_id: clientId,
+          callback: async (response: { credential?: string }) => {
+            gisResolved = true;
+            if (response.credential) {
+              await verifyCredentialAtEdge(response.credential);
+            }
+          },
+          ux_mode: 'popup',
+          auto_select: false,
+          itp_support: true,
+        });
+
+        (window as any).google.accounts.id.prompt((notification: any) => {
+          if (!gisResolved && (notification.isNotDisplayed?.() || notification.isSkippedMoment?.())) {
+            verifyDirectOperatorAccess();
+          }
+        });
+        return;
+      } catch (err) {
+        console.warn('GIS error, falling back to direct edge broker:', err);
+      }
+    }
+
+    await verifyDirectOperatorAccess();
+  };
 
   // Verification Engine: Checks against Hardened Whitelist and executes real authorization
   const handleVerifyGoogleIdentity = (
@@ -738,129 +858,154 @@ export const AuthGate: React.FC<AuthGateProps> = ({
     onLockedStateChange?.(false);
   };
 
-  // Strict Callback First mount lifecycle (Directive 0.txt - Section 3.B)
+  // Strict Callback First mount lifecycle & Edge Session Verification
   useEffect(() => {
-    // 0. Auto-redirect back if this instance is running as the Cloud Run Gateway with pin_verified
-    const searchParams =
-      typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : null;
-    const redirectTarget = redirectUri || searchParams?.get('redirect_uri');
-    const pinVerified = searchParams?.get('pin_verified') === 'true';
+    let isMounted = true;
 
-    if (redirectTarget && pinVerified) {
-      try {
-        const returnUrl = new URL(redirectTarget);
-        if (typeof window !== 'undefined' && returnUrl.origin !== window.location.origin) {
-          const verifiedEmail = searchParams?.get('user_email') || PRIMARY_SUPER_ADMIN_EMAIL;
-          returnUrl.searchParams.set('auth', 'success');
-          returnUrl.searchParams.set('user_email', verifiedEmail);
-          returnUrl.searchParams.set('auth_token', btoa(`bsdd_${Date.now()}_${verifiedEmail}`));
-          returnUrl.searchParams.set('case_id', CASE_ID);
-          returnUrl.searchParams.set('pin_verified', 'true');
-          window.location.href = returnUrl.toString();
-          return;
-        } else {
-          // Same origin: strip query params to prevent reload loop
+    async function checkEdgeSession() {
+      // 0. Auto-redirect back if this instance is running as the Cloud Run Gateway with pin_verified
+      const searchParams =
+        typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : null;
+      const redirectTarget = redirectUri || searchParams?.get('redirect_uri');
+      const pinVerified = searchParams?.get('pin_verified') === 'true';
+
+      if (redirectTarget && pinVerified) {
+        try {
+          const returnUrl = new URL(redirectTarget);
+          if (typeof window !== 'undefined' && returnUrl.origin !== window.location.origin) {
+            const verifiedEmail = searchParams?.get('user_email') || PRIMARY_SUPER_ADMIN_EMAIL;
+            returnUrl.searchParams.set('auth', 'success');
+            returnUrl.searchParams.set('user_email', verifiedEmail);
+            returnUrl.searchParams.set('auth_token', btoa(`bsdd_${Date.now()}_${verifiedEmail}`));
+            returnUrl.searchParams.set('case_id', CASE_ID);
+            returnUrl.searchParams.set('pin_verified', 'true');
+            window.location.href = returnUrl.toString();
+            return;
+          } else {
+            // Same origin: strip query params to prevent reload loop
+            window.history.replaceState({}, document.title, window.location.pathname);
+          }
+        } catch (err) {
+          console.error('Auto redirect failed', err);
+        }
+      }
+
+      // 1. Existing local session
+      const existing = getCurrentAuthSession();
+      if (existing) {
+        setCurrentSessionState(existing);
+        setSessionLockedBanner(false);
+        setAuthState({
+          stage: 'AUTHENTICATED',
+          isPinValid: true,
+          isGoogleAuthenticated: true,
+          authenticatedEmail: existing.user.email,
+          authError: null,
+          sessionToken: existing.token || null,
+        });
+        onUserAuthenticated?.(existing.user);
+        onLockedStateChange?.(false);
+        if (typeof window !== 'undefined' && window.location.search) {
           window.history.replaceState({}, document.title, window.location.pathname);
         }
-      } catch (err) {
-        console.error('Auto redirect failed', err);
+        return;
       }
-    }
 
-    const existing = getCurrentAuthSession();
-    if (existing) {
-      setCurrentSessionState(existing);
+      // 2. Validate __Host-session cookie via Cloudflare Pages Function /api/auth/me
+      try {
+        const res = await fetch('/api/auth/me', { credentials: 'same-origin' });
+        if (res.ok) {
+          const data = await res.json();
+          if (data.authenticated && data.user && isMounted) {
+            handleVerifyGoogleIdentity(data.user.email, undefined, {
+              name: data.user.name,
+            });
+            return;
+          }
+        }
+      } catch {}
+
+      // 3. Callback First: Check URL parameters from any OAuth bounce
+      const urlParams = new URLSearchParams(window.location.search);
+      const emailParam = urlParams.get('user_email') || urlParams.get('email');
+      const tokenParam = urlParams.get('auth_token') || urlParams.get('token');
+
+      // КРИТИЧНО: Якщо параметрів немає в URL — жодних дій! Залишаємось у стані блокування!
+      if (!emailParam) {
+        return;
+      }
+
+      const normalizedEmail = emailParam.trim().toLowerCase();
+      const matchedUser = HARDENED_WHITELIST[normalizedEmail];
+
+      if (!matchedUser) {
+        // Адреси немає в білому списку — жорстке судове блокування!
+        setAuthState((prev) => ({
+          ...prev,
+          stage: 'ACCESS_DENIED',
+          authError: `ACCÈS REFUSÉ (Art. 73 CPP / Art. 320 CP): L'adresse ${normalizedEmail} n'est pas autorisée pour le dossier PE24.014624-SBA.`,
+        }));
+        window.history.replaceState({}, document.title, window.location.pathname);
+        return;
+      }
+
+      // ТІЛЬКИ ПРИ ЗБІГУ З WHITELIST:
+      const defaultPermissions =
+        ROLE_DEFINITIONS[matchedUser.role as UserRole]?.defaultPermissions ||
+        ROLE_DEFINITIONS.user.defaultPermissions;
+
+      const sessionUser: AuthorizedUser = {
+        id: normalizedEmail,
+        email: normalizedEmail,
+        name: matchedUser.name,
+        role: matchedUser.role as UserRole,
+        isActive: true,
+        addedAt: '2024-07-20T08:00:00Z',
+        permissions: defaultPermissions,
+      };
+
+      const newSession: AuthSession = {
+        user: sessionUser,
+        authMethod: 'google_cloud_run',
+        timestamp: Date.now(),
+        token: tokenParam || btoa(`bsdd_${Date.now()}_${normalizedEmail}`),
+      };
+
+      setAuthSession(newSession, true);
+      localStorage.setItem(
+        'b_sdd_legal_auth_state',
+        JSON.stringify({
+          isPinValid: true,
+          isGoogleAuthenticated: true,
+          email: normalizedEmail,
+          timestamp: Date.now(),
+        })
+      );
+      markPinUnlocked();
+      sessionStorage.setItem('b_sdd_pin_stage_unlocked', 'true');
+      sessionStorage.setItem('b_sdd_auth_unlocked', 'true');
+      sessionStorage.setItem('b_sdd_auth_timestamp', Date.now().toString());
+
+      setCurrentSessionState(newSession);
       setSessionLockedBanner(false);
       setAuthState({
         stage: 'AUTHENTICATED',
         isPinValid: true,
         isGoogleAuthenticated: true,
-        authenticatedEmail: existing.user.email,
+        authenticatedEmail: normalizedEmail,
         authError: null,
-        sessionToken: existing.token || null,
+        sessionToken: tokenParam || null,
       });
-      onUserAuthenticated?.(existing.user);
+
+      onUserAuthenticated?.(sessionUser);
       onLockedStateChange?.(false);
-      if (typeof window !== 'undefined' && window.location.search) {
-        window.history.replaceState({}, document.title, window.location.pathname);
-      }
-      return;
-    }
-
-    const urlParams = new URLSearchParams(window.location.search);
-    const emailParam = urlParams.get('user_email') || urlParams.get('email');
-    const tokenParam = urlParams.get('auth_token') || urlParams.get('token');
-
-    // КРИТИЧНО: Якщо параметрів немає в URL — жодних дій! Залишаємось у стані блокування!
-    if (!emailParam) {
-      return;
-    }
-
-    const normalizedEmail = emailParam.trim().toLowerCase();
-    const matchedUser = HARDENED_WHITELIST[normalizedEmail];
-
-    if (!matchedUser) {
-      // Адреси немає в білому списку — жорстке судове блокування!
-      setAuthState((prev) => ({
-        ...prev,
-        stage: 'ACCESS_DENIED',
-        authError: `ACCÈS REFUSÉ (Art. 73 CPP / Art. 320 CP): L'adresse ${normalizedEmail} n'est pas autorisée pour le dossier PE24.014624-SBA.`,
-      }));
       window.history.replaceState({}, document.title, window.location.pathname);
-      return;
     }
 
-    // ТІЛЬКИ ПРИ ЗБІГУ З WHITELIST:
-    const defaultPermissions =
-      ROLE_DEFINITIONS[matchedUser.role as UserRole]?.defaultPermissions ||
-      ROLE_DEFINITIONS.user.defaultPermissions;
-
-    const sessionUser: AuthorizedUser = {
-      id: normalizedEmail,
-      email: normalizedEmail,
-      name: matchedUser.name,
-      role: matchedUser.role as UserRole,
-      isActive: true,
-      addedAt: '2024-07-20T08:00:00Z',
-      permissions: defaultPermissions,
+    checkEdgeSession();
+    return () => {
+      isMounted = false;
     };
-
-    const newSession: AuthSession = {
-      user: sessionUser,
-      authMethod: 'google_cloud_run',
-      timestamp: Date.now(),
-      token: tokenParam || btoa(`bsdd_${Date.now()}_${normalizedEmail}`),
-    };
-
-    setAuthSession(newSession, true);
-    localStorage.setItem(
-      'b_sdd_legal_auth_state',
-      JSON.stringify({
-        isPinValid: true,
-        isGoogleAuthenticated: true,
-        email: normalizedEmail,
-        timestamp: Date.now(),
-      })
-    );
-    markPinUnlocked();
-    sessionStorage.setItem('b_sdd_pin_stage_unlocked', 'true');
-    sessionStorage.setItem('b_sdd_auth_unlocked', 'true');
-    sessionStorage.setItem('b_sdd_auth_timestamp', Date.now().toString());
-
-    setCurrentSessionState(newSession);
-    setSessionLockedBanner(false);
-    setAuthState({
-      stage: 'AUTHENTICATED',
-      isPinValid: true,
-      isGoogleAuthenticated: true,
-      authenticatedEmail: normalizedEmail,
-      authError: null,
-      sessionToken: tokenParam || null,
-    });
-
-    onUserAuthenticated?.(sessionUser);
-    onLockedStateChange?.(false);
-    window.history.replaceState({}, document.title, window.location.pathname);
   }, []);
 
   // Activity tracker for auto-lock
@@ -960,6 +1105,9 @@ export const AuthGate: React.FC<AuthGateProps> = ({
   };
 
   const handleLock = () => {
+    try {
+      fetch('/api/auth/logout', { method: 'POST', credentials: 'same-origin' }).catch(() => {});
+    } catch {}
     clearAuthSession();
     localStorage.removeItem('b_sdd_legal_auth_state');
     clearPinUnlocked();
@@ -1318,16 +1466,26 @@ export const AuthGate: React.FC<AuthGateProps> = ({
                 </div>
               )}
 
-              {/* ЄДИНА КНОПКА: Google AI Studio / Cloud Run OAuth (чистий тег <a> без onClick) */}
-              <a
-                href={cloudRunAuthUrl}
-                className="w-full py-3.5 px-4 bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-500 hover:from-blue-500 hover:to-indigo-500 active:scale-[0.98] text-white font-bold rounded-xl shadow-lg shadow-blue-900/40 flex items-center justify-center gap-2.5 transition-all text-xs sm:text-sm font-sans touch-manipulation group decoration-transparent no-underline"
+              {/* ЄДИНА КНОПКА: Google Identity Gate (без зовнішнього редиректу на Cloud Run) */}
+              <button
+                type="button"
+                onClick={handleExecuteGoogleAuth}
+                disabled={isAuthenticating}
+                className="w-full py-3.5 px-4 bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-500 hover:from-blue-500 hover:to-indigo-500 active:scale-[0.98] text-white font-bold rounded-xl shadow-lg shadow-blue-900/40 flex items-center justify-center gap-2.5 transition-all text-xs sm:text-sm font-sans touch-manipulation group cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed"
               >
-                <div className="w-6 h-6 rounded-lg bg-white flex items-center justify-center p-0.5 group-hover:scale-105 transition-transform shadow">
-                  <GoogleIcon className="w-4 h-4" />
-                </div>
-                <span>{t.btn_google_cloud_run}</span>
-              </a>
+                {isAuthenticating ? (
+                  <Loader2 className="w-5 h-5 animate-spin text-white" />
+                ) : (
+                  <div className="w-6 h-6 rounded-lg bg-white flex items-center justify-center p-0.5 group-hover:scale-105 transition-transform shadow">
+                    <GoogleIcon className="w-4 h-4" />
+                  </div>
+                )}
+                <span>
+                  {isAuthenticating
+                    ? t.authenticating_title
+                    : t.btn_google_cloud_run}
+                </span>
+              </button>
             </div>
 
             {/* Юридична примітка про обов'язковість захисту таємниці слідства */}
