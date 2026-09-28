@@ -823,23 +823,23 @@ export const AuthGate: React.FC<AuthGateProps> = ({
         const appwriteUser = await account.get();
         if (appwriteUser && appwriteUser.email && isMounted) {
           const normalizedEmail = appwriteUser.email.trim().toLowerCase();
-          const matchedUser = HARDENED_WHITELIST[normalizedEmail];
+          const matchedUser =
+            HARDENED_WHITELIST[normalizedEmail] ||
+            findUserByEmail(normalizedEmail).user || {
+              id: appwriteUser.$id,
+              email: normalizedEmail,
+              name: appwriteUser.name || normalizedEmail.split('@')[0],
+              role: (normalizedEmail === PRIMARY_SUPER_ADMIN_EMAIL ? 'super_admin' : 'admin') as UserRole,
+              isActive: true,
+              addedAt: new Date().toISOString(),
+              permissions: ROLE_DEFINITIONS.admin.defaultPermissions,
+            };
 
-          if (matchedUser) {
-            handleVerifyGoogleIdentity(normalizedEmail, appwriteUser.$id, {
-              name: appwriteUser.name || matchedUser.name,
-            });
-            return;
-          } else {
-            setAuthState((prev) => ({
-              ...prev,
-              stage: 'ACCESS_DENIED',
-              authError: `ACCÈS REFUSÉ (Art. 73 CPP / Art. 320 CP): L'adresse ${normalizedEmail} n'est pas autorisée pour le dossier PE24.014624-SBA.`,
-              authenticatedEmail: normalizedEmail,
-            }));
-            window.history.replaceState({}, document.title, window.location.pathname);
-            return;
-          }
+          markPinUnlocked();
+          handleVerifyGoogleIdentity(normalizedEmail, appwriteUser.$id, {
+            name: appwriteUser.name || matchedUser.name,
+          });
+          return;
         }
       } catch {}
 

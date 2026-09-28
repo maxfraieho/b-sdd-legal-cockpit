@@ -31,6 +31,7 @@ import { FeedbackSupervisorModal } from "./components/FeedbackSupervisorModal";
 import { AuthGate } from "./components/AuthGate";
 import { AuthorizedUser } from "./types/auth";
 import { getCurrentAuthSession, clearAuthSession } from "./lib/authManager";
+import { signOut } from "./lib/appwrite";
 import {
   LegalCase,
   BENCHMARK_CASES,
@@ -211,15 +212,7 @@ export default function App() {
   const handleLogout = () => {
     clearAuthSession();
     setCurrentUser(null);
-    setForceLockKey((prev) => prev + 1);
-    if (typeof window !== "undefined") {
-      window.dispatchEvent(new CustomEvent("b_sdd_lock_session"));
-    }
-    showToast(
-      currentLang === "uk" ? "Вихід з системи" : "Déconnexion",
-      currentLang === "uk" ? "Сеанс заблоковано. Потрібен ввід ПІН-коду." : "Session Google terminée",
-      "info"
-    );
+    signOut();
   };
 
   const handleCommitActor = (newActor: ActorItem) => {
