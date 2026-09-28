@@ -58,7 +58,9 @@ const CASE_ID = 'PE24.014624-SBA';
 // Helper for cross-origin PIN persistence during OAuth redirections
 const isPinUnlockedLocally = (): boolean => {
   try {
+    if (sessionStorage.getItem('b_sdd_pin_verified') === 'true') return true;
     if (sessionStorage.getItem('b_sdd_pin_stage_unlocked') === 'true') return true;
+    if (localStorage.getItem('b_sdd_pin_verified') === 'true') return true;
     const ts = localStorage.getItem('b_sdd_pin_stage_unlocked_ts');
     if (ts) {
       const elapsed = Date.now() - parseInt(ts, 10);
@@ -71,16 +73,52 @@ const isPinUnlockedLocally = (): boolean => {
 
 const markPinUnlocked = () => {
   try {
+    sessionStorage.setItem('b_sdd_pin_verified', 'true');
     sessionStorage.setItem('b_sdd_pin_stage_unlocked', 'true');
+    localStorage.setItem('b_sdd_pin_verified', 'true');
     localStorage.setItem('b_sdd_pin_stage_unlocked_ts', Date.now().toString());
   } catch {}
 };
 
 const clearPinUnlocked = () => {
   try {
+    sessionStorage.removeItem('b_sdd_pin_verified');
     sessionStorage.removeItem('b_sdd_pin_stage_unlocked');
+    localStorage.removeItem('b_sdd_pin_verified');
     localStorage.removeItem('b_sdd_pin_stage_unlocked_ts');
   } catch {}
+};
+
+// Callback First: Parse Google OAuth callback parameters from URL query and hash
+const getUrlCallbackParams = (): { email: string | null; token: string | null } => {
+  try {
+    if (typeof window === 'undefined') return { email: null, token: null };
+    const searchParams = new URLSearchParams(window.location.search);
+    const hashString = window.location.hash.startsWith('#')
+      ? window.location.hash.slice(1)
+      : window.location.hash;
+    const hashParams = new URLSearchParams(hashString);
+
+    const email =
+      searchParams.get('user_email') ||
+      searchParams.get('email') ||
+      hashParams.get('user_email') ||
+      hashParams.get('email');
+    const token =
+      searchParams.get('auth_token') ||
+      searchParams.get('token') ||
+      searchParams.get('access_token') ||
+      hashParams.get('auth_token') ||
+      hashParams.get('token') ||
+      hashParams.get('access_token');
+
+    return {
+      email: email ? email.trim().toLowerCase() : null,
+      token: token ? token.trim() : null,
+    };
+  } catch {
+    return { email: null, token: null };
+  }
 };
 
 // Закритий внутрішній реєстр допуску до матеріалів справи PE24.014624-SBA
@@ -368,6 +406,20 @@ export const AuthGate: React.FC<AuthGateProps> = ({
       };
     }
 
+    // 2. Callback First: Check URL callback parameters (user_email / auth_token)
+    const callbackParams = getUrlCallbackParams();
+    if (callbackParams.email) {
+      markPinUnlocked();
+      return {
+        stage: 'AUTHENTICATING',
+        isPinValid: true,
+        isGoogleAuthenticated: false,
+        authenticatedEmail: callbackParams.email,
+        authError: null,
+        sessionToken: callbackParams.token,
+      };
+    }
+
     try {
       const searchParams =
         typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : null;
@@ -544,42 +596,18 @@ export const AuthGate: React.FC<AuthGateProps> = ({
       return;
     }
 
-    // Check URL query parameters and hash fragment for Google OAuth callback
-    const searchParams = new URLSearchParams(window.location.search);
-    const hashString = window.location.hash.startsWith('#')
-      ? window.location.hash.slice(1)
-      : window.location.hash;
-    const hashParams = new URLSearchParams(hashString);
-
-    const emailParam =
-      searchParams.get('user_email') ||
-      searchParams.get('email') ||
-      hashParams.get('user_email') ||
-      hashParams.get('email');
-    const tokenParam =
-      searchParams.get('auth_token') ||
-      searchParams.get('token') ||
-      searchParams.get('access_token') ||
-      hashParams.get('auth_token') ||
-      hashParams.get('token') ||
-      hashParams.get('access_token');
+    // Callback First: Check URL query parameters and hash fragment for Google OAuth callback
+    const { email: emailParam, token: tokenParam } = getUrlCallbackParams();
 
     if (emailParam) {
       // Clean sensitive query parameters from browser URL bar without reloading
-      window.history.replaceState({}, document.title, window.location.pathname);
+      try {
+        window.history.replaceState({}, document.title, window.location.pathname);
+      } catch {}
 
-      if (isPinUnlockedLocally()) {
-        handleVerifyGoogleIdentity(emailParam, tokenParam || undefined);
-      } else {
-        // Queue pending email verification until PIN is entered
-        sessionStorage.setItem('b_sdd_pending_google_email', emailParam);
-        localStorage.setItem('b_sdd_pending_google_email', emailParam);
-        setPendingGoogleEmail(emailParam);
-        if (tokenParam) {
-          sessionStorage.setItem('b_sdd_pending_google_token', tokenParam);
-          localStorage.setItem('b_sdd_pending_google_token', tokenParam);
-        }
-      }
+      // Callback First: do NOT require PIN re-entry if coming back from OAuth with verified identity
+      markPinUnlocked();
+      handleVerifyGoogleIdentity(emailParam, tokenParam || undefined);
     }
   }, []);
 
