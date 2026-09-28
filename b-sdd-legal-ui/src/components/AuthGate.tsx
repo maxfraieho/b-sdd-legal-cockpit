@@ -1499,7 +1499,7 @@ export const AuthGate: React.FC<AuthGateProps> = ({
 
               <div className="flex items-center justify-between text-[11px] text-slate-400 px-1 pt-1">
                 <span>
-                  Адміністратор: <strong className="text-slate-300 font-mono">tukroschu@gmail.com (Володимир Анатолійович)</strong>
+                  Адміністратор: <strong className="text-slate-300 font-mono">{t.refusal_admin}</strong>
                 </span>
                 <button
                   type="button"

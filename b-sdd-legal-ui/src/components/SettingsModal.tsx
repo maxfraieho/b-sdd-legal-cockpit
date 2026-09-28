@@ -408,7 +408,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
 
     if (!isSuperAdmin) {
       setUserActionMsg({
-        text: `Лише Головний Адміністратор (${PRIMARY_SUPER_ADMIN_EMAIL}) має право додавати нових користувачів.`,
+        text: 'Лише Головний Адміністратор має право додавати нових користувачів.',
         type: 'error',
       });
       return;
@@ -1586,7 +1586,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                     <span>Додати нового користувача Google до списку доступу</span>
                   </h4>
                   <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-blue-950/80 border border-blue-800/80 text-blue-300">
-                    Лише Адміністратор ({PRIMARY_SUPER_ADMIN_EMAIL})
+                    Лише Головний Адміністратор
                   </span>
                 </div>
 
