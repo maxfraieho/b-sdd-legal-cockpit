@@ -303,7 +303,7 @@ export const Topbar: React.FC<TopbarProps> = ({
               <button
                 onClick={() => setUserDropdownOpen(!userDropdownOpen)}
                 className="flex items-center space-x-1.5 px-2 py-1 rounded-md bg-[#070B12] hover:bg-slate-800/80 border border-slate-800/90 text-slate-300 hover:text-white transition-all text-[11px] font-mono cursor-pointer"
-                title={`${currentUser.name} (${currentUser.email})`}
+                title={`${currentUser.name} (Уповноважений доступ Art. 73 CPP)`}
               >
                 <div className="w-5 h-5 rounded-full bg-blue-600 border border-blue-400/60 flex items-center justify-center text-white text-[10px] font-bold shrink-0">
                   {currentUser.name.charAt(0).toUpperCase()}
@@ -331,8 +331,8 @@ export const Topbar: React.FC<TopbarProps> = ({
                       <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
                       <span>{currentUser.name}</span>
                     </div>
-                    <div className="text-[11px] text-slate-400 font-mono truncate mt-0.5">
-                      {currentUser.email}
+                    <div className="text-[11px] text-blue-300/90 font-mono truncate mt-0.5 flex items-center gap-1">
+                      <span>🔒 Уповноважений допуск · Art. 73 CPP</span>
                     </div>
                     <div className="mt-1.5">
                       <span

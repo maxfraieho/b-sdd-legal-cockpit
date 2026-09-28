@@ -10,15 +10,15 @@ const STORAGE_SESSION_KEY = 'b_sdd_auth_session_v1';
 const STORAGE_STRICT_MODE_KEY = 'b_sdd_strict_whitelist_mode';
 export const STORAGE_CLOUD_RUN_ENDPOINT_KEY = 'b_sdd_cloud_run_auth_endpoint';
 
-// Active Google Cloud Run Identity Gateway (ais-dev-cy5vorrb7cys2mpbzcua5g)
+// Active Google Cloud Run Identity Gateway (requested by user)
 export const DEFAULT_CLOUD_RUN_AUTH_ENDPOINT =
-  'https://ais-dev-cy5vorrb7cys2mpbzcua5g-147404199355.europe-west3.run.app';
+  'https://ais-dev-e2sihlyjbjzxc5lxx4nkc2-147404199355.europe-west3.run.app';
 
 export function getCloudRunAuthEndpoint(): string {
   try {
     const custom = localStorage.getItem(STORAGE_CLOUD_RUN_ENDPOINT_KEY);
     if (custom && custom.trim().startsWith('https://')) {
-      if (custom.includes('e2sihlyjbjzxc5lxx4nkc2')) {
+      if (custom.includes('europe-west2.run.app')) {
         localStorage.setItem(STORAGE_CLOUD_RUN_ENDPOINT_KEY, DEFAULT_CLOUD_RUN_AUTH_ENDPOINT);
         return DEFAULT_CLOUD_RUN_AUTH_ENDPOINT;
       }
@@ -34,6 +34,26 @@ export function setCloudRunAuthEndpoint(url: string): void {
       localStorage.setItem(STORAGE_CLOUD_RUN_ENDPOINT_KEY, url.trim());
     } else {
       localStorage.removeItem(STORAGE_CLOUD_RUN_ENDPOINT_KEY);
+    }
+  } catch {}
+}
+
+export const STORAGE_GOOGLE_CLIENT_ID_KEY = 'b_sdd_google_client_id';
+
+export function getGoogleClientId(): string {
+  try {
+    return localStorage.getItem(STORAGE_GOOGLE_CLIENT_ID_KEY) || '';
+  } catch {
+    return '';
+  }
+}
+
+export function setGoogleClientId(clientId: string): void {
+  try {
+    if (clientId && clientId.trim()) {
+      localStorage.setItem(STORAGE_GOOGLE_CLIENT_ID_KEY, clientId.trim());
+    } else {
+      localStorage.removeItem(STORAGE_GOOGLE_CLIENT_ID_KEY);
     }
   } catch {}
 }
@@ -310,26 +330,14 @@ export function verifyEmailAccess(email: string): {
     };
   }
 
-  // If not found in whitelist:
-  if (!strict) {
-    // Auto-provision basic viewer/user if strict mode is disabled
-    const autoUser = addAuthorizedUser({
-      email: normalized,
-      name: normalized.split('@')[0],
-      role: 'user',
-      notes: 'Автоматично зареєстровано в режимі відкритого доступу',
-    });
-    return {
-      allowed: true,
-      user: autoUser,
-    };
-  }
-
+  // If not found in whitelist: STRICT ZERO-TRUST: NO AUTO-PROVISIONING
   return {
     allowed: false,
     reason: 'not_whitelisted',
   };
 }
+
+export const findUserByEmail = verifyEmailAccess;
 
 /**
  * Get current active session

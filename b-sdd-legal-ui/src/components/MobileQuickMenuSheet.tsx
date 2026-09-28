@@ -580,7 +580,7 @@ export const MobileQuickMenuSheet: React.FC<MobileQuickMenuSheetProps> = ({
                   </div>
                   <div className="min-w-0">
                     <div className="font-semibold text-white truncate text-xs">{currentUser.name}</div>
-                    <div className="text-[10px] text-slate-400 font-mono truncate">{currentUser.email}</div>
+                    <div className="text-[10px] text-blue-300/90 font-mono truncate">🔒 Уповноважений допуск · Art. 73 CPP</div>
                   </div>
                 </div>
                 <span

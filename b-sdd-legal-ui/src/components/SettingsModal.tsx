@@ -81,6 +81,8 @@ import {
   getCloudRunAuthEndpoint,
   setCloudRunAuthEndpoint,
   DEFAULT_CLOUD_RUN_AUTH_ENDPOINT,
+  getGoogleClientId,
+  setGoogleClientId,
 } from '../lib/authManager';
 import { AuthorizedUser, UserRole, ROLE_DEFINITIONS } from '../types/auth';
 
@@ -177,6 +179,16 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
   // Cloud Run Identity Endpoint state
   const [cloudRunEndpoint, setCloudRunEndpointState] = useState<string>(() => getCloudRunAuthEndpoint());
   const [isSavedEndpoint, setIsSavedEndpoint] = useState<boolean>(false);
+
+  // Google OAuth Client ID state
+  const [googleClientId, setGoogleClientIdState] = useState<string>(() => getGoogleClientId());
+  const [isSavedClientId, setIsSavedClientId] = useState<boolean>(false);
+
+  const handleSaveGoogleClientId = () => {
+    setGoogleClientId(googleClientId);
+    setIsSavedClientId(true);
+    setTimeout(() => setIsSavedClientId(false), 2000);
+  };
 
   const handleSaveCloudRunEndpoint = () => {
     setCloudRunAuthEndpoint(cloudRunEndpoint);
@@ -1459,7 +1471,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                       type="url"
                       value={cloudRunEndpoint}
                       onChange={(e) => setCloudRunEndpointState(e.target.value)}
-                      placeholder="https://ais-dev-...europe-west3.run.app"
+                      placeholder="https://ais-dev-e2sihlyjbjzxc5lxx4nkc2-147404199355.europe-west3.run.app"
                       className="flex-1 bg-slate-950 border border-slate-700 focus:border-blue-500 rounded-lg px-3 py-2 text-xs font-mono text-blue-300 focus:outline-none"
                     />
                     <button
@@ -1482,6 +1494,36 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                   <div className="flex items-center justify-between text-[10px] text-slate-500 font-mono">
                     <span>За замовчуванням: {DEFAULT_CLOUD_RUN_AUTH_ENDPOINT}</span>
                   </div>
+                </div>
+
+                {/* Google OAuth 2.0 Client ID */}
+                <div className="pt-2 border-t border-slate-800/80 space-y-1.5">
+                  <div className="flex items-center justify-between">
+                    <label className="text-xs font-semibold text-slate-300 flex items-center gap-1.5">
+                      <Fingerprint className="w-3.5 h-3.5 text-blue-400" />
+                      <span>Google OAuth 2.0 Client ID (для спливаючого вікна Sign In with Google):</span>
+                    </label>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="text"
+                      value={googleClientId}
+                      onChange={(e) => setGoogleClientIdState(e.target.value)}
+                      placeholder="напр. 123456789-xxxx.apps.googleusercontent.com"
+                      className="flex-1 bg-slate-950 border border-slate-700 focus:border-blue-500 rounded-lg px-3 py-2 text-xs font-mono text-blue-300 focus:outline-none"
+                    />
+                    <button
+                      type="button"
+                      onClick={handleSaveGoogleClientId}
+                      className="px-3 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer"
+                    >
+                      {isSavedClientId ? <Check className="w-3.5 h-3.5 text-emerald-300" /> : null}
+                      <span>{isSavedClientId ? 'Збережено' : 'Зберегти'}</span>
+                    </button>
+                  </div>
+                  <p className="text-[10px] text-slate-500 font-mono">
+                    Створюється в Google Cloud Console → APIs & Services → Credentials → OAuth 2.0 Client ID (Web Application).
+                  </p>
                 </div>
 
                 <div className="pt-2 flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-t border-slate-800/80">
