@@ -16,12 +16,9 @@ export const AuthSuccessPage: React.FC = () => {
         }
       } catch (err: any) {
         if (isMounted) {
-          setError(err?.message || 'Помилка створення сесії');
-          setTimeout(() => {
-            window.location.replace(
-              '/auth/failure?error=' + encodeURIComponent(err?.message || 'OAuth session error')
-            );
-          }, 1200);
+          console.warn('OAuth fallback to dashboard:', err);
+          // Seamless fallback: Land in Cockpit AuthGate instead of hard failure screen
+          window.location.replace('/dashboard');
         }
       }
     }

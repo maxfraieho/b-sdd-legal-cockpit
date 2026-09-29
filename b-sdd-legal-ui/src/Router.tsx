@@ -60,8 +60,8 @@ export const Router: React.FC = () => {
     return <AuthFailurePage />;
   }
 
-  // Main Dashboard route: /dashboard or /cockpit -> Directly renders the full B-SDD Legal Cockpit!
-  if (currentPath === '/dashboard' || currentPath === '/cockpit') {
+  // Main Dashboard / Cockpit / Root route: directly renders App protected by sovereign AuthGate
+  if (currentPath === '/' || currentPath === '/dashboard' || currentPath === '/cockpit') {
     return <App />;
   }
 
@@ -70,6 +70,6 @@ export const Router: React.FC = () => {
     return <DashboardPage onOpenCockpit={() => window.location.assign('/dashboard')} />;
   }
 
-  // Root or unrecognized routes: Route Guard evaluates session
-  return <RootGuardRedirect />;
+  // Default fallback: render App protected by AuthGate
+  return <App />;
 };

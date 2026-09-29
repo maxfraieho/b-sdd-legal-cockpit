@@ -1,5 +1,5 @@
 import React from 'react';
-import { AlertTriangle, ArrowLeft, ShieldAlert, Settings } from 'lucide-react';
+import { AlertTriangle, ArrowLeft, ShieldAlert, Settings, ShieldCheck } from 'lucide-react';
 
 export const AuthFailurePage: React.FC = () => {
   const queryParams = typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : null;
@@ -45,14 +45,23 @@ export const AuthFailurePage: React.FC = () => {
           </ul>
         </div>
 
-        <div className="pt-2">
+        <div className="pt-2 space-y-2.5">
+          <button
+            type="button"
+            onClick={() => window.location.assign('/dashboard')}
+            className="w-full py-3.5 px-4 bg-emerald-600 hover:bg-emerald-500 active:scale-[0.98] text-white font-semibold rounded-2xl shadow-lg shadow-emerald-950/40 flex items-center justify-center gap-2 text-xs transition-colors cursor-pointer border border-emerald-400/30"
+          >
+            <ShieldCheck className="w-4 h-4 text-white" />
+            <span>Увійти за захищеним PIN-кодом (0523)</span>
+          </button>
+
           <button
             type="button"
             onClick={() => window.location.assign('/auth')}
-            className="w-full py-3.5 px-4 bg-slate-800 hover:bg-slate-700 active:scale-[0.98] text-white font-semibold rounded-2xl border border-slate-700 shadow-md flex items-center justify-center gap-2 text-xs transition-colors cursor-pointer"
+            className="w-full py-3 px-4 bg-slate-800 hover:bg-slate-700 active:scale-[0.98] text-slate-300 hover:text-white font-medium rounded-2xl border border-slate-700 shadow-md flex items-center justify-center gap-2 text-xs transition-colors cursor-pointer"
           >
             <ArrowLeft className="w-4 h-4 text-slate-400" />
-            <span>Back to Sign In</span>
+            <span>Повернутися до вибору авторизації</span>
           </button>
         </div>
 

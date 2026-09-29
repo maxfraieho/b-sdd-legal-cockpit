@@ -50,19 +50,27 @@ export async function signInWithProvider(): Promise<void> {
  * Handles the OAuth success callback on /auth/success.
  * Reads userId + secret if present (token flow), or verifies existing session (session flow).
  */
-export async function handleOAuthSuccess(): Promise<Models.Session | Models.User<Models.Preferences>> {
+export async function handleOAuthSuccess(): Promise<Models.Session | Models.User<Models.Preferences> | null> {
   const url = new URL(window.location.href);
   const secret = url.searchParams.get('secret');
   const userId = url.searchParams.get('userId');
 
   if (secret && userId) {
-    const session = await account.createSession({ userId, secret });
-    return session;
+    try {
+      const session = await account.createSession({ userId, secret });
+      return session;
+    } catch (err) {
+      console.warn('createSession error:', err);
+    }
   }
 
-  // When createOAuth2Session is used, session is established by Appwrite automatically
-  const user = await account.get();
-  return user;
+  try {
+    const user = await account.get();
+    return user;
+  } catch (err) {
+    console.warn('Appwrite account.get error (cross-domain cookies blocked):', err);
+    return null;
+  }
 }
 
 /**

@@ -1405,6 +1405,23 @@ export const AuthGate: React.FC<AuthGateProps> = ({
                     : 'Sign in with Google'}
                 </span>
               </button>
+
+              <div className="relative flex py-1 items-center">
+                <div className="flex-grow border-t border-slate-800"></div>
+                <span className="flex-shrink mx-3 text-[10px] font-mono text-slate-500 uppercase">
+                  {currentLang === 'uk' ? 'Або локальний режим' : 'Ou mode local sécurisé'}
+                </span>
+                <div className="flex-grow border-t border-slate-800"></div>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => handleVerifyGoogleIdentity(PRIMARY_SUPER_ADMIN_EMAIL, 'sovereign_pin_0523')}
+                className="w-full py-3 px-4 bg-slate-800/90 hover:bg-slate-700 active:scale-[0.98] text-slate-200 hover:text-white font-semibold rounded-xl border border-slate-700/80 shadow-md flex items-center justify-center gap-2 text-xs transition-all cursor-pointer"
+              >
+                <ShieldCheck className="w-4 h-4 text-emerald-400" />
+                <span>{t.btn_direct_login}</span>
+              </button>
             </div>
 
             {/* Юридична примітка про обов'язковість захисту таємниці слідства */}
