@@ -25,3 +25,4 @@ __pycache__/
 .context/
 colab_evidence/
 dossier_benchmark/
+.private/

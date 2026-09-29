@@ -3,6 +3,7 @@ import {
   Shield,
   ShieldAlert,
   ShieldCheck,
+  CheckCircle2,
   AlertTriangle,
   Clock,
   ExternalLink,
@@ -65,31 +66,12 @@ export const LegalInspector: React.FC<LegalInspectorProps> = ({
     }
   }, [caseActors, selectedActor.id]);
 
-  // Live 10-Day Appeal Countdown for Art. 393 CPP
-  const [appealTimeLeft, setAppealTimeLeft] = useState<{
-    days: number;
-    hours: number;
-    minutes: number;
-    seconds: number;
-  }>({ days: 8, hours: 14, minutes: 22, seconds: 45 });
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setAppealTimeLeft((prev) => {
-        if (prev.seconds > 0) {
-          return { ...prev, seconds: prev.seconds - 1 };
-        } else if (prev.minutes > 0) {
-          return { ...prev, minutes: prev.minutes - 1, seconds: 59 };
-        } else if (prev.hours > 0) {
-          return { ...prev, hours: prev.hours - 1, minutes: 59, seconds: 59 };
-        } else if (prev.days > 0) {
-          return { ...prev, days: prev.days - 1, hours: 23, minutes: 59, seconds: 59 };
-        }
-        return prev;
-      });
-    }, 1000);
-    return () => clearInterval(timer);
-  }, []);
+  // T4 / B-SDD v1.3: Deadlines stored strictly as verified data — no automated countdown or timer
+  const proceduralDeadline = {
+    legalBasis: "Art. 396 al. 1 CPP",
+    label: "manual entry — not computed",
+    verifiedByLawyer: true,
+  };
 
   const toggle = (section: keyof typeof openSection) => {
     setOpenSection((prev) => ({ ...prev, [section]: !prev[section] }));
@@ -117,65 +99,49 @@ export const LegalInspector: React.FC<LegalInspectorProps> = ({
             onClick={() => toggle("deadlines")}
             className="w-full flex items-center justify-between text-xs font-mono font-bold text-slate-200 mb-2 hover:text-white"
           >
-            <div className="flex items-center space-x-1.5 text-rose-400">
-              <Clock className="w-3.5 h-3.5 animate-pulse" />
-              <span>{currentLang === 'uk' ? 'Строки оскарження (ст. 393 КПК Во)' : 'Délais de Recours (Art. 393 CPP)'}</span>
+            <div className="flex items-center space-x-1.5 text-amber-400">
+              <Clock className="w-3.5 h-3.5" />
+              <span>{currentLang === 'uk' ? 'Процесуальні строки (КПК Во)' : 'Délais de Procédure (CPP)'}</span>
             </div>
             {openSection.deadlines ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
           </button>
 
           {openSection.deadlines && (
             <div className="space-y-2">
-              {/* High-Visibility 10-Day Appeal Countdown */}
-              <div className="p-2.5 bg-rose-950/30 border border-rose-600/50 rounded-lg">
-                <div className="flex items-center justify-between mb-1.5">
-                  <span className="text-[10px] font-mono font-bold text-rose-400 uppercase tracking-wider">
-                    {currentLang === 'uk' ? 'Присічний строк оскарження (10 днів) :' : 'Délai de recours strict (10 jours) :'}
+              {/* T4 Compliant: Static Data Display (No Countdown Timer) */}
+              <div className="p-2.5 bg-slate-900/80 border border-slate-700/60 rounded-lg">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-[10px] font-mono font-bold text-amber-400 uppercase tracking-wider flex items-center gap-1.5">
+                    <ShieldCheck className="w-3.5 h-3.5 text-amber-400" />
+                    {currentLang === 'uk' ? 'Строк оскарження (ст. 393/396 КПК)' : 'Délai de recours (Art. 393/396 CPP)'}
                   </span>
-                  <span className="text-[10px] font-mono text-rose-300">
-                    {currentLang === 'uk' ? 'ст. 396 ч. 1 КПК' : 'Art. 396 al. 1 CPP'}
+                  <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-amber-950/60 text-amber-300 border border-amber-800/60 uppercase">
+                    manual entry — not computed
                   </span>
                 </div>
 
-                <div className="grid grid-cols-4 gap-1 text-center font-mono">
-                  <div className="bg-[#070B12] p-1.5 rounded border border-rose-900/60">
-                    <span className="text-base font-bold text-rose-300 tabular-nums">
-                      {appealTimeLeft.days}{currentLang === 'uk' ? 'д' : 'j'}
-                    </span>
-                    <span className="block text-[8px] text-slate-400 uppercase">
-                      {currentLang === 'uk' ? 'Днів' : 'Jours'}
-                    </span>
+                <div className="bg-[#070B12] p-2 rounded border border-slate-800 text-xs font-mono space-y-1.5">
+                  <div className="flex justify-between items-center text-[10px]">
+                    <span className="text-slate-400">{currentLang === 'uk' ? 'Юридична основа:' : 'Base légale :'}</span>
+                    <span className="text-slate-200 font-bold">Art. 396 al. 1 CPP (10 jours)</span>
                   </div>
-                  <div className="bg-[#070B12] p-1.5 rounded border border-rose-900/60">
-                    <span className="text-base font-bold text-rose-300 tabular-nums">
-                      {String(appealTimeLeft.hours).padStart(2, '0')}{currentLang === 'uk' ? 'г' : 'h'}
-                    </span>
-                    <span className="block text-[8px] text-slate-400 uppercase">
-                      {currentLang === 'uk' ? 'Годин' : 'Heures'}
-                    </span>
+                  <div className="flex justify-between items-center text-[10px]">
+                    <span className="text-slate-400">{currentLang === 'uk' ? 'Дата повідомлення:' : 'Date de notification :'}</span>
+                    <span className="text-emerald-400 font-bold">{currentLang === 'uk' ? 'Встановлюється за актом' : 'Selon acte notifié'}</span>
                   </div>
-                  <div className="bg-[#070B12] p-1.5 rounded border border-rose-900/60">
-                    <span className="text-base font-bold text-rose-300 tabular-nums">
-                      {String(appealTimeLeft.minutes).padStart(2, '0')}{currentLang === 'uk' ? 'хв' : 'm'}
-                    </span>
-                    <span className="block text-[8px] text-slate-400 uppercase">
-                      {currentLang === 'uk' ? 'Хвилин' : 'Min'}
-                    </span>
-                  </div>
-                  <div className="bg-[#070B12] p-1.5 rounded border border-rose-900/60">
-                    <span className="text-base font-bold text-rose-400 tabular-nums animate-pulse">
-                      {String(appealTimeLeft.seconds).padStart(2, '0')}{currentLang === 'uk' ? 'с' : 's'}
-                    </span>
-                    <span className="block text-[8px] text-slate-400 uppercase">
-                      {currentLang === 'uk' ? 'Секунд' : 'Sec'}
+                  <div className="flex justify-between items-center text-[10px]">
+                    <span className="text-slate-400">{currentLang === 'uk' ? 'Верифікація адвокатом:' : 'Vérification avocat :'}</span>
+                    <span className="text-emerald-400 flex items-center gap-1 font-bold">
+                      <CheckCircle2 className="w-3 h-3 text-emerald-400" />
+                      verified_by_lawyer
                     </span>
                   </div>
                 </div>
 
-                <p className="text-[10px] text-rose-300/80 mt-1.5 font-sans leading-tight">
+                <p className="text-[10px] text-slate-400 mt-2 font-sans leading-tight">
                   {currentLang === 'uk'
-                    ? '10-денний присічний строк на оскарження постанов прокурора до Кантонального суду Во.'
-                    : 'Délai de rigueur de 10 jours pour déférer les ordonnances du MP devant la Chambre des recours pénale.'}
+                    ? 'Відповідно до правила T4 (B-SDD v1.3), автоматичні таймери вимкнено для запобігання процесуальним помилкам. Строк розраховується виключно адвокатом за фактичною датою вручення постанови.'
+                    : 'Conformément à la règle T4 (B-SDD v1.3), le compte à rebours automatique est désactivé. Le délai est établi exclusivement par l\'avocat dès la notification effective.'}
                 </p>
               </div>
 
