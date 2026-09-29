@@ -344,7 +344,7 @@ export const PROCEDURAL_STAGES: ProceduralStage[] = [
       fr: "Réquisitions de preuves complémentaires et contrôle strict du délai péremptoire Art. 396 CPP",
       de: "Beweisanträge vor Abschluss der Untersuchung und Überwachung der 10-Tage-Frist (Art. 396 StPO)",
       it: "Istanze probatorie conclusive e monitoraggio del termine di 10 giorni (Art. 396 CPP)",
-      en: "Final evidentiary motions under Art. 318 CPC and strict 10-day appeal countdown (Art. 396 CPC)",
+      en: "Final evidentiary motions under Art. 318 CPC and strict 10-day appeal deadline (Art. 396 CPC)",
     },
     description: {
       uk: "Після оголошення про наближення завершення розслідування потерпілий користується правом подати мотивовані клопотання про проведення додаткових слідчих дій у порядку ст. 318 al. 2 КПК (витребування залишків на рахунках, допит спільників). У разі відмови прокурора або винесення постанови про закриття (classement) діє присічний строк у 10 днів (ст. 396 al. 1 КПК) на оскарження до Слідчої палати кантонального суду Во (Chambre des recours pénale du Tribunal cantonal).",

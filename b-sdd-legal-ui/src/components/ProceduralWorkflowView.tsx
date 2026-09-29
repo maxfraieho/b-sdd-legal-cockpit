@@ -575,25 +575,25 @@ export const ProceduralWorkflowView: React.FC<ProceduralWorkflowViewProps> = ({
           </div>
         )}
 
-        {/* STAGE 4 CONTEXT: Clôture & 10-Day Appeal Countdown */}
+        {/* STAGE 4 CONTEXT: Clôture & 10-Day Appeal Deadline (T4 Compliant) */}
         {activeStage.id === "STAGE-4-CLOTURE" && (
-          <div className="bg-[#0A0F1D] border border-rose-500/30 rounded-xl p-4 sm:p-5 shadow-sm space-y-4">
+          <div className="bg-[#0A0F1D] border border-amber-500/30 rounded-xl p-4 sm:p-5 shadow-sm space-y-4">
             <div className="flex items-center justify-between border-b border-slate-800 pb-2.5">
               <div className="flex items-center space-x-2">
-                <span className="p-1.5 rounded bg-rose-500/10 text-rose-400">
+                <span className="p-1.5 rounded bg-amber-500/10 text-amber-400">
                   <Clock className="w-4 h-4" />
                 </span>
-                <h3 className="text-xs sm:text-sm font-mono font-bold text-rose-300">
+                <h3 className="text-xs sm:text-sm font-mono font-bold text-amber-300">
                   {currentLang === "uk"
-                    ? "Контекстний модуль: Присічний 10-денний строк оскарження (Art. 396 al. 1 CPP)"
+                    ? "Контекстний модуль: Процесуальний строк оскарження (Art. 396 al. 1 CPP)"
                     : currentLang === "fr"
-                    ? "Module contextuel : Délai impératif de recours de 10 jours (Art. 396 al. 1 CPP)"
-                    : "Context Module : Mandatory 10-Day Appeal Deadline (Art. 396 para 1 CPC)"}
+                    ? "Module contextuel : Délai impératif de recours (Art. 396 al. 1 CPP)"
+                    : "Context Module : Mandatory Appeal Deadline (Art. 396 para 1 CPC)"}
                 </h3>
               </div>
               <button
                 onClick={() => onTabChange("pleadings")}
-                className="text-[11px] font-mono text-rose-400 hover:text-rose-300 flex items-center space-x-1"
+                className="text-[11px] font-mono text-amber-400 hover:text-amber-300 flex items-center space-x-1"
               >
                 <span>Підготувати скаргу</span>
                 <ArrowRight className="w-3 h-3" />
@@ -601,30 +601,39 @@ export const ProceduralWorkflowView: React.FC<ProceduralWorkflowViewProps> = ({
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs font-mono">
-              {/* Countdown Clock Panel */}
+              {/* T4 Compliant: Static Data Display (No Countdown Clock) */}
               <div className="p-3 bg-[#070B14] rounded-lg border border-slate-800 space-y-2">
                 <div className="flex justify-between items-center text-[11px]">
-                  <span className="text-slate-400 font-bold">Таймер процесуального дедлайну:</span>
-                  <span className="text-rose-400 font-bold animate-pulse">Art. 396 CPP</span>
+                  <span className="text-slate-400 font-bold">
+                    {currentLang === "uk" ? "Контроль строку оскарження:" : "Contrôle du délai :"}
+                  </span>
+                  <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-amber-950/60 text-amber-300 border border-amber-800/60 uppercase">
+                    manual entry — not computed
+                  </span>
                 </div>
-                <div className="p-3 bg-rose-950/20 border border-rose-500/30 rounded flex items-center justify-around text-center">
-                  <div>
-                    <span className="text-2xl font-bold font-mono text-rose-300">08</span>
-                    <span className="block text-[10px] text-slate-400">ДНІВ</span>
+
+                <div className="p-2.5 bg-slate-950/60 border border-slate-800 rounded space-y-2">
+                  <div className="flex justify-between items-center text-[11px]">
+                    <span className="text-slate-400">Правова норма:</span>
+                    <span className="text-slate-200 font-bold">Art. 396 al. 1 CPP (10 днів)</span>
                   </div>
-                  <span className="text-xl font-mono text-rose-500">:</span>
-                  <div>
-                    <span className="text-2xl font-bold font-mono text-rose-300">14</span>
-                    <span className="block text-[10px] text-slate-400">ГОДИН</span>
+                  <div className="flex justify-between items-center text-[11px]">
+                    <span className="text-slate-400">Початок перебігу:</span>
+                    <span className="text-emerald-400 font-bold">З моменту вручення акту</span>
                   </div>
-                  <span className="text-xl font-mono text-rose-500">:</span>
-                  <div>
-                    <span className="text-2xl font-bold font-mono text-rose-300">32</span>
-                    <span className="block text-[10px] text-slate-400">ХВИЛИН</span>
+                  <div className="flex justify-between items-center text-[11px]">
+                    <span className="text-slate-400">Верифікація адвокатом:</span>
+                    <span className="text-emerald-400 flex items-center gap-1 font-bold">
+                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+                      verified_by_lawyer
+                    </span>
                   </div>
                 </div>
-                <p className="text-[10px] text-slate-400 font-sans">
-                  Скарга на будь-яку постанову прокурора подається до Палати кримінальних апеляцій (Chambre des recours pénale du Tribunal cantonal) у строк не більше 10 календарних днів.
+
+                <p className="text-[10px] text-slate-400 font-sans leading-tight">
+                  {currentLang === "uk"
+                    ? "Згідно з інваріантом T4 (B-SDD v1.3), автоматичний таймер вимкнено для усунення ризику пропуску строків через програмні розрахунки. Точний дедлайн встановлюється виключно адвокатом."
+                    : "Conformément à la règle T4 (B-SDD v1.3), le compte à rebours automatique est désactivé. Le délai est calculé manuellement dès la notification effective de la décision."}
                 </p>
               </div>
 

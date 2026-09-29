@@ -2418,7 +2418,7 @@ export const LEGAL_REQUISITIONS: LegalRequisition[] = [
       ],
     },
     corps_texte: {
-      uk: "Згідно зі ст. 396 ч. 1 КПК, скарга подається протягом 10 днів з моменту отримання повідомлення про постанову. Необхідно суворо контролювати зворотний відлік для гарантування прав потерпілого.",
+      uk: "Згідно зі ст. 396 ч. 1 КПК, скарга подається протягом 10 днів з моменту отримання повідомлення про постанову. Строк обчислюється адвокатом за фактичною датою вручення постанови.",
       fr: "Conformément à l'Art. 396 al. 1 CPP, le recours doit être déposé par écrit et motivé dans un délai strict de 10 jours. Le respect de ce délai de rigueur est impératif.",
       en: "Under Art. 396 para 1 CPC, the appeal must be lodged within a strict 10-day deadline. Strict adherence to this time window is of absolute procedural essence.",
     },
