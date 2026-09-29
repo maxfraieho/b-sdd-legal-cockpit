@@ -4,30 +4,6 @@ import { AuthSuccessPage } from './pages/AuthSuccessPage';
 import { AuthFailurePage } from './pages/AuthFailurePage';
 import { DashboardPage } from './pages/DashboardPage';
 import App from './App';
-import { account } from './lib/appwrite';
-import { Loader2 } from 'lucide-react';
-
-const RootGuardRedirect: React.FC = () => {
-  useEffect(() => {
-    account
-      .get()
-      .then(() => {
-        window.location.replace('/dashboard');
-      })
-      .catch(() => {
-        window.location.replace('/auth');
-      });
-  }, []);
-
-  return (
-    <div className="min-h-screen w-screen bg-[#070B12] text-slate-100 flex items-center justify-center p-4">
-      <div className="flex flex-col items-center gap-3">
-        <Loader2 className="w-8 h-8 text-blue-500 animate-spin" />
-        <p className="text-xs font-mono text-slate-400">Перевірка доступу Appwrite...</p>
-      </div>
-    </div>
-  );
-};
 
 export const Router: React.FC = () => {
   const [currentPath, setCurrentPath] = useState<string>(() => {

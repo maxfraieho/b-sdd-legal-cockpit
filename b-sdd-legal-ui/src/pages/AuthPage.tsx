@@ -138,23 +138,6 @@ export const AuthPage: React.FC = () => {
             <span>{isSigningIn ? 'Redirecting to Google...' : 'Sign in with Google'}</span>
           </button>
 
-          <div className="relative flex py-1 items-center">
-            <div className="flex-grow border-t border-slate-800"></div>
-            <span className="flex-shrink mx-3 text-[10px] font-mono text-slate-500 uppercase">
-              Або локальний доступ
-            </span>
-            <div className="flex-grow border-t border-slate-800"></div>
-          </div>
-
-          <button
-            type="button"
-            onClick={() => window.location.assign('/dashboard')}
-            className="w-full py-3.5 px-4 bg-slate-800/90 hover:bg-slate-700 active:scale-[0.98] text-emerald-400 hover:text-emerald-300 font-semibold rounded-2xl border border-emerald-500/40 shadow-md flex items-center justify-center gap-2 text-xs transition-colors cursor-pointer"
-          >
-            <Shield className="w-4 h-4 text-emerald-400" />
-            <span>Увійти за захищеним PIN-кодом (0523)</span>
-          </button>
-
           <p className="text-[11px] text-center text-slate-500">
             Direct token exchange with Appwrite Project <code className="text-slate-400 font-mono">6abab6b5003a4b7b1560</code>
           </p>

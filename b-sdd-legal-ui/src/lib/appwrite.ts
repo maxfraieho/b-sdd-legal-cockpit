@@ -29,48 +29,93 @@ if (typeof window !== 'undefined') {
   );
 }
 
+export interface OAuthSuccessResult {
+  session?: Models.Session | null;
+  user: {
+    $id: string;
+    email: string;
+    name?: string;
+  };
+}
+
 /**
- * Initiates the Google OAuth2 session flow.
- * Uses createOAuth2Session so existing users are seamlessly authenticated
- * without 409 user_already_exists conflicts.
+ * Initiates the Google OAuth2 token flow.
+ * Uses createOAuth2Token which appends userId and secret as query parameters
+ * to the success redirect URL, eliminating cross-domain third-party cookie blocks.
  */
 export async function signInWithProvider(): Promise<void> {
   const success = `${window.location.origin}/auth/success`;
   const failure = `${window.location.origin}/auth/failure`;
 
-  // createOAuth2Session handles both initial login and re-authentication for existing users
-  account.createOAuth2Session(
-    OAuthProvider.Google,
+  account.createOAuth2Token({
+    provider: OAuthProvider.Google,
     success,
-    failure
-  );
+    failure,
+    scopes: ['email', 'profile', 'openid'],
+  });
 }
 
 /**
  * Handles the OAuth success callback on /auth/success.
- * Reads userId + secret if present (token flow), or verifies existing session (session flow).
+ * Reads userId + secret from query parameters (token flow), creates the session,
+ * and extracts the verified Google identity.
  */
-export async function handleOAuthSuccess(): Promise<Models.Session | Models.User<Models.Preferences> | null> {
+export async function handleOAuthSuccess(): Promise<OAuthSuccessResult> {
   const url = new URL(window.location.href);
   const secret = url.searchParams.get('secret');
   const userId = url.searchParams.get('userId');
 
+  let session: Models.Session | null = null;
   if (secret && userId) {
     try {
-      const session = await account.createSession({ userId, secret });
-      return session;
+      session = await account.createSession({ userId, secret });
     } catch (err) {
       console.warn('createSession error:', err);
     }
   }
 
+  // 1. Try account.get() directly (works when session was created in same origin)
   try {
     const user = await account.get();
-    return user;
+    if (user && user.email) {
+      return {
+        session,
+        user: {
+          $id: user.$id,
+          email: user.email,
+          name: user.name,
+        },
+      };
+    }
   } catch (err) {
-    console.warn('Appwrite account.get error (cross-domain cookies blocked):', err);
-    return null;
+    console.warn('account.get error:', err);
   }
+
+  // 2. Fallback: Google UserInfo API using session.providerAccessToken
+  if (session?.providerAccessToken) {
+    try {
+      const gRes = await fetch('https://www.googleapis.com/oauth2/v2/userinfo', {
+        headers: { Authorization: `Bearer ${session.providerAccessToken}` },
+      });
+      if (gRes.ok) {
+        const gUser = await gRes.json();
+        if (gUser.email) {
+          return {
+            session,
+            user: {
+              $id: session.userId || gUser.id,
+              email: gUser.email,
+              name: gUser.name,
+            },
+          };
+        }
+      }
+    } catch (gErr) {
+      console.warn('Google userinfo fetch failed:', gErr);
+    }
+  }
+
+  throw new Error('Не вдалося отримати підтверджену електронну адресу від Google.');
 }
 
 /**

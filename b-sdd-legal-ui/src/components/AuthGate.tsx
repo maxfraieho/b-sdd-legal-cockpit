@@ -197,7 +197,6 @@ const AUTH_I18N = {
     stage2_gateway_banner: 'Шлюз авторизації Google AI Studio для повернення до:',
     btn_google_cloud_run: 'Авторизуватися через Google AI Studio',
     btn_confirm_gateway: 'Підтвердити авторизацію та перейти до кокпіта',
-    btn_direct_login: 'Увійти безпосередньо (захищений локальний режим)',
     authenticating_title: 'Авторизація через Google AI Studio...',
     authenticating_desc:
       'Виконується криптографічна перевірка допуску до матеріалів справи PE24.014624-SBA за стандартом Art. 73 CPP.',
@@ -240,7 +239,6 @@ const AUTH_I18N = {
     stage2_gateway_banner: 'Passerelle d’autorisation Google AI Studio pour retour vers :',
     btn_google_cloud_run: 'S’authentifier via Google AI Studio',
     btn_confirm_gateway: 'Confirmer l’autorisation et ouvrir le cockpit',
-    btn_direct_login: 'Connexion directe (mode local sécurisé)',
     authenticating_title: 'Authentification via Google AI Studio...',
     authenticating_desc:
       'Contrôle cryptographique d’habilitation sur le dossier pénal PE24.014624-SBA (Art. 73 CPP).',
@@ -283,7 +281,6 @@ const AUTH_I18N = {
     stage2_gateway_banner: 'Google AI Studio Autorisierungs-Gateway zur Rückkehr zu:',
     btn_google_cloud_run: 'Über Google AI Studio autorisieren',
     btn_confirm_gateway: 'Autorisierung bestätigen und Cockpit öffnen',
-    btn_direct_login: 'Direktanmeldung (sicherer lokaler Modus)',
     authenticating_title: 'Google AI Studio Authentifizierung...',
     authenticating_desc:
       'Kryptografische Prüfung der Zugriffsberechtigung für das Verfahren PE24.014624-SBA (Art. 73 StPO).',
@@ -326,7 +323,6 @@ const AUTH_I18N = {
     stage2_gateway_banner: 'Modalità gateway Google AI Studio per il ritorno a:',
     btn_google_cloud_run: 'Autenticati con Google AI Studio',
     btn_confirm_gateway: 'Conferma autorizzazione e apri cockpit',
-    btn_direct_login: 'Accesso diretto (modalità locale protetta)',
     authenticating_title: 'Verifica Google AI Studio in corso...',
     authenticating_desc:
       'Verifica crittografica dell’abilitazione al fascicolo penale PE24.014624-SBA (Art. 73 CPP).',
@@ -369,7 +365,6 @@ const AUTH_I18N = {
     stage2_gateway_banner: 'Google AI Studio authorization gateway to return to:',
     btn_google_cloud_run: 'Authorize via Google AI Studio',
     btn_confirm_gateway: 'Confirm Authorization & Open Cockpit',
-    btn_direct_login: 'Direct Access (Secure Local Mode)',
     authenticating_title: 'Authenticating via Google AI Studio...',
     authenticating_desc:
       'Performing cryptographic authorization check against criminal dossier PE24.014624-SBA (Art. 73 CPC).',
@@ -1406,22 +1401,6 @@ export const AuthGate: React.FC<AuthGateProps> = ({
                 </span>
               </button>
 
-              <div className="relative flex py-1 items-center">
-                <div className="flex-grow border-t border-slate-800"></div>
-                <span className="flex-shrink mx-3 text-[10px] font-mono text-slate-500 uppercase">
-                  {currentLang === 'uk' ? 'Або локальний режим' : 'Ou mode local sécurisé'}
-                </span>
-                <div className="flex-grow border-t border-slate-800"></div>
-              </div>
-
-              <button
-                type="button"
-                onClick={() => handleVerifyGoogleIdentity(PRIMARY_SUPER_ADMIN_EMAIL, 'sovereign_pin_0523')}
-                className="w-full py-3 px-4 bg-slate-800/90 hover:bg-slate-700 active:scale-[0.98] text-slate-200 hover:text-white font-semibold rounded-xl border border-slate-700/80 shadow-md flex items-center justify-center gap-2 text-xs transition-all cursor-pointer"
-              >
-                <ShieldCheck className="w-4 h-4 text-emerald-400" />
-                <span>{t.btn_direct_login}</span>
-              </button>
             </div>
 
             {/* Юридична примітка про обов'язковість захисту таємниці слідства */}
