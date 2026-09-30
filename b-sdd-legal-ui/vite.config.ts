@@ -12,6 +12,10 @@ export default defineConfig({
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
+      "@case-data":
+        process.env.VITE_DATA_MODE === "real"
+          ? path.resolve(__dirname, "./src/data/realLegalData.ts")
+          : path.resolve(__dirname, "./src/data/demoLegalData.ts"),
     },
   },
   server: {

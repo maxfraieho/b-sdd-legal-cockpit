@@ -149,7 +149,7 @@ export default function App() {
       }
 
       // Open email client prefilled for Kindle whispersync
-      const subject = customTitle ? `B-SDD Legal: ${customTitle}` : "B-SDD Legal Book (PE24.014624-SBA)";
+      const subject = customTitle ? `B-SDD Legal: ${customTitle}` : `B-SDD Legal Book (${activeCase?.reference || "Dossier"})`;
       const body = "Veuillez trouver ci-joint le document B-SDD Legal pour Kindle Whispersync.";
       const targetKindle = settings.kindleEmail ? `mailto:${settings.kindleEmail}?` : "mailto:?";
       window.open(`${targetKindle}subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`, "_blank");
@@ -168,10 +168,10 @@ export default function App() {
     setIsSealing(true);
     try {
       const record = await commitAtomicSupersession({
-        entity_id: "DOSSIER-PE24.014624-SBA",
+        entity_id: `DOSSIER-${activeCase?.reference || "ACTIVE"}`,
         chapter_id: "CH-18",
-        summary: "Scellement bitemporel intégral du dossier PE24.014624-SBA dans Utopia DB (WORM L-01)",
-        content_snapshot: "Validation formelle des 18 chapitres, réquisitions de séquestre CHF 47'700.00 et bouclier Adriano Milli (Art. 933 CC).",
+        summary: `Scellement bitemporel intégral du dossier ${activeCase?.reference || "judiciaire"} dans Utopia DB (WORM L-01)`,
+        content_snapshot: "Validation formelle des 18 chapitres, réquisitions de séquestre et protection du tiers de bonne foi (Art. 933 CC).",
         committer: "Conseil de la victime (Lausanne)",
       });
       setIsSealing(false);
@@ -470,7 +470,7 @@ export default function App() {
 
             <div className="space-y-3">
               <p className="text-xs text-slate-300 font-sans leading-relaxed">
-                Génération du bundle d'audience pour <strong>PE24.014624-SBA</strong>.
+                Génération du bundle d'audience pour <strong>{activeCase?.reference || "Dossier"}</strong>.
                 Exportation des 18 chapitres et transmission sécurisée vers :
               </p>
               <div className="p-2 bg-[#070B12] rounded border border-slate-800 font-mono text-xs text-blue-300 flex items-center justify-between">

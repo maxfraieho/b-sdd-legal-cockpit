@@ -26,3 +26,4 @@ __pycache__/
 colab_evidence/
 dossier_benchmark/
 .private/
+b-sdd-legal-ui/src/data/realLegalData.ts

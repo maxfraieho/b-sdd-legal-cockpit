@@ -70,9 +70,9 @@ export const CaseSyncModal: React.FC<CaseSyncModalProps> = ({
       titleUk: "Верифікація інваріантів B-SDD (L-01, L-03, L-04, L-05)",
       titleFr: "Vérification des invariants B-SDD (L-01, L-03, L-04, L-05)",
       descUk:
-        "Імунітет Adriano Milli (ст. 933 CC) підтверджено; Арсен Коваленко (26 р.) — повнолітній потерпілий; хеші ISO/IEC 27037 валідні.",
+        "Імунітет добросовісної третьої особи (ст. 933 CC) підтверджено; повнолітній потерпілий (L-04) — цивільний позивач; хеші ISO/IEC 27037 валідні.",
       descFr:
-        "Immunité d'Adriano Milli (Art. 933 CC) scellée ; Arsen Kovalenko (26 ans) partie plaignante ; scellés SHA-256 valides.",
+        "Immunité du tiers de bonne foi (Art. 933 CC) scellée ; victime majeure partie plaignante (L-04) ; scellés SHA-256 valides.",
       status: currentStep >= 1 ? "done" : currentStep === 0 && isRunningSync ? "active" : "pending",
     },
     {
@@ -87,12 +87,12 @@ export const CaseSyncModal: React.FC<CaseSyncModalProps> = ({
     },
     {
       num: 3,
-      titleUk: "Психологічний стан Олени Коваленко (Auteur sous emprise, ст. 18, 48 КК)",
+      titleUk: "Психологічний стан особи під примусом (Auteur sous emprise, ст. 18, 48 КК)",
       titleFr: "Analyse d'emprise psychologique (Auteur sous emprise, Art. 18, 48 CP)",
       descUk:
-        "Дисоціативний розлад та маніпулятивний вплив Любові Суворової знімають роль організатора з Олени; нові особи кваліфікуються окремо.",
+        "Дисоціативний розлад та маніпулятивний вплив знімають роль організатора з особи під примусом; діяння кваліфікуються окремо.",
       descFr:
-        "Trouble dissociatif et emprise perverse de Liubov Suvorova : absence de dessein autonome, requalification conforme au CP.",
+        "Trouble dissociatif et emprise perverse caractérisée : absence de dessein autonome, requalification conforme au CP.",
       status: currentStep >= 3 ? "done" : currentStep === 2 ? "active" : "pending",
     },
     {

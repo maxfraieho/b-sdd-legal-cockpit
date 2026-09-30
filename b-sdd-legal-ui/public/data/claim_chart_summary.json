@@ -62,9 +62,9 @@
       },
       {
         "claim_id": "CIV-TORT-MORAL-ARSEN",
-        "title": "Indemnité pour tort moral en faveur d'Arsen Kovalenko",
-        "claimant_actor_id": "ACT-ARSEN-KOVALENKO",
-        "defendant_actor_id": "ACT-LIUBOV-SUVOROVA",
+        "title": "Indemnité pour tort moral en faveur de la victime (L-04)",
+        "claimant_actor_id": "ACT-VICTIM-ADULT",
+        "defendant_actor_id": "ACT-ACCUSED-PRINCIPAL",
         "amount_chf": 15000.0,
         "amount_usd": 0.0,
         "statutory_basis": "Art. 47 & 49 CO; Art. 180 & 181 CP",
@@ -80,9 +80,9 @@
       },
       {
         "claim_id": "CIV-TORT-MORAL-VOLODYMYR",
-        "title": "Indemnité pour tort moral en faveur de Volodymyr Kovalenko",
-        "claimant_actor_id": "ACT-VOLODYMYR-KOVALENKO",
-        "defendant_actor_id": "ACT-LIUBOV-SUVOROVA",
+        "title": "Indemnité pour tort moral en faveur de la partie civile",
+        "claimant_actor_id": "ACT-CLAIMANT-CIVIL",
+        "defendant_actor_id": "ACT-ACCUSED-PRINCIPAL",
         "amount_chf": 10000.0,
         "amount_usd": 0.0,
         "statutory_basis": "Art. 49 CO; Art. 181 CP",
@@ -127,7 +127,7 @@
         {
           "element_id": "ELEM-180-1",
           "name_fr": "Menace grave d'atteinte à l'intégrité",
-          "description": "Menace expresse de mort et de violences physiques contre la victime Arsen Kovalenko",
+          "description": "Menace expresse de mort et de violences physiques contre la victime majeure (L-04)",
           "status": "corroborated",
           "citations": [
             {

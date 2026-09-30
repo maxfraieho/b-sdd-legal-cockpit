@@ -4,6 +4,7 @@
 // =========================================================================
 
 export type UserRole = 'super_admin' | 'admin' | 'lawyer' | 'user' | 'viewer';
+export type OwnerPersona = 'plaintiff' | 'lawyer';
 
 export interface UserPermissions {
   canManageUsers: boolean;
@@ -20,6 +21,7 @@ export interface AuthorizedUser {
   name: string;
   avatar?: string;
   role: UserRole;
+  ownerPersona?: OwnerPersona;
   isActive: boolean;
   addedAt: string;
   lastLogin?: string;
@@ -107,7 +109,7 @@ export const ROLE_DEFINITIONS: Record<
       canEditActors: true,
       canWormSeal: true,
       canExportJudicialBundle: true,
-      canEditCaseMetadata: false,
+      canEditCaseMetadata: true,
     },
   },
   user: {
