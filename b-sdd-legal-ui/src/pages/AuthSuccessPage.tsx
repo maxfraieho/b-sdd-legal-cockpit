@@ -10,19 +10,19 @@ import { AuthorizedUser, AuthSession, UserRole, ROLE_DEFINITIONS } from '../type
 
 const HARDENED_WHITELIST: Record<string, { name: string; role: UserRole }> = {
   'tukroschu@gmail.com': {
-    name: 'Володимир Анатолійович Коваленко (Головний Адміністратор / Позивач)',
+    name: 'Administrator (SBA Lead)',
     role: 'super_admin',
   },
   'arsen.k111999@gmail.com': {
-    name: 'Арсен Коваленко (Потерпілий ст. 115, 118 КПК)',
+    name: 'Authorized Party (Art. 115/118 CPP)',
     role: 'user',
   },
   'vokov.dev@gmail.com': {
-    name: 'Інженер безпеки B-SDD',
+    name: 'Security Engineer (SecOps)',
     role: 'admin',
   },
   'counsel.vaud.vd@gmail.com': {
-    name: 'Юридичний повірений (Ordre des Avocats)',
+    name: 'Legal Counsel (Ordre des Avocats)',
     role: 'lawyer',
   },
 };

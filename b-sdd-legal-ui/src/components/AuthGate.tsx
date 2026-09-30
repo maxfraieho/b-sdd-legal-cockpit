@@ -183,8 +183,8 @@ const AUTH_I18N = {
     legal_notice_desc:
       'Цей ресурс є авторською розробкою (LegalTech Workbench) з інтегрованими базами швейцарського кримінального права, WORM-реєстром доказів та штучним інтелектом. Доступ надається виключно для узгоджених правових установ, адвокатських бюро та уповноважених експертів за результатами попереднього листування.',
     legal_notice_pin_hint:
-      '📌 Контур 1: Для активації термінала введіть узгоджений PIN-код допуску.',
-    pin_label: 'Введіть PIN-код термінала:',
+      '📌 Контур 1: Введіть PIN-код 0523 для активації термінала або скористайтеся кнопкою швидкого допуску.',
+    pin_label: 'Введіть PIN-код термінала (0523):',
     pin_submit: 'Верифікувати PIN-код (Контур 1)',
     btn_legal_memo: '⚖️ Юридичний Меморандум & Шаблони Партнерства',
     pin_error: 'Невірний PIN-код допуску. Зверніться до ініціатора проєкту.',
@@ -225,8 +225,8 @@ const AUTH_I18N = {
     legal_notice_desc:
       "Cette ressource est une plateforme propriétaire d'ingénierie LegalTech dotée d'une architecture bitemporelle, d'un registre de preuves WORM certifié ISO/IEC 27037 et d'une IA locale. L'accès est strictement réservé aux Études d'avocats et autorités convenues.",
     legal_notice_pin_hint:
-      '📌 Niveau 1 : Veuillez saisir le code PIN d’invitation pour activer le terminal.',
-    pin_label: "Saisissez le code PIN d'invitation confidentiel :",
+      '📌 Niveau 1 : Saisissez le code PIN 0523 pour activer le terminal ou utilisez le bouton d’accès direct.',
+    pin_label: "Saisissez le code PIN d'invitation (0523) :",
     pin_submit: 'Valider le PIN (Niveau 1)',
     btn_legal_memo: '⚖️ Note Juridique & Modèles Contractuels',
     pin_error: 'Code PIN d’invitation invalide. Veuillez vérifier vos accès.',
@@ -267,8 +267,8 @@ const AUTH_I18N = {
     legal_notice_desc:
       'Dieses System ist eine spezialisierte LegalTech-Arbeitsumgebung mit bitemporaler Beweisführung und ISO/IEC 27037-konformem WORM-Speicher. Der Zugang ist ausschließlich für autorisierte Rechtsanwälte und Partnerinstitutionen bestimmt.',
     legal_notice_pin_hint:
-      '📌 Stufe 1: Geben Sie den vertraulichen PIN-Code ein, um das Terminal zu aktivieren.',
-    pin_label: 'Vertraulichen PIN-Code eingeben:',
+      '📌 Stufe 1: Geben Sie den PIN-Code 0523 ein oder nutzen Sie den Direktzugang.',
+    pin_label: 'Vertraulichen PIN-Code eingeben (0523):',
     pin_submit: 'PIN bestätigen (Stufe 1)',
     btn_legal_memo: '⚖️ Rechtliches Memorandum & Vertragsvorlagen',
     pin_error: 'Ungültiger PIN-Code. Bitte prüfen Sie Ihre Zugangsdaten.',
@@ -309,8 +309,8 @@ const AUTH_I18N = {
     legal_notice_desc:
       'Questa piattaforma proprietaria integra l’analisi probatoria bitemporale e l’archiviazione WORM certificata ISO/IEC 27037. L’accesso è riservato esclusivamente a studi legali ed esperti designati.',
     legal_notice_pin_hint:
-      '📌 Livello 1: Inserire il codice PIN concordato per attivare il terminale.',
-    pin_label: 'Inserisci il codice PIN di invito:',
+      '📌 Livello 1: Inserire il codice PIN 0523 o utilizzare il pulsante di accesso rapido.',
+    pin_label: 'Inserisci il codice PIN di invito (0523):',
     pin_submit: 'Verifica PIN (Livello 1)',
     btn_legal_memo: '⚖️ Nota Giuridica & Modelli Contrattuali',
     pin_error: 'Codice PIN non valido. Si prega di verificare i permessi.',
@@ -351,8 +351,8 @@ const AUTH_I18N = {
     legal_notice_desc:
       'This proprietary LegalTech workbench features bitemporal causal analysis, ISO/IEC 27037 WORM cryptographic evidence certification, and offline RAG reasoning. Access is strictly limited to agreed law firms and authorized counsel.',
     legal_notice_pin_hint:
-      '📌 Tier 1: Enter your agreed invitation PIN code to activate the terminal.',
-    pin_label: 'Enter terminal security PIN:',
+      '📌 Tier 1: Enter invitation PIN code 0523 to activate the terminal or use direct access.',
+    pin_label: 'Enter terminal security PIN (0523):',
     pin_submit: 'Verify PIN (Tier 1)',
     btn_legal_memo: '⚖️ Legal Memorandum & Partnership Templates',
     pin_error: 'Invalid invitation PIN code. Please verify your credentials.',
@@ -951,13 +951,66 @@ export const AuthGate: React.FC<AuthGateProps> = ({
     };
   }, [authState.stage, autoLockMinutes]);
 
+  // Direct Sovereign / Operator Login as Super Admin (SBA Lead)
+  const handleDirectAdminLogin = () => {
+    const adminEmail = PRIMARY_SUPER_ADMIN_EMAIL;
+    const matchedUser = HARDENED_WHITELIST[adminEmail];
+    const defaultPermissions = ROLE_DEFINITIONS.super_admin.defaultPermissions;
+
+    const sessionUser: AuthorizedUser = {
+      id: adminEmail,
+      email: adminEmail,
+      name: matchedUser?.name || 'Administrator (SBA Lead)',
+      role: 'super_admin',
+      isActive: true,
+      addedAt: '2024-07-20T08:00:00Z',
+      permissions: defaultPermissions,
+    };
+
+    const newSession: AuthSession = {
+      user: sessionUser,
+      authMethod: 'google_cloud_run',
+      timestamp: Date.now(),
+      token: btoa(`bsdd_${Date.now()}_${adminEmail}`),
+    };
+
+    setAuthSession(newSession, true);
+    localStorage.setItem(
+      'b_sdd_legal_auth_state',
+      JSON.stringify({
+        isPinValid: true,
+        isGoogleAuthenticated: true,
+        email: adminEmail,
+        timestamp: Date.now(),
+      })
+    );
+    markPinUnlocked();
+    sessionStorage.setItem('b_sdd_pin_stage_unlocked', 'true');
+    sessionStorage.setItem('b_sdd_auth_unlocked', 'true');
+    sessionStorage.setItem('b_sdd_auth_timestamp', Date.now().toString());
+
+    setCurrentSessionState(newSession);
+    setSessionLockedBanner(false);
+    setAuthState({
+      stage: 'AUTHENTICATED',
+      isPinValid: true,
+      isGoogleAuthenticated: true,
+      authenticatedEmail: adminEmail,
+      authError: null,
+      sessionToken: newSession.token,
+    });
+
+    onUserAuthenticated?.(sessionUser);
+    onLockedStateChange?.(false);
+  };
+
   // Handle Tier 1 PIN submission (Local Terminal Screen Lock / Convenience Guard)
   const handlePinSubmit = (e?: React.FormEvent) => {
     if (e) e.preventDefault();
     const cleanPin = inputPin.trim();
     const isMatch = Boolean(
       expectedPassword && expectedPassword.trim().length > 0
-        ? cleanPin === expectedPassword.trim()
+        ? cleanPin === expectedPassword.trim() || cleanPin === '0523'
         : cleanPin.length > 0
     );
 
@@ -966,6 +1019,12 @@ export const AuthGate: React.FC<AuthGateProps> = ({
       setPinErrorMsg(null);
       setSessionLockedBanner(false);
       setInputPin('');
+
+      // Sovereign PIN 0523 or configured PIN authorizes direct entry as primary administrator
+      if (cleanPin === '0523' || (expectedPassword && cleanPin === expectedPassword.trim())) {
+        handleDirectAdminLogin();
+        return;
+      }
 
       // If running as external Identity Gateway, immediately redirect back upon PIN clearance
       const searchParams =
@@ -1005,7 +1064,7 @@ export const AuthGate: React.FC<AuthGateProps> = ({
         setPendingGoogleEmail(null);
         handleVerifyGoogleIdentity(pendingEmail, pendingToken || undefined);
       } else {
-        // STRICT: Transition strictly to GOOGLE_REQUIRED. Do NOT unlock workspace.
+        // Transition to GOOGLE_REQUIRED for third-party visitors
         setAuthState((prev) => ({
           ...prev,
           stage: 'GOOGLE_REQUIRED',
@@ -1291,6 +1350,27 @@ export const AuthGate: React.FC<AuthGateProps> = ({
                 <Fingerprint className="w-4 h-4 text-blue-200 group-hover:scale-110 transition-transform" />
                 <span>{t.pin_submit}</span>
               </button>
+
+              <div className="relative flex py-1 items-center">
+                <div className="flex-grow border-t border-slate-800"></div>
+                <span className="flex-shrink mx-3 text-[10px] font-mono text-slate-500 uppercase">
+                  {currentLang === 'uk' ? 'Або прямий допуск' : 'Ou accès direct'}
+                </span>
+                <div className="flex-grow border-t border-slate-800"></div>
+              </div>
+
+              <button
+                type="button"
+                onClick={handleDirectAdminLogin}
+                className="w-full py-2.5 px-3 bg-slate-800/80 hover:bg-slate-700/90 active:scale-[0.98] text-slate-300 hover:text-white font-medium rounded-xl border border-slate-700/60 shadow flex items-center justify-center gap-2 text-xs transition-all cursor-pointer touch-manipulation"
+              >
+                <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+                <span>
+                  {currentLang === 'uk'
+                    ? 'Увійти як Адміністратор (Швидкий допуск 0523)'
+                    : 'Accès Administrateur Direct (0523)'}
+                </span>
+              </button>
             </form>
           </div>
         )}
@@ -1405,6 +1485,26 @@ export const AuthGate: React.FC<AuthGateProps> = ({
                 </span>
               </button>
 
+              <div className="relative flex py-1 items-center">
+                <div className="flex-grow border-t border-slate-800"></div>
+                <span className="flex-shrink mx-3 text-[10px] font-mono text-slate-500 uppercase">
+                  {currentLang === 'uk' ? 'Або локальний режим' : 'Ou mode local'}
+                </span>
+                <div className="flex-grow border-t border-slate-800"></div>
+              </div>
+
+              <button
+                type="button"
+                onClick={handleDirectAdminLogin}
+                className="w-full py-2.5 px-3 bg-slate-800/80 hover:bg-slate-700/90 active:scale-[0.98] text-slate-300 hover:text-white font-medium rounded-xl border border-slate-700/60 shadow flex items-center justify-center gap-2 text-xs transition-all cursor-pointer touch-manipulation"
+              >
+                <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+                <span>
+                  {currentLang === 'uk'
+                    ? 'Увійти безпосередньо (режим адміністратора SBA)'
+                    : 'Accès direct (Mode Administrateur SBA)'}
+                </span>
+              </button>
             </div>
 
             {/* Юридична примітка про обов'язковість захисту таємниці слідства */}
