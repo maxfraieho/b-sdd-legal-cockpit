@@ -80,7 +80,7 @@ export const DEFAULT_SETTINGS: AppSettings = {
     'ATF-146-IV-9', 'ATF-141-IV-369', 'ATF-144-IV-285'
   ],
   mcpTunnelUrl: 'https://legal-mcp.exodus.pp.ua',
-  authPassword: '0523',
+  authPassword: '',
   autoLockMinutes: 15,
   manualEditMode: false,
   kindleEmail: '',

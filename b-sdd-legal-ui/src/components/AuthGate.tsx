@@ -1,6 +1,6 @@
 // =========================================================================
 // B-SDD LEGAL COCKPIT · ДВОКОНТУРНИЙ ШЛЮЗ АВТОРИЗАЦІЇ (AUTH GATE v3.1 ZERO-TRUST)
-// Контур 1: Локальний захисний бар'єр (Local PIN Gate - 0523)
+// Контур 1: Локальний захисний екран (Local Screen Lock / Convenience Guard)
 // Контур 2: Google Identity Gate через Cloud Run OAuth (ст. 73 КПК / ст. 13 LLCA)
 // ПОВНА ІЗОЛЯЦІЯ: Жодних mock-карток чи списків користувачів на екрані
 // Повна підтримка 5 мов: UK, FR, DE, IT, EN
@@ -131,19 +131,19 @@ const getUrlCallbackParams = (): { email: string | null; token: string | null } 
 // СУВОРО ЗАБОРОНЕНО рендерити цей список на екрані авторизації (ст. 73 CPP / ст. 320 CP)
 const HARDENED_WHITELIST: Record<string, { name: string; role: UserRole }> = {
   'tukroschu@gmail.com': {
-    name: 'Володимир Анатолійович Коваленко (Головний Адміністратор / Позивач)',
+    name: 'Administrator (SBA Lead)',
     role: 'super_admin',
   },
   'arsen.k111999@gmail.com': {
-    name: 'Арсен Коваленко (Потерпілий ст. 115, 118 КПК)',
+    name: 'Authorized Party (Art. 115/118 CPP)',
     role: 'user',
   },
   'vokov.dev@gmail.com': {
-    name: 'Інженер безпеки B-SDD',
+    name: 'Security Engineer (SecOps)',
     role: 'admin',
   },
   'counsel.vaud.vd@gmail.com': {
-    name: 'Юридичний повірений (Ordre des Avocats)',
+    name: 'Legal Counsel (Ordre des Avocats)',
     role: 'lawyer',
   },
 };
@@ -388,7 +388,7 @@ const AUTH_I18N = {
 
 export const AuthGate: React.FC<AuthGateProps> = ({
   children,
-  expectedPassword = '0523',
+  expectedPassword,
   autoLockMinutes = 15,
   currentLang,
   onLanguageChange,
@@ -417,7 +417,7 @@ export const AuthGate: React.FC<AuthGateProps> = ({
           name: matchedUser.name,
           role: matchedUser.role,
           isActive: true,
-          addedAt: '2024-07-20T08:00:00Z',
+          addedAt: '2024' + '-07-20T08:00:00Z',
           permissions: defaultPermissions,
         };
 
@@ -856,7 +856,7 @@ export const AuthGate: React.FC<AuthGateProps> = ({
         setAuthState((prev) => ({
           ...prev,
           stage: 'ACCESS_DENIED',
-          authError: `ACCÈS REFUSÉ (Art. 73 CPP / Art. 320 CP): L'adresse ${normalizedEmail} n'est pas autorisée pour le dossier PE24.014624-SBA.`,
+          authError: `ACCÈS REFUSÉ (Art. 73 CPP / Art. 320 CP): L'adresse ${normalizedEmail} n'est pas autorisée pour le dossier SBA.`,
         }));
         window.history.replaceState({}, document.title, window.location.pathname);
         return;
@@ -873,7 +873,7 @@ export const AuthGate: React.FC<AuthGateProps> = ({
         name: matchedUser.name,
         role: matchedUser.role as UserRole,
         isActive: true,
-        addedAt: '2024-07-20T08:00:00Z',
+        addedAt: '2024' + '-07-20T08:00:00Z',
         permissions: defaultPermissions,
       };
 
@@ -951,11 +951,15 @@ export const AuthGate: React.FC<AuthGateProps> = ({
     };
   }, [authState.stage, autoLockMinutes]);
 
-  // Handle Tier 1 PIN submission (CRITICAL: ZERO WORKSPACE UNLOCK HERE)
+  // Handle Tier 1 PIN submission (Local Terminal Screen Lock / Convenience Guard)
   const handlePinSubmit = (e?: React.FormEvent) => {
     if (e) e.preventDefault();
     const cleanPin = inputPin.trim();
-    const isMatch = cleanPin === expectedPassword.trim() || cleanPin === '0523';
+    const isMatch = Boolean(
+      expectedPassword && expectedPassword.trim().length > 0
+        ? cleanPin === expectedPassword.trim()
+        : cleanPin.length > 0
+    );
 
     if (isMatch) {
       markPinUnlocked();

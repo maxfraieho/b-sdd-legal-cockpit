@@ -238,7 +238,7 @@ export default function App() {
     <AuthGate
       currentLang={currentLang}
       onLanguageChange={setCurrentLang}
-      expectedPassword={settings.authPassword || "0523"}
+      expectedPassword={settings.authPassword || ""}
       autoLockMinutes={settings.autoLockMinutes || 15}
       forceLockKey={forceLockKey}
       onUserAuthenticated={(user) => {

@@ -464,7 +464,7 @@ export const GlossaryModal: React.FC<GlossaryModalProps> = ({ isOpen, onClose, c
                   <span>🔐 1. Авторизація та Захист Таємниці</span>
                 </h4>
                 <ul className="text-xs text-slate-300 space-y-1 list-disc pl-4">
-                  <li>Захисний PIN-код за замовчуванням: <strong className="font-mono text-amber-300">0523</strong>.</li>
+                  <li>Локальний пароль термінала налаштовується в меню «Налаштування».</li>
                   <li>Кнопка блокування у верхній панелі миттєво ховає матеріали від сторонніх очей.</li>
                   <li>Автоматичне блокування за таймером бездіяльності (15 хвилин).</li>
                 </ul>

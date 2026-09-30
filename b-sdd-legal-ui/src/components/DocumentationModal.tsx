@@ -309,7 +309,7 @@ export const DocumentationModal: React.FC<DocumentationModalProps> = ({
                 <button
                   onClick={() =>
                     handleCopy(
-                      "PIN-код безпеки за замовчуванням: 0523. Екстрене блокування кнопкою Lock у Topbar.",
+                      "Локальний пароль безпеки екрана. Екстрене блокування кнопкою Lock у Topbar.",
                       "auth"
                     )
                   }
@@ -340,7 +340,7 @@ export const DocumentationModal: React.FC<DocumentationModalProps> = ({
                     <strong className="text-slate-200">Керування користувачами:</strong> У вікні налаштувань (⚙️ Settings ➔ вкладка «👥 Користувачі & Доступ») адміністратор може додавати нових людей, призначати ролі (Адвокат, Користувач, Спостерігач) або блокувати доступ.
                   </li>
                   <li>
-                    <strong className="text-slate-200">Резервний аварійний PIN:</strong> Передбачено для офлайн-доступу або збоїв зв'язку (за замовчуванням 0523, змінюється в налаштуваннях).
+                    <strong className="text-slate-200">Локальний екранний пароль:</strong> Передбачено для швидкого блокування екрана (налаштовується в меню налаштувань).
                   </li>
                   <li>
                     <strong className="text-slate-200">Екстрене блокування сесії:</strong> У верхній панелі (Topbar) натисніть іконку замка або виберіть «Заблокувати сесію» в меню профілю.

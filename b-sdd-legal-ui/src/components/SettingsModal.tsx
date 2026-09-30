@@ -246,7 +246,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
       enableSequestrationCalc,
       enabledLawIds,
       mcpTunnelUrl: mcpTunnelUrl.trim(),
-      authPassword: authPassword.trim() || '0523',
+      authPassword: authPassword.trim(),
       autoLockMinutes: Number(autoLockMinutes) || 15,
       manualEditMode,
     };
