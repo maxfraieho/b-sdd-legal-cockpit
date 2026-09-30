@@ -80,7 +80,7 @@ bash scripts/deploy_cloudflare_pages.sh
 cd /app/applet/b-sdd-legal-ui
 
 # Зчитування токенів з оточення або конфігураційного файлу
-export CLOUDFLARE_ACCOUNT_ID="${CLOUDFLARE_ACCOUNT_ID:-c354ea45a11a1e1c14f1f41fe780cb34}"
+export CLOUDFLARE_ACCOUNT_ID="${CLOUDFLARE_ACCOUNT_ID:-<your_account_id>}"
 if [ -z "${CLOUDFLARE_API_TOKEN:-}" ] && [ -f "/home/vokov/workspace/ai-drakon-scaffolder/cloudflare-worker/.env" ]; then
   export CLOUDFLARE_API_TOKEN=$(grep '^CLOUDFLARE_API_TOKEN=' /home/vokov/workspace/ai-drakon-scaffolder/cloudflare-worker/.env | cut -d '=' -f 2)
 fi

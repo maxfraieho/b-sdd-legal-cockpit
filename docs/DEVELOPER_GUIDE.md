@@ -18,7 +18,7 @@
 ```
 
 ### 1.1. Двовимірний часовий простір (Bitemporality)
-1. **$T_v$ (Valid Time / Час факту)**: Інтервал часу $[T_{v\_start}, T_{v\_end}]$, протягом якого діяння відбулося в реальному світі (наприклад, погроза телефоном 15.07.2024 о 19:30).
+1. **$T_v$ (Valid Time / Час факту)**: Інтервал часу $[T_{v\_start}, T_{v\_end}]$, протягом якого діяння відбулося в реальному світі (наприклад, телефонний контакт о 19:30 UTC).
 2. **$T_t$ (Transaction Time / Час фіксації)**: Момент часу, коли інформація про подію була зафіксована слідчим у протоколі або внесена до реєстру Utopia DB / Appwrite Cloud WORM.
 - Дельта $\Delta T = |T_t - T_v|$ є об'єктивним криміналістичним індикатором для викриття маніпуляцій датами та ретроспективних правок протилежної сторони.
 
@@ -90,7 +90,7 @@ b-sdd-legal-cockpit/
 │
 ├── scripts/                         # Автоматизація
 │   ├── provision_appwrite.mjs       # Декларативне створення БД, колекцій та бакетів Appwrite
-│   ├── seed_appwrite.mjs            # Початкове завантаження справи PE24.014624-SBA та WORM доказів
+│   ├── seed_appwrite.mjs            # Початкове завантаження еталонної справи та WORM доказів
 │   ├── deploy_cloudflare_pages.sh   # Скрипт збірки та публікації на Cloudflare Pages
 │   ├── generate_legal_book.py       # Компілятор EPUB 3.0 книг для Amazon Kindle
 │   └── run_legal_sprint.sh          # Скрипт запуску автономного юридичного спринту
@@ -194,7 +194,7 @@ bash scripts/deploy_cloudflare_pages.sh
 
 ### 5.2. Вимоги до змінних середовища Cloudflare
 - `CLOUDFLARE_API_TOKEN`: Токен з правами *Cloudflare Pages: Edit*.
-- `CLOUDFLARE_ACCOUNT_ID`: Ідентифікатор облікового запису Cloudflare (`c354ea45a11a1e1c14f1f41fe780cb34`).
+- `CLOUDFLARE_ACCOUNT_ID`: Ідентифікатор облікового запису Cloudflare (`<your_cloudflare_account_id>`).
 
 ---
 

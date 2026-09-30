@@ -8,8 +8,12 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT_DIR="$(cd "${SCRIPT_DIR}/.." && pwd)"
 REMOTE_HOST="192.168.3.184"
-CF_ACCOUNT_ID="${CF_ACCOUNT_ID:-c354ea45a11a1e1c14f1f41fe780cb34}"
 PROJECT_NAME="b-sdd-legal-ui"
+
+CF_ACCOUNT_ID="${CLOUDFLARE_ACCOUNT_ID:-${CF_ACCOUNT_ID:-}}"
+if [ -z "${CF_ACCOUNT_ID}" ] && [ -f "/home/vokov/workspace/ai-drakon-scaffolder/cloudflare-worker/.env" ]; then
+  CF_ACCOUNT_ID=$(grep '^CLOUDFLARE_ACCOUNT_ID=' /home/vokov/workspace/ai-drakon-scaffolder/cloudflare-worker/.env | cut -d '=' -f 2 || true)
+fi
 
 echo "=== [1/4] Pre-flight Invariant Verification ==="
 cd "${ROOT_DIR}"
