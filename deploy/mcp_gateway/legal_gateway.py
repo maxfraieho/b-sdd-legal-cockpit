@@ -46,17 +46,21 @@ def load_config() -> Dict[str, Any]:
             print(f"[WARN] Failed to parse {CONFIG_PATH}: {e}", file=sys.stderr)
     return {
         "server": {
-            "host": "0.0.0.0",
+            "host": "127.0.0.1",
             "port": 8766,
             "bearer_token": "",
-            "auth_enabled": False,
-            "require_auth": False
+            "auth_enabled": True,
+            "require_auth": True
         },
         "cors": {
-            "allow_origins": ["*"],
+            "allow_origins": [
+                "http://localhost:5173",
+                "http://127.0.0.1:5173",
+                "https://b-sdd-legal-ui.pages.dev"
+            ],
             "allow_credentials": True,
-            "allow_methods": ["*"],
-            "allow_headers": ["*"]
+            "allow_methods": ["GET", "POST", "HEAD", "OPTIONS"],
+            "allow_headers": ["Authorization", "Content-Type", "Mcp-Session-Id", "User-Agent"]
         },
         "upstreams": {
             "legal_node": "http://192.168.3.234:8766",
@@ -70,8 +74,37 @@ def load_config() -> Dict[str, Any]:
 
 
 CONFIG = load_config()
-SERVER_HOST = os.environ.get("LEGAL_MCP_HOST", CONFIG.get("server", {}).get("host", "0.0.0.0"))
+SERVER_HOST = os.environ.get("LEGAL_MCP_HOST", CONFIG.get("server", {}).get("host", "127.0.0.1"))
 SERVER_PORT = int(os.environ.get("LEGAL_MCP_PORT", CONFIG.get("server", {}).get("port", 8766)))
+AUTH_ENABLED = os.environ.get("LEGAL_MCP_AUTH_ENABLED", "1" if CONFIG.get("server", {}).get("auth_enabled", True) else "0") in ("1", "true", "True")
+REQUIRE_AUTH = os.environ.get("LEGAL_MCP_REQUIRE_AUTH", "1" if CONFIG.get("server", {}).get("require_auth", True) else "0") in ("1", "true", "True")
+BEARER_TOKEN = os.environ.get("LEGAL_MCP_TOKEN", CONFIG.get("server", {}).get("bearer_token", "")).strip()
+
+
+def check_auth(request: Request, authorization: Optional[str] = Header(None), token: Optional[str] = Query(None)):
+    """Enforces Bearer token authentication (T2: Sovereign Gateway Hardening)."""
+    if not REQUIRE_AUTH:
+        return "anonymous"
+    if not BEARER_TOKEN:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Configuration error: LEGAL_MCP_TOKEN must be set in environment when auth is required."
+        )
+    provided = None
+    if authorization and authorization.lower().startswith("bearer "):
+        provided = authorization[7:].strip()
+    elif token:
+        provided = token.strip()
+    elif request.headers.get("x-mcp-token"):
+        provided = request.headers.get("x-mcp-token").strip()
+
+    if not provided or provided != BEARER_TOKEN:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Unauthorized: Valid Bearer token required for Legal MCP Gateway."
+        )
+    return "authenticated"
+
 
 app = FastAPI(
     title="B-SDD Legal Sovereign Remote MCP Gateway",
@@ -79,14 +112,19 @@ app = FastAPI(
     description="Sovereign MCP gateway exposing Swiss Criminal Legal tools, Utopia DB, GitNexus, and DRAKON."
 )
 
-# CORS Middleware
+# CORS Middleware (Explicit whitelist only; never wildcard with credentials)
 cors_cfg = CONFIG.get("cors", {})
+raw_origins = cors_cfg.get("allow_origins", [])
+safe_origins = [o for o in raw_origins if o != "*"]
+if not safe_origins:
+    safe_origins = ["http://localhost:5173", "http://127.0.0.1:5173", "https://b-sdd-legal-ui.pages.dev"]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=cors_cfg.get("allow_origins", ["*"]),
-    allow_credentials=cors_cfg.get("allow_credentials", True),
-    allow_methods=cors_cfg.get("allow_methods", ["*"]),
-    allow_headers=cors_cfg.get("allow_headers", ["*"]),
+    allow_origins=safe_origins,
+    allow_credentials=True,
+    allow_methods=["GET", "POST", "HEAD", "OPTIONS"],
+    allow_headers=["Authorization", "Content-Type", "Mcp-Session-Id", "User-Agent"],
 )
 
 # Active SSE Sessions
@@ -113,41 +151,63 @@ def get_all_tool_specs() -> List[Dict[str, Any]]:
     return tools
 
 
-def dispatch_tool_call(name: str, args: Dict[str, Any]) -> Any:
-    """Dispatches tool execution to the appropriate toolkit."""
+def dispatch_tool_call(name: str, args: Dict[str, Any], caller_id: str = "internal") -> Any:
+    """Dispatches tool execution with strict authorization and safety guards (T2)."""
+    start_ts = datetime.now(timezone.utc).isoformat()
+    result = None
+
+    # Write operations guard
+    allow_write = os.environ.get("LEGAL_MCP_ALLOW_WRITE", "0") in ("1", "true", "True")
+
     # 1. Legal Tools
     if name == "legal_dossier_search":
-        return toolkit_legal.legal_dossier_search(query=args.get("query", ""), chapter=args.get("chapter"))
+        result = toolkit_legal.legal_dossier_search(query=args.get("query", ""), chapter=args.get("chapter"))
     elif name == "legal_transcripts_query":
-        return toolkit_legal.legal_transcripts_query(recording_id=args.get("recording_id"), keyword=args.get("keyword"))
+        result = toolkit_legal.legal_transcripts_query(recording_id=args.get("recording_id"), keyword=args.get("keyword"))
     elif name == "legal_actor_matrix_get":
-        return toolkit_legal.legal_actor_matrix_get()
+        result = toolkit_legal.legal_actor_matrix_get()
     elif name == "legal_evidence_get":
-        return toolkit_legal.legal_evidence_get(evidence_id=args.get("evidence_id"))
+        result = toolkit_legal.legal_evidence_get(evidence_id=args.get("evidence_id"))
     elif name == "legal_sprint_dispatch":
-        return toolkit_legal.legal_sprint_dispatch(sprint_id=args.get("sprint_id", "sprint_003"), instruction=args.get("instruction", ""), prompt=args.get("prompt"))
+        if not allow_write:
+            raise PermissionError("Tool 'legal_sprint_dispatch' is disabled by default. Set LEGAL_MCP_ALLOW_WRITE=1 to enable.")
+        result = toolkit_legal.legal_sprint_dispatch(sprint_id=args.get("sprint_id", "sprint_003"), instruction=args.get("instruction", ""), prompt=args.get("prompt"))
     elif name == "legal_supervisor_status":
-        return toolkit_legal.legal_supervisor_status()
+        result = toolkit_legal.legal_supervisor_status()
     elif name == "legal_epub_rebuild":
-        return toolkit_legal.legal_epub_rebuild()
+        if not allow_write:
+            raise PermissionError("Tool 'legal_epub_rebuild' is disabled by default. Set LEGAL_MCP_ALLOW_WRITE=1 to enable.")
+        result = toolkit_legal.legal_epub_rebuild()
     elif name == "utopia_db_query":
-        return toolkit_legal.utopia_db_query(sql_query=args.get("sql_query", ""))
+        # T2 Guard: Allowlist only. Raw mutation queries are strictly forbidden.
+        sql = str(args.get("sql_query", "")).strip()
+        sql_upper = sql.upper()
+        forbidden = ["DROP", "DELETE", "TRUNCATE", "UPDATE", "INSERT", "ALTER", "CREATE", "GRANT", "REVOKE"]
+        if any(f" {kw} " in f" {sql_upper} " for kw in forbidden):
+            raise ValueError("Security violation: Only read-only queries are permitted on utopia_db_query.")
+        if not sql_upper.startswith("SELECT"):
+            raise ValueError("Security violation: utopia_db_query requires a SELECT statement.")
+        result = toolkit_legal.utopia_db_query(sql_query=sql)
     elif name == "legal_feedback_reconcile":
-        return toolkit_legal.legal_feedback_reconcile(
+        if not allow_write:
+            raise PermissionError("Tool 'legal_feedback_reconcile' is disabled by default. Set LEGAL_MCP_ALLOW_WRITE=1 to enable.")
+        result = toolkit_legal.legal_feedback_reconcile(
             text=args.get("text", ""),
             handler=args.get("handler", "agy"),
             target_chapter=args.get("target_chapter")
         )
     elif name == "legal_appwrite_status":
-        return toolkit_legal.legal_appwrite_status()
+        result = toolkit_legal.legal_appwrite_status()
 
     # 2. Documentation & Planning Tools (Spark Architect)
     elif name == "legal_docs_list":
-        return toolkit_docs.docs_list(category=args.get("category", "all"))
+        result = toolkit_docs.docs_list(category=args.get("category", "all"))
     elif name == "legal_docs_read":
-        return toolkit_docs.docs_read(doc_path=args.get("doc_path", ""), max_chars=args.get("max_chars"))
+        result = toolkit_docs.docs_read(doc_path=args.get("doc_path", ""), max_chars=args.get("max_chars"))
     elif name == "legal_docs_write":
-        return toolkit_docs.docs_write(
+        if not allow_write:
+            raise PermissionError("Tool 'legal_docs_write' is disabled by default. Set LEGAL_MCP_ALLOW_WRITE=1 to enable.")
+        result = toolkit_docs.docs_write(
             doc_path=args.get("doc_path", ""),
             content=args.get("content", ""),
             mode=args.get("mode", "overwrite"),
@@ -155,7 +215,9 @@ def dispatch_tool_call(name: str, args: Dict[str, Any]) -> Any:
             comment=args.get("comment")
         )
     elif name == "legal_plan_save":
-        return toolkit_docs.plan_save(
+        if not allow_write:
+            raise PermissionError("Tool 'legal_plan_save' is disabled by default. Set LEGAL_MCP_ALLOW_WRITE=1 to enable.")
+        result = toolkit_docs.plan_save(
             plan_id=args.get("plan_id", ""),
             title=args.get("title", ""),
             objective=args.get("objective", ""),
@@ -166,15 +228,17 @@ def dispatch_tool_call(name: str, args: Dict[str, Any]) -> Any:
             author=args.get("author", "Gemini Spark Architect")
         )
     elif name == "legal_plans_list":
-        return toolkit_docs.plans_list(status=args.get("status"), tag=args.get("tag"))
+        result = toolkit_docs.plans_list(status=args.get("status"), tag=args.get("tag"))
     elif name == "legal_plan_get":
-        return toolkit_docs.plan_get(plan_id=args.get("plan_id", ""))
+        result = toolkit_docs.plan_get(plan_id=args.get("plan_id", ""))
 
-    # 2. Utopia Tools
+    # 3. Utopia Tools
     elif name == "utopia_bitemporal_query":
-        return toolkit_utopia.bitemporal_query(valid_time_day=args.get("valid_time_day"), component=args.get("component"), sql=args.get("sql"))
+        result = toolkit_utopia.bitemporal_query(valid_time_day=args.get("valid_time_day"), component=args.get("component"), sql=args.get("sql"))
     elif name == "utopia_record_worm_ledger":
-        return toolkit_utopia.record_worm_ledger(
+        if not allow_write:
+            raise PermissionError("Tool 'utopia_record_worm_ledger' is disabled by default. Set LEGAL_MCP_ALLOW_WRITE=1 to enable.")
+        result = toolkit_utopia.record_worm_ledger(
             sprint_id=args.get("sprint_id", "sprint_legal"),
             commit_hash=args.get("commit_hash", ""),
             release_tag=args.get("release_tag", ""),
@@ -183,7 +247,48 @@ def dispatch_tool_call(name: str, args: Dict[str, Any]) -> Any:
             metadata=args.get("metadata")
         )
     elif name == "utopia_check_invariants":
-        return toolkit_utopia.check_invariants(component=args.get("component"))
+        result = toolkit_utopia.check_invariants(component=args.get("component"))
+
+    # 4. GitNexus AST Tools
+    elif name == "gitnexus_ast_query":
+        result = toolkit_gitnexus.query_ast_graph(query_type=args.get("query_type", "cross_repo"), valid_time_day=args.get("valid_time_day"), params=args.get("params"))
+    elif name == "gitnexus_blast_radius":
+        result = toolkit_gitnexus.audit_blast_radius(symbol_name=args.get("symbol_name", ""), max_depth=args.get("max_depth", 3), files=args.get("files"))
+    elif name == "gitnexus_symbol_search":
+        result = toolkit_gitnexus.symbol_search(query=args.get("query", ""), workspace=args.get("workspace"), symbol_type=args.get("symbol_type"), limit=args.get("limit", 50))
+
+    # 5. DRAKON Tools
+    elif name == "drakon_planar_validate":
+        result = toolkit_drakon.planar_validate(args.get("schema_input", args.get("schema", {})))
+    elif name == "drakon_svg_export":
+        result = toolkit_drakon.svg_export(schema_input=args.get("schema_input", args.get("schema", {})), title=args.get("title", "DRAKON Diagram"))
+    elif name == "drakon_code_compile":
+        result = toolkit_drakon.compile_code(schema_input=args.get("schema_input", args.get("schema", {})), target_lang=args.get("target_lang", "pseudocode"))
+
+    # 6. Astryx Tools
+    elif name == "astryx_canvas_push":
+        if not allow_write:
+            raise PermissionError("Tool 'astryx_canvas_push' is disabled by default. Set LEGAL_MCP_ALLOW_WRITE=1 to enable.")
+        result = toolkit_astryx.canvas_push(schema=args.get("schema", {}), canvas_id=args.get("canvas_id", "main"), notify=args.get("notify", True))
+    elif name == "astryx_canvas_get":
+        result = toolkit_astryx.get_canvas_state(canvas_id=args.get("canvas_id", "main"))
+
+    # 7. Skills Tools
+    elif name == "skills_catalog_inspect":
+        result = toolkit_skills.inspect_skills_catalog(category=args.get("category"), search=args.get("search"), include_drakon=args.get("include_drakon", False))
+    elif name == "skills_rule_of_two_crystallize":
+        if not allow_write:
+            raise PermissionError("Tool 'skills_rule_of_two_crystallize' is disabled by default. Set LEGAL_MCP_ALLOW_WRITE=1 to enable.")
+        result = toolkit_skills.crystallize_rule_of_two(skill_name=args.get("skill_name", ""), session_id=args.get("session_id"), user_prompt=args.get("user_prompt"), dry_run=args.get("dry_run", False))
+    elif name == "skills_verify_immutability":
+        result = toolkit_skills.verify_immutability()
+    else:
+        raise ValueError(f"Unknown tool: {name}")
+
+    # T2 Mandate: Log every tool call (tool name, timestamp, caller id, result size). Never log arguments or content.
+    result_size = len(json.dumps(result, ensure_ascii=False)) if isinstance(result, (dict, list)) else len(str(result))
+    logging.info(f"[TOOL_METADATA_AUDIT] tool={name} timestamp={start_ts} caller_id={caller_id} result_bytes={result_size}")
+    return result
 
     # 3. GitNexus AST Tools
     elif name == "gitnexus_ast_query":
@@ -381,8 +486,9 @@ async def sse_transport(request: Request):
     """
     Standard MCP SSE Transport Endpoint.
     Opens persistent SSE connection, yields the message endpoint, and keeps alive.
-    Supports /sse and /mcp aliases with dual sessionId and session_id parameter formats.
+    Requires Bearer token authentication (T2).
     """
+    check_auth(request)
     session_id = str(uuid.uuid4())
     queue: asyncio.Queue = asyncio.Queue()
     ACTIVE_SESSIONS[session_id] = queue
@@ -410,7 +516,6 @@ async def sse_transport(request: Request):
             "Cache-Control": "no-cache",
             "Connection": "keep-alive",
             "X-Accel-Buffering": "no",
-            "Access-Control-Allow-Origin": "*"
         }
     )
 
@@ -422,12 +527,13 @@ async def sse_messages(
     session_id: Optional[str] = Query(None),
     sessionId: Optional[str] = Query(None)
 ):
-    """Handles incoming JSON-RPC 2.0 requests over SSE transport."""
+    """Handles incoming JSON-RPC 2.0 requests over SSE transport (T2: authenticated)."""
+    check_auth(request)
     actual_session_id = sessionId or session_id or request.headers.get("mcp-session-id")
     req_json = await request.json()
     resp = process_jsonrpc_request(req_json)
 
-    headers = {"Access-Control-Allow-Origin": "*"}
+    headers = {}
     if actual_session_id:
         headers["Mcp-Session-Id"] = actual_session_id
 
@@ -447,7 +553,8 @@ async def direct_rpc(
     session_id: Optional[str] = Query(None),
     sessionId: Optional[str] = Query(None)
 ):
-    """Direct HTTP POST JSON-RPC 2.0 and Streamable HTTP handler."""
+    """Direct HTTP POST JSON-RPC 2.0 and Streamable HTTP handler (T2: authenticated)."""
+    check_auth(request)
     try:
         body = await request.json()
     except Exception:
@@ -467,7 +574,7 @@ async def direct_rpc(
     if actual_session_id and actual_session_id in ACTIVE_SESSIONS and resp_content:
         await ACTIVE_SESSIONS[actual_session_id].put(resp_content)
 
-    headers = {"Access-Control-Allow-Origin": "*"}
+    headers = {}
     if actual_session_id:
         headers["Mcp-Session-Id"] = actual_session_id
 
@@ -476,7 +583,8 @@ async def direct_rpc(
 
 @app.get("/api/tools")
 def list_tools(request: Request):
-    """REST endpoint to inspect all registered MCP tools."""
+    """REST endpoint to inspect all registered MCP tools (T2: authenticated)."""
+    check_auth(request)
     return {"tools": get_all_tool_specs()}
 
 

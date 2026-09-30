@@ -25,7 +25,11 @@ from socketserver import ThreadingMixIn
 from pathlib import Path
 from typing import Dict, Any, List, Optional
 
+HOST = os.environ.get("LEGAL_MCP_HOST", "127.0.0.1")
 PORT = int(os.environ.get("LEGAL_MCP_PORT", "8766"))
+BEARER_TOKEN = os.environ.get("LEGAL_MCP_TOKEN", "").strip()
+REQUIRE_AUTH = os.environ.get("LEGAL_MCP_REQUIRE_AUTH", "1") in ("1", "true", "True")
+
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 DOSSIER_DIR = PROJECT_ROOT / "dossier_benchmark" / "DOSSIER_LEGAL_UA_ED10"
 TRANSCRIPTS_FILE = PROJECT_ROOT / "dossier_benchmark" / "АРХІВ_61_ЧОРНОВИХ_ТРАНСКРИПЦІЙ_ТАЙМКОДИ.md"
@@ -202,7 +206,15 @@ def tool_legal_epub_rebuild() -> str:
 
 
 def tool_utopia_db_query(sql_query: str) -> str:
-    """Queries Utopia DB on 192.168.3.251:9922."""
+    """Queries Utopia DB on 192.168.3.251:9922 (Read-only SELECT guard enforced)."""
+    sql_clean = sql_query.strip()
+    sql_upper = sql_clean.upper()
+    forbidden = ["DROP", "DELETE", "TRUNCATE", "UPDATE", "INSERT", "ALTER", "CREATE", "GRANT", "REVOKE"]
+    if any(f" {kw} " in f" {sql_upper} " for kw in forbidden):
+        return "ERROR: Security violation: Only read-only queries are permitted on utopia_db_query."
+    if not sql_upper.startswith("SELECT"):
+        return "ERROR: Security violation: utopia_db_query requires a SELECT statement."
+
     script = PROJECT_ROOT / "scripts" / "utopia_mcp_server.py"
     if not script.exists():
         return f"ERROR: {script} not found."
@@ -216,7 +228,7 @@ def tool_utopia_db_query(sql_query: str) -> str:
             "docker exec -i utopia-db psql -U utopia -d utopia"
         ]
         p = subprocess.Popen(cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
-        stdout, stderr = p.communicate(input=sql_query + "\n", timeout=12)
+        stdout, stderr = p.communicate(input=sql_clean + "\n", timeout=12)
         if p.returncode != 0:
             return f"ERROR ({p.returncode}): {stderr.strip()}"
         return stdout.strip()
@@ -405,6 +417,23 @@ class LegalMCPHandler(BaseHTTPRequestHandler):
         self.send_header("Access-Control-Allow-Headers", "*")
         self.end_headers()
 
+    def _check_auth(self) -> bool:
+        """Validates Bearer token or token query parameter (T2: Sovereign Gateway Hardening)."""
+        if not REQUIRE_AUTH:
+            return True
+        if not BEARER_TOKEN:
+            return False
+        auth_hdr = self.headers.get("Authorization", "")
+        if auth_hdr.startswith("Bearer ") and auth_hdr[7:].strip() == BEARER_TOKEN:
+            return True
+        if "?token=" in self.path:
+            from urllib.parse import urlparse, parse_qs
+            parsed = urlparse(self.path)
+            qs = parse_qs(parsed.query)
+            if qs.get("token", [""])[0] == BEARER_TOKEN:
+                return True
+        return False
+
     def do_GET(self):
         if self.path in ("/health", "/"):
             self._send_json(200, {
@@ -415,16 +444,22 @@ class LegalMCPHandler(BaseHTTPRequestHandler):
                 "port": PORT,
                 "tools_count": len(TOOLS_REGISTRY)
             })
-        elif self.path == "/api/tools":
+            return
+
+        # Enforce authentication on data and transport endpoints
+        if not self._check_auth():
+            self._send_json(401, {"error": "Unauthorized: Valid Bearer token required for Legal MCP Gateway."})
+            return
+
+        if self.path == "/api/tools":
             tools_list = [{"name": k, "description": v["description"], "parameters": v["parameters"]} for k, v in TOOLS_REGISTRY.items()]
             self._send_json(200, {"tools": tools_list})
-        elif self.path == "/sse":
+        elif self.path.startswith("/sse"):
             session_id = str(uuid.uuid4())
             self.send_response(200)
             self.send_header("Content-Type", "text/event-stream")
             self.send_header("Cache-Control", "no-cache")
             self.send_header("Connection", "keep-alive")
-            self.send_header("Access-Control-Allow-Origin", "*")
             self.end_headers()
 
             # MCP SSE initiation event
@@ -444,6 +479,10 @@ class LegalMCPHandler(BaseHTTPRequestHandler):
             self._send_json(404, {"error": "Not Found"})
 
     def do_POST(self):
+        if not self._check_auth():
+            self._send_json(401, {"error": "Unauthorized: Valid Bearer token required for Legal MCP Gateway."})
+            return
+
         content_length = int(self.headers.get("Content-Length", 0))
         raw_body = self.rfile.read(content_length)
 
@@ -471,9 +510,9 @@ class LegalMCPHandler(BaseHTTPRequestHandler):
 
 
 def run_server():
-    server_address = ("0.0.0.0", PORT)
+    server_address = (HOST, PORT)
     httpd = ThreadedHTTPServer(server_address, LegalMCPHandler)
-    logging.info(f"Legal MCP Gateway listening on 0.0.0.0:{PORT} (Node: 192.168.3.234 / 100.80.16.33)")
+    logging.info(f"Legal MCP Gateway listening on {HOST}:{PORT} (Auth required: {REQUIRE_AUTH})")
     try:
         httpd.serve_forever()
     except KeyboardInterrupt:

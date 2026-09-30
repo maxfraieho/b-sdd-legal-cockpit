@@ -1,21 +1,29 @@
 {
   "server": {
-    "host": "0.0.0.0",
+    "host": "127.0.0.1",
     "port": 8766,
     "bearer_token": "",
-    "auth_enabled": false,
-    "require_auth": false
+    "auth_enabled": true,
+    "require_auth": true
   },
   "cors": {
     "allow_origins": [
-      "*"
+      "http://localhost:5173",
+      "http://127.0.0.1:5173",
+      "https://b-sdd-legal-ui.pages.dev"
     ],
     "allow_credentials": true,
     "allow_methods": [
-      "*"
+      "GET",
+      "POST",
+      "HEAD",
+      "OPTIONS"
     ],
     "allow_headers": [
-      "*"
+      "Authorization",
+      "Content-Type",
+      "Mcp-Session-Id",
+      "User-Agent"
     ]
   },
   "upstreams": {
