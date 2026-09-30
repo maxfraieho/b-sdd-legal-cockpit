@@ -1,6 +1,6 @@
 // =========================================================================
 // B-SDD LEGAL COCKPIT · ADVOCATE ACTION CENTER (ACTION CENTER)
-// Séquestre Art. 263 CPP, 10-Day Recours Radar (Art. 393 CPP), EPUB Recompile
+// Séquestre Art. 263 CPP, Recours Art. 396 al. 1 CPP, EPUB Recompile
 // =========================================================================
 
 import React, { useState } from "react";
@@ -164,7 +164,7 @@ Pour les parties plaignantes, Me Volod & Partners`;
               </span>
             </div>
             <p className="text-xs text-zinc-400">
-              Actes urgents, réquisition de séquestre Art. 263 CPP et radar de recours Art. 393 CPP.
+              Actes urgents, réquisition de séquestre Art. 263 CPP et statut de recours Art. 396 al. 1 CPP.
             </p>
           </div>
         </div>
