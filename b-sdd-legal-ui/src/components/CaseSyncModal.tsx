@@ -143,7 +143,7 @@ export const CaseSyncModal: React.FC<CaseSyncModalProps> = ({
   // Spark JSON Payload
   const sparkPayload = {
     task_id: `SPARK-CASE-SYNC-${Date.now()}`,
-    case_reference: activeCase.reference || "PE24.014624-SBA",
+    case_reference: activeCase.reference || "DOSSIER-SBA",
     jurisdiction: "Ministère public d'arrondissement de Lausanne (Vaud)",
     timestamp: new Date().toISOString(),
     invariants: {
@@ -290,8 +290,8 @@ export const CaseSyncModal: React.FC<CaseSyncModalProps> = ({
                   </p>
                   <p>
                     {currentLang === "uk"
-                      ? "ШІ аналізує всі внесені зміни (нових фігурантів, додані скани/фото, скориговані заяви) та порівнює їх із 35 нормами швейцарського кримінального і процесуального права у MemPalace. Враховується дисоціативний стан Олени Коваленко (ст. 18, 48 КК) та зберігається абсолютний імунітет Адріано Міллі (ст. 933 CC)."
-                      : "L'IA analyse les deltas, confronte les déclarations aux 35 articles de lois suisses et requalifie la créance garantie ainsi que les conclusions civiles de la procédure PE24.014624-SBA."}
+                      ? "ШІ аналізує всі внесені зміни (нових фігурантів, додані скани/фото, скориговані заяви) та порівнює їх із 35 нормами швейцарського кримінального і процесуального права у MemPalace. Враховується дисоціативний стан особи під примусом (ст. 18, 48 КК) та зберігається абсолютний імунітет добросовісної третьої особи (ст. 933 CC)."
+                      : "L'IA analyse les deltas, confronte les déclarations aux 35 articles de lois suisses et requalifie la créance garantie ainsi que les conclusions civiles de la procédure pénale."}
                   </p>
                 </div>
               </div>
