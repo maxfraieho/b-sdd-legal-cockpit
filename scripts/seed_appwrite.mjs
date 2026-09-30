@@ -134,7 +134,7 @@ async function main() {
       body: JSON.stringify({
         documentId: w.record_id,
         data: w,
-        permissions: ['read("users")', 'update("users")'],
+        permissions: ['read("users")'],
       }),
     });
     console.log(`  WORM ${w.record_id}:`, wRes.ok ? '✓ Додано' : wRes.status === 409 ? '✓ Вже існує' : wRes.data?.message);

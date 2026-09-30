@@ -80,9 +80,18 @@ async function main() {
     }
   }
 
-  // Helper для створення колекції
-  async function ensureCollection(colId, name, attributes) {
+  // Helper для створення колекції з точним контролем прав доступу
+  async function ensureCollection(colId, name, attributes, customPermissions = null) {
     console.log(`\nПеревірка колекції '${colId}' (${name})...`);
+    // Default: mutable collections have read/create/update/delete for authenticated users
+    // WORM collection is strictly append-only (read/create only; no update/delete)
+    const effectivePermissions = customPermissions || [
+      'read("users")',
+      'create("users")',
+      'update("users")',
+      'delete("users")',
+    ];
+
     const check = await api(`/databases/${DATABASE_ID}/collections/${colId}`, { method: 'GET' });
     if (!check.ok) {
       console.log(`  ➔ Створення колекції '${colId}'...`);
@@ -91,12 +100,7 @@ async function main() {
         body: JSON.stringify({
           collectionId: colId,
           name: name,
-          permissions: [
-            'read("users")',
-            'create("users")',
-            'update("users")',
-            'delete("users")',
-          ],
+          permissions: effectivePermissions,
           documentSecurity: false,
           enabled: true,
         }),
@@ -108,7 +112,19 @@ async function main() {
       console.log(`  ✓ Колекцію '${colId}' створено.`);
       await sleep(1000);
     } else {
-      console.log(`  ✓ Колекція '${colId}' вже існує.`);
+      console.log(`  ✓ Колекція '${colId}' вже існує. Оновлення політики прав (B-SDD WORM / Role Hardening)...`);
+      const updateRes = await api(`/databases/${DATABASE_ID}/collections/${colId}`, {
+        method: 'PUT',
+        body: JSON.stringify({
+          name: name,
+          permissions: effectivePermissions,
+          documentSecurity: false,
+          enabled: true,
+        }),
+      });
+      if (updateRes.ok) {
+        console.log(`  ✓ Права доступу для '${colId}' успішно синхронізовано.`);
+      }
     }
 
     // Створення атрибутів
@@ -158,7 +174,11 @@ async function main() {
     { key: 'sequestration_target_chf', type: 'float', required: false, default: 0 },
   ]);
 
-  // 3. Колекція WORM_RECORDS
+  // 3. Колекція WORM_RECORDS (Strictly Append-Only under Invariant L-01: NO update, NO delete)
+  const wormPermissions = [
+    'read("users")',
+    'create("users")',
+  ];
   await ensureCollection('worm_records', 'WORM Bitemporal Ledger', [
     { key: 'record_id', type: 'string', size: 255, required: true },
     { key: 'entity_id', type: 'string', size: 255, required: true },
@@ -173,7 +193,7 @@ async function main() {
     { key: 'content_snapshot', type: 'string', size: 65535, required: true },
     { key: 'status', type: 'string', size: 50, required: true },
     { key: 'timestamp', type: 'string', size: 50, required: true },
-  ]);
+  ], wormPermissions);
 
   // 4. Колекція ACTORS
   await ensureCollection('actors', 'Procedural Actors Registry', [
