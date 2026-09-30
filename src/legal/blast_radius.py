@@ -91,6 +91,8 @@ class AllegationCorroboration:
 class ManualDeadlineEntry:
     """Manual procedural deadline record under Swiss CPP (T4: no automatic computation or countdown)."""
     deadline_at: str                                    # Entered deadline date string (manual data)
+    # UNVERIFIED — pending legal audit: Art. 393 vs Art. 396 citation mapping to be confirmed with qualified Swiss counsel.
+    # Note: Art. 393 CPP governs admissibility of recours; Art. 396 al. 1 CPP governs form and 10-day time limit.
     legal_basis: str = "Art. 396 al. 1 CPP"            # Legal basis citation
     computation_note: str = ""                          # Operator / lawyer annotation
     source_document: str = ""                           # Vault item hash / reference

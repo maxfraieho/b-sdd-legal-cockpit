@@ -27,6 +27,12 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
   }
 
   handleClear = () => {
+    const confirmation = window.confirm(
+      "УВАГА: Очищення кешу призведе до видалення несинхронізованих локальних даних (нових фігурантів, доданих доказів та локальних нотаток).\n\nВи дійсно бажаєте продовжити скидання локального сховища?"
+    );
+    if (!confirmation) {
+      return;
+    }
     try {
       localStorage.clear();
       sessionStorage.clear();
