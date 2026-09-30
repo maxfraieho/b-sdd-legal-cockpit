@@ -414,18 +414,18 @@ export const EvidenceIngestionWizard: React.FC<EvidenceIngestionWizardProps> = (
           )} and fulfilling admissibility under ATF 146 IV 9.`,
         },
         citation_cle: {
-          uk: `« ${inputText.slice(0, 180)}... »`,
-          fr: `« ${inputText.slice(0, 180)}... »`,
-          de: `« ${inputText.slice(0, 180)}... »`,
-          it: `« ${inputText.slice(0, 180)}... »`,
-          en: `« ${inputText.slice(0, 180)}... »`,
+          uk: `« ${inputText.slice(0, 180)}... » (Попередній витяг, очікує просторового закріплення)`,
+          fr: `« ${inputText.slice(0, 180)}... » (Extrait préliminaire, en attente de vérification spatiale)`,
+          de: `« ${inputText.slice(0, 180)}... » (Vorläufiger Auszug, wartet auf räumliche Prüfung)`,
+          it: `« ${inputText.slice(0, 180)}... » (Estratto preliminare, in attesa di verifica spaziale)`,
+          en: `« ${inputText.slice(0, 180)}... » (Preliminary extract, pending spatial anchor verification)`,
         },
         admissibilite: {
-          uk: "Повністю допустимий доказ (ст. 139 КПК Швейцарії, прецедент ATF 146 IV 9)",
-          fr: "Pleinement recevable selon l'Art. 139 CPP et la jurisprudence constante ATF 146 IV 9",
-          de: "Vollumfänglich verwertbares Beweismittel (Art. 139 StPO, Leitentscheid BGE 146 IV 9)",
-          it: "Mezzo di prova pienamente ammissibile (Art. 139 CPP Svizzero, giurisprudenza DTF 146 IV 9)",
-          en: "Fully admissible under Art. 139 CPC and leading precedent ATF 146 IV 9",
+          uk: "Попередньо кваліфіковано (PROPOSED): потребує офіційної рецензії адвоката згідно зі ст. 139 КПК Швейцарії",
+          fr: "Qualification préliminaire (PROPOSED) : requiert validation formelle de l'avocat selon Art. 139 CPP",
+          de: "Vorläufige Qualifikation (PROPOSED): erfordert anwaltliche Prüfung gemäss Art. 139 StPO",
+          it: "Qualifica preliminare (PROPOSED): richiede revisione formale dell'avvocato ex Art. 139 CPP",
+          en: "Preliminary qualification (PROPOSED): requires formal counsel review under Art. 139 CPP",
         },
         valid_time: `${inputDate} ${inputTime}:00`,
         transaction_time: new Date().toISOString().replace("T", " ").slice(0, 19),
@@ -435,7 +435,7 @@ export const EvidenceIngestionWizard: React.FC<EvidenceIngestionWizardProps> = (
           financialImpact > 0
             ? "Включити до розрахунку арешту ст. 263 КПК та заявити в клопотанні ст. 318 КПК"
             : "Долучити до матеріалів допиту та клопотання ст. 318 КПК Во",
-        confidence_score: 98.4,
+        confidence_score: 85.0, // Heuristic baseline estimate, subject to lawyer review
       };
 
       setQualification(result);

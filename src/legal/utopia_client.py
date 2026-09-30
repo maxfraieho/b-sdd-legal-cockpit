@@ -3,13 +3,14 @@ Utopia DB Bitemporal Client.
 100% Pure Python Standard Library (Invariant L-02 / ADR-002).
 Direct SQL and bitemporal querying against Utopia DB (192.168.3.251:9922).
 """
+import os
 import subprocess
 from typing import Any, Dict, List, Optional
 
-UTOPIA_HOST = "192.168.3.251"
-UTOPIA_PORT = "9922"
-UTOPIA_USER = "root"
-UTOPIA_PASS = "podroid"
+UTOPIA_HOST = os.getenv("UTOPIA_DB_HOST", "192.168.3.251")
+UTOPIA_PORT = os.getenv("UTOPIA_DB_PORT", "9922")
+UTOPIA_USER = os.getenv("UTOPIA_DB_USER", "root")
+UTOPIA_PASS = os.getenv("UTOPIA_DB_PASS", "")
 
 
 def run_psql(query: str, timeout_sec: int = 10) -> str:
@@ -17,14 +18,22 @@ def run_psql(query: str, timeout_sec: int = 10) -> str:
     Executes a SQL query against the utopia-db container on 192.168.3.251
     via SSH and docker exec. Pure stdlib subprocess.
     """
-    cmd = [
-        "sshpass", "-p", UTOPIA_PASS,
-        "ssh", "-p", UTOPIA_PORT,
-        "-o", "StrictHostKeyChecking=no",
-        "-o", "ConnectTimeout=5",
-        f"{UTOPIA_USER}@{UTOPIA_HOST}",
-        "docker exec -i utopia-db psql -U utopia -d utopia"
-    ]
+    if not UTOPIA_PASS:
+        cmd = [
+            "ssh", "-p", UTOPIA_PORT,
+            "-o", "BatchMode=yes",
+            "-o", "ConnectTimeout=5",
+            f"{UTOPIA_USER}@{UTOPIA_HOST}",
+            "docker exec -i utopia-db psql -U utopia -d utopia"
+        ]
+    else:
+        cmd = [
+            "sshpass", "-p", UTOPIA_PASS,
+            "ssh", "-p", UTOPIA_PORT,
+            "-o", "ConnectTimeout=5",
+            f"{UTOPIA_USER}@{UTOPIA_HOST}",
+            "docker exec -i utopia-db psql -U utopia -d utopia"
+        ]
     try:
         p = subprocess.Popen(
             cmd,

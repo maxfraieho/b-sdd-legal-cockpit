@@ -25,31 +25,31 @@ const STORAGE_KEY = 'b_sdd_worm_bitemporal_ledger_v1';
 const SEED_RECORDS: WormLedgerRecord[] = [
   {
     record_id: "WORM-REC-20240723-0001",
-    entity_id: "ACT-ARSEN-KOVALENKO",
+    entity_id: "ACT-PLAIGNANT-01",
     chapter_id: "CH-01",
     valid_from: "2024-07-23T10:00:00Z",
     valid_to: "9999-12-31T23:59:59Z",
     superseded_by: null,
     supersedes_id: null,
     sha256_hash: "8c94fa10b98144298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7",
-    committer: "Me B. Kamber (Avocat plaidant / Lausanne)",
-    summary: "Purge de la mention erronée de minorité : fixation du statut d'adulte né le 05.11.1999 (26 ans) et partie plaignante (Art. 115, 118 CPP).",
-    content_snapshot: "Arsen KOVALENKO, né le 05.11.1999, 26 ans, capable de discernement. Victime et partie plaignante constituée.",
+    committer: "Me Conseil juridique (Barreau Vaudois)",
+    summary: "Fixation du statut d'adulte majeur et partie plaignante (Art. 115, 118 CPP).",
+    content_snapshot: "Partie plaignante adulte, capable de discernement. Victime constituée au sens de l'Art. 115 CPP.",
     status: 'active',
     timestamp: "2024-07-23T10:00:00Z",
   },
   {
     record_id: "WORM-REC-20240723-0002",
-    entity_id: "ACT-ADRIANO-MILLI",
+    entity_id: "ACT-TIERS-ACQUEREUR-01",
     chapter_id: "CH-02",
     valid_from: "2024-07-23T11:30:00Z",
     valid_to: "9999-12-31T23:59:59Z",
     superseded_by: null,
     supersedes_id: null,
     sha256_hash: "d4af37c5a0591234567890abcdef1234567890abcdef1234567890abcdef1234",
-    committer: "Me B. Kamber (Avocat plaidant / Lausanne)",
-    summary: "Sanctuarisation de l'immunité d'Adriano Milli sous le bouclier de l'Art. 933 CC et Art. 105 al. 2 CPP (Invariant L-03).",
-    content_snapshot: "Adriano MILLI : Tiers de bonne foi absolu. Interdiction d'office de toute poursuite pénale ou action récursoire.",
+    committer: "Me Conseil juridique (Barreau Vaudois)",
+    summary: "Sanctuarisation de l'immunité du tiers sous le bouclier de l'Art. 933 CC et Art. 105 al. 2 CPP (Invariant L-03).",
+    content_snapshot: "TIERS-ACQUEREUR-01 : Tiers de bonne foi absolu. Interdiction d'office de toute poursuite pénale ou action récursoire.",
     status: 'active',
     timestamp: "2024-07-23T11:30:00Z",
   },
@@ -63,8 +63,8 @@ const SEED_RECORDS: WormLedgerRecord[] = [
     supersedes_id: null,
     sha256_hash: "1481a54728fbe5d8995a9d6854e4c3a216bfa58896587c6b5b5c928424268e31",
     committer: "Expert Forensic ISO 27037",
-    summary: "Scellement de l'alibi objectif de Lausanne (iPhone 14 Pro, f/1.78, 46.5197° N, 6.6323° E) réfutant l'agression prétendue à Renens.",
-    content_snapshot: "Cliché EXIF 1481 à 13:45:12 à Lausanne. Intégrité des bras certifiée sous analyse spectrale RGB.",
+    summary: "Scellement de l'alibi objectif de Lausanne (iPhone 14 Pro, f/1.78, 46.5197° N, 6.6323° E) réfutant l'agression prétendue.",
+    content_snapshot: "Cliché EXIF 1481 à 13:45:12 à Lausanne. Intégrité certifiée sous analyse spectrale RGB.",
     status: 'active',
     timestamp: "2024-07-24T14:00:00Z",
   },
@@ -77,7 +77,7 @@ const SEED_RECORDS: WormLedgerRecord[] = [
     superseded_by: "WORM-REC-20240726-0005",
     supersedes_id: null,
     sha256_hash: "3b82f610b981e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495",
-    committer: "Me B. Kamber (Avocat plaidant / Lausanne)",
+    committer: "Me Conseil juridique (Barreau Vaudois)",
     summary: "Fixation des conclusions de séquestre conservatoire Art. 263 CPP à concurrence de CHF 46'850.00.",
     content_snapshot: "Séquestre de CHF 46'850.00 : Restitution de $15'000 USD (CHF 13'500.-), dégâts serrure CHF 850.-, tort moral CHF 32'500.-.",
     status: 'superseded',
@@ -92,7 +92,7 @@ const SEED_RECORDS: WormLedgerRecord[] = [
     superseded_by: null,
     supersedes_id: "WORM-REC-20240725-0004",
     sha256_hash: "7f8e9d0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e",
-    committer: "Me B. Kamber (Avocat plaidant / Lausanne)",
+    committer: "Me Conseil juridique (Barreau Vaudois)",
     summary: "Mise à jour du séquestre conservatoire Art. 263 CPP à concurrence de CHF 47'700.00 (intégration des lunettes optiques brisées CHF 850.- / photo_1448).",
     content_snapshot: "Séquestre de CHF 47'700.00 : Restitution de $15'000 USD (CHF 13'500.-), dégâts serrure CHF 850.-, lunettes médicales brisées CHF 850.-, tort moral CHF 32'500.-.",
     status: 'active',
@@ -100,43 +100,33 @@ const SEED_RECORDS: WormLedgerRecord[] = [
   },
   {
     record_id: "WORM-REC-20240726-0006",
-    entity_id: "ACT-OLENA-KOVALENKO",
+    entity_id: "ACT-PROCHE-PADR-01",
     chapter_id: "CH-03",
     valid_from: "2024-07-26T10:00:00Z",
     valid_to: "9999-12-31T23:59:59Z",
     superseded_by: null,
     supersedes_id: null,
     sha256_hash: "9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c",
-    committer: "Me B. Kamber (Avocat plaidant / Lausanne)",
-    summary: "Sanctuarisation procédurale d'Olena Kovalenko comme PADR (Art. 178 let. d CPP) sous les Art. 18 et 48 CP (absence de culpabilité / détresse psychique sous contrainte de Liubov Suvorova).",
-    content_snapshot: "Olena KOVALENKO : Statut PADR (Art. 178 let. d CPP). Irresponsabilité pénale sous contrainte morale (Art. 18 & 48 CP). Transfert de la culpabilité substantielle sur Liubov Suvorova (Art. 24 CP).",
+    committer: "Me Conseil juridique (Barreau Vaudois)",
+    summary: "Sanctuarisation procédurale comme PADR (Art. 178 let. d CPP) sous les Art. 18 et 48 CP (absence de culpabilité / contrainte morale).",
+    content_snapshot: "Statut PADR (Art. 178 let. d CPP). Irresponsabilité pénale sous contrainte morale (Art. 18 & 48 CP). Transfert de la culpabilité substantielle sur l'instigatrice principale (Art. 24 CP).",
     status: 'active',
     timestamp: "2024-07-26T10:00:00Z",
   },
 ];
 
 export async function computeSha256(text: string): Promise<string> {
-  try {
-    const cryptoSubtle =
-      (typeof globalThis !== 'undefined' && globalThis.crypto?.subtle) ||
-      (typeof window !== 'undefined' && window.crypto?.subtle);
-    if (cryptoSubtle) {
-      const encoder = new TextEncoder();
-      const data = encoder.encode(text);
-      const hashBuffer = await cryptoSubtle.digest('SHA-256', data);
-      const hashArray = Array.from(new Uint8Array(hashBuffer));
-      return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-    }
-  } catch {}
-  // Deterministic fallback (strictly 64-char hexadecimal per Invariant L-05)
-  let hash = 0;
-  for (let i = 0; i < text.length; i++) {
-    const char = text.charCodeAt(i);
-    hash = (hash << 5) - hash + char;
-    hash |= 0;
+  const cryptoSubtle =
+    (typeof globalThis !== 'undefined' && globalThis.crypto?.subtle) ||
+    (typeof window !== 'undefined' && window.crypto?.subtle);
+  if (cryptoSubtle) {
+    const encoder = new TextEncoder();
+    const data = encoder.encode(text);
+    const hashBuffer = await cryptoSubtle.digest('SHA-256', data);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
   }
-  const hex = Math.abs(hash).toString(16).padStart(8, '0');
-  return (hex + '8c94fa10b98144298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7').slice(0, 64);
+  throw new Error("CRYPTOGRAPHIC_HASH_UNAVAILABLE: WebCrypto API недоступний. Для дотримання вимог кримінально-процесуального ланцюга зберігання (Chain of Custody) фіксація запису заборонена.");
 }
 
 export function loadWormLedger(): WormLedgerRecord[] {

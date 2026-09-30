@@ -44,6 +44,7 @@ import {
 import { UI_TRANSLATIONS } from "../data/translations";
 import { EvidenceIngestionWizard } from "./EvidenceIngestionWizard";
 import { SwissCodesModal } from "./SwissCodesModal";
+import { commitAtomicSupersession } from "../lib/wormLedger";
 
 interface EvidenceFactbookProps {
   currentLang: SupportedLanguage;
@@ -362,10 +363,20 @@ export const EvidenceFactbook: React.FC<EvidenceFactbookProps> = ({ currentLang 
     return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
   };
 
-  const handleCommitNewEvidence = (newPiece: BordereauPiece) => {
+  const handleCommitNewEvidence = async (newPiece: BordereauPiece) => {
     setPieces((prev) => [newPiece, ...prev]);
     setSelectedPiece(newPiece);
     setActiveMode("factbook");
+    try {
+      await commitAtomicSupersession({
+        entity_id: newPiece.cote,
+        summary: resolveLocalized(newPiece.titre, "fr"),
+        content_snapshot: `Cote: ${newPiece.cote} | SHA256: ${newPiece.sha256} | Categorie: ${newPiece.categorie} | Date: ${newPiece.date_faits}`,
+        committer: "Conseil de la victime (Barreau Vaudois)",
+      });
+    } catch (err) {
+      console.error("WORM commit failed:", err);
+    }
   };
 
   return (

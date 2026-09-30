@@ -562,7 +562,17 @@ export default function App() {
         isOpen={evidenceWizardOpen}
         onClose={() => setEvidenceWizardOpen(false)}
         currentLang={currentLang}
-        onCommitEvidence={(newPiece) => {
+        onCommitEvidence={async (newPiece) => {
+          try {
+            await commitAtomicSupersession({
+              entity_id: newPiece.cote,
+              summary: resolveLocalized(newPiece.titre, "fr"),
+              content_snapshot: `Cote: ${newPiece.cote} | SHA256: ${newPiece.sha256} | Categorie: ${newPiece.categorie} | Date: ${newPiece.date_faits}`,
+              committer: "Conseil de la victime (Barreau Vaudois)",
+            });
+          } catch (err) {
+            console.error("WORM commit error:", err);
+          }
           setCurrentTab("factbook");
           showToast(
             currentLang === "uk" ? "Доказ кваліфіковано & WORM зафіксовано" : "Preuve Qualifiée & Scellée WORM",

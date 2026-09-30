@@ -158,10 +158,7 @@ export async function fetchGoogleDriveContent(
         throw new Error(`Статус HTTP ${resp.status}`);
       }
     } catch (err) {
-      // Fallback: create mock/placeholder with exact URL
-      textContent = `Google Document: ${urlOrId}\nДокумент зареєстровано в системі справи PE24.014624-SBA для судово-експертної кваліфікації.`;
-      buffer = new TextEncoder().encode(textContent).buffer;
-      sizeBytes = buffer.byteLength;
+      throw new Error(`SOURCE_UNAVAILABLE: Не вдалося завантажити Google Doc (${err instanceof Error ? err.message : String(err)}). Автентифікуйте Google Drive через OAuth або завантажте локальний оригінал.`);
     }
   } else {
     // Regular Drive File (could be image, audio, pdf)
@@ -181,9 +178,7 @@ export async function fetchGoogleDriveContent(
         throw new Error(`HTTP ${resp.status}`);
       }
     } catch (err) {
-      textContent = `Google Drive File ID: ${id}\nПосилання: ${urlOrId}\nМатеріал зареєстровано в досьє справи.`;
-      buffer = new TextEncoder().encode(textContent).buffer;
-      sizeBytes = buffer.byteLength;
+      throw new Error(`SOURCE_UNAVAILABLE: Не вдалося завантажити Google Drive файл (${err instanceof Error ? err.message : String(err)}). Перевірте публічні права доступу або завантажте файл безпосередньо.`);
     }
   }
 
