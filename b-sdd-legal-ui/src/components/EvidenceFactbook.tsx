@@ -48,9 +48,15 @@ import { commitAtomicSupersession } from "../lib/wormLedger";
 
 interface EvidenceFactbookProps {
   currentLang: SupportedLanguage;
+  pieces?: BordereauPiece[];
+  onPiecesChange?: (pieces: BordereauPiece[]) => void;
 }
 
-export const EvidenceFactbook: React.FC<EvidenceFactbookProps> = ({ currentLang }) => {
+export const EvidenceFactbook: React.FC<EvidenceFactbookProps> = ({
+  currentLang,
+  pieces: propPieces,
+  onPiecesChange,
+}) => {
   const t = (key: string): string =>
     UI_TRANSLATIONS[currentLang]?.[key] ||
     UI_TRANSLATIONS["fr"]?.[key] ||
@@ -61,7 +67,13 @@ export const EvidenceFactbook: React.FC<EvidenceFactbookProps> = ({ currentLang 
   const [activeMode, setActiveMode] = useState<"factbook" | "gallery" | "gdrive">("factbook");
 
   // Pieces state (supports adding/removing photos and linking with Utopia DB ADRs)
-  const [pieces, setPieces] = useState<BordereauPiece[]>(BORDEREAU_PIECES);
+  const [pieces, setPieces] = useState<BordereauPiece[]>(() => propPieces || BORDEREAU_PIECES);
+
+  useEffect(() => {
+    if (propPieces) {
+      setPieces(propPieces);
+    }
+  }, [propPieces]);
 
   // Evidence Ingestion Wizard and Swiss Codes Modals
   const [isWizardOpen, setIsWizardOpen] = useState(false);
@@ -72,7 +84,18 @@ export const EvidenceFactbook: React.FC<EvidenceFactbookProps> = ({ currentLang 
   const [selectedCategory, setSelectedCategory] = useState<string>("Tous");
 
   // Selected piece for inspection
-  const [selectedPiece, setSelectedPiece] = useState<BordereauPiece>(BORDEREAU_PIECES[0]);
+  const [selectedPiece, setSelectedPiece] = useState<BordereauPiece>(() => {
+    const list = propPieces || BORDEREAU_PIECES;
+    return list[0] || ({} as BordereauPiece);
+  });
+
+  useEffect(() => {
+    if (pieces && pieces.length > 0) {
+      if (!selectedPiece?.cote || !pieces.some(p => p.cote === selectedPiece.cote)) {
+        setSelectedPiece(pieces[0]);
+      }
+    }
+  }, [pieces]);
 
   // Audio player state
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -251,8 +274,8 @@ export const EvidenceFactbook: React.FC<EvidenceFactbookProps> = ({ currentLang 
     const reader = new FileReader();
     reader.onload = () => {
       const dataUrl = reader.result as string;
-      setPieces((prev) =>
-        prev.map((p) => {
+      setPieces((prev) => {
+        const next = prev.map((p) => {
           if (p.cote === targetAttachCote) {
             return {
               ...p,
@@ -271,8 +294,10 @@ export const EvidenceFactbook: React.FC<EvidenceFactbookProps> = ({ currentLang 
             };
           }
           return p;
-        })
-      );
+        });
+        onPiecesChange?.(next);
+        return next;
+      });
 
       // Update selected piece if it's the target
       if (selectedPiece.cote === targetAttachCote) {
@@ -300,8 +325,8 @@ export const EvidenceFactbook: React.FC<EvidenceFactbookProps> = ({ currentLang 
       return;
     }
 
-    setPieces((prev) =>
-      prev.map((p) => {
+    setPieces((prev) => {
+      const next = prev.map((p) => {
         if (p.cote === cote) {
           return {
             ...p,
@@ -310,8 +335,10 @@ export const EvidenceFactbook: React.FC<EvidenceFactbookProps> = ({ currentLang 
           };
         }
         return p;
-      })
-    );
+      });
+      onPiecesChange?.(next);
+      return next;
+    });
 
     if (selectedPiece.cote === cote) {
       setSelectedPiece((prev) => ({
@@ -364,7 +391,11 @@ export const EvidenceFactbook: React.FC<EvidenceFactbookProps> = ({ currentLang 
   };
 
   const handleCommitNewEvidence = async (newPiece: BordereauPiece) => {
-    setPieces((prev) => [newPiece, ...prev]);
+    setPieces((prev) => {
+      const next = [newPiece, ...prev.filter((p) => p.cote !== newPiece.cote)];
+      onPiecesChange?.(next);
+      return next;
+    });
     setSelectedPiece(newPiece);
     setActiveMode("factbook");
     try {

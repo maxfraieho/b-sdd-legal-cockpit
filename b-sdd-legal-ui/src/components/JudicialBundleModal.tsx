@@ -23,6 +23,7 @@ interface JudicialBundleModalProps {
   onClose: () => void;
   activeCase?: LegalCase;
   currentLang: SupportedLanguage;
+  pieces?: BordereauPiece[];
   onShowToast: (title: string, description: string, type?: "success" | "info") => void;
 }
 
@@ -31,8 +32,10 @@ export const JudicialBundleModal: React.FC<JudicialBundleModalProps> = ({
   onClose,
   activeCase,
   currentLang,
+  pieces,
   onShowToast,
 }) => {
+  const piecesList = pieces || BORDEREAU_PIECES;
   const [includeExifPhotos, setIncludeExifPhotos] = useState(true);
   const [includeQrAudio, setIncludeQrAudio] = useState(true);
   const [includeCivilClaims, setIncludeCivilClaims] = useState(true);
@@ -67,7 +70,7 @@ DATE D'ÉMISSION : ${new Date().toLocaleDateString("fr-CH")}
 CONFORMITÉ LÉGALE : ISO/IEC 27037 & CPP RS 312.0
 
 TABLE DES PIÈCES MATÉRIELLES :
-${BORDEREAU_PIECES.map(
+${piecesList.map(
   (p, idx) =>
     `[${p.cote}] ${resolveLocalized(p.titre, "fr")} (Date: ${p.date_faits})\n  SHA-256: ${p.sha256}\n  Catégorie: ${p.categorie} | Portée: ${resolveLocalized(p.portee_probatoire, "fr")}`
 ).join("\n\n")}`;
@@ -181,7 +184,7 @@ ${BORDEREAU_PIECES.map(
           </div>
 
           <div className="text-[11px] font-mono text-amber-300">
-            Всього матеріальних доказів: <strong>{BORDEREAU_PIECES.length} шт.</strong>
+            Всього матеріальних доказів: <strong>{piecesList.length} шт.</strong>
           </div>
         </div>
 
@@ -282,7 +285,7 @@ ${BORDEREAU_PIECES.map(
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-800 print:divide-gray-300">
-                    {BORDEREAU_PIECES.map((piece) => (
+                    {piecesList.map((piece) => (
                       <tr key={piece.cote} className="hover:bg-slate-900/40 print:hover:bg-transparent">
                         <td className="py-2.5 px-2 font-mono font-bold text-amber-400 print:text-black align-top">
                           {piece.cote}
@@ -323,7 +326,7 @@ ${BORDEREAU_PIECES.map(
                 </h3>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  {BORDEREAU_PIECES.filter((p) => p.fichier_local).map((p) => (
+                  {piecesList.filter((p) => p.fichier_local).map((p) => (
                     <div
                       key={p.cote}
                       className="p-3 bg-[#090E1A] print:bg-white border border-slate-800 print:border-gray-400 rounded-lg space-y-2 text-xs"

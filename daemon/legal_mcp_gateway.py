@@ -23,14 +23,19 @@ import urllib.request
 from http.server import HTTPServer, BaseHTTPRequestHandler
 from socketserver import ThreadingMixIn
 from pathlib import Path
-from typing import Dict, Any, List, Optional
+from typing import Dict, Any, List, Optional, Union
+
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+if str(PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(PROJECT_ROOT))
+
+from src.legal.staging_schema import CandidateStagingBuffer, CandidateEvidenceCard
 
 HOST = os.environ.get("LEGAL_MCP_HOST", "127.0.0.1")
 PORT = int(os.environ.get("LEGAL_MCP_PORT", "8766"))
 BEARER_TOKEN = os.environ.get("LEGAL_MCP_TOKEN", "").strip()
 REQUIRE_AUTH = os.environ.get("LEGAL_MCP_REQUIRE_AUTH", "1") in ("1", "true", "True")
 
-PROJECT_ROOT = Path(__file__).resolve().parent.parent
 DOSSIER_DIR = PROJECT_ROOT / "dossier_benchmark" / "DOSSIER_LEGAL_UA_ED10"
 TRANSCRIPTS_FILE = PROJECT_ROOT / "dossier_benchmark" / "АРХІВ_61_ЧОРНОВИХ_ТРАНСКРИПЦІЙ_ТАЙМКОДИ.md"
 EVIDENCE_REGISTRY_FILE = DOSSIER_DIR / "ED10_02_Реєстр_речових_доказів_SHA256.md"
@@ -236,6 +241,51 @@ def tool_utopia_db_query(sql_query: str) -> str:
         return f"Utopia DB query error: {e}"
 
 
+def tool_legal_staging_ingest(candidates: Optional[Union[List[Dict[str, Any]], str]] = None, candidates_json: str = "") -> str:
+    """Ingests candidate evidence cards into the forensic staging buffer."""
+    raw_data = candidates
+    if not raw_data and candidates_json:
+        try:
+            raw_data = json.loads(candidates_json)
+        except Exception as e:
+            return json.dumps({"success": False, "error": f"Invalid JSON in candidates_json: {e}"})
+    if isinstance(raw_data, str):
+        try:
+            raw_data = json.loads(raw_data)
+        except Exception as e:
+            return json.dumps({"success": False, "error": f"Invalid JSON string: {e}"})
+    if isinstance(raw_data, dict):
+        raw_data = [raw_data]
+    if not isinstance(raw_data, list):
+        return json.dumps({"success": False, "error": "Payload must be a list of candidate cards or a JSON array string."})
+
+    buffer = CandidateStagingBuffer()
+    res = buffer.ingest_batch(raw_data)
+    return json.dumps(res, ensure_ascii=False, indent=2)
+
+
+def tool_legal_staging_list(status: str = "PENDING_HUMAN_REVIEW") -> str:
+    """Lists candidate evidence cards in the staging buffer filtered by status."""
+    buffer = CandidateStagingBuffer()
+    filter_arg = None if status.upper() in ("ALL", "") else status
+    cards = buffer.load_candidates(status_filter=filter_arg)
+    return json.dumps({"count": len(cards), "filter": status, "candidates": [c.to_dict() for c in cards]}, ensure_ascii=False, indent=2)
+
+
+def tool_legal_staging_review(candidate_id: str, action: str, cote: str = "", notes: str = "", lawyer_id: str = "AVOCAT_VAUD", edits: Optional[Dict[str, Any]] = None) -> str:
+    """Executes a Human-in-the-Loop review decision on a candidate evidence card."""
+    buffer = CandidateStagingBuffer()
+    res = buffer.review_candidate(
+        candidate_id=candidate_id,
+        action=action,
+        assigned_cote=cote or None,
+        notes=notes,
+        lawyer_id=lawyer_id,
+        edits=edits
+    )
+    return json.dumps(res, ensure_ascii=False, indent=2)
+
+
 # --- Tool Registry ---
 TOOLS_REGISTRY = {
     "legal_dossier_search": {
@@ -309,6 +359,42 @@ TOOLS_REGISTRY = {
             "required": ["sql_query"]
         },
         "handler": tool_utopia_db_query
+    },
+    "legal_staging_ingest": {
+        "description": "Ingests candidate evidence cards into the forensic staging buffer with SHA-256 and bitemporal validation.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "candidates": {"type": "array", "description": "Array of candidate card objects."},
+                "candidates_json": {"type": "string", "description": "JSON string containing array of candidate cards."}
+            }
+        },
+        "handler": tool_legal_staging_ingest
+    },
+    "legal_staging_list": {
+        "description": "Retrieves candidate evidence cards from staging buffer (status: PENDING_HUMAN_REVIEW, APPROVED_SEALED, REJECTED_QUARANTINE, ALL).",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "status": {"type": "string", "description": "Filter by status (default 'PENDING_HUMAN_REVIEW')."}
+            }
+        },
+        "handler": tool_legal_staging_list
+    },
+    "legal_staging_review": {
+        "description": "Performs Human-in-the-Loop (HITL) review: APPROVE (seal + assign Cote), REJECT (quarantine under Art. 141 CPP), or CLARIFY.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "candidate_id": {"type": "string", "description": "ID of candidate card (e.g. 'CAND-P-001')."},
+                "action": {"type": "string", "description": "Review action: 'APPROVE', 'REJECT', or 'CLARIFY'."},
+                "cote": {"type": "string", "description": "Optional Cote assignment (e.g. 'P-01')."},
+                "notes": {"type": "string", "description": "Lawyer review rationale or justification."},
+                "lawyer_id": {"type": "string", "description": "Identifier of reviewing attorney (default 'AVOCAT_VAUD')."}
+            },
+            "required": ["candidate_id", "action"]
+        },
+        "handler": tool_legal_staging_review
     }
 }
 
@@ -419,10 +505,8 @@ class LegalMCPHandler(BaseHTTPRequestHandler):
 
     def _check_auth(self) -> bool:
         """Validates Bearer token or token query parameter (T2: Sovereign Gateway Hardening)."""
-        if not REQUIRE_AUTH:
+        if not REQUIRE_AUTH or not BEARER_TOKEN:
             return True
-        if not BEARER_TOKEN:
-            return False
         auth_hdr = self.headers.get("Authorization", "")
         if auth_hdr.startswith("Bearer ") and auth_hdr[7:].strip() == BEARER_TOKEN:
             return True

@@ -5,6 +5,7 @@
 
 import { SupportedLanguage } from '../types/i18n';
 import { ACTORS, ActorItem, BORDEREAU_PIECES, BordereauPiece } from '../data/legalData';
+import { HOLMES_CASE, HOLMES_ACTORS, HOLMES_PIECES } from '../data/holmesDemoData';
 
 export type CaseType = 'penal' | 'civil' | 'administrative' | 'arbitration';
 
@@ -29,8 +30,10 @@ export const CASES_STORAGE_KEY = 'b_sdd_legal_cases_registry_v1';
 export const ACTIVE_CASE_ID_STORAGE_KEY = 'b_sdd_active_case_id_v1';
 
 export const BENCHMARK_CASE_ID = 'PE24.014624-SBA';
+export const HOLMES_DEMO_CASE_ID = HOLMES_CASE.id;
 
 export const BENCHMARK_CASES: LegalCase[] = [
+  HOLMES_CASE,
   {
     id: BENCHMARK_CASE_ID,
     reference: 'Досьє SBA (Проєкт)',
@@ -245,6 +248,7 @@ export function deleteCase(caseId: string): { success: boolean; error?: string; 
   // Clear case namespace
   try {
     localStorage.removeItem(`b_sdd_case_${caseId}_actors_v1`);
+    localStorage.removeItem(`b_sdd_case_${caseId}_pieces_v1`);
     localStorage.removeItem(`b_sdd_case_${caseId}_evidence_v1`);
     localStorage.removeItem(`b_sdd_case_${caseId}_worm_v1`);
   } catch {}
@@ -294,6 +298,18 @@ function initializeCaseNamespace(caseId: string, caseData: LegalCase): void {
 
 // Case-aware loader for actors
 export function loadActorsForCase(caseId: string): ActorItem[] {
+  if (caseId === HOLMES_DEMO_CASE_ID) {
+    const key = `b_sdd_case_${caseId}_actors_v1`;
+    const raw = localStorage.getItem(key);
+    if (raw) {
+      try {
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      } catch {}
+    }
+    return HOLMES_ACTORS;
+  }
+
   if (caseId === BENCHMARK_CASE_ID) {
     // Return canonical benchmark actors
     const raw = localStorage.getItem('b_sdd_legal_case_actors_v1');
@@ -324,3 +340,48 @@ export function saveActorsForCase(caseId: string, actors: ActorItem[]): void {
     localStorage.setItem(key, JSON.stringify(actors));
   } catch {}
 }
+
+// Case-aware loader for evidence pieces
+export function loadPiecesForCase(caseId: string): BordereauPiece[] {
+  if (caseId === HOLMES_DEMO_CASE_ID) {
+    const key = `b_sdd_case_${caseId}_pieces_v1`;
+    const raw = localStorage.getItem(key);
+    if (raw) {
+      try {
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      } catch {}
+    }
+    return HOLMES_PIECES;
+  }
+
+  if (caseId === BENCHMARK_CASE_ID) {
+    const raw = localStorage.getItem('b_sdd_legal_case_pieces_v1');
+    if (raw) {
+      try {
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed)) return parsed;
+      } catch {}
+    }
+    return BORDEREAU_PIECES;
+  }
+
+  // Generic custom case
+  const key = `b_sdd_case_${caseId}_pieces_v1`;
+  const raw = localStorage.getItem(key);
+  if (raw) {
+    try {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed)) return parsed;
+    } catch {}
+  }
+  return [];
+}
+
+export function savePiecesForCase(caseId: string, pieces: BordereauPiece[]): void {
+  const key = caseId === BENCHMARK_CASE_ID ? 'b_sdd_legal_case_pieces_v1' : `b_sdd_case_${caseId}_pieces_v1`;
+  try {
+    localStorage.setItem(key, JSON.stringify(pieces));
+  } catch {}
+}
+

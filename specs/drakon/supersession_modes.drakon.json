@@ -1,0 +1,72 @@
+{
+  "schema_version": "1.0",
+  "name": "B-SDD Drakon: Two Supersession Modes (CHANGE vs CORRECTION)",
+  "category": "legal_bitemporal_engine",
+  "description": "Planar DRAKON diagram specifying the two fundamental WORM bitemporal supersession modes: CORRECTION (rectification of recording error, closing tx_to while preserving valid interval) vs CHANGE (evolution in reality, closing valid_to). Complies with C=0, X=0.",
+  "params": "entity_id: str, mode: SupersessionMode, delta: dict, reason: str, source_vault_hash: str",
+  "nodes": [
+    {
+      "node_id": "start",
+      "node_type": "headline",
+      "label": "Bitemporal Supersession Dispatcher (WORM Ledger)",
+      "edges": { "down": "step_read_current_active", "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-001", "severity": "normal" },
+      "x": 0.0,
+      "y": 0.0
+    },
+    {
+      "node_id": "step_read_current_active",
+      "node_type": "action",
+      "label": "Read current active WORM record (valid_from, valid_to, tx_from, tx_to=INF)",
+      "edges": { "down": "cond_is_correction", "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-001", "severity": "normal" },
+      "x": 0.0,
+      "y": 2.0
+    },
+    {
+      "node_id": "cond_is_correction",
+      "node_type": "question",
+      "label": "Supersession Mode == CORRECTION (error fix) rather than CHANGE (fact change)?",
+      "edges": { "down": "step_prep_correction", "right": "step_prep_change" },
+      "semantic_binding": { "adr_invariant_id": "ADR-001", "severity": "normal" },
+      "x": 0.0,
+      "y": 4.0
+    },
+    {
+      "node_id": "step_prep_correction",
+      "node_type": "action",
+      "label": "CORRECTION Mode: Old record tx_to=NOW; New record keeps identical [valid_from, valid_to], tx_from=NOW, tx_to=INF",
+      "edges": { "down": "step_atomic_worm_insert", "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-001", "severity": "normal" },
+      "x": 0.0,
+      "y": 6.0
+    },
+    {
+      "node_id": "step_prep_change",
+      "node_type": "action",
+      "label": "CHANGE Mode: Old record valid_to=NOW; New record sets valid_from=NOW, valid_to=INF, tx_from=NOW, tx_to=INF",
+      "edges": { "down": "step_atomic_worm_insert", "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-001", "severity": "normal" },
+      "x": 4.0,
+      "y": 4.0
+    },
+    {
+      "node_id": "step_atomic_worm_insert",
+      "node_type": "action",
+      "label": "Atomic WORM Commit: Append new record and seal SHA-256 hash in ledger transaction",
+      "edges": { "down": "end_supersession_sealed", "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-001", "severity": "normal" },
+      "x": 0.0,
+      "y": 8.0
+    },
+    {
+      "node_id": "end_supersession_sealed",
+      "node_type": "end",
+      "label": "Bitemporal Ledger Updated with Preserved Forensic Truth",
+      "edges": { "down": null, "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-001", "severity": "normal" },
+      "x": 0.0,
+      "y": 10.0
+    }
+  ]
+}

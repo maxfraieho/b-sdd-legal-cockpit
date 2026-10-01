@@ -10,4 +10,5 @@ export type WorkspaceTab =
   | "factbook"
   | "actors"
   | "pleadings"
-  | "worm_ledger";
+  | "worm_ledger"
+  | "verification_queue";

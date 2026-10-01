@@ -42,6 +42,7 @@ export interface AppSettings {
   enableSequestrationCalc: boolean;
   enabledLawIds: string[];
   mcpTunnelUrl: string;
+  isPinProtectionEnabled: boolean;
   authPassword: string;
   autoLockMinutes: number;
   manualEditMode: boolean;
@@ -80,6 +81,7 @@ export const DEFAULT_SETTINGS: AppSettings = {
     'ATF-146-IV-9', 'ATF-141-IV-369', 'ATF-144-IV-285'
   ],
   mcpTunnelUrl: 'https://legal-mcp.exodus.pp.ua',
+  isPinProtectionEnabled: false,
   authPassword: '',
   autoLockMinutes: 15,
   manualEditMode: false,

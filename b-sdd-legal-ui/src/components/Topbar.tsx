@@ -25,6 +25,7 @@ import { SupportedLanguage } from "../types/i18n";
 import { LegalCase } from "../lib/casesManager";
 import { AstryxActionDrawer } from "./astryx/AstryxActionDrawer";
 import { AuthorizedUser, ROLE_DEFINITIONS } from "../types/auth";
+import { UI_TRANSLATIONS } from "../data/translations";
 
 import { WorkspaceTab } from "../types/workspace";
 export type { WorkspaceTab };
@@ -48,6 +49,7 @@ interface TopbarProps {
   onSendToKindle?: () => void;
   activeCase?: LegalCase;
   onOpenCaseManager?: () => void;
+  onSelectCase?: (caseId: string) => void;
   onOpenLegalStrategy?: () => void;
   isRecompiling?: boolean;
   mobileTab?: "workspace" | "inspector";
@@ -77,6 +79,7 @@ export const Topbar: React.FC<TopbarProps> = ({
   onSendToKindle,
   activeCase,
   onOpenCaseManager,
+  onSelectCase,
   onOpenLegalStrategy,
   isRecompiling = false,
   mobileTab = "workspace",
@@ -98,10 +101,13 @@ export const Topbar: React.FC<TopbarProps> = ({
     "worm_ledger",
   ].includes(currentTab);
 
+  // Client persona vs Advocate persona differentiation
+  const isClient = currentUser?.role === 'user' || currentUser?.role === 'viewer';
+
   return (
     <>
       <header className="h-[44px] min-h-[44px] bg-[#0A0F1D] border-b border-slate-800/80 px-2 sm:px-3 flex items-center justify-between select-none z-30 shrink-0 gap-1 sm:gap-2">
-        {/* LEFT: Case Badge & Case Switcher Dropdown */}
+        {/* LEFT: Case Badge & Direct Switcher Toggle */}
         <div className="flex items-center space-x-1.5 sm:space-x-2 shrink-0">
           <button
             onClick={onOpenCaseManager}
@@ -113,122 +119,243 @@ export const Topbar: React.FC<TopbarProps> = ({
             }
           >
             <FolderKanban className="w-3.5 h-3.5 text-amber-400 shrink-0" />
-            <span>{activeCase && activeCase.reference !== "PE24.014624-SBA" ? activeCase.reference : "Досьє SBA (Проєкт)"}</span>
+            <span className="hidden sm:inline">{activeCase ? activeCase.reference : "Досьє SBA"}</span>
             <ChevronDown className="w-3 h-3 text-amber-400/80 shrink-0" />
           </button>
 
+          {/* Quick Case Mode Switcher (Sprint S018 Isolation - For Advocates & Admins) */}
+          {!isClient && (
+            <div className="flex items-center bg-[#070A12] border border-slate-800 rounded p-0.5 text-[10px] font-mono">
+              <button
+                onClick={() => onSelectCase?.("PE24.DEMO-HOLMES")}
+                className={`px-2 py-0.5 rounded transition-all cursor-pointer ${
+                  activeCase?.id === "PE24.DEMO-HOLMES"
+                    ? "bg-amber-500/20 text-amber-300 border border-amber-500/40 font-bold"
+                    : "text-slate-400 hover:text-slate-200"
+                }`}
+                title="Демо-справа: Шерлок Холмс (Zero PII)"
+              >
+                🎭 Холмс
+              </button>
+              <button
+                onClick={() => onSelectCase?.("PE24.014624-SBA")}
+                className={`px-2 py-0.5 rounded transition-all cursor-pointer ${
+                  activeCase?.id !== "PE24.DEMO-HOLMES"
+                    ? "bg-blue-500/20 text-blue-300 border border-blue-500/40 font-bold"
+                    : "text-slate-400 hover:text-slate-200"
+                }`}
+                title="Суверенне судове досьє SBA"
+              >
+                🏛️ Досьє SBA
+              </button>
+            </div>
+          )}
+
           <div className="hidden xl:flex items-center space-x-2 text-[11px] text-slate-400">
             <span className="text-slate-600">/</span>
-            <span className="text-slate-300 font-medium truncate max-w-[200px]">
+            <span className="text-slate-300 font-medium truncate max-w-[180px]">
               {activeCase
                 ? activeCase.court[currentLang] || activeCase.court.fr
                 : "Ministère public vaudois"}
             </span>
-            <span className="text-slate-600">·</span>
-            <span className="text-emerald-400 font-mono text-[10px]">
-              {activeCase
-                ? `${activeCase.canton} (${activeCase.type.toUpperCase()})`
-                : "Droits des victimes (CPP)"}
-            </span>
           </div>
         </div>
 
-        {/* CENTER: Astryx 3-Core Nav Switches (Desktop >= md) */}
-        <nav className="hidden md:flex items-center bg-[#070B12] p-0.5 rounded-lg border border-slate-800/80 shrink-0">
-          {/* 1. Procedures (Default Pipeline) */}
-          <button
-            onClick={() => {
-              onTabChange("procedures");
-              onMobileTabChange?.("workspace");
-            }}
-            className={`flex items-center space-x-1.5 px-3 py-1 rounded text-xs font-mono font-bold transition-all ${
-              currentTab === "procedures"
-                ? "bg-blue-600 text-white shadow-sm ring-1 ring-blue-400/40"
-                : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/40"
-            }`}
-            title="Процедурний маршрут справи за КПК Швейцарії (5 стадій)"
-          >
-            <GitBranch className="w-3.5 h-3.5 text-blue-300 shrink-0" />
-            <span>
-              {currentLang === "uk"
-                ? "Процедури (5)"
-                : currentLang === "fr"
-                ? "Procédure (5)"
-                : currentLang === "de"
-                ? "Verfahren (5)"
-                : currentLang === "it"
-                ? "Procedura (5)"
-                : "Pipeline (5)"}
-            </span>
-          </button>
+        {/* CENTER: Role-Differentiated Navigation */}
+        {isClient ? (
+          /* Client Persona: 4 Clean & Reassuring Views */
+          <nav className="hidden md:flex items-center bg-[#070B12] p-0.5 rounded-lg border border-slate-800/80 shrink-0">
+            {/* 1. Evidence / Documents */}
+            <button
+              onClick={() => {
+                onTabChange("factbook");
+                onMobileTabChange?.("workspace");
+              }}
+              className={`flex items-center space-x-1.5 px-3 py-1 rounded text-xs font-mono font-bold transition-all ${
+                currentTab === "factbook"
+                  ? "bg-blue-600 text-white shadow-sm ring-1 ring-blue-400/40"
+                  : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/40"
+              }`}
+              title="Матеріали справи, фотографії та доказові документи"
+            >
+              <FolderOpen className="w-3.5 h-3.5 text-blue-300 shrink-0" />
+              <span>{UI_TRANSLATIONS[currentLang]?.client_tab_evidence || "📁 Матеріали та докази"}</span>
+            </button>
 
-          {/* 2. Tools Catalog Hub */}
-          <button
-            onClick={() => {
-              onTabChange("toolbox");
-              onMobileTabChange?.("workspace");
-            }}
-            className={`flex items-center space-x-1.5 px-3 py-1 rounded text-xs font-mono font-bold transition-all ${
-              currentTab === "toolbox" || isSubTool
-                ? "bg-indigo-600 text-white shadow-sm ring-1 ring-indigo-400/40"
-                : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/40"
-            }`}
-            title="Каталог усіх інструментів досьє (Factbook, фігуранти, клопотання, WORM)"
-          >
-            <Briefcase className="w-3.5 h-3.5 text-indigo-300 shrink-0" />
-            <span>
-              {currentLang === "uk"
-                ? "🧰 Інструменти"
-                : currentLang === "fr"
-                ? "🧰 Outils"
-                : currentLang === "de"
-                ? "🧰 Werkzeuge"
-                : currentLang === "it"
-                ? "🧰 Strumenti"
-                : "🧰 Toolbox"}
-            </span>
-            {isSubTool && (
-              <span className="text-[10px] px-1 bg-indigo-900/80 text-indigo-200 rounded">
-                {currentTab === "factbook"
-                  ? "Preuves"
-                  : currentTab === "actors"
-                  ? "Parties"
-                  : currentTab === "pleadings"
-                  ? "Séquestre"
-                  : currentTab === "kindle_review"
-                  ? "Diff"
-                  : "WORM"}
+            {/* 2. Case Parties */}
+            <button
+              onClick={() => {
+                onTabChange("actors");
+                onMobileTabChange?.("workspace");
+              }}
+              className={`flex items-center space-x-1.5 px-3 py-1 rounded text-xs font-mono font-bold transition-all ${
+                currentTab === "actors"
+                  ? "bg-cyan-600 text-white shadow-sm ring-1 ring-cyan-400/40"
+                  : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/40"
+              }`}
+              title="Учасники справи та процесуальний статус"
+            >
+              <Users className="w-3.5 h-3.5 text-cyan-300 shrink-0" />
+              <span>{UI_TRANSLATIONS[currentLang]?.client_tab_actors || "👥 Учасники справи"}</span>
+            </button>
+
+            {/* 3. Chronology / Timeline */}
+            <button
+              onClick={() => {
+                onTabChange("procedures");
+                onMobileTabChange?.("workspace");
+              }}
+              className={`flex items-center space-x-1.5 px-3 py-1 rounded text-xs font-mono font-bold transition-all ${
+                currentTab === "procedures"
+                  ? "bg-indigo-600 text-white shadow-sm ring-1 ring-indigo-400/40"
+                  : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/40"
+              }`}
+              title="Хронологія подій та ключові дати"
+            >
+              <GitBranch className="w-3.5 h-3.5 text-indigo-300 shrink-0" />
+              <span>{UI_TRANSLATIONS[currentLang]?.client_tab_timeline || "📅 Хронологія подій"}</span>
+            </button>
+
+            {/* 4. Consultation / AI Assistant */}
+            <button
+              onClick={() => {
+                onTabChange("ai_copilot");
+                onMobileTabChange?.("workspace");
+              }}
+              className={`flex items-center space-x-1.5 px-3 py-1 rounded text-xs font-mono font-bold transition-all ${
+                currentTab === "ai_copilot"
+                  ? "bg-purple-600 text-white shadow-sm ring-1 ring-purple-400/40"
+                  : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/40"
+              }`}
+              title="ШІ-Консультація та роз'яснення матеріалів справи"
+            >
+              <Brain className="w-3.5 h-3.5 text-purple-300 shrink-0" />
+              <span>{UI_TRANSLATIONS[currentLang]?.client_tab_copilot || "💬 Консультація / ШІ"}</span>
+            </button>
+          </nav>
+        ) : (
+          /* Advocate/Lawyer Persona: Full Procedural Cockpit (Procedures, Toolbox, Studio, HITL) */
+          <nav className="hidden md:flex items-center bg-[#070B12] p-0.5 rounded-lg border border-slate-800/80 shrink-0">
+            {/* 1. Procedures (Default Pipeline) */}
+            <button
+              onClick={() => {
+                onTabChange("procedures");
+                onMobileTabChange?.("workspace");
+              }}
+              className={`flex items-center space-x-1.5 px-3 py-1 rounded text-xs font-mono font-bold transition-all ${
+                currentTab === "procedures"
+                  ? "bg-blue-600 text-white shadow-sm ring-1 ring-blue-400/40"
+                  : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/40"
+              }`}
+              title="Процедурний маршрут справи за КПК Швейцарії (5 стадій)"
+            >
+              <GitBranch className="w-3.5 h-3.5 text-blue-300 shrink-0" />
+              <span>
+                {currentLang === "uk"
+                  ? "Процедури (5)"
+                  : currentLang === "fr"
+                  ? "Procédure (5)"
+                  : currentLang === "de"
+                  ? "Verfahren (5)"
+                  : currentLang === "it"
+                  ? "Procedura (5)"
+                  : "Pipeline (5)"}
               </span>
-            )}
-          </button>
+            </button>
 
-          {/* 3. Astryx AI Copilot */}
-          <button
-            onClick={() => {
-              onTabChange("ai_copilot");
-              onMobileTabChange?.("workspace");
-            }}
-            className={`flex items-center space-x-1.5 px-3 py-1 rounded text-xs font-mono font-bold transition-all ${
-              currentTab === "ai_copilot"
-                ? "bg-purple-600 text-white shadow-sm ring-1 ring-purple-400/40"
-                : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/40"
-            }`}
-            title="ШІ-Юрисконсульт, аналіз допустимості ATF 146 IV 9 та синтез висновків"
-          >
-            <Brain className="w-3.5 h-3.5 text-purple-300 shrink-0" />
-            <span>
-              {currentLang === "uk"
-                ? "🤖 ШІ-Студія"
-                : currentLang === "fr"
-                ? "🤖 Studio IA"
-                : currentLang === "de"
-                ? "🤖 KI-Studio"
-                : currentLang === "it"
-                ? "🤖 Studio IA"
-                : "🤖 AI Studio"}
-            </span>
-          </button>
-        </nav>
+            {/* 2. Tools Catalog Hub */}
+            <button
+              onClick={() => {
+                onTabChange("toolbox");
+                onMobileTabChange?.("workspace");
+              }}
+              className={`flex items-center space-x-1.5 px-3 py-1 rounded text-xs font-mono font-bold transition-all ${
+                currentTab === "toolbox" || isSubTool
+                  ? "bg-indigo-600 text-white shadow-sm ring-1 ring-indigo-400/40"
+                  : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/40"
+              }`}
+              title="Каталог усіх інструментів досьє (Factbook, фігуранти, клопотання, WORM)"
+            >
+              <Briefcase className="w-3.5 h-3.5 text-indigo-300 shrink-0" />
+              <span>
+                {currentLang === "uk"
+                  ? "🧰 Інструменти"
+                  : currentLang === "fr"
+                  ? "🧰 Outils"
+                  : currentLang === "de"
+                  ? "🧰 Werkzeuge"
+                  : currentLang === "it"
+                  ? "🧰 Strumenti"
+                  : "🧰 Toolbox"}
+              </span>
+              {isSubTool && (
+                <span className="text-[10px] px-1 bg-indigo-900/80 text-indigo-200 rounded">
+                  {currentTab === "factbook"
+                    ? "Preuves"
+                    : currentTab === "actors"
+                    ? "Parties"
+                    : currentTab === "pleadings"
+                    ? "Séquestre"
+                    : currentTab === "kindle_review"
+                    ? "Diff"
+                    : "WORM"}
+                </span>
+              )}
+            </button>
+
+            {/* 3. Astryx AI Copilot */}
+            <button
+              onClick={() => {
+                onTabChange("ai_copilot");
+                onMobileTabChange?.("workspace");
+              }}
+              className={`flex items-center space-x-1.5 px-3 py-1 rounded text-xs font-mono font-bold transition-all ${
+                currentTab === "ai_copilot"
+                  ? "bg-purple-600 text-white shadow-sm ring-1 ring-purple-400/40"
+                  : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/40"
+              }`}
+              title="ШІ-Юрисконсульт, аналіз допустимості ATF 146 IV 9 та синтез висновків"
+            >
+              <Brain className="w-3.5 h-3.5 text-purple-300 shrink-0" />
+              <span>
+                {currentLang === "uk"
+                  ? "🤖 ШІ-Студія"
+                  : currentLang === "fr"
+                  ? "🤖 Studio IA"
+                  : currentLang === "de"
+                  ? "🤖 KI-Studio"
+                  : currentLang === "it"
+                  ? "🤖 Studio IA"
+                  : "🤖 AI Studio"}
+              </span>
+            </button>
+
+            {/* 4. HITL Evidence Verification Queue */}
+            <button
+              onClick={() => {
+                onTabChange("verification_queue");
+                onMobileTabChange?.("workspace");
+              }}
+              className={`flex items-center space-x-1.5 px-3 py-1 rounded text-xs font-mono font-bold transition-all ${
+                currentTab === "verification_queue"
+                  ? "bg-amber-600 text-white shadow-sm ring-1 ring-amber-400/40"
+                  : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/40"
+              }`}
+              title="Черга форензік-верифікації доказів Spark L1 (Human-in-the-Loop)"
+            >
+              <ShieldCheck className="w-3.5 h-3.5 text-amber-300 shrink-0" />
+              <span>
+                {currentLang === "uk"
+                  ? "⚖️ Черга HITL"
+                  : currentLang === "fr"
+                  ? "⚖️ File HITL"
+                  : currentLang === "de"
+                  ? "⚖️ HITL-Warteschlange"
+                  : "⚖️ HITL Desk"}
+              </span>
+            </button>
+          </nav>
+        )}
 
         {/* RIGHT: Quick Action Drawer Trigger, Languages & Controls */}
         <div className="flex items-center space-x-1.5 sm:space-x-2 shrink-0">
@@ -257,8 +384,8 @@ export const Topbar: React.FC<TopbarProps> = ({
             <ChevronDown className="w-3 h-3 text-amber-400/80" />
           </button>
 
-          {/* Judicial Bundle Quick Button (desktop) */}
-          {onOpenJudicialBundle && (
+          {/* Judicial Bundle Quick Button (desktop, only for advocates) */}
+          {!isClient && onOpenJudicialBundle && (
             <button
               onClick={onOpenJudicialBundle}
               className="hidden lg:flex items-center space-x-1 px-2 py-1 bg-indigo-600/20 hover:bg-indigo-600/30 border border-indigo-500/40 text-indigo-300 hover:text-white rounded-md text-[11px] font-mono font-bold transition-all min-h-[30px]"

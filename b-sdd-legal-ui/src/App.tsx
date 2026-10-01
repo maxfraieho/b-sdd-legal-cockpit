@@ -29,6 +29,7 @@ import { CaseSyncModal } from "./components/CaseSyncModal";
 import { LegalStrategyModal } from "./components/LegalStrategyModal";
 import { FeedbackSupervisorModal } from "./components/FeedbackSupervisorModal";
 import { AuthGate } from "./components/AuthGate";
+import { EvidenceVerificationQueue } from "./components/EvidenceVerificationQueue";
 import { AuthorizedUser } from "./types/auth";
 import { getCurrentAuthSession, clearAuthSession } from "./lib/authManager";
 import { signOut } from "./lib/appwrite";
@@ -40,6 +41,8 @@ import {
   saveActiveCaseId,
   loadActorsForCase,
   saveActorsForCase,
+  loadPiecesForCase,
+  savePiecesForCase,
 } from "./lib/casesManager";
 import { CheckCircle2, BookOpen, Send, X, ShieldCheck, PanelRightClose, PanelRightOpen, Scale } from "lucide-react";
 
@@ -62,8 +65,9 @@ export default function App() {
   const [overrides, setOverrides] = useState<TranslationOverrides>(() => loadOverrides());
   const [settingsModalOpen, setSettingsModalOpen] = useState(false);
 
-  // Dynamic Case Actors state (scoped to active case)
+  // Dynamic Case Actors & Evidence Pieces state (scoped to active case)
   const [caseActors, setCaseActors] = useState<ActorItem[]>(() => loadActorsForCase(activeCaseId));
+  const [casePieces, setCasePieces] = useState<BordereauPiece[]>(() => loadPiecesForCase(activeCaseId));
   const [actorWizardOpen, setActorWizardOpen] = useState(false);
 
   // Loading & toast states
@@ -99,9 +103,22 @@ export default function App() {
     saveActiveCaseId(caseId);
     const newActors = loadActorsForCase(caseId);
     setCaseActors(newActors);
+    const newPieces = loadPiecesForCase(caseId);
+    setCasePieces(newPieces);
     showToast(
       currentLang === "uk" ? "Активне досьє змінено" : "Dossier actif modifié",
       caseId
+    );
+  };
+
+  // Human-In-The-Loop: Evidence Sealing Handler
+  const handlePieceApproved = (piece: BordereauPiece) => {
+    const updated = [...casePieces.filter((p) => p.cote !== piece.cote), piece];
+    setCasePieces(updated);
+    savePiecesForCase(activeCaseId, updated);
+    showToast(
+      currentLang === "uk" ? `Доказ ${piece.cote} внесено до реєстру` : `Pièce ${piece.cote} ajoutée au bordereau`,
+      piece.sha256.slice(0, 16) + "..."
     );
   };
 
@@ -239,10 +256,14 @@ export default function App() {
       currentLang={currentLang}
       onLanguageChange={setCurrentLang}
       expectedPassword={settings.authPassword || ""}
+      isPinProtectionEnabled={settings.isPinProtectionEnabled ?? false}
       autoLockMinutes={settings.autoLockMinutes || 15}
       forceLockKey={forceLockKey}
       onUserAuthenticated={(user) => {
         setCurrentUser(user);
+        if (user.role === 'user' || user.role === 'viewer') {
+          setCurrentTab('factbook');
+        }
         showToast(
           currentLang === "uk" ? `Авторизовано: ${user.name}` : `Connecté : ${user.name}`,
           `${user.email} (${user.role})`
@@ -279,6 +300,7 @@ export default function App() {
           onToggleEInkMode={() => setIsEInkMode(!isEInkMode)}
           activeCase={activeCase}
           onOpenCaseManager={() => setCaseManagerModalOpen(true)}
+          onSelectCase={handleSelectCase}
           mobileTab={mobileTab}
           onMobileTabChange={setMobileTab}
           currentUser={currentUser}
@@ -332,13 +354,21 @@ export default function App() {
           )}
 
           {currentTab === "factbook" && (
-            <EvidenceFactbook currentLang={currentLang} />
+            <EvidenceFactbook
+              currentLang={currentLang}
+              pieces={casePieces}
+              onPiecesChange={(updated) => {
+                setCasePieces(updated);
+                savePiecesForCase(activeCaseId, updated);
+              }}
+            />
           )}
 
           {currentTab === "actors" && (
             <ActorsRegistryView
               currentLang={currentLang}
               actors={caseActors}
+              pieces={casePieces}
               onActorsChange={(updated) => {
                 setCaseActors(updated);
                 saveActorsForCase(activeCaseId, updated);
@@ -363,6 +393,14 @@ export default function App() {
 
           {currentTab === "worm_ledger" && (
             <WormLedgerView currentLang={currentLang} />
+          )}
+
+          {currentTab === "verification_queue" && (
+            <EvidenceVerificationQueue
+              currentLang={currentLang}
+              onPieceApproved={handlePieceApproved}
+              onShowToast={showToast}
+            />
           )}
         </section>
 
@@ -579,7 +617,7 @@ export default function App() {
             `${newPiece.cote}: ${resolveLocalized(newPiece.titre, currentLang)}`
           );
         }}
-        existingPiecesCount={BORDEREAU_PIECES.length}
+        existingPiecesCount={casePieces.length}
       />
 
       {/* AI ACTOR INGESTION & SWISS CPP QUALIFICATION WIZARD */}
@@ -667,6 +705,7 @@ export default function App() {
         onClose={() => setJudicialBundleOpen(false)}
         activeCase={activeCase}
         currentLang={currentLang}
+        pieces={casePieces}
         onShowToast={showToast}
       />
 

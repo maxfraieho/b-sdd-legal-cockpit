@@ -202,8 +202,8 @@ export const LegalInspector: React.FC<LegalInspectorProps> = ({
                           {actor.age && (
                             <span className="text-[10px] font-mono text-emerald-400 font-normal">
                               {currentLang === 'uk'
-                                ? `(${actor.age} р., нар. ${actor.birthdate})`
-                                : `(${actor.age} ans, né le ${actor.birthdate})`}
+                                ? `(${actor.age} р.${actor.birthdate ? `, нар. ${actor.birthdate}` : ''})`
+                                : `(${actor.age} ans${actor.birthdate ? `, né le ${actor.birthdate}` : ''})`}
                             </span>
                           )}
                         </h4>
@@ -212,16 +212,24 @@ export const LegalInspector: React.FC<LegalInspectorProps> = ({
                         </span>
                       </div>
 
-                      {/* IMMUTABLE BADGES (L-03 & L-04) */}
-                      {actor.protected_bona_fide ? (
-                        <div className="px-2 py-0.5 bg-amber-500/10 border border-amber-500/70 text-amber-300 rounded text-[10px] font-mono font-bold flex items-center gap-1 shadow-[0_0_8px_rgba(212,175,55,0.25)] shrink-0">
-                          <Award className="w-3 h-3 text-amber-400" />
-                          <span>{currentLang === 'uk' ? 'ЗАХИЩЕНИЙ ЩИТОМ (ст. 933 ЦК)' : 'PROTÉGÉ (Art. 933 CC)'}</span>
-                        </div>
-                      ) : actor.id === "ACT-ARSEN-KOVALENKO" ? (
+                      {/* Standard Procedural Status Badges */}
+                      {actor.procedural_standing === 'victime_plaignante' || (actor.id && actor.id.includes('PLAIGNANT')) ? (
                         <div className="px-2 py-0.5 bg-emerald-500/10 border border-emerald-500/60 text-emerald-300 rounded text-[10px] font-mono font-bold flex items-center gap-1 shrink-0">
                           <ShieldCheck className="w-3 h-3 text-emerald-400" />
-                          <span>{currentLang === 'uk' ? 'ПОВНОЛІТНІЙ ПОТЕРПІЛИЙ' : 'VICTIME ADULTE'}</span>
+                          <span>{currentLang === 'uk' ? 'ПОТЕРПІЛИЙ' : 'VICTIME'}</span>
+                        </div>
+                      ) : actor.procedural_standing === 'tiers' || actor.procedural_standing === 'tiers_bonne_foi' ? (
+                        <div className="px-2 py-0.5 bg-slate-800/80 border border-slate-700 text-slate-300 rounded text-[10px] font-mono font-medium shrink-0">
+                          <span>{currentLang === 'uk' ? 'ТРЕТЯ ОСОБА' : 'TIERS'}</span>
+                        </div>
+                      ) : actor.id === 'PARTY-L03' || actor.procedural_standing === 'avocat' ? (
+                        <div className="px-2 py-0.5 bg-blue-500/10 border border-blue-500/60 text-blue-300 rounded text-[10px] font-mono font-bold flex items-center gap-1 shrink-0">
+                          <ShieldCheck className="w-3 h-3 text-blue-400" />
+                          <span>{currentLang === 'uk' ? 'ПРЕДСТАВНИК' : 'REPRÉSENTANT'}</span>
+                        </div>
+                      ) : actor.procedural_standing === 'temoin' ? (
+                        <div className="px-1.5 py-0.5 bg-cyan-500/10 border border-cyan-800/60 text-cyan-300 rounded text-[10px] font-mono font-bold shrink-0">
+                          {currentLang === 'uk' ? 'СВІДОК' : 'TÉMOIN'}
                         </div>
                       ) : (
                         <div className="px-1.5 py-0.5 bg-rose-500/10 border border-rose-800/60 text-rose-300 rounded text-[10px] font-mono font-bold shrink-0">
@@ -233,17 +241,6 @@ export const LegalInspector: React.FC<LegalInspectorProps> = ({
                     <p className="text-[11px] text-slate-300 font-sans leading-relaxed line-clamp-2">
                       {resolveLocalized(actor.role, currentLang)}
                     </p>
-
-                    {actor.protected_bona_fide && (
-                      <div className="mt-1.5 p-1.5 bg-amber-950/30 border border-amber-500/30 rounded text-[10px] font-mono text-amber-300 flex items-center gap-1">
-                        <Lock className="w-3 h-3 text-amber-400 shrink-0" />
-                        <span>
-                          {currentLang === 'uk'
-                            ? 'Будь-яке обвинувачення категорично виключене законом (Інваріант L-03)'
-                            : 'Toute action accusatoire strictement forclose (L-03)'}
-                        </span>
-                      </div>
-                    )}
                   </div>
                 );
               })}

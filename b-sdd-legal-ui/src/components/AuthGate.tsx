@@ -51,6 +51,7 @@ export type { AuthStage, AuthGateState };
 interface AuthGateProps {
   children: React.ReactNode;
   expectedPassword?: string;
+  isPinProtectionEnabled?: boolean;
   autoLockMinutes?: number;
   currentLang: SupportedLanguage;
   onLanguageChange: (lang: SupportedLanguage) => void;
@@ -183,21 +184,22 @@ const AUTH_I18N = {
     legal_notice_desc:
       'Цей ресурс є авторською розробкою (LegalTech Workbench) з інтегрованими базами швейцарського кримінального права, WORM-реєстром доказів та штучним інтелектом. Доступ надається виключно для узгоджених правових установ, адвокатських бюро та уповноважених експертів за результатами попереднього листування.',
     legal_notice_pin_hint:
-      '📌 Контур 1: Введіть PIN-код 0523 для активації термінала або скористайтеся кнопкою швидкого допуску.',
-    pin_label: 'Введіть PIN-код термінала (0523):',
-    pin_submit: 'Верифікувати PIN-код (Контур 1)',
+      '📌 Контур 1: Введіть захисний PIN-код термінала для переходу до другого фактора (Google Identity).',
+    pin_label: 'Введіть захисний PIN-код термінала:',
+    pin_submit: 'Підтвердити PIN-код (Контур 1)',
     btn_legal_memo: '⚖️ Юридичний Меморандум & Шаблони Партнерства',
     pin_error: 'Невірний PIN-код допуску. Зверніться до ініціатора проєкту.',
     stage2_verified: 'КОНТУР 1: PIN ВЕРИФІКОВАНО',
-    stage2_title: 'Авторизація через Google AI Studio',
+    stage2_title: 'Авторизація через Google Account',
     stage2_btn_lock: 'Заблокувати / Скинути PIN',
     stage2_court_title: 'Ministère public du canton de Vaud · PE24.014624-SBA',
     stage2_court_desc:
-      'Матеріали кримінального провадження (ст. 115, 118 КПК). Авторизація доступу здійснюється через захищений шлюз Google AI Studio відповідно до ст. 73 КПК Швейцарії (таємниця слідства).',
-    stage2_gateway_banner: 'Шлюз авторизації Google AI Studio для повернення до:',
-    btn_google_cloud_run: 'Авторизуватися через Google AI Studio',
+      'Матеріали кримінального провадження (ст. 115, 118 КПК). Авторизація доступу здійснюється через захищений шлюз Google Identity відповідно до ст. 73 КПК Швейцарії (таємниця слідства).',
+    stage2_gateway_banner: 'Шлюз авторизації Google для повернення до:',
+    btn_google_signin: 'Увійти через Google (Авторизація справи)',
+    btn_google_cloud_run: 'Авторизуватися через Google Account',
     btn_confirm_gateway: 'Підтвердити авторизацію та перейти до кокпіта',
-    authenticating_title: 'Авторизація через Google AI Studio...',
+    authenticating_title: 'Авторизація через Google Account...',
     authenticating_desc:
       'Виконується криптографічна перевірка допуску до матеріалів справи PE24.014624-SBA за стандартом Art. 73 CPP.',
     refusal_title: 'ДОСТУП НЕ ПІДТВЕРДЖЕНО (Art. 73 CPP)',
@@ -210,8 +212,8 @@ const AUTH_I18N = {
     stage2_direct_placeholder: 'Введіть Google-адресу (@gmail.com)',
     stage2_btn_verify: 'Верифікувати допуск Google Identity',
     stage2_or_text: 'Або перевірка допуску за Google-адресою:',
-    stage2_quick_title: 'Швидкий допуск уповноважених осіб справи:',
-    pending_google_title: 'Авторизація Google AI Studio підтверджена:',
+    stage2_quick_title: 'Авторизовані учасники справи:',
+    pending_google_title: 'Авторизація Google Identity підтверджена:',
     pending_google_desc: 'Введіть PIN-код локального термінала для завершення авторизації.',
     footer_standard: 'B-SDD Protocol v3.0 · ISO/IEC 27037',
     footer_bar: 'Ordre des Avocats / LAVI Reference',
@@ -225,21 +227,22 @@ const AUTH_I18N = {
     legal_notice_desc:
       "Cette ressource est une plateforme propriétaire d'ingénierie LegalTech dotée d'une architecture bitemporelle, d'un registre de preuves WORM certifié ISO/IEC 27037 et d'une IA locale. L'accès est strictement réservé aux Études d'avocats et autorités convenues.",
     legal_notice_pin_hint:
-      '📌 Niveau 1 : Saisissez le code PIN 0523 pour activer le terminal ou utilisez le bouton d’accès direct.',
-    pin_label: "Saisissez le code PIN d'invitation (0523) :",
+      '📌 Niveau 1 : Saisissez le code PIN du terminal pour passer au second facteur (Google Identity).',
+    pin_label: "Saisissez le code PIN du terminal :",
     pin_submit: 'Valider le PIN (Niveau 1)',
     btn_legal_memo: '⚖️ Note Juridique & Modèles Contractuels',
     pin_error: 'Code PIN d’invitation invalide. Veuillez vérifier vos accès.',
     stage2_verified: 'NIVEAU 1 : PIN VÉRIFIÉ',
-    stage2_title: 'Authentification Google AI Studio',
+    stage2_title: 'Authentification Google Account',
     stage2_btn_lock: 'Verrouiller / Réinitialiser PIN',
     stage2_court_title: 'Ministère public du canton de Vaud · PE24.014624-SBA',
     stage2_court_desc:
-      'Cause pénale et protection de la victime (art. 115, 118 CPP). L’accès au dossier s’effectue via la passerelle sécurisée Google AI Studio conformément au secret de l’instruction (Art. 73 CPP).',
-    stage2_gateway_banner: 'Passerelle d’autorisation Google AI Studio pour retour vers :',
-    btn_google_cloud_run: 'S’authentifier via Google AI Studio',
+      'Cause pénale et protection de la victime (art. 115, 118 CPP). L’accès au dossier s’effectue via la passerelle sécurisée Google Identity conformément au secret de l’instruction (Art. 73 CPP).',
+    stage2_gateway_banner: 'Passerelle d’autorisation Google pour retour vers :',
+    btn_google_signin: 'Se connecter avec Google (Habilitation dossier)',
+    btn_google_cloud_run: 'S’authentifier via Google Account',
     btn_confirm_gateway: 'Confirmer l’autorisation et ouvrir le cockpit',
-    authenticating_title: 'Authentification via Google AI Studio...',
+    authenticating_title: 'Authentification via Google Account...',
     authenticating_desc:
       'Contrôle cryptographique d’habilitation sur le dossier pénal PE24.014624-SBA (Art. 73 CPP).',
     refusal_title: 'ACCÈS NON AUTORISÉ (Art. 73 CPP / Art. 320 CP)',
@@ -252,8 +255,8 @@ const AUTH_I18N = {
     stage2_direct_placeholder: 'Saisissez votre adresse Google (@gmail.com)',
     stage2_btn_verify: 'Vérifier l’habilitation Google Identity',
     stage2_or_text: 'Ou vérification par adresse Google :',
-    stage2_quick_title: 'Accès rapide des parties habilitées au dossier :',
-    pending_google_title: 'Identité Google AI Studio confirmée :',
+    stage2_quick_title: 'Parties habilitées au dossier :',
+    pending_google_title: 'Identité Google confirmée :',
     pending_google_desc: 'Saisissez le code PIN du terminal local pour finaliser l’autorisation.',
     footer_standard: 'Protocole B-SDD v3.0 · ISO/IEC 27037',
     footer_bar: 'Conforme Ordre des Avocats / LAVI',
@@ -267,21 +270,22 @@ const AUTH_I18N = {
     legal_notice_desc:
       'Dieses System ist eine spezialisierte LegalTech-Arbeitsumgebung mit bitemporaler Beweisführung und ISO/IEC 27037-konformem WORM-Speicher. Der Zugang ist ausschließlich für autorisierte Rechtsanwälte und Partnerinstitutionen bestimmt.',
     legal_notice_pin_hint:
-      '📌 Stufe 1: Geben Sie den PIN-Code 0523 ein oder nutzen Sie den Direktzugang.',
-    pin_label: 'Vertraulichen PIN-Code eingeben (0523):',
+      '📌 Stufe 1: Geben Sie den Sicherheits-PIN-Code ein, um zum zweiten Faktor (Google Identity) zu gelangen.',
+    pin_label: 'Sicherheits-PIN-Code eingeben:',
     pin_submit: 'PIN bestätigen (Stufe 1)',
     btn_legal_memo: '⚖️ Rechtliches Memorandum & Vertragsvorlagen',
     pin_error: 'Ungültiger PIN-Code. Bitte prüfen Sie Ihre Zugangsdaten.',
     stage2_verified: 'STUFE 1: PIN BESTÄTIGT',
-    stage2_title: 'Google AI Studio Authentifizierung',
+    stage2_title: 'Google Account Authentifizierung',
     stage2_btn_lock: 'Sperren / PIN zurücksetzen',
     stage2_court_title: 'Staatsanwaltschaft Kanton Waadt · PE24.014624-SBA',
     stage2_court_desc:
-      'Strafverfahren und Opferschutz (Art. 115, 118 StPO). Der Zugang erfolgt über das sichere Google AI Studio Gateway gemäss Untersuchungsgeheimnis (Art. 73 StPO).',
-    stage2_gateway_banner: 'Google AI Studio Autorisierungs-Gateway zur Rückkehr zu:',
-    btn_google_cloud_run: 'Über Google AI Studio autorisieren',
+      'Strafverfahren und Opferschutz (Art. 115, 118 StPO). Der Zugang erfolgt über das sichere Google Identity Gateway gemäss Untersuchungsgeheimnis (Art. 73 StPO).',
+    stage2_gateway_banner: 'Google Autorisierungs-Gateway zur Rückkehr zu:',
+    btn_google_signin: 'Mit Google anmelden (Verfahrenslegitimation)',
+    btn_google_cloud_run: 'Über Google Account autorisieren',
     btn_confirm_gateway: 'Autorisierung bestätigen und Cockpit öffnen',
-    authenticating_title: 'Google AI Studio Authentifizierung...',
+    authenticating_title: 'Google Account Authentifizierung...',
     authenticating_desc:
       'Kryptografische Prüfung der Zugriffsberechtigung für das Verfahren PE24.014624-SBA (Art. 73 StPO).',
     refusal_title: 'ZUGANG NICHT AUTORISIERT (Art. 73 StPO / Art. 320 StGB)',
@@ -294,8 +298,8 @@ const AUTH_I18N = {
     stage2_direct_placeholder: 'Geben Sie Ihre Google-Adresse ein (@gmail.com)',
     stage2_btn_verify: 'Google Identity Zugang verifizieren',
     stage2_or_text: 'Oder Überprüfung per Google-Adresse:',
-    stage2_quick_title: 'Schnellzugang für autorisierte Verfahrensbeteiligte:',
-    pending_google_title: 'Google AI Studio bestätigt:',
+    stage2_quick_title: 'Autorisierte Verfahrensbeteiligte:',
+    pending_google_title: 'Google Identität bestätigt:',
     pending_google_desc: 'Geben Sie den lokalen Terminal-PIN-Code ein, um die Autorisierung abzuschließen.',
     footer_standard: 'B-SDD-Protokoll v3.0 · ISO/IEC 27037',
     footer_bar: 'Anwaltskammer / OHG-konform',
@@ -309,21 +313,22 @@ const AUTH_I18N = {
     legal_notice_desc:
       'Questa piattaforma proprietaria integra l’analisi probatoria bitemporale e l’archiviazione WORM certificata ISO/IEC 27037. L’accesso è riservato esclusivamente a studi legali ed esperti designati.',
     legal_notice_pin_hint:
-      '📌 Livello 1: Inserire il codice PIN 0523 o utilizzare il pulsante di accesso rapido.',
-    pin_label: 'Inserisci il codice PIN di invito (0523):',
+      '📌 Livello 1: Inserire il codice PIN del terminale per procedere al secondo fattore (Google Identity).',
+    pin_label: 'Inserisci il codice PIN del terminale:',
     pin_submit: 'Verifica PIN (Livello 1)',
     btn_legal_memo: '⚖️ Nota Giuridica & Modelli Contrattuali',
     pin_error: 'Codice PIN non valido. Si prega di verificare i permessi.',
     stage2_verified: 'LIVELLO 1: PIN VERIFICATO',
-    stage2_title: 'Autenticazione Google AI Studio',
+    stage2_title: 'Autenticazione Google Account',
     stage2_btn_lock: 'Blocca / Reimposta PIN',
     stage2_court_title: 'Ministero Pubblico del Cantone Vaud · PE24.014624-SBA',
     stage2_court_desc:
-      'Procedimento penale e tutela della vittima (art. 115, 118 CPP). L’accesso avviene tramite gateway sicuro Google AI Studio ai sensi dell’Art. 73 CPP (segreto istruttorio).',
-    stage2_gateway_banner: 'Modalità gateway Google AI Studio per il ritorno a:',
-    btn_google_cloud_run: 'Autenticati con Google AI Studio',
+      'Procedimento penale e tutela della vittima (art. 115, 118 CPP). L’accesso avviene tramite gateway sicuro Google Identity ai sensi dell’Art. 73 CPP (segreto istruttorio).',
+    stage2_gateway_banner: 'Modalità gateway Google per il ritorno a:',
+    btn_google_signin: 'Accedi con Google (Abilitazione fascicolo)',
+    btn_google_cloud_run: 'Autenticati con Google Account',
     btn_confirm_gateway: 'Conferma autorizzazione e apri cockpit',
-    authenticating_title: 'Verifica Google AI Studio in corso...',
+    authenticating_title: 'Verifica Google Account in corso...',
     authenticating_desc:
       'Verifica crittografica dell’abilitazione al fascicolo penale PE24.014624-SBA (Art. 73 CPP).',
     refusal_title: 'ACCESSO NEGATO (Art. 73 CPP / Art. 320 CP)',
@@ -336,8 +341,8 @@ const AUTH_I18N = {
     stage2_direct_placeholder: 'Inserisci il tuo indirizzo Google (@gmail.com)',
     stage2_btn_verify: 'Verifica accesso Google Identity',
     stage2_or_text: 'O verifica tramite indirizzo Google:',
-    stage2_quick_title: 'Accesso rapido per le parti autorizzate del dossier:',
-    pending_google_title: 'Identità Google AI Studio confermata:',
+    stage2_quick_title: 'Parti autorizzate del dossier:',
+    pending_google_title: 'Identità Google confermata:',
     pending_google_desc: 'Inserisci il codice PIN del terminale locale per completare l’autorizzazione.',
     footer_standard: 'Protocollo B-SDD v3.0 · ISO/IEC 27037',
     footer_bar: 'Conforme Ordine Avvocati / LAVI',
@@ -351,21 +356,22 @@ const AUTH_I18N = {
     legal_notice_desc:
       'This proprietary LegalTech workbench features bitemporal causal analysis, ISO/IEC 27037 WORM cryptographic evidence certification, and offline RAG reasoning. Access is strictly limited to agreed law firms and authorized counsel.',
     legal_notice_pin_hint:
-      '📌 Tier 1: Enter invitation PIN code 0523 to activate the terminal or use direct access.',
-    pin_label: 'Enter terminal security PIN (0523):',
+      '📌 Tier 1: Enter terminal security PIN to proceed to second factor (Google Identity).',
+    pin_label: 'Enter terminal security PIN:',
     pin_submit: 'Verify PIN (Tier 1)',
     btn_legal_memo: '⚖️ Legal Memorandum & Partnership Templates',
     pin_error: 'Invalid invitation PIN code. Please verify your credentials.',
     stage2_verified: 'TIER 1: PIN VERIFIED',
-    stage2_title: 'Google AI Studio Authentication',
+    stage2_title: 'Google Account Authentication',
     stage2_btn_lock: 'Lock / Reset PIN',
     stage2_court_title: "Public Prosecutor's Office · Canton of Vaud · PE24.014624-SBA",
     stage2_court_desc:
-      'Criminal proceeding and victim protection (Art. 115, 118 Swiss CPC). Access is authenticated via secure Google AI Studio Gateway under Art. 73 CPC (confidentiality of investigation).',
-    stage2_gateway_banner: 'Google AI Studio authorization gateway to return to:',
-    btn_google_cloud_run: 'Authorize via Google AI Studio',
+      'Criminal proceeding and victim protection (Art. 115, 118 Swiss CPC). Access is authenticated via secure Google Identity Gateway under Art. 73 CPC (confidentiality of investigation).',
+    stage2_gateway_banner: 'Google authorization gateway to return to:',
+    btn_google_signin: 'Sign in with Google (Case Authorization)',
+    btn_google_cloud_run: 'Authorize via Google Account',
     btn_confirm_gateway: 'Confirm Authorization & Open Cockpit',
-    authenticating_title: 'Authenticating via Google AI Studio...',
+    authenticating_title: 'Authenticating via Google Account...',
     authenticating_desc:
       'Performing cryptographic authorization check against criminal dossier PE24.014624-SBA (Art. 73 CPC).',
     refusal_title: 'ACCESS DENIED (Art. 73 Swiss CPC / Art. 320 Swiss CP)',
@@ -378,8 +384,8 @@ const AUTH_I18N = {
     stage2_direct_placeholder: 'Enter your Google email (@gmail.com)',
     stage2_btn_verify: 'Verify Google Identity Access',
     stage2_or_text: 'Or verify via Google email address:',
-    stage2_quick_title: 'Fast-track access for authorized case participants:',
-    pending_google_title: 'Google AI Studio Identity Confirmed:',
+    stage2_quick_title: 'Authorized case participants:',
+    pending_google_title: 'Google Identity Confirmed:',
     pending_google_desc: 'Enter local terminal PIN code to finalize admission.',
     footer_standard: 'B-SDD Protocol v3.0 · ISO/IEC 27037',
     footer_bar: 'Bar Association & LAVI Reference',
@@ -389,6 +395,7 @@ const AUTH_I18N = {
 export const AuthGate: React.FC<AuthGateProps> = ({
   children,
   expectedPassword,
+  isPinProtectionEnabled = false,
   autoLockMinutes = 15,
   currentLang,
   onLanguageChange,
@@ -486,6 +493,18 @@ export const AuthGate: React.FC<AuthGateProps> = ({
       if (isPinPreVerified) {
         markPinUnlocked();
       }
+
+      // If PIN protection is not enabled by admin, skip PIN stage entirely
+      if (!isPinProtectionEnabled) {
+        return {
+          stage: 'GOOGLE_REQUIRED',
+          isPinValid: true,
+          isGoogleAuthenticated: false,
+          authenticatedEmail: null,
+          authError: null,
+        };
+      }
+
       const pinStage = isPinPreVerified || isPinUnlockedLocally();
       return {
         stage: pinStage ? 'GOOGLE_REQUIRED' : 'PIN_ENTRY',
@@ -496,8 +515,8 @@ export const AuthGate: React.FC<AuthGateProps> = ({
       };
     } catch {
       return {
-        stage: 'PIN_ENTRY',
-        isPinValid: false,
+        stage: isPinProtectionEnabled ? 'PIN_ENTRY' : 'GOOGLE_REQUIRED',
+        isPinValid: !isPinProtectionEnabled,
         isGoogleAuthenticated: false,
         authenticatedEmail: null,
         authError: null,
@@ -548,6 +567,17 @@ export const AuthGate: React.FC<AuthGateProps> = ({
   const [isShaking, setIsShaking] = useState<boolean>(false);
   const [sessionLockedBanner, setSessionLockedBanner] = useState<boolean>(false);
 
+  // Synchronize stage if admin toggles PIN protection in Settings
+  useEffect(() => {
+    if (!isPinProtectionEnabled && authState.stage === 'PIN_ENTRY') {
+      setAuthState((prev) => ({
+        ...prev,
+        stage: 'GOOGLE_REQUIRED',
+        isPinValid: true,
+      }));
+    }
+  }, [isPinProtectionEnabled, authState.stage]);
+
   // Lock Synchronization from App / Topbar logout
   useEffect(() => {
     if (forceLockKey && forceLockKey > 0) {
@@ -563,8 +593,8 @@ export const AuthGate: React.FC<AuthGateProps> = ({
       setPendingGoogleEmail(null);
       setCurrentSessionState(null);
       setAuthState({
-        stage: 'PIN_ENTRY',
-        isPinValid: false,
+        stage: isPinProtectionEnabled ? 'PIN_ENTRY' : 'GOOGLE_REQUIRED',
+        isPinValid: !isPinProtectionEnabled,
         isGoogleAuthenticated: false,
         authenticatedEmail: null,
         authError: null,
@@ -574,7 +604,7 @@ export const AuthGate: React.FC<AuthGateProps> = ({
       setSessionLockedBanner(true);
       if (onLockedStateChange) onLockedStateChange(true);
     }
-  }, [forceLockKey, onLockedStateChange]);
+  }, [forceLockKey, isPinProtectionEnabled, onLockedStateChange]);
 
   useEffect(() => {
     const handleGlobalLock = () => {
@@ -590,8 +620,8 @@ export const AuthGate: React.FC<AuthGateProps> = ({
       setPendingGoogleEmail(null);
       setCurrentSessionState(null);
       setAuthState({
-        stage: 'PIN_ENTRY',
-        isPinValid: false,
+        stage: isPinProtectionEnabled ? 'PIN_ENTRY' : 'GOOGLE_REQUIRED',
+        isPinValid: !isPinProtectionEnabled,
         isGoogleAuthenticated: false,
         authenticatedEmail: null,
         authError: null,
@@ -604,7 +634,7 @@ export const AuthGate: React.FC<AuthGateProps> = ({
 
     window.addEventListener('b_sdd_lock_session', handleGlobalLock);
     return () => window.removeEventListener('b_sdd_lock_session', handleGlobalLock);
-  }, [onLockedStateChange]);
+  }, [isPinProtectionEnabled, onLockedStateChange]);
 
   // Google OAuth error & authenticating state
   const [googleAuthError, setGoogleAuthError] = useState<string | null>(null);
@@ -818,17 +848,33 @@ export const AuthGate: React.FC<AuthGateProps> = ({
         const appwriteUser = await account.get();
         if (appwriteUser && appwriteUser.email && isMounted) {
           const normalizedEmail = appwriteUser.email.trim().toLowerCase();
+          const checkResult = findUserByEmail(normalizedEmail);
           const matchedUser =
             HARDENED_WHITELIST[normalizedEmail] ||
-            findUserByEmail(normalizedEmail).user || {
-              id: appwriteUser.$id,
-              email: normalizedEmail,
-              name: appwriteUser.name || normalizedEmail.split('@')[0],
-              role: (normalizedEmail === PRIMARY_SUPER_ADMIN_EMAIL ? 'super_admin' : 'admin') as UserRole,
-              isActive: true,
-              addedAt: new Date().toISOString(),
-              permissions: ROLE_DEFINITIONS.admin.defaultPermissions,
-            };
+            checkResult.user;
+
+          if (!matchedUser) {
+            setAuthState((prev) => ({
+              ...prev,
+              stage: 'ACCESS_DENIED',
+              authError: `ACCÈS REFUSÉ (Art. 73 CPP / Art. 320 CP): L'adresse ${normalizedEmail} n'est pas autorisée pour le dossier SBA.`,
+            }));
+            return;
+          }
+
+          // If PIN protection is enabled by administrator and not yet unlocked on this device,
+          // require Stage 1 PIN entry first before admitting to the cockpit
+          if (isPinProtectionEnabled && !isPinUnlockedLocally()) {
+            setPendingGoogleEmail(normalizedEmail);
+            sessionStorage.setItem('b_sdd_pending_google_email', normalizedEmail);
+            setAuthState((prev) => ({
+              ...prev,
+              stage: 'PIN_ENTRY',
+              isPinValid: false,
+              authenticatedEmail: normalizedEmail,
+            }));
+            return;
+          }
 
           markPinUnlocked();
           handleVerifyGoogleIdentity(normalizedEmail, appwriteUser.$id, {
@@ -951,66 +997,14 @@ export const AuthGate: React.FC<AuthGateProps> = ({
     };
   }, [authState.stage, autoLockMinutes]);
 
-  // Direct Sovereign / Operator Login as Super Admin (SBA Lead)
-  const handleDirectAdminLogin = () => {
-    const adminEmail = PRIMARY_SUPER_ADMIN_EMAIL;
-    const matchedUser = HARDENED_WHITELIST[adminEmail];
-    const defaultPermissions = ROLE_DEFINITIONS.super_admin.defaultPermissions;
-
-    const sessionUser: AuthorizedUser = {
-      id: adminEmail,
-      email: adminEmail,
-      name: matchedUser?.name || 'Administrator (SBA Lead)',
-      role: 'super_admin',
-      isActive: true,
-      addedAt: '2024-07-20T08:00:00Z',
-      permissions: defaultPermissions,
-    };
-
-    const newSession: AuthSession = {
-      user: sessionUser,
-      authMethod: 'google_cloud_run',
-      timestamp: Date.now(),
-      token: btoa(`bsdd_${Date.now()}_${adminEmail}`),
-    };
-
-    setAuthSession(newSession, true);
-    localStorage.setItem(
-      'b_sdd_legal_auth_state',
-      JSON.stringify({
-        isPinValid: true,
-        isGoogleAuthenticated: true,
-        email: adminEmail,
-        timestamp: Date.now(),
-      })
-    );
-    markPinUnlocked();
-    sessionStorage.setItem('b_sdd_pin_stage_unlocked', 'true');
-    sessionStorage.setItem('b_sdd_auth_unlocked', 'true');
-    sessionStorage.setItem('b_sdd_auth_timestamp', Date.now().toString());
-
-    setCurrentSessionState(newSession);
-    setSessionLockedBanner(false);
-    setAuthState({
-      stage: 'AUTHENTICATED',
-      isPinValid: true,
-      isGoogleAuthenticated: true,
-      authenticatedEmail: adminEmail,
-      authError: null,
-      sessionToken: newSession.token,
-    });
-
-    onUserAuthenticated?.(sessionUser);
-    onLockedStateChange?.(false);
-  };
-
-  // Handle Tier 1 PIN submission (Local Terminal Screen Lock / Convenience Guard)
+  // Handle Tier 1 PIN submission (Optional Extra Security Guard)
   const handlePinSubmit = (e?: React.FormEvent) => {
     if (e) e.preventDefault();
     const cleanPin = inputPin.trim();
+    const targetPassword = expectedPassword?.trim();
     const isMatch = Boolean(
-      expectedPassword && expectedPassword.trim().length > 0
-        ? cleanPin === expectedPassword.trim() || cleanPin === '0523'
+      targetPassword && targetPassword.length > 0
+        ? cleanPin === targetPassword
         : cleanPin.length > 0
     );
 
@@ -1019,12 +1013,6 @@ export const AuthGate: React.FC<AuthGateProps> = ({
       setPinErrorMsg(null);
       setSessionLockedBanner(false);
       setInputPin('');
-
-      // Sovereign PIN 0523 or configured PIN authorizes direct entry as primary administrator
-      if (cleanPin === '0523' || (expectedPassword && cleanPin === expectedPassword.trim())) {
-        handleDirectAdminLogin();
-        return;
-      }
 
       // If running as external Identity Gateway, immediately redirect back upon PIN clearance
       const searchParams =
@@ -1051,7 +1039,8 @@ export const AuthGate: React.FC<AuthGateProps> = ({
       // Check if there was a pending Google Identity verification waiting
       const pendingEmail =
         sessionStorage.getItem('b_sdd_pending_google_email') ||
-        localStorage.getItem('b_sdd_pending_google_email');
+        localStorage.getItem('b_sdd_pending_google_email') ||
+        pendingGoogleEmail;
       const pendingToken =
         sessionStorage.getItem('b_sdd_pending_google_token') ||
         localStorage.getItem('b_sdd_pending_google_token');
@@ -1064,7 +1053,7 @@ export const AuthGate: React.FC<AuthGateProps> = ({
         setPendingGoogleEmail(null);
         handleVerifyGoogleIdentity(pendingEmail, pendingToken || undefined);
       } else {
-        // Transition to GOOGLE_REQUIRED for third-party visitors
+        // Unlock Stage 1 and transition to Stage 2: GOOGLE_REQUIRED
         setAuthState((prev) => ({
           ...prev,
           stage: 'GOOGLE_REQUIRED',
@@ -1097,8 +1086,8 @@ export const AuthGate: React.FC<AuthGateProps> = ({
     setPendingGoogleEmail(null);
     setCurrentSessionState(null);
     setAuthState({
-      stage: 'PIN_ENTRY',
-      isPinValid: false,
+      stage: isPinProtectionEnabled ? 'PIN_ENTRY' : 'GOOGLE_REQUIRED',
+      isPinValid: !isPinProtectionEnabled,
       isGoogleAuthenticated: false,
       authenticatedEmail: null,
       authError: null,
@@ -1280,6 +1269,8 @@ export const AuthGate: React.FC<AuthGateProps> = ({
               </div>
             )}
 
+
+
             {/* PIN Entry Form */}
             <form onSubmit={handlePinSubmit} className="space-y-3 sm:space-y-4">
               <div>
@@ -1351,26 +1342,7 @@ export const AuthGate: React.FC<AuthGateProps> = ({
                 <span>{t.pin_submit}</span>
               </button>
 
-              <div className="relative flex py-1 items-center">
-                <div className="flex-grow border-t border-slate-800"></div>
-                <span className="flex-shrink mx-3 text-[10px] font-mono text-slate-500 uppercase">
-                  {currentLang === 'uk' ? 'Або прямий допуск' : 'Ou accès direct'}
-                </span>
-                <div className="flex-grow border-t border-slate-800"></div>
-              </div>
 
-              <button
-                type="button"
-                onClick={handleDirectAdminLogin}
-                className="w-full py-2.5 px-3 bg-slate-800/80 hover:bg-slate-700/90 active:scale-[0.98] text-slate-300 hover:text-white font-medium rounded-xl border border-slate-700/60 shadow flex items-center justify-center gap-2 text-xs transition-all cursor-pointer touch-manipulation"
-              >
-                <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-                <span>
-                  {currentLang === 'uk'
-                    ? 'Увійти як Адміністратор (Швидкий допуск 0523)'
-                    : 'Accès Administrateur Direct (0523)'}
-                </span>
-              </button>
             </form>
           </div>
         )}
@@ -1399,24 +1371,26 @@ export const AuthGate: React.FC<AuthGateProps> = ({
                 </div>
               </div>
 
-              {/* Кнопка повернення до Контуру 1 */}
-              <button
-                type="button"
-                onClick={() => {
-                  clearPinUnlocked();
-                  setAuthState((prev) => ({
-                    ...prev,
-                    stage: 'PIN_ENTRY',
-                    isPinValid: false,
-                    authError: null,
-                  }));
-                }}
-                className="text-[11px] text-slate-400 hover:text-white px-2.5 py-1.5 rounded-lg bg-slate-900 border border-slate-800 hover:border-slate-700 transition-colors flex items-center gap-1.5 cursor-pointer touch-manipulation"
-                title="Заблокувати / Скинути PIN"
-              >
-                <Lock className="w-3.5 h-3.5 text-amber-400" />
-                <span>{t.stage2_btn_lock}</span>
-              </button>
+              {/* Кнопка повернення до Контуру 1 (лише коли захист PIN увімкнено) */}
+              {isPinProtectionEnabled && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    clearPinUnlocked();
+                    setAuthState((prev) => ({
+                      ...prev,
+                      stage: 'PIN_ENTRY',
+                      isPinValid: false,
+                      authError: null,
+                    }));
+                  }}
+                  className="text-[11px] text-slate-400 hover:text-white px-2.5 py-1.5 rounded-lg bg-slate-900 border border-slate-800 hover:border-slate-700 transition-colors flex items-center gap-1.5 cursor-pointer touch-manipulation"
+                  title="Заблокувати / Скинути PIN"
+                >
+                  <Lock className="w-3.5 h-3.5 text-amber-400" />
+                  <span>{t.stage2_btn_lock}</span>
+                </button>
+              )}
             </div>
 
             {/* Індикатор шлюзу авторизації, якщо запит прийшов від іншого сайту */}
@@ -1485,26 +1459,7 @@ export const AuthGate: React.FC<AuthGateProps> = ({
                 </span>
               </button>
 
-              <div className="relative flex py-1 items-center">
-                <div className="flex-grow border-t border-slate-800"></div>
-                <span className="flex-shrink mx-3 text-[10px] font-mono text-slate-500 uppercase">
-                  {currentLang === 'uk' ? 'Або локальний режим' : 'Ou mode local'}
-                </span>
-                <div className="flex-grow border-t border-slate-800"></div>
-              </div>
 
-              <button
-                type="button"
-                onClick={handleDirectAdminLogin}
-                className="w-full py-2.5 px-3 bg-slate-800/80 hover:bg-slate-700/90 active:scale-[0.98] text-slate-300 hover:text-white font-medium rounded-xl border border-slate-700/60 shadow flex items-center justify-center gap-2 text-xs transition-all cursor-pointer touch-manipulation"
-              >
-                <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-                <span>
-                  {currentLang === 'uk'
-                    ? 'Увійти безпосередньо (режим адміністратора SBA)'
-                    : 'Accès direct (Mode Administrateur SBA)'}
-                </span>
-              </button>
             </div>
 
             {/* Юридична примітка про обов'язковість захисту таємниці слідства */}

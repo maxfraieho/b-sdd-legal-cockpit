@@ -13,15 +13,23 @@ export const UI_TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> 
     case_ref: "Досьє SBA (Проєкт)",
     procedure_type: "Матеріали до відкриття провадження (КПК)",
     plaintiff_role: "Потерпілий та Цивільний позивач",
-    utopia_db_label: "Utopia DB :251",
+    utopia_db_label: "Реєстр справи: активний",
     evidence_count_label: "2'405 доказів",
-    node_label: "Вузол :234",
-    btn_snapshot: "Юридичний знімок (0.56 мс)",
+    node_label: "Захищений контур",
+    btn_snapshot: "Засвідчити стан справи",
     btn_snapshot_copied: "Скопійовано!",
     btn_lock: "Заблокувати",
     btn_settings: "Налаштування",
     edit_mode_badge: "Режим редагування АКТИВНИЙ",
     edit_mode_toggle: "Редагувати переклад",
+
+    // Client-specific tab labels (Role: 'user')
+    client_tab_evidence: "📁 Матеріали та докази",
+    client_tab_actors: "👥 Учасники справи",
+    client_tab_timeline: "📅 Хронологія подій",
+    client_tab_copilot: "💬 Консультація / ШІ",
+    client_status_verified: "✓ Перевірено адвокатом",
+    client_status_pending: "⏳ Очікує розгляду",
 
     // Navigation Tabs
     tab_claim_chart: "Склади злочинів (6)",
@@ -68,7 +76,7 @@ export const UI_TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> 
     probative_value_label: "Пряме доказове значення :",
     verbatim_quote_label: "Засвідчена дослівно цитата / Зміст :",
     admissibility_regime_label: "Процесуальна допустимість (КПК Во) :",
-    local_path_label: "Локальний шлях на вузлі .234 :",
+    local_path_label: "Джерело матеріалу :",
     certified_sha256_label: "Засвідчений хеш SHA-256 :",
 
     // Evidence Factbook, Gallery & GDrive
@@ -92,7 +100,7 @@ export const UI_TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> 
     factbook_back_to_list: "← Повернутися до списку",
     factbook_exhibits_count_label: "Речових доказів",
     factbook_gallery_title: "Судово-медичний та фотографічний архів речових доказів",
-    factbook_gallery_sub: "Усі цифрові фотографії та скани сертифіковані за стандартом ISO/IEC 27037 з прив'язкою EXIF/GPS та ADR у базі Utopia DB.",
+    factbook_gallery_sub: "Усі цифрові фотографії та скани перевірено за судовим стандартом ISO/IEC 27037 з фіксацією дати, часу, локації та незмінного цифрового відбитка.",
     factbook_open_forensic_lightbox: "Відкрити Forensic Lightbox",
     factbook_meta_camera: "Камера / Джерело:",
     factbook_meta_time: "Час фіксації:",
@@ -150,7 +158,7 @@ export const UI_TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> 
 
     // Tab 6: Bitemporal Timeline
     bitemporal_header: "Бітемпоральне зіставлення доказів · Valid Time ($T_v$) проти Transaction Time ($T_t$)",
-    bitemporal_sub: "Зіставлення об'єктивної фізичної реальності (EXIF / аудіо) з маніпулятивними заявами підозрюваної в Utopia DB (.251).",
+    bitemporal_sub: "Співставлення об'єктивної фізичної реальності (EXIF / аудіо) із суперечливими заявами сторони обвинувачення.",
     conflict_validated_badge: "КОНФЛІКТ ЗАКРІПЛЕНО ДЛЯ ПРОКУРАТУРИ",
 
     // Tab 7: Actors
@@ -175,20 +183,20 @@ export const UI_TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> 
     auth_pin_placeholder: "Введіть пароль локального термінала",
     auth_btn_unlock: "Відкрити досьє",
     auth_error: "Невірний пароль доступу. Спробуйте ще раз.",
-    auth_shield_note: "Захищено криптографічним інваріантом L-03 та WORM-реєстром Utopia DB.",
+    auth_shield_note: "Захищено законом: статус добросовісного набувача (ст. 933 ЦК) та незмінний цифровий реєстр.",
 
     // Settings
     settings_title: "Налаштування системи та технічна інтеграція",
-    settings_tab_llm: "LLM Проксі & ШІ-Переклад",
-    settings_tab_tunnel: "Cloudflare Tunnel & MCP",
+    settings_tab_llm: "Аналітичний асистент & ШІ-Переклад",
+    settings_tab_tunnel: "Захищений канал інтеграції",
     settings_tab_translations: "Керування перекладами",
     settings_tab_security: "Безпека & Пароль",
-    settings_proxy_url: "URL LLM Проксі (OpenAI API формат):",
+    settings_proxy_url: "URL аналітичного сервера (OpenAI API формат):",
     settings_model_slot: "Модельний слот / Model ID:",
-    settings_api_key: "API Ключ проксі (необов'язково):",
+    settings_api_key: "API Ключ (необов'язково):",
     settings_btn_test_conn: "Перевірити з'єднання",
-    settings_tunnel_info: "Відкриття MCP для Gemini Spark та Google AI екосистеми:",
-    settings_tunnel_cmd: "Команда запуску тунелю на вузлі .234 / .184:",
+    settings_tunnel_info: "Захищений канал для роботи аналітичних ШІ-асистентів:",
+    settings_tunnel_cmd: "Параметри захищеного з'єднання адвокатського кокпіта:",
     settings_btn_close: "Закрити",
     settings_btn_save: "Зберегти налаштування",
   },
@@ -200,15 +208,23 @@ export const UI_TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> 
     case_ref: "Dossier SBA (Projet)",
     procedure_type: "Dossier d'instruction préalable (CPP)",
     plaintiff_role: "Partie Plaignante",
-    utopia_db_label: "Utopia DB :251",
+    utopia_db_label: "Registre du dossier : actif",
     evidence_count_label: "2'405 preuves",
-    node_label: "Node :234",
-    btn_snapshot: "Synthèse Dossier (0.56 ms)",
+    node_label: "Périmètre sécurisé",
+    btn_snapshot: "Attester l'état du dossier",
     btn_snapshot_copied: "Copié !",
     btn_lock: "Verrouiller",
     btn_settings: "Paramètres",
     edit_mode_badge: "Mode édition ACTIF",
     edit_mode_toggle: "Éditer traductions",
+
+    // Client-specific tab labels (Role: 'user')
+    client_tab_evidence: "📁 Pièces & Documents",
+    client_tab_actors: "👥 Parties au dossier",
+    client_tab_timeline: "📅 Chronologie des faits",
+    client_tab_copilot: "💬 Consultation / IA",
+    client_status_verified: "✓ Validé par le conseil",
+    client_status_pending: "⏳ En attente d'examen",
 
     // Navigation Tabs
     tab_claim_chart: "Chefs d'Accusation (6)",
@@ -255,7 +271,7 @@ export const UI_TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> 
     probative_value_label: "Portée probatoire directe :",
     verbatim_quote_label: "Extrait textuel / Contenu certifié :",
     admissibility_regime_label: "Régime d'admissibilité (CPP Vaud) :",
-    local_path_label: "Chemin local sur nœud .234 :",
+    local_path_label: "Source d'archive :",
     certified_sha256_label: "Empreinte SHA-256 certifiée :",
 
     // Evidence Factbook, Gallery & GDrive
@@ -279,7 +295,7 @@ export const UI_TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> 
     factbook_back_to_list: "← Retour au bordereau",
     factbook_exhibits_count_label: "Pièces matérielles",
     factbook_gallery_title: "Archive Forensique Photographique & Constats Médicaux",
-    factbook_gallery_sub: "Toutes les photographies et scans sont certifiés selon la norme ISO/IEC 27037 avec métadonnées EXIF/GPS et synchronisation ADR dans Utopia DB.",
+    factbook_gallery_sub: "Toutes les photographies et scans sont certifiés selon la norme ISO/IEC 27037 avec horodatage, géolocalisation et empreinte numérique infalsifiable.",
     factbook_open_forensic_lightbox: "Ouvrir le Lightbox Forensique",
     factbook_meta_camera: "Appareil / Source :",
     factbook_meta_time: "Horodatage :",
@@ -337,7 +353,7 @@ export const UI_TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> 
 
     // Tab 6: Bitemporal Timeline
     bitemporal_header: "Rapprochement Bitemporel des Preuves · Valid Time ($T_v$) vs Transaction Time ($T_t$)",
-    bitemporal_sub: "Confrontation de la réalité physique objective (horodatage EXIF / aveu audio) face aux déclarations tardives dans Utopia DB (.251).",
+    bitemporal_sub: "Confrontation de la réalité physique objective (horodatage EXIF / aveu audio) face aux déclarations tardives versées au dossier.",
     conflict_validated_badge: "CONFLIT VALIDÉ POUR LE PARQUET",
 
     // Tab 7: Actors
@@ -362,20 +378,20 @@ export const UI_TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> 
     auth_pin_placeholder: "Mot de passe du terminal local",
     auth_btn_unlock: "Déverrouiller le Dossier",
     auth_error: "Code d'accès invalide. Veuillez réessayer.",
-    auth_shield_note: "Protégé par l'Invariant L-03 et le registre WORM Utopia DB.",
+    auth_shield_note: "Protégé par la garantie de bonne foi (Art. 933 CC) et le registre d'intégrité probatoire.",
 
     // Settings
     settings_title: "Paramètres Système & Intégration Technique",
     settings_tab_llm: "Proxy LLM & Traduction IA",
-    settings_tab_tunnel: "Tunnel Cloudflare & MCP",
+    settings_tab_tunnel: "Canal Sécurisé d'Intégration",
     settings_tab_translations: "Gestion des Traductions",
     settings_tab_security: "Sécurité & Mot de Passe",
     settings_proxy_url: "URL du Proxy LLM (format OpenAI API) :",
     settings_model_slot: "Slot Modèle / Model ID :",
     settings_api_key: "Clé API Proxy (optionnel) :",
     settings_btn_test_conn: "Tester la connexion",
-    settings_tunnel_info: "Exposition MCP pour Gemini Spark et l'écosystème Google AI :",
-    settings_tunnel_cmd: "Commande de démarrage tunnel sur nœud .234 / .184 :",
+    settings_tunnel_info: "Canal sécurisé pour l'assistance analytique et l'audit légal :",
+    settings_tunnel_cmd: "Paramètres de connexion du cockpit judiciaire :",
     settings_btn_close: "Fermer",
     settings_btn_save: "Enregistrer les paramètres",
   },
@@ -387,15 +403,23 @@ export const UI_TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> 
     case_ref: "SBA Dossier (Draft)",
     procedure_type: "Preliminary Case Materials (CPC)",
     plaintiff_role: "Victim & Private Claimant",
-    utopia_db_label: "Utopia DB :251",
+    utopia_db_label: "Case Docket: Active",
     evidence_count_label: "2,405 evidence items",
-    node_label: "Node :234",
-    btn_snapshot: "Legal Snapshot (0.56 ms)",
+    node_label: "Secure Enclave",
+    btn_snapshot: "Attest Case State",
     btn_snapshot_copied: "Copied!",
     btn_lock: "Lock Screen",
     btn_settings: "Settings",
     edit_mode_badge: "Manual Edit Mode ACTIVE",
     edit_mode_toggle: "Edit Translations",
+
+    // Client-specific tab labels (Role: 'user')
+    client_tab_evidence: "📁 Case Files & Exhibits",
+    client_tab_actors: "👥 Case Parties",
+    client_tab_timeline: "📅 Chronology of Events",
+    client_tab_copilot: "💬 Consultation / AI",
+    client_status_verified: "✓ Verified by Counsel",
+    client_status_pending: "⏳ Pending Review",
 
     // Navigation Tabs
     tab_claim_chart: "Indictment Charges (6)",
@@ -442,7 +466,7 @@ export const UI_TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> 
     probative_value_label: "Direct Probative Value:",
     verbatim_quote_label: "Certified Verbatim Excerpt / Content:",
     admissibility_regime_label: "Admissibility Regime (Swiss CPC):",
-    local_path_label: "Local Path on Node .234:",
+    local_path_label: "Evidence Source Repository:",
     certified_sha256_label: "Certified SHA-256 Fingerprint:",
 
     // Evidence Factbook, Gallery & GDrive
@@ -466,7 +490,7 @@ export const UI_TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> 
     factbook_back_to_list: "← Back to registry",
     factbook_exhibits_count_label: "Physical Exhibits",
     factbook_gallery_title: "Forensic Photographic & Medical Evidence Archive",
-    factbook_gallery_sub: "All digital photos and scans are certified under ISO/IEC 27037 standard with EXIF/GPS binding and ADR sync in Utopia DB.",
+    factbook_gallery_sub: "All digital photos and scans are certified under ISO/IEC 27037 standard with timestamp, GPS binding, and immutable hash verification.",
     factbook_open_forensic_lightbox: "Open Forensic Lightbox",
     factbook_meta_camera: "Camera / Source:",
     factbook_meta_time: "Timestamp:",
@@ -524,7 +548,7 @@ export const UI_TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> 
 
     // Tab 6: Bitemporal Timeline
     bitemporal_header: "Bitemporal Evidence Reconciliation · Valid Time ($T_v$) vs Transaction Time ($T_t$)",
-    bitemporal_sub: "Confronting objective physical reality (EXIF / audio) with delayed fabrication claims in Utopia DB (.251).",
+    bitemporal_sub: "Confronting objective physical reality (EXIF / audio) with delayed and contradictory claims recorded in proceedings.",
     conflict_validated_badge: "CONFLICT CONFIRMED FOR PROSECUTION",
 
     // Tab 7: Actors
@@ -549,20 +573,20 @@ export const UI_TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> 
     auth_pin_placeholder: "Enter local terminal password",
     auth_btn_unlock: "Unlock Case Dossier",
     auth_error: "Invalid access password. Please try again.",
-    auth_shield_note: "Secured by Invariant L-03 and Utopia DB WORM ledger.",
+    auth_shield_note: "Protected by bona fide acquirer status (Art. 933 CC) and immutable digital registry.",
 
     // Settings
     settings_title: "System Settings & Technical Integration",
-    settings_tab_llm: "LLM Proxy & AI Translation",
-    settings_tab_tunnel: "Cloudflare Tunnel & MCP",
+    settings_tab_llm: "Analytical Assistant & AI Translation",
+    settings_tab_tunnel: "Secure Integration Channel",
     settings_tab_translations: "Translation Overrides",
     settings_tab_security: "Security & Passwords",
-    settings_proxy_url: "LLM Proxy URL (OpenAI API format):",
+    settings_proxy_url: "Analytical Server URL (OpenAI API format):",
     settings_model_slot: "Model Slot / Model ID:",
     settings_api_key: "Proxy API Key (optional):",
     settings_btn_test_conn: "Test Connection",
-    settings_tunnel_info: "Exposing MCP for Gemini Spark and Google AI Studio ecosystem:",
-    settings_tunnel_cmd: "Tunnel launch command on node .234 / .184:",
+    settings_tunnel_info: "Secure channel for legal analytical assistants:",
+    settings_tunnel_cmd: "Connection parameters for legal cockpit:",
     settings_btn_close: "Close",
     settings_btn_save: "Save Settings",
   },
@@ -574,15 +598,23 @@ export const UI_TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> 
     case_ref: "Dossier SBA (Entwurf)",
     procedure_type: "Vorbereitung Strafverfahren (StPO)",
     plaintiff_role: "Geschädigte Person & Privatklägerschaft",
-    utopia_db_label: "Utopia DB :251",
+    utopia_db_label: "Verfahrensregister: aktiv",
     evidence_count_label: "2'405 Beweismittel",
-    node_label: "Knoten :234",
-    btn_snapshot: "Aktenauszug (0.56 ms)",
+    node_label: "Gesicherter Bereich",
+    btn_snapshot: "Aktenstand beglaubigen",
     btn_snapshot_copied: "Kopiert!",
     btn_lock: "Sperren",
     btn_settings: "Einstellungen",
     edit_mode_badge: "Bearbeitungsmodus AKTIV",
     edit_mode_toggle: "Übersetzung bearbeiten",
+
+    // Client-specific tab labels (Role: 'user')
+    client_tab_evidence: "📁 Akten & Beweise",
+    client_tab_actors: "👥 Beteiligte",
+    client_tab_timeline: "📅 Chronologie",
+    client_tab_copilot: "💬 Beratung / KI",
+    client_status_verified: "✓ Vom Anwalt geprüft",
+    client_status_pending: "⏳ In Prüfung",
 
     // Navigation Tabs
     tab_claim_chart: "Straftatbestände (6)",
@@ -629,7 +661,7 @@ export const UI_TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> 
     probative_value_label: "Direkte Beweiskraft :",
     verbatim_quote_label: "Zertifiziertes wörtliches Zitat / Inhalt :",
     admissibility_regime_label: "Zulässigkeitsprüfung (Schweiz. StPO) :",
-    local_path_label: "Lokaler Speicherpfad auf Knoten .234 :",
+    local_path_label: "Aktenquelle :",
     certified_sha256_label: "Zertifizierter SHA-256 Hash :",
 
     // Evidence Factbook, Gallery & GDrive
@@ -653,7 +685,7 @@ export const UI_TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> 
     factbook_back_to_list: "← Zurück zum Verzeichnis",
     factbook_exhibits_count_label: "Beweisstücke",
     factbook_gallery_title: "Forensisches Foto- und Medizinalarchiv",
-    factbook_gallery_sub: "Alle digitalen Fotos und Scans sind nach ISO/IEC 27037 zertifiziert mit EXIF/GPS-Bindung und ADR-Synchronisation in Utopia DB.",
+    factbook_gallery_sub: "Alle digitalen Fotos und Scans sind nach ISO/IEC 27037 zertifiziert mit Zeitstempel, GPS-Bindung und unveränderlichem kryptografischem Nachweis.",
     factbook_open_forensic_lightbox: "Forensische Lightbox öffnen",
     factbook_meta_camera: "Kamera / Quelle:",
     factbook_meta_time: "Aufnahmezeit:",
@@ -711,7 +743,7 @@ export const UI_TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> 
 
     // Tab 6: Bitemporal Timeline
     bitemporal_header: "Bitemporaler Beweisabgleich · Valid Time ($T_v$) vs Transaction Time ($T_t$)",
-    bitemporal_sub: "Konfrontation der objektiven Realität (EXIF / Audio) mit fabrizierten Behauptungen in Utopia DB (.251).",
+    bitemporal_sub: "Konfrontation der objektiven Realität (EXIF / Audio) mit verspäteten und widersprüchlichen Aussagen in den Akten.",
     conflict_validated_badge: "WIDERSPRUCH FÜR STAATSANWALTSCHAFT BESTÄTIGT",
 
     // Tab 7: Actors
@@ -736,20 +768,20 @@ export const UI_TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> 
     auth_pin_placeholder: "Lokales Terminalpasswort eingeben",
     auth_btn_unlock: "Dossier freischalten",
     auth_error: "Ungültiges Passwort. Bitte erneut versuchen.",
-    auth_shield_note: "Geschützt durch kryptographische Invariante L-03 und Utopia DB WORM-Register.",
+    auth_shield_note: "Geschützt durch Gutglaubensschutz (Art. 933 ZGB) und unveränderliches Beweisregister.",
 
     // Settings
     settings_title: "Systemeinstellungen & Technische Integration",
-    settings_tab_llm: "LLM-Proxy & KI-Übersetzung",
-    settings_tab_tunnel: "Cloudflare Tunnel & MCP",
+    settings_tab_llm: "Analytischer Assistent & KI-Übersetzung",
+    settings_tab_tunnel: "Gesicherter Integrationskanal",
     settings_tab_translations: "Übersetzungsverwaltung",
     settings_tab_security: "Sicherheit & Passwort",
-    settings_proxy_url: "LLM-Proxy URL (OpenAI API Format):",
+    settings_proxy_url: "Analytischer Server URL (OpenAI API Format):",
     settings_model_slot: "Modell-Slot / Model ID:",
     settings_api_key: "Proxy API-Schlüssel (optional):",
     settings_btn_test_conn: "Verbindung testen",
-    settings_tunnel_info: "MCP-Freigabe für Gemini Spark und das Google AI Ökosystem:",
-    settings_tunnel_cmd: "Tunnel-Startbefehl auf Knoten .234 / .184:",
+    settings_tunnel_info: "Gesicherter Kanal für juristische Analyseassistenten:",
+    settings_tunnel_cmd: "Verbindungsparameter des juristischen Cockpits:",
     settings_btn_close: "Schliessen",
     settings_btn_save: "Einstellungen speichern",
   },
@@ -761,15 +793,23 @@ export const UI_TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> 
     case_ref: "Dossier SBA (Progetto)",
     procedure_type: "Atti per apertura procedimento (CPP)",
     plaintiff_role: "Danneggiato e Accusatore privato",
-    utopia_db_label: "Utopia DB :251",
+    utopia_db_label: "Registro del fascicolo: attivo",
     evidence_count_label: "2'405 prove",
-    node_label: "Nodo :234",
-    btn_snapshot: "Estratto Dossier (0.56 ms)",
+    node_label: "Perimetro protetto",
+    btn_snapshot: "Certifica stato fascicolo",
     btn_snapshot_copied: "Copiato!",
     btn_lock: "Blocca",
     btn_settings: "Impostazioni",
     edit_mode_badge: "Modalità di modifica ATTIVA",
     edit_mode_toggle: "Modifica traduzione",
+
+    // Client-specific tab labels (Role: 'user')
+    client_tab_evidence: "📁 Atti & Prove",
+    client_tab_actors: "👥 Parti del fascicolo",
+    client_tab_timeline: "📅 Cronologia dei fatti",
+    client_tab_copilot: "💬 Consulenza / IA",
+    client_status_verified: "✓ Verificato dal legale",
+    client_status_pending: "⏳ In attesa di esame",
 
     // Navigation Tabs
     tab_claim_chart: "Capi d'Accusa (6)",
@@ -816,7 +856,7 @@ export const UI_TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> 
     probative_value_label: "Portata probatoria diretta :",
     verbatim_quote_label: "Citazione testuale certificata / Contenuto :",
     admissibility_regime_label: "Ammissibilità probatoria (CPP Svizzero) :",
-    local_path_label: "Percorso locale sul nodo .234 :",
+    local_path_label: "Fonte documentale :",
     certified_sha256_label: "Hash SHA-256 certificato :",
 
     // Evidence Factbook, Gallery & GDrive
@@ -840,7 +880,7 @@ export const UI_TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> 
     factbook_back_to_list: "← Ritorna al registro",
     factbook_exhibits_count_label: "Reperti materiali",
     factbook_gallery_title: "Archivio Forense Fotografico e Medico",
-    factbook_gallery_sub: "Tutte le fotografie digitali e le scansioni sono certificate secondo ISO/IEC 27037 con metadati EXIF/GPS e sincronizzazione ADR in Utopia DB.",
+    factbook_gallery_sub: "Tutte le fotografie digitali e le scansioni sono certificate secondo ISO/IEC 27037 con datazione certa, GPS e registro digitale immutabile.",
     factbook_open_forensic_lightbox: "Apri Lightbox Forense",
     factbook_meta_camera: "Fotocamera / Fonte:",
     factbook_meta_time: "Orario di scatto:",
@@ -898,7 +938,7 @@ export const UI_TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> 
 
     // Tab 6: Bitemporal Timeline
     bitemporal_header: "Riconciliazione Bitemporale delle Prove · Valid Time ($T_v$) vs Transaction Time ($T_t$)",
-    bitemporal_sub: "Confronto tra realtà fisica oggettiva (EXIF / registrazioni) e asserzioni tardive fabbricate in Utopia DB (.251).",
+    bitemporal_sub: "Confronto tra realtà fisica oggettiva (EXIF / registrazioni) e asserzioni tardive inserite agli atti.",
     conflict_validated_badge: "CONFLITTO CONFERMATO PER LA PROCURA",
 
     // Tab 7: Actors
@@ -923,20 +963,20 @@ export const UI_TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> 
     auth_pin_placeholder: "Inserisci password del terminale locale",
     auth_btn_unlock: "Sblocca il Fascicolo",
     auth_error: "Password non valida. Riprovare.",
-    auth_shield_note: "Protetto dall'Invariante L-03 e dal registro WORM Utopia DB.",
+    auth_shield_note: "Protetto dalla buona fede (Art. 933 CC) e dal registro probatorio immutabile.",
 
     // Settings
     settings_title: "Impostazioni di Sistema & Integrazione Tecnica",
-    settings_tab_llm: "Proxy LLM & Traduzione IA",
-    settings_tab_tunnel: "Tunnel Cloudflare & MCP",
+    settings_tab_llm: "Assistente Analitico & Traduzione IA",
+    settings_tab_tunnel: "Canale Sicuro di Integrazione",
     settings_tab_translations: "Gestione delle Traduzioni",
     settings_tab_security: "Sicurezza & Password",
-    settings_proxy_url: "URL Proxy LLM (formato OpenAI API):",
+    settings_proxy_url: "URL Server Analitico (formato OpenAI API):",
     settings_model_slot: "Slot Modello / Model ID:",
     settings_api_key: "Chiave API Proxy (facoltativa):",
     settings_btn_test_conn: "Verifica connessione",
-    settings_tunnel_info: "Esposizione MCP per Gemini Spark e l'ecosistema Google AI:",
-    settings_tunnel_cmd: "Comando avvio tunnel sul nodo .234 / .184:",
+    settings_tunnel_info: "Canale sicuro per gli assistenti di analisi legale:",
+    settings_tunnel_cmd: "Parametri di connessione del cockpit giudiziario:",
     settings_btn_close: "Chiudi",
     settings_btn_save: "Salva impostazioni",
   },

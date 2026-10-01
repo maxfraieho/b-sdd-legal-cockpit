@@ -52,6 +52,7 @@ import { commitAtomicSupersession } from "../lib/wormLedger";
 interface ActorsRegistryViewProps {
   currentLang: SupportedLanguage;
   actors: ActorItem[];
+  pieces?: BordereauPiece[];
   onActorsChange: (updated: ActorItem[]) => void;
   onOpenAiWizard: () => void;
   onShowToast: (title: string, description: string, type?: "success" | "info") => void;
@@ -60,6 +61,7 @@ interface ActorsRegistryViewProps {
 export const ActorsRegistryView: React.FC<ActorsRegistryViewProps> = ({
   currentLang,
   actors,
+  pieces,
   onActorsChange,
   onOpenAiWizard,
   onShowToast,
@@ -778,7 +780,7 @@ export const ActorsRegistryView: React.FC<ActorsRegistryViewProps> = ({
                     </div>
 
                     <div className="space-y-2">
-                      {BORDEREAU_PIECES.filter((p) =>
+                      {(pieces || BORDEREAU_PIECES).filter((p) =>
                         selectedActor.linked_pieces?.includes(p.cote)
                       ).map((piece) => (
                         <div

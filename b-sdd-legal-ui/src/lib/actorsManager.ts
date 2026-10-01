@@ -478,13 +478,13 @@ export function calculateActorImpact(
     }
   }
 
-  // Invariant L-01 Enforcement: Arsen Kovalenko victim standing
-  if (actor.id === 'ACT-ARSEN-KOVALENKO') {
+  // Invariant L-01 Enforcement: Complainant / Victim standing (Arsen Kovalenko / PARTY-L04)
+  if (actor.id === 'ACT-ARSEN-KOVALENKO' || actor.id === 'PARTY-L04' || (actor.procedural_standing === 'victime_plaignante' && actor.id.includes('L04'))) {
     if (action === 'remove') {
       canProceed = false;
       blockedByInvariant = true;
       blockingMessage =
-        'Violation de l Invariant L-01 : Arsen KOVALENKO est la partie plaignante fondatrice de la procédure PE24.014624-SBA. Sa radiation désintégrerait l ensemble du dossier.';
+        'Violation de l Invariant L-01 : La partie plaignante fondatrice ne peut être radiée du dossier.';
     } else if (
       action === 'update' &&
       (actor.age !== undefined && actor.age < 18)

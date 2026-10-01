@@ -294,10 +294,10 @@ export const AstryxActionDrawer: React.FC<AstryxActionDrawerProps> = ({
                     </div>
                     <div className="text-[10px] text-slate-400 font-sans">
                       {currentLang === "uk"
-                        ? "Аудит фактів на вузлі Utopia DB .251, розрахунок секвестру CHF 47'700"
+                        ? "Аудит матеріалів справи, розрахунок кримінального секвестру CHF 47'700"
                         : currentLang === "fr"
-                        ? "Audit des faits Utopia DB .251, calcul du séquestre CHF 47'700"
-                        : "Utopia DB .251 audit, CHF 47,700 sequestration update"}
+                        ? "Audit des pièces du dossier, calcul du séquestre pénal CHF 47'700"
+                        : "Audit of case evidence, CHF 47,700 criminal sequestration analysis"}
                     </div>
                   </div>
                 </div>
@@ -339,17 +339,17 @@ export const AstryxActionDrawer: React.FC<AstryxActionDrawerProps> = ({
                   <div>
                     <div className="font-bold text-slate-200 group-hover:text-white">
                       {currentLang === "uk"
-                        ? "💾 Незмінний WORM Леджер (L-01)"
+                        ? "💾 Реєстр незмінності судових доказів"
                         : currentLang === "fr"
-                        ? "💾 Registre WORM immuable (L-01)"
-                        : "💾 Immutable WORM Ledger (L-01)"}
+                        ? "💾 Registre d'intégrité probatoire"
+                        : "💾 Immutable Judicial Evidence Registry"}
                     </div>
                     <div className="text-[10px] text-slate-400 font-sans">
                       {currentLang === "uk"
-                        ? "Журнал бітемпоральних суперсесій та криптографічні печатки"
+                        ? "Журнал процесуальних змін та цифрові криптографічні печатки"
                         : currentLang === "fr"
-                        ? "Journal des supersessions bitemporelles et sceaux"
-                        : "Bitemporal supersession audit trail & hashes"}
+                        ? "Journal des modifications procédurales et sceaux certifiés"
+                        : "Procedural modifications log & certified digital seals"}
                     </div>
                   </div>
                 </div>

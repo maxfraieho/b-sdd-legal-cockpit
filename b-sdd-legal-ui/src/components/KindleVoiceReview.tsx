@@ -262,7 +262,7 @@ export const KindleVoiceReview: React.FC<KindleVoiceReviewProps> = ({
       setIsSaved(true);
       setTimeout(() => setIsSaved(false), 2500);
       if (onCommitSuccess) {
-        onCommitSuccess(`Chapitre ${selectedChapter.number} scellé dans Utopia WORM.`);
+        onCommitSuccess(currentLang === 'uk' ? `Розділ ${selectedChapter.number} офіційно засвідчено в реєстрі справи.` : `Chapitre ${selectedChapter.number} certifié au dossier.`);
       }
     } catch (err) {
       console.error("WORM commit error:", err);
@@ -299,8 +299,8 @@ export const KindleVoiceReview: React.FC<KindleVoiceReviewProps> = ({
               </h2>
               <p className="text-[10px] sm:text-[11px] text-slate-400 truncate">
                 {currentLang === 'uk'
-                  ? 'Голосове введення Web Speech API або введення тексту для парсингу через KùzuDB'
-                  : 'Saisie vocale continue Web Speech API ou prise de note pour analyse KùzuDB'}
+                  ? "Голосове введення або текст для автоматичного юридичного аналізу зв'язків"
+                  : "Saisie vocale ou notes pour analyse des relations juridiques"}
               </p>
             </div>
           </div>
@@ -352,7 +352,7 @@ export const KindleVoiceReview: React.FC<KindleVoiceReviewProps> = ({
               </span>
             </button>
 
-            {/* Analyze via MemPalace KùzuDB */}
+            {/* Analyze Legal Relationships */}
             <button
               onClick={handleAnalyzeKuzu}
               disabled={isAnalyzing}
@@ -363,19 +363,19 @@ export const KindleVoiceReview: React.FC<KindleVoiceReviewProps> = ({
               <span className="font-mono">
                 {isAnalyzing
                   ? currentLang === 'uk'
-                    ? 'Аналіз графа...'
+                    ? "Аналіз зв'язків..."
                     : currentLang === 'it'
-                    ? 'Analisi grafo...'
+                    ? 'Analisi relazioni...'
                     : currentLang === 'de'
-                    ? 'Graph-Analyse...'
-                    : 'Analyse KùzuDB...'
+                    ? 'Prüfung...'
+                    : 'Analyse des liens...'
                   : currentLang === 'uk'
-                  ? '⚡ Проаналізувати KùzuDB'
+                  ? "⚡ Перевірити юридичні зв'язки"
                   : currentLang === 'it'
-                  ? '⚡ Analizza via KùzuDB'
+                  ? '⚡ Analizza collegamenti'
                   : currentLang === 'de'
-                  ? '⚡ KùzuDB Analyse'
-                  : '⚡ Analyser via KùzuDB'}
+                  ? '⚡ Verknüpfungen prüfen'
+                  : '⚡ Analyser les liens'}
               </span>
             </button>
           </div>
@@ -481,27 +481,27 @@ export const KindleVoiceReview: React.FC<KindleVoiceReviewProps> = ({
           </button>
         </div>
 
-        {/* KùzuDB Real-Time Analysis Report Pill Strip */}
+        {/* Real-Time Legal Relationship Analysis Pill Strip */}
         {analysisReport && (
           <div className="mt-2 p-2 bg-[#0F1A2E] border border-blue-800/40 rounded flex flex-wrap items-center gap-2 text-[11px] animate-fadeIn">
             <span className="font-mono text-blue-300 font-semibold flex items-center gap-1">
               <Sparkles className="w-3 h-3 text-blue-400" />
-              KùzuDB Blast Radar:
+              {currentLang === 'uk' ? "Юридичні зв'язки справи :" : "Liens juridiques :"}
             </span>
-            <span className="text-slate-400">Entités:</span>
+            <span className="text-slate-400">{currentLang === 'uk' ? "Учасники:" : "Parties:"}</span>
             {analysisReport.entities.map((ent, idx) => (
               <span key={idx} className="bg-blue-950/80 text-blue-200 border border-blue-700/50 px-1.5 py-0.5 rounded text-[10px] font-mono">
                 {ent}
               </span>
             ))}
-            <span className="text-slate-400 ml-1">Articles CP:</span>
+            <span className="text-slate-400 ml-1">{currentLang === 'uk' ? "Статті КК:" : "Articles CP:"}</span>
             {analysisReport.articles.map((art, idx) => (
               <span key={idx} className="bg-amber-950/70 text-amber-300 border border-amber-600/40 px-1.5 py-0.5 rounded text-[10px] font-mono font-bold">
                 {art}
               </span>
             ))}
             <span className="ml-auto text-[10px] text-slate-400 font-mono">
-              Rayon d'impact: <strong className="text-emerald-400">{analysisReport.impactScore} chapitres</strong>
+              {currentLang === 'uk' ? "Охоплення:" : "Rayon d'impact:"} <strong className="text-emerald-400">{analysisReport.impactScore} {currentLang === 'uk' ? "розділів" : "chapitres"}</strong>
             </span>
           </div>
         )}
@@ -577,7 +577,7 @@ export const KindleVoiceReview: React.FC<KindleVoiceReviewProps> = ({
           </div>
           <span className="text-emerald-400 text-[10px] font-mono flex items-center gap-1">
             <CheckCircle2 className="w-3 h-3 text-emerald-400" />
-            <span className="hidden sm:inline">Vérifié WORM</span>
+            <span className="hidden sm:inline">{currentLang === 'uk' ? 'Засвідчено' : 'Certifié'}</span>
           </span>
         </div>
       </div>
@@ -738,7 +738,7 @@ export const KindleVoiceReview: React.FC<KindleVoiceReviewProps> = ({
               {isSaved && (
                 <span className="text-[11px] font-mono text-emerald-400 flex items-center gap-1 animate-fadeIn">
                   <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
-                  {currentLang === 'uk' ? 'Зафіксовано в WORM!' : 'Scellé dans WORM !'}
+                  {currentLang === 'uk' ? 'Офіційно засвідчено!' : 'Officiellement certifié !'}
                 </span>
               )}
 
@@ -748,7 +748,7 @@ export const KindleVoiceReview: React.FC<KindleVoiceReviewProps> = ({
               >
                 <Save className="w-3.5 h-3.5" />
                 <span className="font-mono">
-                  {currentLang === 'uk' ? 'Зафіксувати WORM запис' : 'Sceller dans WORM (L-01)'}
+                  {currentLang === 'uk' ? 'Офіційно засвідчити редакцію' : 'Certifier au dossier'}
                 </span>
               </button>
             </div>

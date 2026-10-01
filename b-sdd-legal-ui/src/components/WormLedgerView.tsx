@@ -65,12 +65,12 @@ export const WormLedgerView: React.FC<WormLedgerViewProps> = ({ currentLang }) =
           </div>
           <div>
             <h2 className="text-xs font-mono font-bold text-slate-200 uppercase tracking-wider">
-              {currentLang === 'uk' ? 'Реєстр WORM Bitemporal Ledger (Utopia DB)' : 'Registre WORM Bitemporel (Utopia DB)'}
+              {currentLang === 'uk' ? 'Офіційний реєстр незмінності судових доказів' : 'Registre officiel d\'intégrité probatoire'}
             </h2>
             <p className="text-[11px] text-slate-400 font-sans">
               {currentLang === 'uk'
-                ? 'Незмінні записи суперсесій (valid_from / valid_to). Жодного деструктивного перезапису (Інваріант L-01).'
-                : 'Enregistrements immuables par supersession (valid_from / valid_to). Zéro écrasement destructif (L-01).'}
+                ? 'Фіксація часу події та внесення до справи. Жодного видалення чи підміни матеріалів (ст. 139 КПК).'
+                : 'Horodatage certain des faits et versement au dossier. Zéro altération ni suppression (Art. 139 CPP).'}
             </p>
           </div>
         </div>
@@ -104,18 +104,18 @@ export const WormLedgerView: React.FC<WormLedgerViewProps> = ({ currentLang }) =
       {/* SYSTEM ARCHITECTURE & INVARIANTS STATUS PANEL */}
       <div className="bg-[#0D1424] border-b border-slate-800/80 px-3 py-2 grid grid-cols-2 md:grid-cols-5 gap-2 text-[11px] font-mono shrink-0">
         <div className="p-1.5 bg-[#070B12] rounded border border-slate-800">
-          <span className="text-slate-500 block text-[10px]">MemPalace KùzuDB :</span>
+          <span className="text-slate-500 block text-[10px]">{currentLang === 'uk' ? "База зв'язків справи :" : "Graphe relationnel :"}</span>
           <span className="text-emerald-400 font-bold flex items-center gap-1">
             <span className="h-1.5 w-1.5 rounded-full bg-emerald-500"></span>
-            Port :8766 (8'746 rel.)
+            {currentLang === 'uk' ? "8'746 юридичних зв'язків" : "8'746 relations certifiées"}
           </span>
         </div>
 
         <div className="p-1.5 bg-[#070B12] rounded border border-slate-800">
-          <span className="text-slate-500 block text-[10px]">Evidence Compiler :</span>
+          <span className="text-slate-500 block text-[10px]">{currentLang === 'uk' ? "Компілятор досьє :" : "Compilateur du dossier :"}</span>
           <span className="text-emerald-400 font-bold flex items-center gap-1">
             <span className="h-1.5 w-1.5 rounded-full bg-emerald-500"></span>
-            Port :8162 Online
+            {currentLang === 'uk' ? "Активний / Готовий" : "Opérationnel / Prêt"}
           </span>
         </div>
 

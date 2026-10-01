@@ -77,17 +77,17 @@ export const SwissCodesModal: React.FC<SwissCodesModalProps> = ({
               <h2 className="text-sm sm:text-base font-bold text-slate-100 flex items-center space-x-2">
                 <span>
                   {currentLang === "uk"
-                    ? "База кодексів Швейцарії & Законодавство кантону Во (MemPalace)"
+                    ? "База кодексів Швейцарії & Законодавство кантону Во"
                     : currentLang === "fr"
-                    ? "Corpus Juridique Suisse & Droit Vaudois (MemPalace KùzuDB)"
+                    ? "Corpus Juridique Suisse & Droit Vaudois"
                     : currentLang === "de"
-                    ? "Schweizerisches Gesetzeskorpus & Waadtländer Recht (MemPalace)"
+                    ? "Schweizerisches Gesetzeskorpus & Waadtländer Recht"
                     : currentLang === "it"
-                    ? "Corpus Giuridico Svizzero & Diritto Vodese (MemPalace)"
-                    : "Swiss Legal Codes & Vaud Cantonal Corpus (MemPalace)"}
+                    ? "Corpus Giuridico Svizzero & Diritto Vodese"
+                    : "Swiss Legal Codes & Vaud Cantonal Corpus"}
                 </span>
                 <span className="text-[10px] font-mono bg-emerald-950/80 text-emerald-300 border border-emerald-800/60 px-2 py-0.5 rounded-full">
-                  KùzuDB 8'746 {currentLang === "uk" ? "зв'язків" : currentLang === "fr" ? "relations" : currentLang === "de" ? "Verknüpfungen" : currentLang === "it" ? "relazioni" : "relations"}
+                  8'746 {currentLang === "uk" ? "правових норм" : currentLang === "fr" ? "normes & relations" : currentLang === "de" ? "Rechtsnormen" : currentLang === "it" ? "norme & relazioni" : "legal norms"}
                 </span>
               </h2>
               <p className="text-[11px] text-slate-400">

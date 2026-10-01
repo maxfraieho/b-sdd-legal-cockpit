@@ -166,7 +166,8 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
 
   // Other tabs state
   const [mcpTunnelUrl, setMcpTunnelUrl] = useState(settings.mcpTunnelUrl);
-  const [authPassword, setAuthPassword] = useState(settings.authPassword);
+  const [isPinProtectionEnabled, setIsPinProtectionEnabled] = useState(settings.isPinProtectionEnabled ?? false);
+  const [authPassword, setAuthPassword] = useState(settings.authPassword || '');
   const [autoLockMinutes, setAutoLockMinutes] = useState(settings.autoLockMinutes);
   const [manualEditMode, setManualEditMode] = useState(settings.manualEditMode);
 
@@ -246,6 +247,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
       enableSequestrationCalc,
       enabledLawIds,
       mcpTunnelUrl: mcpTunnelUrl.trim(),
+      isPinProtectionEnabled,
       authPassword: authPassword.trim(),
       autoLockMinutes: Number(autoLockMinutes) || 15,
       manualEditMode,
@@ -519,7 +521,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                 </span>
               </h2>
               <p className="text-xs text-slate-400">
-                Конфігурація провайдерів ШІ (Проксі .184 / Gemini), баз MemPalace, Utopia WORM та нормативних кодексів
+                Конфігурація аналітичних моделей ШІ, реєстру доказів, правових зв'язків та нормативних кодексів
               </p>
             </div>
           </div>
@@ -735,7 +737,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                     <div className="flex items-center justify-between mb-1">
                       <strong className="text-xs text-amber-400 flex items-center gap-1.5">
                         <ShieldCheck className="w-3.5 h-3.5 text-amber-400" />
-                        MemPalace Вбудований
+                        Автономний правовий рушій
                       </strong>
                       <span className="text-[9px] font-mono bg-amber-950 px-1.5 py-0.5 rounded text-amber-300 border border-amber-800">
                         100% Offline
@@ -895,11 +897,11 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                 )}
               </div>
 
-              {/* 1.3 Knowledge Graph Integration (MemPalace KùzuDB & Utopia DB) */}
+              {/* 1.3 Knowledge Graph Integration */}
               <div className="bg-[#070B14] border border-slate-800 rounded-xl p-4 space-y-3">
                 <h3 className="text-sm font-semibold text-white flex items-center gap-2 border-b border-slate-800 pb-2">
                   <Database className="w-4 h-4 text-emerald-400" />
-                  <span>Інтеграція з базами знань MemPalace &amp; Utopia DB :</span>
+                  <span>Інтеграція з реєстрами справи та правовими зв'язками :</span>
                 </h3>
 
                 <div className="space-y-2">
@@ -907,14 +909,14 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                     {
                       state: connectMemPalaceGraph,
                       setter: setConnectMemPalaceGraph,
-                      title: 'Граф знань MemPalace KùzuDB (порт :8766)',
-                      desc: 'Пошук серед 8’746 ребер зв’язків: дати, персоналії (Суворова, Коваленко, Міллі), хронологія.',
+                      title: "Юридичний граф зв'язків справи",
+                      desc: "Аналіз 8'746 взаємозв'язків: дати, обставини, персоналії (Суворова, Коваленко, Міллі), хронологія.",
                     },
                     {
                       state: connectUtopiaDb,
                       setter: setConnectUtopiaDb,
-                      title: 'Utopia DB WORM Ledger (вузол :251 / :234)',
-                      desc: 'Автоматична перевірка незмінності доказів (Інваріант L-01) за алгоритмом SHA-256.',
+                      title: "Реєстр незмінності судових доказів",
+                      desc: "Автоматичний контроль автентичності та незмінності кожного доказу за судовим стандартом ISO/IEC 27037.",
                     },
                     {
                       state: enableTemporalSearch,
@@ -1290,10 +1292,10 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                 <div>
                   <h3 className="text-sm font-semibold text-white flex items-center gap-2">
                     <Network className="w-4 h-4 text-blue-400" />
-                    <span>Публікація Utopia MCP для екосистеми Google AI (Gemini Spark Pro)</span>
+                    <span>Захищений канал аналітичної інтеграції (Legal MCP)</span>
                   </h3>
                   <p className="text-xs text-slate-400 mt-1">
-                    Використовуючи встановлений на вузлі .184 / .234 бінарник <code className="text-amber-300 font-mono">/usr/local/bin/cloudflared</code>, можна безпечно транслювати локальний MCP-сервер Utopia DB до Gemini Spark, NotebookLM та Google AI Studio.
+                    Безпечний захищений канал для взаємодії адвокатського кокпіта з аналітичними сервісами та юридичними асистентами.
                   </p>
                 </div>
 
@@ -1465,10 +1467,10 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                   <div>
                     <h3 className="text-sm font-semibold text-white flex items-center gap-2">
                       <Shield className="w-4 h-4 text-amber-400" />
-                      <span>Google Cloud Run Identity Gateway (Контур 2)</span>
+                      <span>Захищений шлюз авторизації (Контур 2)</span>
                     </h3>
                     <p className="text-xs text-slate-400 mt-0.5">
-                      Адреса шлюзу автентифікації Google AI Studio / Cloud Run. Авторизуватися можуть лише особи з білого списку.
+                      Адреса захищеного шлюзу автентифікації. Доступ дозволено виключно уповноваженим особам із білого списку (ст. 73 КПК).
                     </p>
                   </div>
 
@@ -1783,23 +1785,54 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                   <span>Безпека судового досьє PE24.014624-SBA</span>
                 </h3>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-xs font-medium text-slate-300 mb-1.5">
-                      Резервний PIN-код адвоката (Master PIN):
-                    </label>
-                    <input
-                      type="password"
-                      value={authPassword}
-                      onChange={e => setAuthPassword(e.target.value)}
-                      placeholder="••••"
-                      className="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-white font-mono text-xs focus:ring-1 focus:ring-blue-500"
-                    />
-                    <span className="text-[10px] text-slate-500 mt-1 block">
-                      Використовується для аварійного входу при недоступності сервісів Google.
-                    </span>
+                {/* Двоконтурний захист термінала (Попередній PIN-код) */}
+                <div className="p-4 bg-slate-900/80 border border-slate-800 rounded-xl space-y-3">
+                  <div className="flex items-center justify-between gap-4">
+                    <div>
+                      <span className="text-xs font-semibold text-white block">
+                        Двоконтурний захист термінала (Попередній PIN-код)
+                      </span>
+                      <span className="text-[11px] text-slate-400 block mt-0.5 leading-relaxed">
+                        Додаткова опція безпеки: спочатку користувач вводить PIN-код термінала, і лише після цього переходить до обов'язкової авторизації через Google Account (перевірка за білим списком).
+                      </span>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setIsPinProtectionEnabled(!isPinProtectionEnabled)}
+                      className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+                        isPinProtectionEnabled ? 'bg-blue-600' : 'bg-slate-700'
+                      }`}
+                    >
+                      <span
+                        className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+                          isPinProtectionEnabled ? 'translate-x-5' : 'translate-x-0'
+                        }`}
+                      />
+                    </button>
                   </div>
 
+                  {isPinProtectionEnabled && (
+                    <div className="pt-3 border-t border-slate-800/80 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-xs font-medium text-slate-300 mb-1.5">
+                          PIN-код захисту термінала (Контур 1):
+                        </label>
+                        <input
+                          type="password"
+                          value={authPassword}
+                          onChange={e => setAuthPassword(e.target.value)}
+                          placeholder="••••"
+                          className="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-lg text-white font-mono text-xs focus:ring-1 focus:ring-blue-500"
+                        />
+                        <span className="text-[10px] text-slate-500 mt-1 block">
+                          Конфіденційне значення. Ніколи не відображається відкрито на екрані авторизації.
+                        </span>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-xs font-medium text-slate-300 mb-1.5">
                       Автоблокування при неактивності:
