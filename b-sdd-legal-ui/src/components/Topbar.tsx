@@ -359,6 +359,16 @@ export const Topbar: React.FC<TopbarProps> = ({
 
         {/* RIGHT: Quick Action Drawer Trigger, Languages & Controls */}
         <div className="flex items-center space-x-1.5 sm:space-x-2 shrink-0">
+          {/* Link to Aequitas AI Presentation Page */}
+          <a
+            href="/"
+            className="flex items-center space-x-1.5 px-2 py-1 bg-[#141E33] hover:bg-[#1C2B49] border border-slate-700/70 text-[#38BDF8] hover:text-white rounded-md text-[11px] font-mono transition-all min-h-[30px]"
+            title="Презентація платформи Aequitas AI"
+          >
+            <Sparkles className="w-3 h-3 text-[#D4AF37]" />
+            <span className="hidden sm:inline font-bold">Aequitas AI</span>
+          </a>
+
           {/* Astryx Quick Actions Drawer Trigger Button */}
           <button
             onClick={() => setActionDrawerOpen(true)}

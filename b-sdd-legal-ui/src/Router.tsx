@@ -3,6 +3,7 @@ import { AuthPage } from './pages/AuthPage';
 import { AuthSuccessPage } from './pages/AuthSuccessPage';
 import { AuthFailurePage } from './pages/AuthFailurePage';
 import { DashboardPage } from './pages/DashboardPage';
+import { AequitasLandingPage } from './pages/AequitasLandingPage';
 import App from './App';
 
 export const Router: React.FC = () => {
@@ -36,14 +37,22 @@ export const Router: React.FC = () => {
     return <AuthFailurePage />;
   }
 
-  // Main Dashboard / Cockpit / Root route: directly renders App protected by sovereign AuthGate
-  if (currentPath === '/' || currentPath === '/dashboard' || currentPath === '/cockpit') {
+  // Presentation Landing Page: / (root) or /aequitas or /presentation
+  if (currentPath === '/' || currentPath === '/aequitas' || currentPath === '/presentation' || currentPath === '/landing') {
+    return <AequitasLandingPage />;
+  }
+
+  // Sovereign Workbench / Cockpit / Dashboard
+  if (currentPath === '/dashboard' || currentPath === '/cockpit') {
     return <App />;
   }
 
   // Profile / Appwrite details view
   if (currentPath === '/profile') {
-    return <DashboardPage onOpenCockpit={() => window.location.assign('/dashboard')} />;
+    return <DashboardPage onOpenCockpit={() => {
+      window.history.pushState({}, '', '/cockpit');
+      setCurrentPath('/cockpit');
+    }} />;
   }
 
   // Default fallback: render App protected by AuthGate

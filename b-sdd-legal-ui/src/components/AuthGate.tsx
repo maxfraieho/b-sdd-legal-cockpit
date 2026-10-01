@@ -1133,6 +1133,13 @@ export const AuthGate: React.FC<AuthGateProps> = ({
       {/* Top Bar with Case Reference & Language Switcher */}
       <div className="w-full max-w-lg mx-auto flex items-center justify-between z-20 py-1">
         <div className="flex items-center gap-2">
+          <a
+            href="/"
+            className="text-[11px] font-mono text-[#38BDF8] hover:text-white bg-slate-900/80 border border-slate-800 px-2 py-0.5 rounded shadow-sm flex items-center gap-1 transition-colors"
+            title="Повернутися до презентації Aequitas AI"
+          >
+            <span>← Aequitas AI</span>
+          </a>
           <span className="text-[11px] font-mono font-bold text-amber-400 bg-amber-950/60 border border-amber-800/80 px-2 py-0.5 rounded shadow-sm">
             {CASE_ID}
           </span>
